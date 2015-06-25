@@ -5,6 +5,7 @@ public class ButtObjS : MonoBehaviour {
 
 	public bool isFollowing = false;
 	public float xDiff = 0.5f;
+	public float yDiff = 0.5f;
 	public float lerpRate = 1f;
 
 	public PlayerS parentObj;
@@ -30,6 +31,8 @@ public class ButtObjS : MonoBehaviour {
 			else{
 				followPos.x += xDiff;
 			}
+
+			followPos.y += yDiff;
 
 			transform.position = Vector3.Lerp
 				(transform.position,followPos,lerpRate*Time.deltaTime*TimeManagerS.timeMult);

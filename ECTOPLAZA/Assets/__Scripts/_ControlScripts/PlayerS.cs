@@ -22,6 +22,10 @@ public class PlayerS : MonoBehaviour {
 	public float jumpSpeed;
 	private bool jumped = false;
 	private bool jumpButtonDown = false;
+	public float addJumpForce;
+	public float addJumpForceMaxTime;
+	private float addingJumpTime;
+	private bool stopAddingJump;
 
 	public GroundDetectS groundDetect;
 
@@ -49,6 +53,11 @@ public class PlayerS : MonoBehaviour {
 	private Vector3 snapVel;
 
 	public float flingForceMult = 3f;
+	public float flingForceMultLv2;
+	public float flingForceMultLv3;
+	public int flingLv1Cap;
+	public int flingLv2Cap;
+	private bool dontCorrectSpeed = false;
 
 	public bool isDangerous = false;
 	public float maxHealth = 3;
@@ -130,6 +139,10 @@ public class PlayerS : MonoBehaviour {
 
 	void Walk () {
 
+		if (dontCorrectSpeed && groundDetect.Grounded()){
+			dontCorrectSpeed = false;
+		}
+
 		if (!isSnapping && !stretching && !groundPounded){
 
 			float xForce = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
@@ -140,11 +153,14 @@ public class PlayerS : MonoBehaviour {
 				xForce*=airControlMult;
 			}
 	
-			ownRigid.AddForce(new Vector3(xForce,0,0));
+			// only add force if not flinging/hit
+			if (!dontCorrectSpeed){
+				ownRigid.AddForce(new Vector3(xForce,0,0));
+			}
 	
 			Vector3 fixVel = ownRigid.velocity;
 	
-			if (groundDetect.Grounded()){
+			if (!dontCorrectSpeed){
 
 				if (fixVel.x < -maxSpeed){
 					fixVel.x = -maxSpeed;
@@ -208,6 +224,8 @@ public class PlayerS : MonoBehaviour {
 		
 					ownRigid.AddForce(jumpForce);
 		
+					addingJumpTime = 0;
+					stopAddingJump = false;
 					jumped = true;
 				}
 				else{
@@ -218,10 +236,34 @@ public class PlayerS : MonoBehaviour {
 						ownRigid.velocity = groundPoundVel;
 						groundPounded = true;
 
+						// allow for air control
+						dontCorrectSpeed = false;
+
 						SleepTime(groundPoundPauseTime);
 					}
 				}
 	
+			}
+
+			// add addtl jump force
+			if (jumped){
+				if (!jumpButtonDown){
+					stopAddingJump = true;
+				}
+				else{
+					if (!stopAddingJump){
+						Vector3 jumpForce = Vector3.zero;
+						
+						jumpForce.y = addJumpForce*Time.deltaTime*TimeManagerS.timeMult;
+						
+						ownRigid.AddForce(jumpForce);
+
+						addingJumpTime += Time.deltaTime*TimeManagerS.timeMult;
+						if (addingJumpTime > addJumpForceMaxTime){
+							stopAddingJump = true;
+						}
+					}
+				}
 			}
 		}
 	}
@@ -283,6 +325,15 @@ public class PlayerS : MonoBehaviour {
 
 					GameObject placeDot = Instantiate(placeDotPrefab, transform.position, Quaternion.identity)
 						as GameObject;
+
+					// change size of dot for now to indicate future power of fling
+					if (placedDots.Count-1 > flingLv2Cap){
+						placeDot.transform.localScale *= 1.25f;
+					}
+					// if inbetween, keep same size
+					if (placedDots.Count-1 < flingLv1Cap){
+						placeDot.transform.localScale *= 0.75f;
+					}
 					
 					placeDot.GetComponent<DotColliderS>().whoCreatedMe = this;
 					
@@ -324,6 +375,8 @@ public class PlayerS : MonoBehaviour {
 					isDangerous = true;
 					//buttObjRigid.velocity = Vector3.zero;
 
+					int numDots = movePositions.Count;
+
 					movePositions.Clear();
 					placedDots.Clear();
 					currentTarget = 0;
@@ -340,7 +393,17 @@ public class PlayerS : MonoBehaviour {
 
 						if (snapVel != Vector3.zero){
 						
-							snapVel*=flingForceMult*Time.deltaTime;
+							if (numDots > flingLv2Cap){
+								snapVel*=flingForceMultLv3*Time.deltaTime;
+							}
+							else if (numDots > flingLv1Cap){
+								snapVel*=flingForceMultLv2*Time.deltaTime;
+							}
+							else{
+								snapVel*=flingForceMult*Time.deltaTime;
+							}
+
+							
 						}
 						else{
 							snapVel= buttObjRigid.velocity.normalized*flingForceMult*Time.deltaTime;
@@ -359,8 +422,18 @@ public class PlayerS : MonoBehaviour {
 					prevVel = ownRigid.velocity = snapVel;
 					buttObjRigid.velocity = Vector3.zero;
 
+					dontCorrectSpeed = true;
+
 					if (doFling){
-						SleepTime(flingPauseTime);
+						if (numDots > flingLv2Cap){
+							SleepTime(flingPauseTime*1.25f);
+						}
+						else if (numDots > flingLv1Cap){
+							SleepTime(flingPauseTime);
+						}
+						else{
+							SleepTime(flingPauseTime*0.75f);
+						}
 						
 						doFling = false;
 					}
