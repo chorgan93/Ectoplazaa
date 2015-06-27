@@ -492,6 +492,6 @@ public class PlayerS : MonoBehaviour {
 		prevButtVel = buttObjRigid.velocity;
 		effectPause = true;
 
-		print ("PAUSE");
+		//print ("PAUSE");
 	}
 }
