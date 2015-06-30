@@ -48,11 +48,13 @@
   <ItemGroup>
      <Compile Include="Assets\__Scripts\CameraScripts\AdaptiveCameraPtS.cs" />
      <Compile Include="Assets\__Scripts\CameraScripts\CameraFollowS.cs" />
+     <Compile Include="Assets\__Scripts\CameraScripts\CameraShakeS.cs" />
      <Compile Include="Assets\__Scripts\EnvironmentScripts\FakeParaS.cs" />
      <Compile Include="Assets\__Scripts\_ControlScripts\ButtObjS.cs" />
      <Compile Include="Assets\__Scripts\_ControlScripts\DotColliderS.cs" />
      <Compile Include="Assets\__Scripts\_ControlScripts\GroundDetectS.cs" />
      <Compile Include="Assets\__Scripts\_ControlScripts\PlayerS.cs" />
+     <Compile Include="Assets\__Scripts\__SystemsScripts\DamageS.cs" />
      <Compile Include="Assets\__Scripts\__SystemsScripts\PlatformS.cs" />
      <Compile Include="Assets\__Scripts\__SystemsScripts\TimeManagerS.cs" />
  <Reference Include="UnityEngine.UI">

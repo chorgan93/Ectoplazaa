@@ -8,7 +8,7 @@ public class PlayerS : MonoBehaviour {
 	private Rigidbody ownRigid;
 
 	public GameObject spriteObject;
-	private Renderer spriteObjRender;
+	private SpriteRenderer spriteObjRender;
 
 	public ButtObjS buttObj;
 	private Rigidbody buttObjRigid;
@@ -77,6 +77,19 @@ public class PlayerS : MonoBehaviour {
 	private float groundPoundPauseTime = 0.3f;
 	private float flingPauseTime = 0.45f;
 
+	public GameObject dangerObj;
+	public bool respawning = false;
+	public float respawnTimeMax = 2f;
+	private float respawnTimeCountdown;
+
+	private Vector3 spawnPos;
+	public GameObject spawnPt;
+
+	// raycasting to prevent wall sticking
+	private bool rightCheck;
+	private bool leftCheck;
+	private RaycastHit hit;
+
 
 	// Use this for initialization
 	void Start () {
@@ -84,25 +97,26 @@ public class PlayerS : MonoBehaviour {
 		platformType = PlatformS.GetPlatform();
 
 		ownRigid = GetComponent<Rigidbody>();
-		spriteObjRender = spriteObject.GetComponent<Renderer>();
+		spriteObjRender = spriteObject.GetComponent<SpriteRenderer>();
 
 		buttObjRigid = buttObj.GetComponent<Rigidbody>();
+
+		transform.position = spawnPos = spawnPt.transform.position;
 	
 	}
-	
-	// Update is called once per frame
-	void Update () {
 
-
-	}
 
 	void FixedUpdate () {
 
 		if (!TimeManagerS.paused){
 
 			ManageDelay();
+			//print (leftCheck);
 
-			if (!effectPause){
+			if (!effectPause && !respawning){
+
+				
+				CheckWallCast();
 
 				Walk();
 				Jump ();
@@ -110,12 +124,66 @@ public class PlayerS : MonoBehaviour {
 				Snap();
 
 			}
+
+			Respawn();
+
+			if (isDangerous && !respawning){
+				if (!dangerObj.activeSelf){
+					dangerObj.SetActive(true);
+				}
+			}
+			else{
+				dangerObj.SetActive(false);
+			}
 		}
 
 		ManageFollow();
 		ManageGravity ();
 
 	
+	}
+
+	void CheckWallCast(){
+
+		RaycastHit rightHit;
+		RaycastHit leftHit;
+
+		Physics.Raycast(transform.position,Vector3.right, out rightHit, 5f);
+		Physics.Raycast(transform.position,-Vector3.right, out leftHit, 5f);
+
+		if (rightHit.collider != null){
+
+			//print (rightHit.collider.name);
+		
+			if (rightHit.collider.gameObject.tag != "Player" &&
+			    rightHit.collider.gameObject.tag != "PlayerTrail"){
+				rightCheck = true;
+				//print ("HIT!!");
+			}
+			else{
+				rightCheck = false;
+			}
+
+		}
+		else{
+			rightCheck = false;
+		}
+
+		if (leftHit.collider != null){
+			
+			if (leftHit.collider.gameObject.tag != "Player" ||
+			    leftHit.collider.gameObject.tag != "PlayerTrail"){
+				leftCheck = true;
+			}
+			else{
+				leftCheck = false;
+			}
+			
+		}
+		else{
+			leftCheck = false;
+		}
+
 	}
 
 	void ManageDelay(){
@@ -152,6 +220,9 @@ public class PlayerS : MonoBehaviour {
 			if (!groundDetect.Grounded()){
 				xForce*=airControlMult;
 			}
+
+			// make sure not to do force stuff when up against wall
+			if ((xForce > 0 && !rightCheck) || xForce < 0 && !leftCheck){
 	
 			// only add force if not flinging/hit
 			if (!dontCorrectSpeed){
@@ -178,6 +249,7 @@ public class PlayerS : MonoBehaviour {
 			}
 	
 			ownRigid.velocity = fixVel;
+			}
 	
 			//print (Input.GetAxis("Horizontal"));
 
@@ -187,6 +259,11 @@ public class PlayerS : MonoBehaviour {
 	}
 
 	void Jump () {
+
+		// turn danger off
+		if (groundDetect.Grounded()){
+			isDangerous = false;
+		}
 
 		// turn jump ability on/off depending on grounded status
 
@@ -234,6 +311,7 @@ public class PlayerS : MonoBehaviour {
 						Vector3 groundPoundVel = Vector3.zero;
 						groundPoundVel.y = -groundPoundForce*Time.deltaTime*TimeManagerS.timeMult;
 						ownRigid.velocity = groundPoundVel;
+						isDangerous = true;
 						groundPounded = true;
 
 						// allow for air control
@@ -459,6 +537,26 @@ public class PlayerS : MonoBehaviour {
 
 	}
 
+	void Respawn () {
+
+		if (respawning){
+			respawnTimeCountdown -= Time.deltaTime*TimeManagerS.timeMult;
+			ownRigid.useGravity = false;
+			ownRigid.velocity = Vector3.zero;
+			dangerObj.SetActive(false);
+			if (!effectPause){
+				spriteObjRender.enabled = false;
+			}
+			if (respawnTimeCountdown <= 0){
+				spriteObjRender.enabled = true;
+				respawning = false;
+				transform.position = spawnPos;
+				ownRigid.useGravity = true;
+			}
+		}
+
+	}
+
 	void ManageFollow(){
 
 		if (stretching || isSnapping){
@@ -483,9 +581,13 @@ public class PlayerS : MonoBehaviour {
 
 	public void TakeDamage(float dmg){
 		health -= dmg;
+		if (health <= 0){
+			respawning = true;
+			respawnTimeCountdown = respawnTimeMax;
+		}
 	}
 
-	void SleepTime(float delayTime){
+	public void SleepTime(float delayTime){
 		pauseDelay = delayTime;
 		prevGravState = ownRigid.useGravity;
 		prevVel = ownRigid.velocity;

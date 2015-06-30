@@ -8,6 +8,9 @@ public class ButtObjS : MonoBehaviour {
 	public float yDiff = 0.5f;
 	public float lerpRate = 1f;
 
+	private SpriteRenderer headRender;
+	private SpriteRenderer ownRender;
+
 	public PlayerS parentObj;
 
 	// Use this for initialization
@@ -16,6 +19,9 @@ public class ButtObjS : MonoBehaviour {
 		parentObj = transform.parent.gameObject.GetComponent<PlayerS>();
 		transform.parent = null;
 		parentObj.buttObj = this;
+
+		ownRender = GetComponentInChildren<SpriteRenderer>();
+		headRender = parentObj.spriteObject.GetComponent<SpriteRenderer>();
 	
 	}
 	
@@ -37,6 +43,8 @@ public class ButtObjS : MonoBehaviour {
 			transform.position = Vector3.Lerp
 				(transform.position,followPos,lerpRate*Time.deltaTime*TimeManagerS.timeMult);
 		}
+
+		ownRender.enabled = headRender.enabled;
 
 	}
 }
