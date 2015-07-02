@@ -63,6 +63,7 @@
 'Assets/__Scripts/_ControlScripts/DotColliderS.cs'
 'Assets/__Scripts/_ControlScripts/GroundDetectS.cs'
 'Assets/__Scripts/_ControlScripts/PlayerS.cs'
+'Assets/__Scripts/__SystemsScripts/DamageS.cs'
 'Assets/__Scripts/__SystemsScripts/PlatformS.cs'
 'Assets/__Scripts/__SystemsScripts/TimeManagerS.cs'
 -r:'/Applications/Unity/Unity 5.app/Contents/Frameworks/Mono/lib/mono/unity/System.Runtime.Serialization.dll'

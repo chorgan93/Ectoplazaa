@@ -22,13 +22,16 @@ public class DamageS : MonoBehaviour {
 		}
 
 		if (other.gameObject.tag == "PlayerTrail"){
+
+			print ("yeah");
+
 			PlayerS otherPlayer = other.GetComponent<DotColliderS>().whoCreatedMe;
 
-			if (!otherPlayer == playerRef){
+			if (otherPlayer != playerRef && otherPlayer.health > 0){
 			
 				otherPlayer.TakeDamage(playerRef.maxHealth);
 				otherPlayer.SleepTime(pauseTime);
-				playerRef.SleepTime(pauseTime);
+				playerRef.SleepTime(pauseTime/4);
 
 				CameraShakeS.C.LargeShake();
 
