@@ -28,7 +28,7 @@ public class ButtObjS : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 	
-		if (isFollowing){
+		if (isFollowing && !parentObj.effectPause){
 
 			Vector3 followPos = parentObj.transform.position;
 			if (parentObj.facingRight){
@@ -57,6 +57,7 @@ public class ButtObjS : MonoBehaviour {
 				if (parentObj.attacking){
 					if (parentObj.attackToPerform == 2){
 						print ("END BULLET ATTACK");
+						parentObj.UnlockVel();
 						parentObj.isDangerous = false;
 						parentObj.attackToPerform = 0;
 						parentObj.attacking = false;
@@ -64,8 +65,11 @@ public class ButtObjS : MonoBehaviour {
 					}
 					else if (parentObj.attackToPerform == 1){
 						// add fling force
-						print ("YEAH FLING");
+						//print ("YEAH FLING");
 						if (!parentObj.didLv2Fling){
+
+							
+							parentObj.TurnOffIgnoreWalls();
 
 							// THIS IS TRIGGERING TWICE, NULLING
 							// FIX THIS IMMEDIATELY
@@ -87,6 +91,7 @@ public class ButtObjS : MonoBehaviour {
 						parentObj.GetComponent<Rigidbody>().useGravity = true;
 						parentObj.isDangerous = false;
 						parentObj.attacking = false;
+						parentObj.TurnOffIgnoreWalls();
 						isFollowing = true;
 					}
 				}

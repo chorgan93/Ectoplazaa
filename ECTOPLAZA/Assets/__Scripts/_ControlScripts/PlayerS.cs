@@ -72,7 +72,8 @@ public class PlayerS : MonoBehaviour {
 	private bool prevGravState;
 	private Vector3 prevVel;
 	private Vector3 prevButtVel;
-	private bool effectPause = false;
+	[HideInInspector]
+	public bool effectPause = false;
 
 	private float groundPoundPauseTime = 0.3f;
 	private float flingPauseTime = 0.45f;
@@ -113,8 +114,14 @@ public class PlayerS : MonoBehaviour {
 	private float lv1ReturnRate = 12f;
 	private float lv1ButtDelay = 1f;
 	public float lv2FlingForce = 80000f;
-	private float lv3BulletSpeed = 5000f;
+	private float lv3BulletSpeed = 7500f;
+	private bool lockInPlace = false;
 	private Vector3 bulletVel;
+
+	// physics layer experimentation for attack 0 and 1
+	private int physicsLayerDefault;
+	private string physicsLayerNoWalls = "IgnoreWallCollider";
+	private RaycastHit newHit;
 
 	//[HideInInspector]
 	public bool didLv2Fling = false;
@@ -131,6 +138,8 @@ public class PlayerS : MonoBehaviour {
 		buttObjRigid = buttObj.GetComponent<Rigidbody>();
 
 		transform.position = spawnPos = spawnPt.transform.position;
+
+		physicsLayerDefault = gameObject.layer;
 	
 	}
 
@@ -158,6 +167,10 @@ public class PlayerS : MonoBehaviour {
 			}
 
 			Respawn();
+
+			if (lockInPlace){
+				ownRigid.velocity = Vector3.zero;
+			}
 
 			if (isDangerous && !respawning){
 				if (!dangerObj.activeSelf){
@@ -211,7 +224,7 @@ public class PlayerS : MonoBehaviour {
 			    leftHit.collider.gameObject.tag != "PlayerTrail"&&
 			    leftHit.collider.gameObject.tag != "Butt"){
 				leftCheck = true;
-				print (leftHit.collider.name);
+				//print (leftHit.collider.name);
 			}
 			else{
 				leftCheck = false;
@@ -309,24 +322,85 @@ public class PlayerS : MonoBehaviour {
 
 				if (attackToPerform == 2){
 					// bullet snap
-					ownRigid.velocity = bulletVel = attackDir.normalized*Time.deltaTime*lv3BulletSpeed;
-					print ("LV3!!");
+					bulletVel = attackDir.normalized*Time.deltaTime*lv3BulletSpeed;
+					//print ("LV3!!");
+
+					bool wallHit = false;
+					
+					Physics.Raycast(transform.position,bulletVel.normalized, out newHit, 2f);
+					
+					if (newHit.collider != null){
+						if (newHit.collider.tag == "Ground" || newHit.collider.tag == "Wall"){
+							wallHit = true;
+						}
+					}
+
+					if (!wallHit){
+						//set attack time
+						lv1OutCountdown = lv1OutTimeMax;
+						TurnOnIgnoreWalls();
+					}
+					else{
+						
+						print ("DONT ATTACK THRU WALL");
+
+						// have butt go to head
+						buttObj.isFollowing = true;
+						// lock in place so no sliding
+						lockInPlace = true;
+						buttDelayCountdown = 0;
+						// set attack to 2 so butt behaves properly
+						attackToPerform = 2;
+					}
 
 					// add kinesthetic effects
-					CameraShakeS.C.MicroShake();
+					//CameraShakeS.C.MicroShake();
 				//	SleepTime(0.3f);
+
+					// SEEMS TO BE WORKING CORRECTLY
 
 				}
 				else{
 					// stretch attack
 					//ownRigid.AddForce(lv1AttackForce*attackDir.normalized*Time.deltaTime);
 
-					// create attack target and set attack time
-					lv1OutCountdown = lv1OutTimeMax;
+
+
+
 
 					// im gonna use bullet vel as the target pos cuz im lazy
 					bulletVel = (transform.position+attackDir.normalized*lv1AttackTargetRange);
 					bulletVel.z = transform.position.z;
+
+					// make sure we are not right next to a wall
+					// cancel attack if so
+
+					bool wallHit = false;
+
+					 Physics.Raycast(transform.position,bulletVel.normalized, out newHit, 5f);
+
+					if (newHit.collider != null){
+						if (newHit.collider.tag == "Ground" || newHit.collider.tag == "Wall"){
+							wallHit = true;
+						}
+					}
+
+					if (!wallHit){
+						//set attack time
+						lv1OutCountdown = lv1OutTimeMax;
+						TurnOnIgnoreWalls();
+					}
+					else{
+
+						print ("DONT ATTACK THRU WALL");
+						//attackToPerform = 0;
+						lv1OutCountdown = 0;
+						didLv2Fling = false;
+						buttDelayCountdown = 0;
+						buttObj.isFollowing = true;
+						// set attack to 2 so butt behaves properly
+						attackToPerform = 2;
+					}
 
 
 
@@ -754,6 +828,8 @@ public class PlayerS : MonoBehaviour {
 				respawning = false;
 				transform.position = spawnPos;
 				ownRigid.useGravity = true;
+				
+				health = maxHealth;
 			}
 		}
 
@@ -806,7 +882,7 @@ public class PlayerS : MonoBehaviour {
 		if (attacking &&
 		    (other.gameObject.tag == "Ground" || other.gameObject.tag == "Wall")){
 			//attacking = false;
-			print ("STOP!!");
+			//print ("STOP!!");
 			ownRigid.velocity = Vector3.zero;
 			buttDelayCountdown = 0;
 
@@ -825,9 +901,23 @@ public class PlayerS : MonoBehaviour {
 			if (attackToPerform == 2){
 				// have butt go to head
 				buttObj.isFollowing = true;
+				// lock in place so no sliding
+				lockInPlace = true;
 			}
 
 			CameraShakeS.C.MicroShake();
 		}
+	}
+
+	public void UnlockVel () {
+		lockInPlace = false;
+	}
+
+	public void TurnOnIgnoreWalls(){
+		//gameObject.layer = LayerMask.NameToLayer(physicsLayerNoWalls);
+	}
+
+	public void TurnOffIgnoreWalls(){
+		//gameObject.layer = physicsLayerDefault;
 	}
 }
