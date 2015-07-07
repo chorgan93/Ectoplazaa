@@ -50,6 +50,7 @@
      <Compile Include="Assets\__Scripts\CameraScripts\CameraFollowS.cs" />
      <Compile Include="Assets\__Scripts\CameraScripts\CameraShakeS.cs" />
      <Compile Include="Assets\__Scripts\EnvironmentScripts\FakeParaS.cs" />
+     <Compile Include="Assets\__Scripts\_ControlScripts\AimObjS.cs" />
      <Compile Include="Assets\__Scripts\_ControlScripts\ButtObjS.cs" />
      <Compile Include="Assets\__Scripts\_ControlScripts\DotColliderS.cs" />
      <Compile Include="Assets\__Scripts\_ControlScripts\GroundDetectS.cs" />

@@ -10,6 +10,15 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 	public float playerWeight;
 	public float centerWeight;
 
+	void Start () {
+		playerPositions.Clear();
+
+		GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+		for (int i = 0; i < players.Length; i++){
+			playerPositions.Add(players[i].transform);
+		}
+	}
+
 
 	
 	// Update is called once per frame

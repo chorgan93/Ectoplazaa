@@ -17,6 +17,7 @@ public class ButtObjS : MonoBehaviour {
 	void Start () {
 
 		parentObj = transform.parent.gameObject.GetComponent<PlayerS>();
+		parentObj.buttObj = this;
 		transform.parent = null;
 		parentObj.buttObj = this;
 
@@ -56,7 +57,7 @@ public class ButtObjS : MonoBehaviour {
 				//print("YEAH");
 				if (parentObj.attacking){
 					if (parentObj.attackToPerform == 2){
-						print ("END BULLET ATTACK");
+						//print ("END BULLET ATTACK");
 						parentObj.UnlockVel();
 						parentObj.isDangerous = false;
 						parentObj.attackToPerform = 0;
@@ -75,11 +76,15 @@ public class ButtObjS : MonoBehaviour {
 							// FIX THIS IMMEDIATELY
 
 							parentObj.didLv2Fling = true;
+							parentObj.dontCorrectSpeed = true;
 							parentObj.GetComponent<Rigidbody>().useGravity = true;
-							parentObj.GetComponent<Rigidbody>().AddForce((parentObj.transform.position-
-						                                              transform.position).normalized
+
+							parentObj.GetComponent<Rigidbody>().AddForce((parentObj.attackDir).normalized
 						                                             *parentObj.lv2FlingForce*Time.deltaTime,
 						                                             ForceMode.VelocityChange);
+
+							//print ((parentObj.attackDir).normalized
+							//      *parentObj.lv2FlingForce*Time.deltaTime);
 							// add kinesthetic effects
 							CameraShakeS.C.MicroShake();
 							//parentObj.SleepTime(0.15f);
@@ -88,11 +93,15 @@ public class ButtObjS : MonoBehaviour {
 					}
 					else{
 						// ahhhh
+						//print ("USE GRAV");
 						parentObj.GetComponent<Rigidbody>().useGravity = true;
 						parentObj.isDangerous = false;
 						parentObj.attacking = false;
 						parentObj.TurnOffIgnoreWalls();
 						isFollowing = true;
+						// stop vel
+						parentObj.GetComponent<Rigidbody>().velocity = Vector3.zero;
+						parentObj.dropDown = true;
 					}
 				}
 			}

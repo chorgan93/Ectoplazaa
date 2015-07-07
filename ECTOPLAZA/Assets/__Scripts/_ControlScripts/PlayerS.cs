@@ -57,7 +57,8 @@ public class PlayerS : MonoBehaviour {
 	public float flingForceMultLv3;
 	public int flingLv1Cap;
 	public int flingLv2Cap;
-	private bool dontCorrectSpeed = false;
+	[HideInInspector]
+	public bool dontCorrectSpeed = false;
 
 	public bool isDangerous = false;
 	public float maxHealth = 3;
@@ -65,7 +66,7 @@ public class PlayerS : MonoBehaviour {
 
 	public bool facingRight = false;
 
-	private bool groundPounded = false;
+	//private bool groundPounded = false;
 	public float groundPoundForce;
 
 	private float pauseDelay;
@@ -75,7 +76,7 @@ public class PlayerS : MonoBehaviour {
 	[HideInInspector]
 	public bool effectPause = false;
 
-	private float groundPoundPauseTime = 0.3f;
+	//private float groundPoundPauseTime = 0.3f;
 	private float flingPauseTime = 0.45f;
 
 	public GameObject dangerObj;
@@ -93,10 +94,11 @@ public class PlayerS : MonoBehaviour {
 
 	// new (as of 2 July) attack stuff
 	private bool canCharge = true;
-	private bool charging = false;
+	[HideInInspector]
+	public bool charging = false;
 	private float chargeTime = 0;
-	private float medChargeTime = 0.6f;
-	private float maxChargeTime = 1.3f;
+	private float medChargeTime = 0.4f;
+	private float maxChargeTime = 0.8f;
 
 	[HideInInspector]
 	public int attackToPerform = 0;
@@ -104,23 +106,33 @@ public class PlayerS : MonoBehaviour {
 	public bool attacking = false;
 	private float buttDelayCountdown;
 
+	[HideInInspector]
+	public Vector3 attackDir;
+
+	private float attackGroundLeewayMaxTime = 0.02f;
+	private float groundLeeway;
+
 	private bool performedAttack = false;
 
 	//private float lv1AttackForce = 60000f;
-	private float lv1AttackTargetRange = 12f;
-	private float lv1OutRate = 18f;
+	//private float lv1AttackTargetRange = 12f;
+	private float lv1OutRate = 6000f;
 	private float lv1OutTimeMax = 0.2f;
 	private float lv1OutCountdown;
-	private float lv1ReturnRate = 12f;
+	private float lv1ReturnRate = 1f;
+	private bool snapReturning = false;
+
+	[HideInInspector]
+	public bool dropDown = false;
 	private float lv1ButtDelay = 1f;
-	public float lv2FlingForce = 80000f;
+	public float lv2FlingForce = 100;
 	private float lv3BulletSpeed = 7500f;
 	private bool lockInPlace = false;
 	private Vector3 bulletVel;
 
 	// physics layer experimentation for attack 0 and 1
-	private int physicsLayerDefault;
-	private string physicsLayerNoWalls = "IgnoreWallCollider";
+	//private int physicsLayerDefault;
+	//private string physicsLayerNoWalls = "IgnoreWallCollider";
 	private RaycastHit newHit;
 
 	//[HideInInspector]
@@ -135,16 +147,19 @@ public class PlayerS : MonoBehaviour {
 		ownRigid = GetComponent<Rigidbody>();
 		spriteObjRender = spriteObject.GetComponent<SpriteRenderer>();
 
-		buttObjRigid = buttObj.GetComponent<Rigidbody>();
 
 		transform.position = spawnPos = spawnPt.transform.position;
 
-		physicsLayerDefault = gameObject.layer;
+		//physicsLayerDefault = gameObject.layer;
 	
 	}
 
 
 	void FixedUpdate () {
+
+		if (buttObj != null && buttObjRigid == null){
+			buttObjRigid = buttObj.GetComponent<Rigidbody>();
+		}
 
 		if (!TimeManagerS.paused){
 
@@ -172,6 +187,13 @@ public class PlayerS : MonoBehaviour {
 				ownRigid.velocity = Vector3.zero;
 			}
 
+			if (dropDown){
+				Vector3 dropVel = ownRigid.velocity;
+				dropVel.x = 0;
+				ownRigid.velocity = dropVel;
+				//print (ownRigid.velocity);
+			}
+
 			if (isDangerous && !respawning){
 				if (!dangerObj.activeSelf){
 					dangerObj.SetActive(true);
@@ -181,9 +203,6 @@ public class PlayerS : MonoBehaviour {
 				dangerObj.SetActive(false);
 			}
 		}
-
-		//ManageFollow();
-		//ManageGravity ();
 
 	
 	}
@@ -283,6 +302,7 @@ public class PlayerS : MonoBehaviour {
 			chargeTime+=Time.deltaTime*TimeManagerS.timeMult;
 
 			if (!stretchButtonDown){
+				groundLeeway = attackGroundLeewayMaxTime;
 				attacking = true;
 				charging = false;
 				performedAttack = false;
@@ -307,22 +327,31 @@ public class PlayerS : MonoBehaviour {
 	void AttackRelease () {
 
 		if (attacking){
+
+			groundLeeway -= Time.deltaTime*TimeManagerS.timeMult;
+
 			if (!performedAttack){
 				isDangerous = true;
 				performedAttack = true;
 
+				
+				
+				snapReturning = false;
+
 				buttDelayCountdown = lv1ButtDelay;
 
-				Vector3 attackDir = Vector3.zero;
+				attackDir = Vector3.zero;
 				attackDir.x = Input.GetAxis("HorizontalPlayer"+playerNum+platformType);
 				attackDir.y = Input.GetAxis("VerticalPlayer"+playerNum+platformType);
 
-				ownRigid.useGravity = false;
+
 
 
 				if (attackToPerform == 2){
 					// bullet snap
 					bulletVel = attackDir.normalized*Time.deltaTime*lv3BulletSpeed;
+					dontCorrectSpeed = true;
+
 					//print ("LV3!!");
 
 					bool wallHit = false;
@@ -339,10 +368,16 @@ public class PlayerS : MonoBehaviour {
 						//set attack time
 						lv1OutCountdown = lv1OutTimeMax;
 						TurnOnIgnoreWalls();
+
+						// add bullet force
+						ownRigid.velocity = Vector3.zero;
+						ownRigid.AddForce(bulletVel,ForceMode.VelocityChange);
+
+						ownRigid.useGravity = true;
 					}
 					else{
 						
-						print ("DONT ATTACK THRU WALL");
+						//print ("DONT ATTACK THRU WALL");
 
 						// have butt go to head
 						buttObj.isFollowing = true;
@@ -361,46 +396,12 @@ public class PlayerS : MonoBehaviour {
 
 				}
 				else{
-					// stretch attack
-					//ownRigid.AddForce(lv1AttackForce*attackDir.normalized*Time.deltaTime);
+					ownRigid.useGravity = false;
 
 
-
-
-
-					// im gonna use bullet vel as the target pos cuz im lazy
-					bulletVel = (transform.position+attackDir.normalized*lv1AttackTargetRange);
-					bulletVel.z = transform.position.z;
-
-					// make sure we are not right next to a wall
-					// cancel attack if so
-
-					bool wallHit = false;
-
-					 Physics.Raycast(transform.position,bulletVel.normalized, out newHit, 5f);
-
-					if (newHit.collider != null){
-						if (newHit.collider.tag == "Ground" || newHit.collider.tag == "Wall"){
-							wallHit = true;
-						}
-					}
-
-					if (!wallHit){
-						//set attack time
-						lv1OutCountdown = lv1OutTimeMax;
-						TurnOnIgnoreWalls();
-					}
-					else{
-
-						print ("DONT ATTACK THRU WALL");
-						//attackToPerform = 0;
-						lv1OutCountdown = 0;
-						didLv2Fling = false;
-						buttDelayCountdown = 0;
-						buttObj.isFollowing = true;
-						// set attack to 2 so butt behaves properly
-						attackToPerform = 2;
-					}
+					// set start snap vel
+					bulletVel = attackDir.normalized*Time.deltaTime*lv1OutRate;
+					lv1OutCountdown = lv1OutTimeMax;
 
 
 
@@ -409,7 +410,7 @@ public class PlayerS : MonoBehaviour {
 			else{
 				if (attackToPerform == 2){
 					// bullet snap maintain velocity
-					ownRigid.velocity = bulletVel;
+					//ownRigid.velocity = bulletVel;
 					
 				}
 				else if (attackToPerform == 1){
@@ -419,7 +420,8 @@ public class PlayerS : MonoBehaviour {
 					// lerp out to attack target
 					if (lv1OutCountdown > 0){
 
-						
+						// old way without physics
+						/*
 						// set vel to 0
 						ownRigid.velocity = Vector3.zero;
 						
@@ -427,6 +429,12 @@ public class PlayerS : MonoBehaviour {
 						
 						transform.position = Vector3.Lerp(transform.position,bulletVel,lv1OutRate*Time.deltaTime
 						                                  *TimeManagerS.timeMult);
+						                                  */
+
+						lv1OutCountdown -= Time.deltaTime*TimeManagerS.timeMult;
+
+						// vel decrease over time (linear, can be made exponential)
+						ownRigid.velocity = bulletVel*TimeManagerS.timeMult*(lv1OutCountdown/lv1OutTimeMax);
 					}
 					else{
 						//butt should return
@@ -438,30 +446,55 @@ public class PlayerS : MonoBehaviour {
 					// lerp out to attack target and then back to butt poss
 					if (lv1OutCountdown > 0){
 
-						// set vel to 0
-						ownRigid.velocity = Vector3.zero;
-
 						lv1OutCountdown -= Time.deltaTime*TimeManagerS.timeMult;
+						//print (lv1OutCountdown);
 
-						transform.position = Vector3.Lerp(transform.position,bulletVel,lv1OutRate*Time.deltaTime
-						                                  *TimeManagerS.timeMult);
+						if (!snapReturning){
+						
+							// vel decrease over time (linear, can be made exponential)
+							
+							// vel decrease over time (linear, can be made exponential)
+							ownRigid.velocity = bulletVel*TimeManagerS.timeMult*(lv1OutCountdown/lv1OutTimeMax);
+						}
+						else{
+							ownRigid.velocity = -bulletVel*TimeManagerS.timeMult*(lv1OutCountdown/
+							                                                      (lv1OutTimeMax/lv1ReturnRate))
+								*lv1ReturnRate;
+						}
 					}
 					else{
-						// return to buttPos
-						Vector3 buttPos = buttObj.transform.position;
-						buttPos.z = transform.position.z;
-						transform.position = Vector3.Lerp(transform.position,buttPos,lv1ReturnRate*Time.deltaTime
-						                                  *TimeManagerS.timeMult);
 
-						// colliding with butt will end the attack, see buttobjs script
+						// reverse direction & accel
+							if (!snapReturning){
+								snapReturning = true;
+								lv1OutCountdown = lv1OutTimeMax/lv1ReturnRate;
+							}
+							// else end attack 1
+							else{
+							// this code is a redundancy (for now) with buttobj code
+							// make sure to make changes to both
+								//print ("USE GRAV");
+								ownRigid.useGravity = true;
+								isDangerous = false;
+								attacking = false;
+								TurnOffIgnoreWalls();
+								buttObj.isFollowing = true;
+
+							// stop vel
+							ownRigid.velocity = Vector3.zero;
+							dropDown = true;
+							}
+						}
 					}
 				}
 			}
-		}
+
 
 	}
 
 	void Walk () {
+
+		//print (dontCorrectSpeed);
 
 		if (dontCorrectSpeed && groundDetect.Grounded()){
 			dontCorrectSpeed = false;
@@ -529,6 +562,7 @@ public class PlayerS : MonoBehaviour {
 			}
 			//isDangerous = false;
 			canCharge = true;
+			dropDown = false;
 		}
 
 		// turn jump ability on/off depending on grounded status
@@ -536,7 +570,7 @@ public class PlayerS : MonoBehaviour {
 		if (jumped){
 			if (groundDetect.Grounded()){
 				jumped = false;
-				groundPounded = false;
+				//groundPounded = false;
 			}
 		}
 		else{
@@ -835,30 +869,6 @@ public class PlayerS : MonoBehaviour {
 
 	}
 
-	void ManageFollow(){
-
-		if (buttDelayCountdown > 0){
-			buttObj.isFollowing = false;
-		}
-		else{
-			if (attackToPerform != 0 || (attackToPerform == 0 && !attacking)){
-				buttObj.isFollowing = true;
-				buttObjRigid.velocity = Vector3.zero;
-			}
-		}
-
-	}
-
-	void ManageGravity(){
-		if (stretching || isSnapping || TimeManagerS.timeMult == 0 ||
-		    TimeManagerS.paused || effectPause){
-			ownRigid.useGravity = false;
-		}
-		else{
-			ownRigid.useGravity = true;
-		}
-	}
-
 	public void TakeDamage(float dmg){
 		health -= dmg;
 		if (health <= 0){
@@ -868,11 +878,11 @@ public class PlayerS : MonoBehaviour {
 	}
 
 	public void SleepTime(float delayTime){
-		pauseDelay = delayTime;
-		prevGravState = ownRigid.useGravity;
-		prevVel = ownRigid.velocity;
-		prevButtVel = buttObjRigid.velocity;
-		effectPause = true;
+		//pauseDelay = delayTime;
+		//prevGravState = ownRigid.useGravity;
+		//prevVel = ownRigid.velocity;
+		//prevButtVel = buttObjRigid.velocity;
+		//effectPause = true;
 
 		//print ("PAUSE");
 	}
@@ -880,7 +890,7 @@ public class PlayerS : MonoBehaviour {
 	void OnCollisionEnter(Collision other){
 		// end bullet attack
 		if (attacking &&
-		    (other.gameObject.tag == "Ground" || other.gameObject.tag == "Wall")){
+		    (other.gameObject.tag == "Ground" || other.gameObject.tag == "Wall") &&groundLeeway <= 0 ){
 			//attacking = false;
 			//print ("STOP!!");
 			ownRigid.velocity = Vector3.zero;
@@ -890,12 +900,14 @@ public class PlayerS : MonoBehaviour {
 				// trigger return early
 				
 				lv1OutCountdown = 0;
+				//snapReturning = true;
 			}
 			if (attackToPerform == 1){
 				// trigger return early
 				// turn into attack0
 				attackToPerform = 0;
 				lv1OutCountdown = 0;
+				snapReturning = true;
 				didLv2Fling = false;
 			}
 			if (attackToPerform == 2){
@@ -919,5 +931,18 @@ public class PlayerS : MonoBehaviour {
 
 	public void TurnOffIgnoreWalls(){
 		//gameObject.layer = physicsLayerDefault;
+	}
+
+	// for aim obj
+	public float GetChargeTime(){
+		return(chargeTime);
+	}
+
+	public float GetChargeLv2Min(){
+		return (medChargeTime);
+	}
+
+	public float GetChargeLv3Min(){
+		return (maxChargeTime);
 	}
 }
