@@ -15,9 +15,14 @@ public class PlayerS : MonoBehaviour {
 
 	public int playerNum;
 
+
 	public float walkSpeed;
 	public float maxSpeed;
 	public float airControlMult;
+	private bool canAirStrafe = true; 
+
+	private bool isBouncy = false; 
+	public PhysicMaterial bouncyPhysics, normalPhysics; 
 
 	public float jumpSpeed;
 	private bool jumped = false;
@@ -104,6 +109,7 @@ public class PlayerS : MonoBehaviour {
 	public int attackToPerform = 0;
 	[HideInInspector]
 	public bool attacking = false;
+
 	private float buttDelayCountdown;
 
 	[HideInInspector]
@@ -126,7 +132,7 @@ public class PlayerS : MonoBehaviour {
 	public bool dropDown = false;
 	private float lv1ButtDelay = 1f;
 	public float lv2FlingForce = 100;
-	private float lv3BulletSpeed = 7500f;
+	private float lv3BulletSpeed = 12500;
 	private bool lockInPlace = false;
 	private Vector3 bulletVel;
 
@@ -138,6 +144,15 @@ public class PlayerS : MonoBehaviour {
 	//[HideInInspector]
 	public bool didLv2Fling = false;
 
+	//VISUAL VARS------------------------------------------------
+	public GameObject deathParticles, jumpParticles, hitParticles, groundedParticles; 
+	public GameObject dangerousSprite; 
+
+	private TrailRenderer playerTrailRenderer; 
+	public GameObject tempHeadSphere,tempButtSphere; 
+	public Material [] playerMats;
+	public Material [] playerParticleMats; 
+	public Material	 hurtMat; 
 
 	// Use this for initialization
 	void Start () {
@@ -147,8 +162,14 @@ public class PlayerS : MonoBehaviour {
 		ownRigid = GetComponent<Rigidbody>();
 		spriteObjRender = spriteObject.GetComponent<SpriteRenderer>();
 
+		playerTrailRenderer = this.GetComponent<TrailRenderer>(); 
 
 		transform.position = spawnPos = spawnPt.transform.position;
+
+		tempButtSphere.GetComponent<Renderer>().material = playerMats[playerNum-1]; 
+		tempHeadSphere.GetComponent<Renderer>().material = playerMats[playerNum-1]; 
+
+		playerTrailRenderer.material = playerMats[playerNum-1];
 
 		//physicsLayerDefault = gameObject.layer;
 	
@@ -173,6 +194,8 @@ public class PlayerS : MonoBehaviour {
 
 				Walk();
 				Jump ();
+				MiscAction(); //TRAIL RENDERER UPDATE, OTHER THINGS
+
 				//Stretch();
 				//Snap();
 
@@ -183,8 +206,10 @@ public class PlayerS : MonoBehaviour {
 
 			Respawn();
 
+
 			if (lockInPlace){
-				ownRigid.velocity = Vector3.zero;
+				//DISABLED FOR BOUNCINESS ------------------------------------------------------------------------------------------
+				//ownRigid.velocity = Vector3.zero;
 			}
 
 			if (dropDown){
@@ -275,6 +300,14 @@ public class PlayerS : MonoBehaviour {
 		}
 	}
 
+	/*
+	_________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+	ATTACKING-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	_____________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+	*/
+
 	void ChargeAttack () {
 
 		// turn stretch button bool on/off
@@ -330,12 +363,10 @@ public class PlayerS : MonoBehaviour {
 
 			groundLeeway -= Time.deltaTime*TimeManagerS.timeMult;
 
-			if (!performedAttack){
+			if (!performedAttack)
+			{
 				isDangerous = true;
-				performedAttack = true;
-
-				
-				
+					
 				snapReturning = false;
 
 				buttDelayCountdown = lv1ButtDelay;
@@ -344,208 +375,374 @@ public class PlayerS : MonoBehaviour {
 				attackDir.x = Input.GetAxis("HorizontalPlayer"+playerNum+platformType);
 				attackDir.y = Input.GetAxis("VerticalPlayer"+playerNum+platformType);
 
-
-
-
-				if (attackToPerform == 2){
-					// bullet snap
-					bulletVel = attackDir.normalized*Time.deltaTime*lv3BulletSpeed;
-					dontCorrectSpeed = true;
-
-					//print ("LV3!!");
-
-					bool wallHit = false;
-					
-					Physics.Raycast(transform.position,bulletVel.normalized, out newHit, 2f);
-					
-					if (newHit.collider != null){
-						if (newHit.collider.tag == "Ground" || newHit.collider.tag == "Wall"){
-							wallHit = true;
-						}
-					}
-
-					if (!wallHit){
-						//set attack time
-						lv1OutCountdown = lv1OutTimeMax;
-						TurnOnIgnoreWalls();
-
-						// add bullet force
-						ownRigid.velocity = Vector3.zero;
-						ownRigid.AddForce(bulletVel,ForceMode.VelocityChange);
-
-						ownRigid.useGravity = true;
-					}
-					else{
-						
-						//print ("DONT ATTACK THRU WALL");
-
-						// have butt go to head
-						buttObj.isFollowing = true;
-						// lock in place so no sliding
-						lockInPlace = true;
-						buttDelayCountdown = 0;
-						// set attack to 2 so butt behaves properly
-						attackToPerform = 2;
-					}
-
-					// add kinesthetic effects
-					//CameraShakeS.C.MicroShake();
-				//	SleepTime(0.3f);
-
-					// SEEMS TO BE WORKING CORRECTLY
-
-				}
-				else{
-					ownRigid.useGravity = false;
-
-
-					// set start snap vel
-					bulletVel = attackDir.normalized*Time.deltaTime*lv1OutRate;
-					lv1OutCountdown = lv1OutTimeMax;
-
-
-
-				}
 			}
-			else{
-				if (attackToPerform == 2){
-					// bullet snap maintain velocity
-					//ownRigid.velocity = bulletVel;
+
+			if (attackToPerform == 2)
+			{
+				FlingFastAttack(false);
+			}
+			if (attackToPerform == 1)
+			{
+				FlingSlowAttack(false);
+			}
+			else if( attackToPerform == 0)
+			{
+				//JabAttack();
+				FlingMiniAttack(false);
+			}
+			
+			performedAttack = true;
+
+		}
+
+
+	}
+
+
+	void FlingMiniAttack(bool endAttack)
+	{
+		/*
+		Just a small fling in a direction
+		*/
+
+		if(!performedAttack)
+		{
+			ownRigid.useGravity = false;
+			
+			bulletVel = attackDir.normalized*Time.deltaTime*lv1OutRate;
+			ownRigid.AddForce(bulletVel*.75f,ForceMode.VelocityChange);
+
+			dontCorrectSpeed = true;
+			ownRigid.useGravity = true;
+			buttObj.isFollowing = true;
+			print ("Fling Mini Attack");
+
+			//print (bulletVel); 
+		}
+		else
+		{
+
+		}
+
+		if(endAttack)
+		{
+			// trigger return early
+			isDangerous = false;
+			attacking = false;
+			//snapReturning = true;
+		}
+
+	}
+	
+	void JabAttack(bool endAttack)
+	{
+		if(endAttack)
+		{
+			
+		}
+		else
+		{
+			if(!performedAttack)
+			{
+				ownRigid.useGravity = false;
+				
+				// set start snap vel
+				bulletVel = attackDir.normalized*Time.deltaTime*lv1OutRate;
+				
+				print (bulletVel); 
+				
+				lv1OutCountdown = lv1OutTimeMax;
+				
+			}
+			else
+			{
+				//print ("JAB ATTACK!");
+				// lerp out to attack target and then back to butt poss
+				if (lv1OutCountdown > 0){
 					
-				}
-				else if (attackToPerform == 1){
-
-					// this will act the same as weak attack up until attack time is over 
-					// in which case butt does its thing
-					// lerp out to attack target
-					if (lv1OutCountdown > 0){
-
-						// old way without physics
-						/*
-						// set vel to 0
-						ownRigid.velocity = Vector3.zero;
+					lv1OutCountdown -= Time.deltaTime*TimeManagerS.timeMult;
+					//print (lv1OutCountdown);
+					
+					if (!snapReturning){
 						
-						lv1OutCountdown -= Time.deltaTime*TimeManagerS.timeMult;
+						// vel decrease over time (linear, can be made exponential)
 						
-						transform.position = Vector3.Lerp(transform.position,bulletVel,lv1OutRate*Time.deltaTime
-						                                  *TimeManagerS.timeMult);
-						                                  */
-
-						lv1OutCountdown -= Time.deltaTime*TimeManagerS.timeMult;
-
 						// vel decrease over time (linear, can be made exponential)
 						ownRigid.velocity = bulletVel*TimeManagerS.timeMult*(lv1OutCountdown/lv1OutTimeMax);
 					}
 					else{
-						//butt should return
-						buttObj.isFollowing = true;
+						ownRigid.velocity = -bulletVel*TimeManagerS.timeMult*(lv1OutCountdown/
+						                                                      (lv1OutTimeMax/lv1ReturnRate))
+							*lv1ReturnRate;
 					}
-
 				}
 				else{
-					// lerp out to attack target and then back to butt poss
-					if (lv1OutCountdown > 0){
-
-						lv1OutCountdown -= Time.deltaTime*TimeManagerS.timeMult;
-						//print (lv1OutCountdown);
-
-						if (!snapReturning){
-						
-							// vel decrease over time (linear, can be made exponential)
-							
-							// vel decrease over time (linear, can be made exponential)
-							ownRigid.velocity = bulletVel*TimeManagerS.timeMult*(lv1OutCountdown/lv1OutTimeMax);
-						}
-						else{
-							ownRigid.velocity = -bulletVel*TimeManagerS.timeMult*(lv1OutCountdown/
-							                                                      (lv1OutTimeMax/lv1ReturnRate))
-								*lv1ReturnRate;
-						}
+					
+					// reverse direction & accel
+					if (!snapReturning){
+						snapReturning = true;
+						lv1OutCountdown = lv1OutTimeMax/lv1ReturnRate;
 					}
+					// else end attack 1
 					else{
-
-						// reverse direction & accel
-							if (!snapReturning){
-								snapReturning = true;
-								lv1OutCountdown = lv1OutTimeMax/lv1ReturnRate;
-							}
-							// else end attack 1
-							else{
-							// this code is a redundancy (for now) with buttobj code
-							// make sure to make changes to both
-								//print ("USE GRAV");
-								ownRigid.useGravity = true;
-								isDangerous = false;
-								attacking = false;
-								TurnOffIgnoreWalls();
-								buttObj.isFollowing = true;
-
-							// stop vel
-							ownRigid.velocity = Vector3.zero;
-							dropDown = true;
-							}
-						}
+						// this code is a redundancy (for now) with buttobj code
+						// make sure to make changes to both
+						//print ("USE GRAV");
+						ownRigid.useGravity = true;
+						isDangerous = false;
+						attacking = false;
+						TurnOffIgnoreWalls();
+						buttObj.isFollowing = true;
+						
+						// stop vel
+						ownRigid.velocity = Vector3.zero;
+						dropDown = true;
 					}
 				}
 			}
-
-
-	}
-
-	void Walk () {
-
-		//print (dontCorrectSpeed);
-
-		if (dontCorrectSpeed && groundDetect.Grounded()){
-			dontCorrectSpeed = false;
-		}
-
-		//if (!isSnapping && !stretching && !groundPounded){
-		if (!attacking && !charging){
-			float xForce = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
-			//float xForce = Input.GetAxis("Horizontal");
-			xForce *= walkSpeed*TimeManagerS.timeMult*Time.deltaTime;
-
-			if (!groundDetect.Grounded()){
-				xForce*=airControlMult;
-			}
-
-			// make sure not to do force stuff when up against wall
-			if ((xForce > 0 && !rightCheck) || xForce < 0 && !leftCheck){
-	
-			// only add force if not flinging/hit
-			if (!dontCorrectSpeed){
-				ownRigid.AddForce(new Vector3(xForce,0,0));
-			}
-	
-			Vector3 fixVel = ownRigid.velocity;
-	
-			if (!dontCorrectSpeed){
-
-				if (fixVel.x < -maxSpeed){
-					fixVel.x = -maxSpeed;
-				}
-				if (fixVel.x > maxSpeed){
-					fixVel.x = maxSpeed;
-				}
-			}
-
-			if (fixVel.x > 0){
-				facingRight = true;
-			}
-			if (fixVel.x < 0){
-				facingRight = false;
-			}
-	
-			ownRigid.velocity = fixVel;
-			}
-	
-			//print (Input.GetAxis("Horizontal"));
-
 		}
 
 
+
+	
 	}
+
+	void FlingSlowAttack(bool endAttack)
+	{
+		if(endAttack)
+		{
+			
+			//attackToPerform = 0;
+			lv1OutCountdown = 0;
+			snapReturning = true;
+			didLv2Fling = false;
+			attacking = false;
+			isDangerous = false;
+			ownRigid.useGravity = true;
+			buttObj.isFollowing = true;
+			canAirStrafe = true; 
+			
+		}
+		else
+		{
+			if(!performedAttack)
+			{
+				canAirStrafe = false; 
+				ownRigid.useGravity = false;
+				
+				// set start snap vel
+				bulletVel = attackDir.normalized*Time.deltaTime*lv1OutRate;
+				
+				//print (bulletVel); 
+				
+				lv1OutCountdown = lv1OutTimeMax;
+			}
+			else
+			{
+				// this will act the same as weak attack up until attack time is over 
+				// in which case butt does its thing
+				// lerp out to attack target
+				if (lv1OutCountdown > 0)
+				{
+					
+					// old way without physics
+					/*
+							// set vel to 0
+							ownRigid.velocity = Vector3.zero;
+							
+							lv1OutCountdown -= Time.deltaTime*TimeManagerS.timeMult;
+							
+							transform.position = Vector3.Lerp(transform.position,bulletVel,lv1OutRate*Time.deltaTime
+							                                  *TimeManagerS.timeMult);
+							                                  */
+					
+					lv1OutCountdown -= Time.deltaTime*TimeManagerS.timeMult;
+					
+					// vel decrease over time (linear, can be made exponential)
+					ownRigid.velocity = bulletVel*TimeManagerS.timeMult*(lv1OutCountdown/lv1OutTimeMax);
+				}
+				else
+				{
+					//butt should return
+					buttObj.isFollowing = true;
+					canAirStrafe = true; 
+				}
+			}
+		}
+	
+
+	}
+
+	void FlingFastAttack(bool endAttack)
+	{
+
+		if(endAttack)
+		{
+			// have butt go to head
+			buttObj.isFollowing = true;
+			// lock in place so no sliding
+			lockInPlace = true;
+
+			attacking = false;
+			isDangerous = false;
+			ownRigid.useGravity = true;
+			buttObj.isFollowing = true;
+			canAirStrafe = true; 
+
+			this.GetComponent<SphereCollider>().material = normalPhysics; 
+
+		}
+		else
+		{
+			if(!performedAttack)
+			{
+				this.GetComponent<SphereCollider>().material = bouncyPhysics; 
+
+				// bullet snap
+				bulletVel = attackDir.normalized*Time.deltaTime*lv3BulletSpeed;
+				dontCorrectSpeed = true;
+				
+				//print ("LV3!!");
+				
+				bool wallHit = false;
+				
+				Physics.Raycast(transform.position,bulletVel.normalized, out newHit, 2f);
+				
+				if (newHit.collider != null)
+				{
+					if (newHit.collider.tag == "Ground" || newHit.collider.tag == "Wall")
+					{
+						wallHit = true;
+					}
+				}
+				
+				if (!wallHit){
+					//set attack time
+					lv1OutCountdown = lv1OutTimeMax;
+					
+					// add bullet force
+					ownRigid.velocity = Vector3.zero;
+					ownRigid.AddForce(bulletVel,ForceMode.VelocityChange);
+					
+					ownRigid.useGravity = true;
+				}
+				else{
+					
+					//print ("DONT ATTACK THRU WALL");
+					
+					// have butt go to head
+					buttObj.isFollowing = true;
+					// lock in place so no sliding
+					lockInPlace = true;
+					buttDelayCountdown = 0;
+					// set attack to 2 so butt behaves properly
+					attackToPerform = 2;
+
+				}
+				
+				// add kinesthetic effects
+				//CameraShakeS.C.MicroShake();
+				//	SleepTime(0.3f);
+				
+				// SEEMS TO BE WORKING CORRECTLY
+			}
+		}
+
+
+
+		}
+
+
+
+	/*
+	_________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+	MOVEMENT-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	_____________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+	*/
+	void Walk () 
+	{
+
+			//print (dontCorrectSpeed);
+
+			if (dontCorrectSpeed && groundDetect.Grounded())
+			{
+				dontCorrectSpeed = false;
+			}
+
+			//if (!isSnapping && !stretching && !groundPounded){
+			if (!charging && canAirStrafe) //&& !attacking)
+			{
+				float xForce = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
+				//float xForce = Input.GetAxis("Horizontal");
+				xForce *= walkSpeed*TimeManagerS.timeMult*Time.deltaTime;
+
+				if (!groundDetect.Grounded())
+				{
+					xForce*=airControlMult;
+				}
+
+				// make sure not to do force stuff when up against wall
+				if ((xForce > 0 && !rightCheck) || xForce < 0 && !leftCheck){
+		
+				// only add force if not flinging/hit
+				
+				//THIS WAS DISABLING AIR STRAFE WHILE FLINGING
+				/*if (!dontCorrectSpeed){
+					ownRigid.AddForce(new Vector3(xForce,0,0));
+				}*/
+		
+				bool applyForce = true; 
+
+				if((ownRigid.velocity.x > maxSpeed) && (xForce > 0))
+				{
+						applyForce = false; 
+				}
+				else if((ownRigid.velocity.x < -maxSpeed) && (xForce < 0))
+				{
+					applyForce = false; 
+				}
+
+				if(applyForce)
+					ownRigid.AddForce(new Vector3(xForce,0,0));
+
+
+				Vector3 fixVel = ownRigid.velocity;
+
+				/*
+				July 13th: Changing the way max speed in handled, player will not decelerate when over max speed.
+				However the player cannot add force in the direction that the player is going max speed, but can always decelerate. 
+				
+				if (!dontCorrectSpeed){
+
+					if (fixVel.x < -maxSpeed){
+						fixVel.x = -maxSpeed;
+					}
+					if (fixVel.x > maxSpeed){
+						fixVel.x = maxSpeed;
+					}
+				}
+				*/
+
+				if (fixVel.x > 0){
+					facingRight = true;
+				}
+				if (fixVel.x < 0){
+					facingRight = false;
+				}
+		
+				ownRigid.velocity = fixVel;
+				}
+		
+				//print (Input.GetAxis("Horizontal"));
+
+			}
+
+
+		}
+
+
 
 	void Jump () {
 
@@ -602,6 +799,8 @@ public class PlayerS : MonoBehaviour {
 		
 					ownRigid.AddForce(jumpForce);
 		
+					Instantiate(jumpParticles, this.transform.position, Quaternion.identity); 
+
 					addingJumpTime = 0;
 					stopAddingJump = false;
 					jumped = true;
@@ -645,6 +844,18 @@ public class PlayerS : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	void MiscAction()
+	{
+		this.GetComponent<LineRenderer>().SetPosition(0,this.transform.position);
+		this.GetComponent<LineRenderer>().SetPosition(1,buttObj.transform.position);
+
+		if(isDangerous)
+			dangerousSprite.GetComponent<SpriteRenderer>().enabled = true; 
+		else
+			dangerousSprite.GetComponent<SpriteRenderer>().enabled = false; 
+
 	}
 
 	void Stretch () {
@@ -874,6 +1085,8 @@ public class PlayerS : MonoBehaviour {
 		if (health <= 0){
 			respawning = true;
 			respawnTimeCountdown = respawnTimeMax;
+
+			Instantiate(deathParticles, this.transform.position, Quaternion.identity); 
 		}
 	}
 
@@ -889,32 +1102,34 @@ public class PlayerS : MonoBehaviour {
 
 	void OnCollisionEnter(Collision other){
 		// end bullet attack
+
+		Vector3 hitParticleSpawn = this.transform.position; 
+		hitParticleSpawn.z +=.5f;
+		Instantiate(hitParticles,hitParticleSpawn,Quaternion.identity);
+
 		if (attacking &&
 		    (other.gameObject.tag == "Ground" || other.gameObject.tag == "Wall") &&groundLeeway <= 0 ){
 			//attacking = false;
 			//print ("STOP!!");
-			ownRigid.velocity = Vector3.zero;
+
+			//DISABLED FOR BOUNCINESS ------------------------------------------------------------------------------------------
+			//ownRigid.velocity = Vector3.zero;
+
+
 			buttDelayCountdown = 0;
 
-			if (attackToPerform == 0){
-				// trigger return early
-				
-				lv1OutCountdown = 0;
-				//snapReturning = true;
+			if (attackToPerform == 0)
+			{
+				//JabAttack();
+				FlingMiniAttack(true);
 			}
-			if (attackToPerform == 1){
-				// trigger return early
-				// turn into attack0
-				attackToPerform = 0;
-				lv1OutCountdown = 0;
-				snapReturning = true;
-				didLv2Fling = false;
+			if (attackToPerform == 1)
+			{
+				FlingSlowAttack(true); 
 			}
-			if (attackToPerform == 2){
-				// have butt go to head
-				buttObj.isFollowing = true;
-				// lock in place so no sliding
-				lockInPlace = true;
+			if (attackToPerform == 2)
+			{
+				FlingFastAttack(true); 
 			}
 
 			CameraShakeS.C.MicroShake();
