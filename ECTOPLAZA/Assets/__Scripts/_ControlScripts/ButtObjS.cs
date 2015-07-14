@@ -83,6 +83,8 @@ public class ButtObjS : MonoBehaviour {
 						                                             *parentObj.lv2FlingForce*Time.deltaTime,
 						                                             ForceMode.VelocityChange);
 
+							//print ("did fling");
+
 							//print ((parentObj.attackDir).normalized
 							//      *parentObj.lv2FlingForce*Time.deltaTime);
 							// add kinesthetic effects
