@@ -21,7 +21,7 @@ public class PlayerS : MonoBehaviour {
 	public float airControlMult;
 	private bool canAirStrafe = true; 
 
-	private bool isBouncy = false; 
+ 	private bool isBouncy = false; 
 	public PhysicMaterial bouncyPhysics, normalPhysics; 
 
 	public float jumpSpeed;
