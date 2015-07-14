@@ -21,8 +21,8 @@ public class ButtObjS : MonoBehaviour {
 		transform.parent = null;
 		parentObj.buttObj = this;
 
-		ownRender = GetComponentInChildren<SpriteRenderer>();
-		headRender = parentObj.spriteObject.GetComponent<SpriteRenderer>();
+		//ownRender = GetComponentInChildren<SpriteRenderer>();
+		//headRender = parentObj.spriteObject.GetComponent<SpriteRenderer>();
 	
 	}
 	
@@ -45,7 +45,7 @@ public class ButtObjS : MonoBehaviour {
 				(transform.position,followPos,lerpRate*Time.deltaTime*TimeManagerS.timeMult);
 		}
 
-		ownRender.enabled = headRender.enabled;
+		//ownRender.enabled = headRender.enabled;
 
 	}
 
