@@ -23,7 +23,7 @@ public class DamageS : MonoBehaviour {
 			}
 		}
 
-		if (other.gameObject.tag == "PlayerTrail"){
+		/*if (other.gameObject.tag == "PlayerTrail"){
 
 			print ("yeah");
 
@@ -38,6 +38,6 @@ public class DamageS : MonoBehaviour {
 				CameraShakeS.C.LargeShake();
 
 			}
-		}
+		}*/
 	}
 }

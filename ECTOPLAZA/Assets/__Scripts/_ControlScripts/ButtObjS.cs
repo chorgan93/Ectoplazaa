@@ -17,9 +17,9 @@ public class ButtObjS : MonoBehaviour {
 	void Start () {
 
 		parentObj = transform.parent.gameObject.GetComponent<PlayerS>();
-		parentObj.buttObj = this;
+		parentObj.buttObj = this.gameObject;
 		transform.parent = null;
-		parentObj.buttObj = this;
+		//parentObj.buttObj = this;
 
 		//ownRender = GetComponentInChildren<SpriteRenderer>();
 		//headRender = parentObj.spriteObject.GetComponent<SpriteRenderer>();

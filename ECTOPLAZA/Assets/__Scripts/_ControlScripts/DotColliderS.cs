@@ -6,7 +6,7 @@ public class DotColliderS : MonoBehaviour {
 	public PlayerS whoCreatedMe;
 	
 	void Start () {
-		GetComponent<Renderer>().material = whoCreatedMe.GetComponent<Renderer>().material;
+		//GetComponent<Renderer>().material = whoCreatedMe.GetComponent<Renderer>().material;
 	}
 	
 	/*void OnTriggerEnter(Collider other){
