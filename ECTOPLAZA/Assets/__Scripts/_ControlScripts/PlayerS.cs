@@ -341,17 +341,19 @@ public class PlayerS : MonoBehaviour {
 				performedAttack = false;
 
 				// butt should not follow
-				buttObj.isFollowing = false;
+				//buttObj.isFollowing = false;
 
 				if (chargeTime >= maxChargeTime){
 					// fully charged attack
 					attackToPerform = 2;
+					GetComponent<TrailHandlerS>().SetButtDelay(0.2f);
 				}
 				else if (chargeTime >= medChargeTime){
 					attackToPerform = 1;
 				}
 				else{
 					attackToPerform = 0;
+					GetComponent<TrailHandlerS>().SetButtDelay(0.1f);
 				}
 			}
 		}
@@ -414,7 +416,7 @@ public class PlayerS : MonoBehaviour {
 
 			dontCorrectSpeed = true;
 			ownRigid.useGravity = true;
-			buttObj.isFollowing = true;
+			//buttObj.isFollowing = true;
 			print ("Fling Mini Attack");
 
 			//print (bulletVel); 
@@ -519,7 +521,7 @@ public class PlayerS : MonoBehaviour {
 			attacking = false;
 			isDangerous = false;
 			ownRigid.useGravity = true;
-			buttObj.isFollowing = true;
+			//buttObj.isFollowing = true;
 			canAirStrafe = true; 
 			
 		}
@@ -564,7 +566,7 @@ public class PlayerS : MonoBehaviour {
 				else
 				{
 					//butt should return
-					buttObj.isFollowing = true;
+					//buttObj.isFollowing = true;
 					canAirStrafe = true; 
 				}
 			}
@@ -579,14 +581,14 @@ public class PlayerS : MonoBehaviour {
 		if(endAttack)
 		{
 			// have butt go to head
-			buttObj.isFollowing = true;
+			//buttObj.isFollowing = true;
 			// lock in place so no sliding
 			lockInPlace = true;
 
 			attacking = false;
 			isDangerous = false;
 			ownRigid.useGravity = true;
-			buttObj.isFollowing = true;
+			//buttObj.isFollowing = true;
 			canAirStrafe = true; 
 
 			this.GetComponent<SphereCollider>().material = normalPhysics; 
@@ -631,10 +633,10 @@ public class PlayerS : MonoBehaviour {
 					//print ("DONT ATTACK THRU WALL");
 					
 					// have butt go to head
-					buttObj.isFollowing = true;
+					//buttObj.isFollowing = true;
 					// lock in place so no sliding
 					lockInPlace = true;
-					buttDelayCountdown = 0;
+					//GetComponent<TrailHandlerS>().SetButtDelay(0.8f);
 					// set attack to 2 so butt behaves properly
 					attackToPerform = 2;
 
@@ -848,8 +850,8 @@ public class PlayerS : MonoBehaviour {
 
 	void MiscAction()
 	{
-		this.GetComponent<LineRenderer>().SetPosition(0,this.transform.position);
-		this.GetComponent<LineRenderer>().SetPosition(1,buttObj.transform.position);
+		//this.GetComponent<LineRenderer>().SetPosition(0,this.transform.position);
+		//this.GetComponent<LineRenderer>().SetPosition(1,buttObj.transform.position);
 
 		if(isDangerous)
 			dangerousSprite.GetComponent<SpriteRenderer>().enabled = true; 
