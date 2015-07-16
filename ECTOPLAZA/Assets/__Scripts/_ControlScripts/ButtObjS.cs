@@ -17,7 +17,7 @@ public class ButtObjS : MonoBehaviour {
 	void Start () {
 
 		parentObj = transform.parent.gameObject.GetComponent<PlayerS>();
-		parentObj.buttObj = this;
+		//parentObj.buttObj = this;
 		transform.parent = null;
 		//parentObj.buttObj = this;
 
@@ -76,7 +76,7 @@ public class ButtObjS : MonoBehaviour {
 							// FIX THIS IMMEDIATELY
 
 							parentObj.didLv2Fling = true;
-							parentObj.dontCorrectSpeed = true;
+							//parentObj.dontCorrectSpeed = true;
 							parentObj.GetComponent<Rigidbody>().useGravity = true;
 
 							parentObj.GetComponent<Rigidbody>().AddForce((parentObj.attackDir).normalized

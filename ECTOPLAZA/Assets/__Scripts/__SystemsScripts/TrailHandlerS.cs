@@ -108,7 +108,7 @@ public class TrailHandlerS : MonoBehaviour {
 		buttDelayCountdown -= Time.deltaTime*TimeManagerS.timeMult;
 
 		if (buttDelayCountdown > 0){
-			print (buttDelayCountdown);
+			//print (buttDelayCountdown);
 			nextFollowVelCountdown = timeBetweenDotsMax;
 
 			// make sure butt is not moving

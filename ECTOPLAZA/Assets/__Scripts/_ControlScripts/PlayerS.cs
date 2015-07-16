@@ -10,8 +10,8 @@ public class PlayerS : MonoBehaviour {
 	public GameObject spriteObject;
 	private SpriteRenderer spriteObjRender;
 
-	public ButtObjS buttObj;
-	private Rigidbody buttObjRigid;
+	//public ButtObjS buttObj;
+	//private Rigidbody buttObjRigid;
 
 	public int playerNum;
 
@@ -62,8 +62,8 @@ public class PlayerS : MonoBehaviour {
 	public float flingForceMultLv3;
 	public int flingLv1Cap;
 	public int flingLv2Cap;
-	[HideInInspector]
-	public bool dontCorrectSpeed = false;
+	//[HideInInspector]
+	//public bool dontCorrectSpeed = false;
 
 	public bool isDangerous = false;
 	public float maxHealth = 3;
@@ -103,7 +103,7 @@ public class PlayerS : MonoBehaviour {
 	public bool charging = false;
 	private float chargeTime = 0;
 	private float medChargeTime = 0.4f;
-	private float maxChargeTime = 0.8f;
+	private float maxChargeTime = 1.2f;
 
 	[HideInInspector]
 	public int attackToPerform = 0;
@@ -115,16 +115,19 @@ public class PlayerS : MonoBehaviour {
 	[HideInInspector]
 	public Vector3 attackDir;
 
-	private float attackGroundLeewayMaxTime = 0.02f;
+	private float attackGroundLeewayMaxTime = 0.5f;
 	private float groundLeeway;
 
-	private bool performedAttack = false;
+	[HideInInspector]
+	public bool performedAttack = false;
 
 	//private float lv1AttackForce = 60000f;
 	//private float lv1AttackTargetRange = 12f;
 	private float lv1OutRate = 6000f;
+	
+	private float lv2OutRate = 10000f;
 	private float lv1OutTimeMax = 0.2f;
-	private float lv1OutCountdown;
+	public float lv1OutCountdown;
 	private float lv1ReturnRate = 1f;
 	private bool snapReturning = false;
 
@@ -178,9 +181,11 @@ public class PlayerS : MonoBehaviour {
 
 	void FixedUpdate () {
 
-		if (buttObj != null && buttObjRigid == null){
-			buttObjRigid = buttObj.GetComponent<Rigidbody>();
-		}
+		//print(attacking);
+
+	//	if (buttObj != null && buttObjRigid == null){
+	//		buttObjRigid = buttObj.GetComponent<Rigidbody>();
+	//	}
 
 		if (!TimeManagerS.paused){
 
@@ -285,7 +290,7 @@ public class PlayerS : MonoBehaviour {
 		if (effectPause){
 
 			ownRigid.velocity = Vector3.zero;
-			buttObjRigid.velocity = Vector3.zero;
+		//	buttObjRigid.velocity = Vector3.zero;
 
 			pauseDelay -= Time.deltaTime*TimeManagerS.timeMult;
 
@@ -295,7 +300,7 @@ public class PlayerS : MonoBehaviour {
 				effectPause = false;
 				ownRigid.velocity = prevVel;
 				ownRigid.useGravity = prevGravState;
-				buttObjRigid.velocity = prevButtVel;
+				//buttObjRigid.velocity = prevButtVel;
 			}
 		}
 	}
@@ -350,6 +355,7 @@ public class PlayerS : MonoBehaviour {
 				}
 				else if (chargeTime >= medChargeTime){
 					attackToPerform = 1;
+					//print ("do attack 1");
 				}
 				else{
 					attackToPerform = 0;
@@ -386,6 +392,7 @@ public class PlayerS : MonoBehaviour {
 			if (attackToPerform == 1)
 			{
 				FlingSlowAttack(false);
+				//print ("started slow fling");
 			}
 			else if( attackToPerform == 0)
 			{
@@ -414,10 +421,10 @@ public class PlayerS : MonoBehaviour {
 			bulletVel = attackDir.normalized*Time.deltaTime*lv1OutRate;
 			ownRigid.AddForce(bulletVel*.75f,ForceMode.VelocityChange);
 
-			dontCorrectSpeed = true;
+			//dontCorrectSpeed = true;
 			ownRigid.useGravity = true;
 			//buttObj.isFollowing = true;
-			print ("Fling Mini Attack");
+			//print ("Fling Mini Attack");
 
 			//print (bulletVel); 
 		}
@@ -458,7 +465,7 @@ public class PlayerS : MonoBehaviour {
 			}
 			else
 			{
-				//print ("JAB ATTACK!");
+				print ("JAB ATTACK!");
 				// lerp out to attack target and then back to butt poss
 				if (lv1OutCountdown > 0){
 					
@@ -487,14 +494,12 @@ public class PlayerS : MonoBehaviour {
 					}
 					// else end attack 1
 					else{
-						// this code is a redundancy (for now) with buttobj code
-						// make sure to make changes to both
 						//print ("USE GRAV");
 						ownRigid.useGravity = true;
 						isDangerous = false;
 						attacking = false;
 						TurnOffIgnoreWalls();
-						buttObj.isFollowing = true;
+						//buttObj.isFollowing = true;
 						
 						// stop vel
 						ownRigid.velocity = Vector3.zero;
@@ -513,6 +518,8 @@ public class PlayerS : MonoBehaviour {
 	{
 		if(endAttack)
 		{
+
+			//print ("I ended attack");
 			
 			//attackToPerform = 0;
 			lv1OutCountdown = 0;
@@ -529,11 +536,14 @@ public class PlayerS : MonoBehaviour {
 		{
 			if(!performedAttack)
 			{
+
+				//print ("Start slow fling");
+
 				canAirStrafe = false; 
 				ownRigid.useGravity = false;
 				
 				// set start snap vel
-				bulletVel = attackDir.normalized*Time.deltaTime*lv1OutRate;
+				bulletVel = attackDir.normalized*Time.deltaTime*lv2OutRate;
 				
 				//print (bulletVel); 
 				
@@ -546,6 +556,10 @@ public class PlayerS : MonoBehaviour {
 				// lerp out to attack target
 				if (lv1OutCountdown > 0)
 				{
+
+					//print ("I am trying to end attack");
+					
+					//print (lv1OutCountdown);
 					
 					// old way without physics
 					/*
@@ -602,7 +616,7 @@ public class PlayerS : MonoBehaviour {
 
 				// bullet snap
 				bulletVel = attackDir.normalized*Time.deltaTime*lv3BulletSpeed;
-				dontCorrectSpeed = true;
+				//dontCorrectSpeed = true;
 				
 				//print ("LV3!!");
 				
@@ -668,10 +682,12 @@ public class PlayerS : MonoBehaviour {
 
 			//print (dontCorrectSpeed);
 
-			if (dontCorrectSpeed && groundDetect.Grounded())
-			{
-				dontCorrectSpeed = false;
-			}
+		// JULY 15: Trying to remove dontCorrectSpeed
+
+			//if (dontCorrectSpeed && groundDetect.Grounded())
+			//{
+			//	dontCorrectSpeed = false;
+			//}
 
 			//if (!isSnapping && !stretching && !groundPounded){
 			if (!charging && canAirStrafe) //&& !attacking)
@@ -688,58 +704,64 @@ public class PlayerS : MonoBehaviour {
 				// make sure not to do force stuff when up against wall
 				if ((xForce > 0 && !rightCheck) || xForce < 0 && !leftCheck){
 		
-				// only add force if not flinging/hit
-				
-				//THIS WAS DISABLING AIR STRAFE WHILE FLINGING
-				/*if (!dontCorrectSpeed){
-					ownRigid.AddForce(new Vector3(xForce,0,0));
-				}*/
-		
-				bool applyForce = true; 
-
-				if((ownRigid.velocity.x > maxSpeed) && (xForce > 0))
-				{
-						applyForce = false; 
-				}
-				else if((ownRigid.velocity.x < -maxSpeed) && (xForce < 0))
-				{
+					// only add force if not flinging/hit
+					
+					//THIS WAS DISABLING AIR STRAFE WHILE FLINGING
+					/*if (!dontCorrectSpeed){
+						ownRigid.AddForce(new Vector3(xForce,0,0));
+					}*/
+			
+					bool applyForce = true; 
+	
+					if((ownRigid.velocity.x > maxSpeed) && (xForce > 0))
+					{
+							applyForce = false; 
+					//print ("Dont apply force!");
+					}
+					else if((ownRigid.velocity.x < -maxSpeed) && (xForce < 0))
+					{
 					applyForce = false; 
-				}
-
-				if(applyForce)
-					ownRigid.AddForce(new Vector3(xForce,0,0));
-
-
-				Vector3 fixVel = ownRigid.velocity;
-
-				/*
-				July 13th: Changing the way max speed in handled, player will not decelerate when over max speed.
-				However the player cannot add force in the direction that the player is going max speed, but can always decelerate. 
-				
-				if (!dontCorrectSpeed){
-
-					if (fixVel.x < -maxSpeed){
-						fixVel.x = -maxSpeed;
+					//print ("Dont apply force!");
 					}
-					if (fixVel.x > maxSpeed){
-						fixVel.x = maxSpeed;
+	
+					if(applyForce)
+						ownRigid.AddForce(new Vector3(xForce,0,0));
+	
+	
+					Vector3 fixVel = ownRigid.velocity;
+	
+					/*
+					July 13th: Changing the way max speed in handled, player will not decelerate when over max speed.
+					However the player cannot add force in the direction that the player is going max speed, but can always decelerate. 
+					
+					if (!dontCorrectSpeed){	
+	
+						if (fixVel.x < -maxSpeed){
+							fixVel.x = -maxSpeed;
+						}
+						if (fixVel.x > maxSpeed){
+							fixVel.x = maxSpeed;
+						}
 					}
-				}
-				*/
-
-				if (fixVel.x > 0){
-					facingRight = true;
-				}
-				if (fixVel.x < 0){
-					facingRight = false;
-				}
+					*/
+	
+					if (fixVel.x > 0){
+						facingRight = true;
+					}
+					if (fixVel.x < 0){
+						facingRight = false;
+					}
 		
-				ownRigid.velocity = fixVel;
+					//ownRigid.velocity = fixVel;
 				}
 		
 				//print (Input.GetAxis("Horizontal"));
 
 			}
+		else{
+			// if not allowed to apply force, say so for debugging purposes
+			//print("I can't move!");
+		}
 
 
 		}
@@ -754,11 +776,16 @@ public class PlayerS : MonoBehaviour {
 
 		if (groundDetect.Grounded()){
 			// end a fling attack on ground hit
-			if (attackToPerform == 1 && attacking){
+			//if (attackToPerform == 1 && attacking){
+			if (attacking && groundLeeway <= 0){
 				isDangerous = false;
 				attacking = false;
 				didLv2Fling = false;
+			ownRigid.useGravity = true;
+				
+				charging = false;
 			}
+			//}
 			//isDangerous = false;
 			canCharge = true;
 			dropDown = false;
@@ -885,7 +912,7 @@ public class PlayerS : MonoBehaviour {
 					stretching = true;
 					canStretch = false;
 
-					buttObj.transform.position = transform.position;
+					//buttObj.transform.position = transform.position;
 
 					placeDotCountdown = placeDotCountdownMax;
 				}
@@ -998,7 +1025,9 @@ public class PlayerS : MonoBehaviour {
 							
 						}
 						else{
-							snapVel= buttObjRigid.velocity.normalized*flingForceMult*Time.deltaTime;
+							// CLEAN UP after confirmation of working code
+							snapVel= GetComponent<TrailHandlerS>().buttObj.
+								GetComponent<Rigidbody>().velocity.normalized*flingForceMult*Time.deltaTime;
 						}
 						
 						//CameraShakeS.C.TimeSleep(0.1f);
@@ -1009,12 +1038,13 @@ public class PlayerS : MonoBehaviour {
 
 					}
 					else{
-						snapVel = buttObjRigid.velocity;
+						snapVel= GetComponent<TrailHandlerS>().buttObj.
+							GetComponent<Rigidbody>().velocity;
 					}
 					prevVel = ownRigid.velocity = snapVel;
-					buttObjRigid.velocity = Vector3.zero;
+					//buttObjRigid.velocity = Vector3.zero;
 
-					dontCorrectSpeed = true;
+					//dontCorrectSpeed = true;
 
 					if (doFling){
 						if (numDots > flingLv2Cap){
@@ -1033,7 +1063,7 @@ public class PlayerS : MonoBehaviour {
 				}
 				else{
 					
-					Vector3 snapDir = (movePositions[currentTarget]-buttObj.transform.position);
+					Vector3 snapDir = (movePositions[currentTarget]-GetComponent<TrailHandlerS>().buttObj.transform.position);
 					
 					snapVel = snapDir/(placeDotCountdownMax/snapSpeedMult);
 					
@@ -1043,7 +1073,7 @@ public class PlayerS : MonoBehaviour {
 			}
 			
 			
-			buttObjRigid.velocity = snapVel*TimeManagerS.timeMult;
+			//buttObjRigid.velocity = snapVel*TimeManagerS.timeMult;
 			
 			
 		
