@@ -20,12 +20,15 @@ public class DamageS : MonoBehaviour {
 				playerRef.SleepTime(pauseTime);
 	
 				CameraShakeS.C.LargeShake();
+
+				// add to score
+				playerRef.score++;
 			}
 		}
 
-		/*if (other.gameObject.tag == "PlayerTrail"){
+		if (other.gameObject.tag == "PlayerTrail"){
 
-			print ("yeah");
+			//print ("yeah");
 
 			PlayerS otherPlayer = other.GetComponent<DotColliderS>().whoCreatedMe;
 
@@ -37,7 +40,11 @@ public class DamageS : MonoBehaviour {
 
 				CameraShakeS.C.LargeShake();
 
+				
+				// add to score
+				playerRef.score++;
+
 			}
-		}*/
+		}
 	}
 }

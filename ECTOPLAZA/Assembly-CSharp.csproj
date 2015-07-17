@@ -57,6 +57,7 @@
      <Compile Include="Assets\__Scripts\_ControlScripts\PlayerS.cs" />
      <Compile Include="Assets\__Scripts\__SystemsScripts\DamageS.cs" />
      <Compile Include="Assets\__Scripts\__SystemsScripts\PlatformS.cs" />
+     <Compile Include="Assets\__Scripts\__SystemsScripts\ScoreKeeperS.cs" />
      <Compile Include="Assets\__Scripts\__SystemsScripts\TimeManagerS.cs" />
      <Compile Include="Assets\__Scripts\__SystemsScripts\TrailHandlerS.cs" />
  <Reference Include="UnityEngine.UI">

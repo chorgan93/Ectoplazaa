@@ -40,19 +40,47 @@ public class TrailHandlerS : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 
-		if (buttDelayCountdown > 0){
-			if (!separated){
-				separated = true;
-				dropTimeCountdown = timeBetweenDotsMax;
-			}
-		}
-	
-		DropDots();
-		FollowHead();
+		if (!ScoreKeeperS.gameEnd){
 
-		LineHandler();
+			if (!playerRef.respawning){
+					
+				if (buttDelayCountdown > 0){
+					if (!separated){
+						separated = true;
+						dropTimeCountdown = timeBetweenDotsMax;
+					}
+				}
+			
+				DropDots();
+				FollowHead();
+		
+				LineHandler();
+			}
+			else{
+				separated = false;
+	
+			}
+
+		}
+		else{
+
+			buttRigid.velocity = Vector3.zero;
+
+		}
 
 	}
+
+	public void ClearTrail () {
+	
+		if (spawnedDots.Count > 0){
+			for (int i = 0; i < spawnedDots.Count; i++){
+				Destroy(spawnedDots[i]);
+			}
+			spawnedDots.Clear();
+		}
+
+	}
+
 
 	void LineHandler () {
 
@@ -69,7 +97,11 @@ public class TrailHandlerS : MonoBehaviour {
 		// set joints as each other vertex
 		if (spawnedDots.Count > 0){
 			for (int i=0; i < spawnedDots.Count; i++){
-				bodyConnector.SetPosition(i+1,spawnedDots[spawnedDots.Count-1-i].transform.position);
+				// make sure we're not adding redundant pts
+				//if (i == 0 || (i > 0 && spawnedDots[i].transform.position != spawnedDots[i-1].transform.position
+				  //             && spawnedDots[i].transform.position != buttObj.transform.position)){
+					bodyConnector.SetPosition(i+1,spawnedDots[spawnedDots.Count-1-i].transform.position);
+				//}
 			}
 		}
 	}
@@ -89,6 +121,8 @@ public class TrailHandlerS : MonoBehaviour {
 					as GameObject;
 
 				spawnedDots.Add(newDot);
+
+				newDot.GetComponent<DotColliderS>().whoCreatedMe = playerRef;
 			}
 
 		}

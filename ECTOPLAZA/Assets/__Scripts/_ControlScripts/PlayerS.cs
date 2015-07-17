@@ -15,13 +15,15 @@ public class PlayerS : MonoBehaviour {
 
 	public int playerNum;
 
+	public int score;
+
 
 	public float walkSpeed;
 	public float maxSpeed;
 	public float airControlMult;
 	private bool canAirStrafe = true; 
 
- 	private bool isBouncy = false; 
+ 	//private bool isBouncy = false; 
 	public PhysicMaterial bouncyPhysics, normalPhysics; 
 
 	public float jumpSpeed;
@@ -71,11 +73,11 @@ public class PlayerS : MonoBehaviour {
 
 	public bool facingRight = false;
 
-	//private bool groundPounded = false;
+	private bool groundPounded = false;
 	public float groundPoundForce;
 
 	private float pauseDelay;
-	private bool prevGravState;
+	//private bool prevGravState;
 	private Vector3 prevVel;
 	private Vector3 prevButtVel;
 	[HideInInspector]
@@ -92,6 +94,9 @@ public class PlayerS : MonoBehaviour {
 	private Vector3 spawnPos;
 	public GameObject spawnPt;
 
+	
+	public List<GameObject> allSpawnPts;
+
 	// raycasting to prevent wall sticking
 	private bool rightCheck;
 	private bool leftCheck;
@@ -103,14 +108,14 @@ public class PlayerS : MonoBehaviour {
 	public bool charging = false;
 	private float chargeTime = 0;
 	private float medChargeTime = 0.4f;
-	private float maxChargeTime = 1.2f;
+	private float maxChargeTime = 1.14f;
 
 	[HideInInspector]
 	public int attackToPerform = 0;
 	[HideInInspector]
 	public bool attacking = false;
 
-	private float buttDelayCountdown;
+	//private float buttDelayCountdown;
 
 	[HideInInspector]
 	public Vector3 attackDir;
@@ -123,10 +128,10 @@ public class PlayerS : MonoBehaviour {
 
 	//private float lv1AttackForce = 60000f;
 	//private float lv1AttackTargetRange = 12f;
-	private float lv1OutRate = 6000f;
+	private float lv1OutRate = 5500f;
 	
-	private float lv2OutRate = 10000f;
-	private float lv1OutTimeMax = 0.2f;
+	private float lv2OutRate = 8000f;
+	private float lv1OutTimeMax = 0.3f;
 	public float lv1OutCountdown;
 	private float lv1ReturnRate = 1f;
 	private bool snapReturning = false;
@@ -168,6 +173,7 @@ public class PlayerS : MonoBehaviour {
 		playerTrailRenderer = this.GetComponent<TrailRenderer>(); 
 
 		transform.position = spawnPos = spawnPt.transform.position;
+		GetComponent<TrailHandlerS>().buttObj.transform.position = spawnPos;
 
 		tempButtSphere.GetComponent<Renderer>().material = playerMats[playerNum-1]; 
 		tempHeadSphere.GetComponent<Renderer>().material = playerMats[playerNum-1]; 
@@ -181,57 +187,60 @@ public class PlayerS : MonoBehaviour {
 
 	void FixedUpdate () {
 
-		//print(attacking);
-
-	//	if (buttObj != null && buttObjRigid == null){
-	//		buttObjRigid = buttObj.GetComponent<Rigidbody>();
-	//	}
-
-		if (!TimeManagerS.paused){
-
-			ManageDelay();
-			//print (leftCheck);
-
-			if (!effectPause && !respawning){
-
-				
-				CheckWallCast();
-
-				Walk();
-				Jump ();
-				MiscAction(); //TRAIL RENDERER UPDATE, OTHER THINGS
-
-				//Stretch();
-				//Snap();
-
-				ChargeAttack();
-				AttackRelease();
-
-			}
-
-			Respawn();
 
 
-			if (lockInPlace){
-				//DISABLED FOR BOUNCINESS ------------------------------------------------------------------------------------------
-				//ownRigid.velocity = Vector3.zero;
-			}
+		if (!ScoreKeeperS.gameEnd){
 
-			if (dropDown){
-				Vector3 dropVel = ownRigid.velocity;
-				dropVel.x = 0;
-				ownRigid.velocity = dropVel;
-				//print (ownRigid.velocity);
-			}
+			if (!TimeManagerS.paused){
+	
+				ManageDelay();
+				//print (leftCheck);
+	
+				if (!effectPause && !respawning){
+	
+					
+					CheckWallCast();
+	
+					Walk();
+					Jump ();
+					MiscAction(); //TRAIL RENDERER UPDATE, OTHER THINGS
+	
+					//Stretch();
+					//Snap();
+	
+					ChargeAttack();
+					AttackRelease();
+	
+				}
+	
+				Respawn();
+	
+	
+				if (lockInPlace){
+					//DISABLED FOR BOUNCINESS ------------------------------------------------------------------------------------------
+					//ownRigid.velocity = Vector3.zero;
+				}
 
-			if (isDangerous && !respawning){
-				if (!dangerObj.activeSelf){
-					dangerObj.SetActive(true);
+				if (dropDown){
+					Vector3 dropVel = ownRigid.velocity;
+					dropVel.x = 0;
+					ownRigid.velocity = dropVel;
+					//print (ownRigid.velocity);
+				}
+	
+				if (isDangerous && !respawning){
+					if (!dangerObj.activeSelf){
+						dangerObj.SetActive(true);
+					}
+				}
+				else{
+					dangerObj.SetActive(false);
 				}
 			}
-			else{
-				dangerObj.SetActive(false);
-			}
+	
+		}
+		else{
+			ownRigid.velocity = Vector3.zero;
 		}
 
 	
@@ -299,7 +308,7 @@ public class PlayerS : MonoBehaviour {
 			if (pauseDelay <= 0){
 				effectPause = false;
 				ownRigid.velocity = prevVel;
-				ownRigid.useGravity = prevGravState;
+				//ownRigid.useGravity = prevGravState;
 				//buttObjRigid.velocity = prevButtVel;
 			}
 		}
@@ -345,6 +354,9 @@ public class PlayerS : MonoBehaviour {
 				charging = false;
 				performedAttack = false;
 
+				// allow for ground pound
+				jumped = true;
+
 				// butt should not follow
 				//buttObj.isFollowing = false;
 
@@ -377,7 +389,7 @@ public class PlayerS : MonoBehaviour {
 					
 				snapReturning = false;
 
-				buttDelayCountdown = lv1ButtDelay;
+				//buttDelayCountdown = lv1ButtDelay;
 
 				attackDir = Vector3.zero;
 				attackDir.x = Input.GetAxis("HorizontalPlayer"+playerNum+platformType);
@@ -777,11 +789,13 @@ public class PlayerS : MonoBehaviour {
 		if (groundDetect.Grounded()){
 			// end a fling attack on ground hit
 			//if (attackToPerform == 1 && attacking){
-			if (attacking && groundLeeway <= 0){
+			if ((attacking || groundPounded) && groundLeeway <= 0){
 				isDangerous = false;
 				attacking = false;
 				didLv2Fling = false;
 			ownRigid.useGravity = true;
+
+				groundPounded = false;
 				
 				charging = false;
 			}
@@ -814,7 +828,7 @@ public class PlayerS : MonoBehaviour {
 
 		// detect button press, do jump
 		//if (!isSnapping && !stretching){
-		if (!attacking && !charging){
+		//if (!attacking && !charging){
 			if (Input.GetButton("AButtonPlayer" + playerNum + platformType) && !jumpButtonDown){
 	
 				//print ("Jump!");
@@ -822,21 +836,25 @@ public class PlayerS : MonoBehaviour {
 				jumpButtonDown = true;
 			
 				if (!jumped){
-					Vector3 jumpForce = Vector3.zero;
-				
-					jumpForce.y = jumpSpeed*Time.deltaTime*TimeManagerS.timeMult;
-		
-					ownRigid.AddForce(jumpForce);
-		
-					Instantiate(jumpParticles, this.transform.position, Quaternion.identity); 
 
-					addingJumpTime = 0;
-					stopAddingJump = false;
-					jumped = true;
+				// don't do regular jump while attacking or charging
+				if (!attacking && !charging){
+						Vector3 jumpForce = Vector3.zero;
+					
+						jumpForce.y = jumpSpeed*Time.deltaTime*TimeManagerS.timeMult;
+			
+						ownRigid.AddForce(jumpForce);
+			
+						Instantiate(jumpParticles, this.transform.position, Quaternion.identity); 
+	
+						addingJumpTime = 0;
+						stopAddingJump = false;
+						jumped = true;
+					}
 				}
 				else{
-					// do ground pound
-					/*if (!groundPounded){
+					// do ground pound if not charging
+					if (!groundPounded && !charging){
 						Vector3 groundPoundVel = Vector3.zero;
 						groundPoundVel.y = -groundPoundForce*Time.deltaTime*TimeManagerS.timeMult;
 						ownRigid.velocity = groundPoundVel;
@@ -844,10 +862,10 @@ public class PlayerS : MonoBehaviour {
 						groundPounded = true;
 
 						// allow for air control
-						dontCorrectSpeed = false;
+						//dontCorrectSpeed = false;
 
-						SleepTime(groundPoundPauseTime);
-					}*/
+						//SleepTime(groundPoundPauseTime);
+					}
 				}
 	
 			}
@@ -872,7 +890,7 @@ public class PlayerS : MonoBehaviour {
 					}
 				}
 			}
-		}
+		//}
 	}
 
 	void MiscAction()
@@ -1089,11 +1107,16 @@ public class PlayerS : MonoBehaviour {
 			ownRigid.velocity = Vector3.zero;
 			dangerObj.SetActive(false);
 
+			GetComponent<Collider>().enabled = false;
+
 			stretching = false;
 			isSnapping = false;
 			isDangerous = false;
 			jumpButtonDown = false;
 			stretchButtonDown = false;
+			charging = false;
+			attacking = false;
+			chargeTime = 0;
 
 			//if (placedDots
 
@@ -1101,9 +1124,12 @@ public class PlayerS : MonoBehaviour {
 				spriteObjRender.enabled = false;
 			}
 			if (respawnTimeCountdown <= 0){
+				GetComponent<Collider>().enabled = true;
 				spriteObjRender.enabled = true;
 				respawning = false;
 				transform.position = spawnPos;
+				GetComponent<TrailHandlerS>().buttObj.transform.position = spawnPos;
+				GetComponent<TrailHandlerS>().ClearTrail();
 				ownRigid.useGravity = true;
 				
 				health = maxHealth;
@@ -1148,7 +1174,7 @@ public class PlayerS : MonoBehaviour {
 			//ownRigid.velocity = Vector3.zero;
 
 
-			buttDelayCountdown = 0;
+			//buttDelayCountdown = 0;
 
 			if (attackToPerform == 0)
 			{
