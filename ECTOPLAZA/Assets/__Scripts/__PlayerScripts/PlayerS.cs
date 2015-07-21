@@ -246,7 +246,7 @@ public class PlayerS : MonoBehaviour {
 
 		if(Input.GetKey(KeyCode.K))
 		{
-			TakeDamage(100000f);
+				TakeDamage(100000f);
 		}
 	
 	}
