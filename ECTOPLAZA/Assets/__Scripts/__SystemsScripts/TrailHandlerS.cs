@@ -9,6 +9,9 @@ public class TrailHandlerS : MonoBehaviour {
 	private Rigidbody playerRigid;
 	private Rigidbody buttRigid;
 
+	public Transform startPoint;
+	public Transform endPoint;
+
 	public bool separated = false;
 
 	public float buttDelayCountdown;
@@ -57,8 +60,9 @@ public class TrailHandlerS : MonoBehaviour {
 				LineHandler();
 			}
 			else{
-				separated = false;
-	
+				//separated = false;
+				
+				buttRigid.velocity = Vector3.zero;
 			}
 
 		}
@@ -91,8 +95,8 @@ public class TrailHandlerS : MonoBehaviour {
 		bodyConnector.SetVertexCount(lineHandlerLength);
 
 		// set head and butt as first and last vertext
-		bodyConnector.SetPosition(0,transform.position);
-		bodyConnector.SetPosition(lineHandlerLength-1,buttObj.transform.position);
+		bodyConnector.SetPosition(0,startPoint.position);
+		bodyConnector.SetPosition(lineHandlerLength-1,endPoint.transform.position);
 
 		// set joints as each other vertex
 		if (spawnedDots.Count > 0){
@@ -117,7 +121,10 @@ public class TrailHandlerS : MonoBehaviour {
 			if (dropTimeCountdown <= 0){
 				dropTimeCountdown = timeBetweenDotsMax;
 
-				GameObject newDot = Instantiate(dotPrefab,transform.position,Quaternion.identity)
+				Vector3 spawnPos =startPoint.position;
+				spawnPos.z += 1;
+
+				GameObject newDot = Instantiate(dotPrefab,spawnPos,Quaternion.identity)
 					as GameObject;
 
 				spawnedDots.Add(newDot);
@@ -167,7 +174,7 @@ public class TrailHandlerS : MonoBehaviour {
 	
 					// set velocity
 	
-					currentButtVel = (spawnedDots[0].transform.position-buttObj.transform.position)/timeBetweenDotsMax;
+					currentButtVel = (spawnedDots[0].transform.position-buttObj.transform.position)/(timeBetweenDotsMax*1.5f);
 					//print ("SetVel!");
 				}
 			}

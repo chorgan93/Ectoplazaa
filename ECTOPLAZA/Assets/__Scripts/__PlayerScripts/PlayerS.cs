@@ -861,6 +861,8 @@ public class PlayerS : MonoBehaviour {
 						isDangerous = true;
 						groundPounded = true;
 
+					GetComponent<TrailHandlerS>().SetButtDelay(0.1f);
+
 						// allow for air control
 						//dontCorrectSpeed = false;
 
@@ -1117,6 +1119,8 @@ public class PlayerS : MonoBehaviour {
 			charging = false;
 			attacking = false;
 			chargeTime = 0;
+
+			canAirStrafe = true;
 
 			//if (placedDots
 
