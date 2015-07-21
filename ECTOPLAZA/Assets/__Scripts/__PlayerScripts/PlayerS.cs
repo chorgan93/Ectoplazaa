@@ -59,6 +59,7 @@ public class PlayerS : MonoBehaviour {
 	public float snapSpeedMult;
 	private Vector3 snapVel;
 
+	int flingsLeft = 2; 
 	public float flingForceMult = 3f;
 	public float flingForceMultLv2;
 	public float flingForceMultLv3;
@@ -93,9 +94,7 @@ public class PlayerS : MonoBehaviour {
 
 	private Vector3 spawnPos;
 	public GameObject spawnPt;
-
-	
-	public List<GameObject> allSpawnPts;
+	private GameObject [] allSpawnPts;
 
 	// raycasting to prevent wall sticking
 	private bool rightCheck;
@@ -107,8 +106,8 @@ public class PlayerS : MonoBehaviour {
 	[HideInInspector]
 	public bool charging = false;
 	private float chargeTime = 0;
-	private float medChargeTime = 0.4f;
-	private float maxChargeTime = 1.14f;
+	private float medChargeTime = 1.0f;
+	private float maxChargeTime = 2.0f;
 
 	[HideInInspector]
 	public int attackToPerform = 0;
@@ -130,7 +129,7 @@ public class PlayerS : MonoBehaviour {
 	//private float lv1AttackTargetRange = 12f;
 	private float lv1OutRate = 5500f;
 	
-	private float lv2OutRate = 8000f;
+	private float lv2OutRate = 12500f; //original 8000
 	private float lv1OutTimeMax = 0.3f;
 	public float lv1OutCountdown;
 	private float lv1ReturnRate = 1f;
@@ -140,7 +139,7 @@ public class PlayerS : MonoBehaviour {
 	public bool dropDown = false;
 	private float lv1ButtDelay = 1f;
 	public float lv2FlingForce = 100;
-	private float lv3BulletSpeed = 12500;
+	private float lv3BulletSpeed = 50000; //was 12500
 	private bool lockInPlace = false;
 	private Vector3 bulletVel;
 
@@ -171,6 +170,8 @@ public class PlayerS : MonoBehaviour {
 		spriteObjRender = spriteObject.GetComponent<SpriteRenderer>();
 
 		playerTrailRenderer = this.GetComponent<TrailRenderer>(); 
+
+		allSpawnPts = GameObject.FindGameObjectsWithTag("Spawn");
 
 		transform.position = spawnPos = spawnPt.transform.position;
 		GetComponent<TrailHandlerS>().buttObj.transform.position = spawnPos;
@@ -243,6 +244,10 @@ public class PlayerS : MonoBehaviour {
 			ownRigid.velocity = Vector3.zero;
 		}
 
+		if(Input.GetKey(KeyCode.K))
+		{
+			TakeDamage(100000f);
+		}
 	
 	}
 
@@ -348,6 +353,8 @@ public class PlayerS : MonoBehaviour {
 
 			chargeTime+=Time.deltaTime*TimeManagerS.timeMult;
 
+
+
 			if (!stretchButtonDown){
 				groundLeeway = attackGroundLeewayMaxTime;
 				attacking = true;
@@ -391,10 +398,16 @@ public class PlayerS : MonoBehaviour {
 
 				//buttDelayCountdown = lv1ButtDelay;
 
+
+
 				attackDir = Vector3.zero;
 				attackDir.x = Input.GetAxis("HorizontalPlayer"+playerNum+platformType);
 				attackDir.y = Input.GetAxis("VerticalPlayer"+playerNum+platformType);
 
+				if(attackDir.x == 0 && attackDir.y == 0)
+				{
+					attackDir.x = 1; 
+				}
 			}
 
 			if (attackToPerform == 2)
@@ -430,8 +443,10 @@ public class PlayerS : MonoBehaviour {
 		{
 			ownRigid.useGravity = false;
 			
-			bulletVel = attackDir.normalized*Time.deltaTime*lv1OutRate;
-			ownRigid.AddForce(bulletVel*.75f,ForceMode.VelocityChange);
+			bulletVel = attackDir.normalized*Time.deltaTime*lv1OutRate ;
+			ownRigid.AddForce(bulletVel* (2f*chargeTime),ForceMode.VelocityChange);
+
+			print(chargeTime); 
 
 			//dontCorrectSpeed = true;
 			ownRigid.useGravity = true;
@@ -587,7 +602,7 @@ public class PlayerS : MonoBehaviour {
 					lv1OutCountdown -= Time.deltaTime*TimeManagerS.timeMult;
 					
 					// vel decrease over time (linear, can be made exponential)
-					ownRigid.velocity = bulletVel*TimeManagerS.timeMult*(lv1OutCountdown/lv1OutTimeMax);
+					ownRigid.velocity = bulletVel*TimeManagerS.timeMult*(lv1OutCountdown/lv1OutTimeMax)*1.2f;
 				}
 				else
 				{
@@ -821,7 +836,8 @@ public class PlayerS : MonoBehaviour {
 
 		
 		// detect button up
-		if (!Input.GetButton("AButtonPlayer" + playerNum + platformType)){
+		if (!Input.GetButton("AButtonPlayer" + playerNum + platformType))
+		{
 			jumpButtonDown = false;
 		}
 
@@ -829,16 +845,19 @@ public class PlayerS : MonoBehaviour {
 		// detect button press, do jump
 		//if (!isSnapping && !stretching){
 		//if (!attacking && !charging){
-			if (Input.GetButton("AButtonPlayer" + playerNum + platformType) && !jumpButtonDown){
+		if (Input.GetButton("AButtonPlayer" + playerNum + platformType) && !jumpButtonDown)
+		{
 	
 				//print ("Jump!");
 	
-				jumpButtonDown = true;
+			jumpButtonDown = true;
 			
-				if (!jumped){
+			if (!jumped)
+			{
 
 				// don't do regular jump while attacking or charging
-				if (!attacking && !charging){
+				if (!attacking && !charging)
+				{
 						Vector3 jumpForce = Vector3.zero;
 					
 						jumpForce.y = jumpSpeed*Time.deltaTime*TimeManagerS.timeMult;
@@ -850,49 +869,51 @@ public class PlayerS : MonoBehaviour {
 						addingJumpTime = 0;
 						stopAddingJump = false;
 						jumped = true;
-					}
 				}
-				else{
-					// do ground pound if not charging
-					if (!groundPounded && !charging){
-						Vector3 groundPoundVel = Vector3.zero;
-						groundPoundVel.y = -groundPoundForce*Time.deltaTime*TimeManagerS.timeMult;
-						ownRigid.velocity = groundPoundVel;
-						isDangerous = true;
-						groundPounded = true;
+			}
+		}
 
-					GetComponent<TrailHandlerS>().SetButtDelay(0.1f);
+		else if(Input.GetButton("AButtonPlayer" + playerNum + platformType) && !jumpButtonDown)
+		{
+			// do ground pound if not charging
+			if (!groundPounded && !charging){
+				Vector3 groundPoundVel = Vector3.zero;
+				groundPoundVel.y = -groundPoundForce*Time.deltaTime*TimeManagerS.timeMult;
+				ownRigid.velocity = groundPoundVel;
+				isDangerous = true;
+				groundPounded = true;
 
-						// allow for air control
-						//dontCorrectSpeed = false;
+			GetComponent<TrailHandlerS>().SetButtDelay(0.1f);
 
-						//SleepTime(groundPoundPauseTime);
-					}
-				}
+				// allow for air control
+				//dontCorrectSpeed = false;
+
+				//SleepTime(groundPoundPauseTime);
+			}
+		}
+		
 	
+
+		// add addtl jump force
+		if (jumped){
+			if (!jumpButtonDown){
+				stopAddingJump = true;
 			}
+			else{
+				if (!stopAddingJump){
+					Vector3 jumpForce = Vector3.zero;
+					
+					jumpForce.y = addJumpForce*Time.deltaTime*TimeManagerS.timeMult;
+					
+					ownRigid.AddForce(jumpForce);
 
-			// add addtl jump force
-			if (jumped){
-				if (!jumpButtonDown){
-					stopAddingJump = true;
-				}
-				else{
-					if (!stopAddingJump){
-						Vector3 jumpForce = Vector3.zero;
-						
-						jumpForce.y = addJumpForce*Time.deltaTime*TimeManagerS.timeMult;
-						
-						ownRigid.AddForce(jumpForce);
-
-						addingJumpTime += Time.deltaTime*TimeManagerS.timeMult;
-						if (addingJumpTime > addJumpForceMaxTime){
-							stopAddingJump = true;
-						}
+					addingJumpTime += Time.deltaTime*TimeManagerS.timeMult;
+					if (addingJumpTime > addJumpForceMaxTime){
+						stopAddingJump = true;
 					}
 				}
 			}
-		//}
+		}
 	}
 
 	void MiscAction()
@@ -1131,8 +1152,12 @@ public class PlayerS : MonoBehaviour {
 				GetComponent<Collider>().enabled = true;
 				spriteObjRender.enabled = true;
 				respawning = false;
-				transform.position = spawnPos;
-				GetComponent<TrailHandlerS>().buttObj.transform.position = spawnPos;
+
+				int randomSpawn = Random.Range(0, allSpawnPts.Length-1);
+				GameObject newSpawn = allSpawnPts[randomSpawn];
+				transform.position = newSpawn.transform.position;
+				GetComponent<TrailHandlerS>().buttObj.transform.position = newSpawn.transform.position;
+
 				GetComponent<TrailHandlerS>().ClearTrail();
 				ownRigid.useGravity = true;
 				

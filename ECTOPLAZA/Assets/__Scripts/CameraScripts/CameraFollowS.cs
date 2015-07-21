@@ -3,7 +3,7 @@ using System.Collections;
 
 public class CameraFollowS : MonoBehaviour {
 	public GameObject			poi;
-	public float				camEasing = 0.1f;
+	public float				camEasing = 0.1f; //was 0.1f
 	public Vector3				camOffset;
 	public Vector3				camOffsetOnPause;
 	//public Runner				runnerScript;
