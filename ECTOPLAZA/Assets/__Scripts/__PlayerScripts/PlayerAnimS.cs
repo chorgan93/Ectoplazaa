@@ -26,6 +26,36 @@ public class PlayerAnimS : MonoBehaviour {
 
 	public bool isFacingDirection = false;
 
+	private bool isRunning;
+	public List<Sprite> headRunFrames;
+	public List<Sprite> tailRunFrames;
+	public float runFrameAnimRate;
+	private float runFrameAnimCountdown;
+	private int currentRunFrame;
+
+	private bool isJumping;
+	private bool didJump = false;
+	public List<Sprite> headJumpFrames;
+	public List<Sprite> tailJumpFrames;
+	public float jumpFrameAnimRate;
+	private float jumpFrameAnimCountdown;
+	private int currentJumpFrame;
+
+	// turn needs to be seperated to allow for head and tail to turn independently
+	private bool isTurningHead;
+	private bool didTurnHead = false;
+	public List<Sprite> headTurnFrames;
+
+	private bool isTurningTail;
+	private bool didTurnTail = false;
+	public List<Sprite> tailTurnFrames;
+	public float turnFrameAnimRate;
+	private float turnFrameAnimCountdown;
+
+	private int currentHeadTurnFrame;
+	private int currentTailTurnFrame;
+
+
 
 
 
@@ -54,37 +84,57 @@ public class PlayerAnimS : MonoBehaviour {
 	void Turn(){
 
 		// turn head according to velocity
+
+		// if head is not already turned, turn in isTurning
 		if (headRigid.velocity.x > 0){
 			Vector3 flipSize = headRender.transform.localScale;
-			flipSize.x = -headRenderSize.x;
+			if (flipSize.x != -headRenderSize.x && !didTurnHead)
+			{
+				isTurningHead = true;
+				//didTurnHead = true;
+				flipSize.x = -headRenderSize.x;
+			}
 			headRender.transform.localScale = flipSize;
 		}
 
 		if (headRigid.velocity.x < 0){
 			Vector3 flipSize = headRender.transform.localScale;
-			flipSize.x = headRenderSize.x;
+			if (flipSize.x != headRenderSize.x && !didTurnHead)
+			{
+				isTurningHead = true;
+				//didTurnHead = true;
+				flipSize.x = headRenderSize.x;
+			}
 			headRender.transform.localScale = flipSize;
 		}
 
 		// turn tail according to velocity
 		if (headRigid.velocity.x > 0){
 			Vector3 flipSize = tailRender.transform.localScale;
-			flipSize.x = -tailRenderSize.x;
+			if (flipSize.x != -tailRenderSize.x && !didTurnTail){
+				isTurningTail = true;
+				//didTurnTail = true;
+				flipSize.x = -tailRenderSize.x;
+			}
 			tailRender.transform.localScale = flipSize;
 
-			//Vector3 tailOffSetPos = tailRender.transform.position;
-			//tailOffSetPos.x = -tailOffSetPos;
-			//tailRender.transform.position = tailOffSetPos;
+			Vector3 tailOffSetPos = tailRender.transform.localPosition;
+			tailOffSetPos.x = -tailXPosOffset;
+			tailRender.transform.localPosition = tailOffSetPos;
 		}
 		
 		if (headRigid.velocity.x < 0){
 			Vector3 flipSize = tailRender.transform.localScale;
-			flipSize.x = tailRenderSize.x;
+			if (flipSize.x != tailRenderSize.x && !didTurnTail){
+				isTurningTail = true;
+				//didTurnTail = true;
+				flipSize.x = tailRenderSize.x;
+			}
 			tailRender.transform.localScale = flipSize;
 
-			//Vector3 tailOffSetPos = tailRender.transform.position;
-			//tailOffSetPos.x = tailOffSetPos;
-			//tailRender.transform.position = tailOffSetPos;
+			Vector3 tailOffSetPos = tailRender.transform.localPosition;
+			tailOffSetPos.x = tailXPosOffset;
+			tailRender.transform.localPosition = tailOffSetPos;
 		}
 
 
@@ -94,18 +144,92 @@ public class PlayerAnimS : MonoBehaviour {
 
 	void Animate () {
 
-		idleFrameAnimCountdown -= Time.deltaTime*TimeManagerS.timeMult;
-
-		if (idleFrameAnimCountdown <= 0){
-			idleFrameAnimCountdown = idleFrameAnimRate;
-			currentIdleFrame++;
-			if (currentIdleFrame > headIdleFrames.Count-1){
-				currentIdleFrame = 0;
+		// determine if jumping
+		if (playerRef.groundDetect.Grounded()){
+			didJump = false;
+			if (headRigid.velocity.x != 0){
+				isRunning =  true;
+			}
+			else{
+				isRunning = false;
+			}
+			isJumping = false;
+		}
+		else{
+			if (!didJump){
+				didJump = true;
+				isJumping = true;
 			}
 		}
 
-		headRender.sprite = headIdleFrames[currentIdleFrame];
-		tailRender.sprite = tailIdleFrames[currentIdleFrame];
+		if (isJumping){
+			jumpFrameAnimCountdown -= Time.deltaTime*TimeManagerS.timeMult;
+			
+			if (jumpFrameAnimCountdown <= 0){
+				jumpFrameAnimCountdown = jumpFrameAnimRate;
+				currentJumpFrame++;
+				if (currentJumpFrame > headJumpFrames.Count-1){
+					currentJumpFrame = 0;
+					// end jump animation
+					isJumping = false;
+				}
+			}
+			
+			headRender.sprite = headJumpFrames[currentJumpFrame];
+			// set tail frame if tail is not turning
+			if (!isTurningTail){
+				tailRender.sprite = tailJumpFrames[currentJumpFrame];
+			}
+		}
+
+		else if (isRunning){
+			runFrameAnimCountdown -= Time.deltaTime*TimeManagerS.timeMult;
+			
+			if (runFrameAnimCountdown <= 0){
+				runFrameAnimCountdown = runFrameAnimRate;
+				currentRunFrame++;
+				if (currentRunFrame > headRunFrames.Count-1){
+					currentRunFrame = 0;
+				}
+			}
+			
+			headRender.sprite = headRunFrames[currentRunFrame];
+			if (!isTurningTail){
+				tailRender.sprite = tailRunFrames[currentRunFrame];
+			}
+		}
+		else{
+			idleFrameAnimCountdown -= Time.deltaTime*TimeManagerS.timeMult;
+	
+			if (idleFrameAnimCountdown <= 0){
+				idleFrameAnimCountdown = idleFrameAnimRate;
+				currentIdleFrame++;
+				if (currentIdleFrame > headIdleFrames.Count-1){
+					currentIdleFrame = 0;
+				}
+			}
+	
+			headRender.sprite = headIdleFrames[currentIdleFrame];
+
+			if (!isTurningTail){
+				tailRender.sprite = tailIdleFrames[currentIdleFrame];
+			}
+		}
+
+		// seperate clause for tail turning when head is not turning
+		/*if (isTurningTail){
+			idleFrameAnimCountdown -= Time.deltaTime*TimeManagerS.timeMult;
+			
+			if (idleFrameAnimCountdown <= 0){
+				idleFrameAnimCountdown = idleFrameAnimRate;
+				currentIdleFrame++;
+				if (currentIdleFrame > headIdleFrames.Count-1){
+					currentIdleFrame = 0;
+				}
+			}
+			
+			headRender.sprite = headIdleFrames[currentIdleFrame];
+		}*/
 
 	}
 
