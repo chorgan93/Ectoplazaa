@@ -114,6 +114,9 @@ public class PlayerS : MonoBehaviour {
 	[HideInInspector]
 	public bool attacking = false;
 
+	[HideInInspector]
+	public int attackPriority = 0;
+
 	//private float buttDelayCountdown;
 
 	[HideInInspector]
@@ -370,14 +373,17 @@ public class PlayerS : MonoBehaviour {
 				if (chargeTime >= maxChargeTime){
 					// fully charged attack
 					attackToPerform = 2;
+					attackPriority = 2;
 					GetComponent<TrailHandlerS>().SetButtDelay(0.2f);
 				}
 				else if (chargeTime >= medChargeTime){
 					attackToPerform = 1;
+					attackPriority = 1;
 					//print ("do attack 1");
 				}
 				else{
 					attackToPerform = 0;
+					attackPriority = 0;
 					GetComponent<TrailHandlerS>().SetButtDelay(0.1f);
 				}
 			}
@@ -446,7 +452,7 @@ public class PlayerS : MonoBehaviour {
 			bulletVel = attackDir.normalized*Time.deltaTime*lv1OutRate ;
 			ownRigid.AddForce(bulletVel* (2f*chargeTime),ForceMode.VelocityChange);
 
-			print(chargeTime); 
+			//print(chargeTime); 
 
 			//dontCorrectSpeed = true;
 			ownRigid.useGravity = true;
@@ -797,6 +803,8 @@ public class PlayerS : MonoBehaviour {
 
 	void Jump () {
 
+		print (groundPounded);
+
 		// turn danger off
 
 		// allow charge attack
@@ -804,7 +812,7 @@ public class PlayerS : MonoBehaviour {
 		if (groundDetect.Grounded()){
 			// end a fling attack on ground hit
 			//if (attackToPerform == 1 && attacking){
-			if ((attacking || groundPounded) && groundLeeway <= 0){
+			if (groundLeeway <= 0){
 				isDangerous = false;
 				attacking = false;
 				didLv2Fling = false;
@@ -882,6 +890,9 @@ public class PlayerS : MonoBehaviour {
 				ownRigid.velocity = groundPoundVel;
 				isDangerous = true;
 				groundPounded = true;
+				attackPriority = 3;
+
+				print ("Groundpound!");
 
 			GetComponent<TrailHandlerS>().SetButtDelay(0.1f);
 
