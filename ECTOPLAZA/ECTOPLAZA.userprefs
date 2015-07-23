@@ -1,13 +1,11 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/__Scripts/__PlayerScripts/PlayerSoundS.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/__Scripts/_ControlScripts/AimObjS.cs">
     <Files>
-      <File FileName="../../SyndicateAtomic/MissionStatement/Assets/__Scripts/PolishScripts/CityWrapS.cs" Line="1" Column="1" />
-      <File FileName="../../SyndicateAtomic/MissionStatement/Assets/__Scripts/PolishScripts/ParallaxObjS.cs" Line="1" Column="1" />
-      <File FileName="Assets/__Scripts/__SystemsScripts/DamageS.cs" Line="1" Column="1" />
-      <File FileName="Assets/__Scripts/__PlayerScripts/PlayerS.cs" Line="169" Column="34" />
-      <File FileName="Assets/__Scripts/__SystemsScripts/TrailHandlerS.cs" Line="1" Column="1" />
-      <File FileName="Assets/__Scripts/__PlayerScripts/PlayerSoundS.cs" Line="75" Column="36" />
+      <File FileName="Assets/__Scripts/__PlayerScripts/PlayerS.cs" Line="225" Column="8" />
+      <File FileName="Assets/__Scripts/_ControlScripts/GroundDetectS.cs" Line="1" Column="1" />
+      <File FileName="Assets/__Scripts/_ControlScripts/WallDetectS.cs" Line="13" Column="12" />
+      <File FileName="Assets/__Scripts/_ControlScripts/AimObjS.cs" Line="16" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

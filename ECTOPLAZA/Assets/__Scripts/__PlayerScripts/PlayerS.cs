@@ -171,6 +171,13 @@ public class PlayerS : MonoBehaviour {
 	private bool playedLV2ChargeSound = false;
 	private bool playedLV3ChargeSound = false;
 
+	// wall jump detects
+	public WallDetectS leftWallDetect;
+	public WallDetectS rightWallDetect;
+	public float 		wallJumpXForce;
+	public float 		wallDragForce;
+	private bool 		clingingToWall = false;
+
 	// Use this for initialization
 	void Start () {
 
@@ -214,6 +221,9 @@ public class PlayerS : MonoBehaviour {
 	
 					Walk();
 					Jump ();
+
+					//WallJump ();
+
 					MiscAction(); //TRAIL RENDERER UPDATE, OTHER THINGS
 	
 					//Stretch();
@@ -916,7 +926,7 @@ public class PlayerS : MonoBehaviour {
 			}
 		
 			// do ground pound if not charging
-			else if (!groundPounded && !charging){
+			else if (!groundPounded && !charging && !clingingToWall){
 				Vector3 groundPoundVel = Vector3.zero;
 				groundPoundVel.y = -groundPoundForce*Time.deltaTime*TimeManagerS.timeMult;
 				ownRigid.velocity = groundPoundVel;
@@ -962,6 +972,74 @@ public class PlayerS : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	void WallJump () {
+
+		// allows player to slow descent and jump when "clinging" to a wall
+
+		if (!groundDetect.Grounded()){
+
+		// first, check if player is touching a wall on either side
+		if (leftWallDetect.WallTouching()){
+
+			// trigger "cling" if player is tilting stick towards wall
+			if (Input.GetAxis("HorizontalPlayer" + playerNum + platformType) < 0){
+
+				clingingToWall = true;
+
+
+			}
+
+		}
+
+		if (rightWallDetect.WallTouching()){
+
+			// trigger "cling" if player is tilting stick towards wall
+			if (Input.GetAxis("HorizontalPlayer" + playerNum + platformType) > 0){
+				
+				clingingToWall = true;
+				
+				
+			}
+			
+		}
+
+		if (clingingToWall){
+
+			// start applying cling force against gravity
+			Vector3 clingForce = Vector3.zero;
+			clingForce.y = wallDragForce*Time.deltaTime*TimeManagerS.timeMult;
+			ownRigid.AddForce(clingForce);
+			
+			// check for button press to trigger wall jump
+			if (Input.GetButton("AButtonPlayer"+playerNum+platformType)){
+				Vector3 jumpForce = Vector3.zero;
+
+				// apply x force in opposite direction of wall
+				if (leftWallDetect.WallTouching()){
+					jumpForce.x = wallJumpXForce;
+				}
+				if (rightWallDetect.WallTouching()){
+					jumpForce.x = -wallJumpXForce;
+				}
+
+				// apply normal y jump force
+				jumpForce.y = jumpSpeed;
+
+				jumpForce *= Time.deltaTime;
+
+				ownRigid.AddForce(jumpForce);
+
+				clingingToWall = false;
+			}
+		}
+		}
+		else{
+			clingingToWall = false;
+		}
+
+
 	}
 
 	void MiscAction()
