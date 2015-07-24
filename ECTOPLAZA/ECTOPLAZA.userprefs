@@ -1,12 +1,10 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/__Scripts/__SystemsScripts/TrailHandlerS.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\__Scripts\__PlayerScripts\PlayerS.cs">
     <Files>
-      <File FileName="../../SyndicateAtomic/MissionStatement/Assets/__Scripts/PolishScripts/CityWrapS.cs" Line="18" Column="1" />
-      <File FileName="../../SyndicateAtomic/MissionStatement/Assets/__Scripts/PolishScripts/ParallaxObjS.cs" Line="1" Column="1" />
-      <File FileName="Assets/__Scripts/__SystemsScripts/DamageS.cs" Line="39" Column="69" />
-      <File FileName="Assets/__Scripts/__PlayerScripts/PlayerS.cs" Line="893" Column="24" />
-      <File FileName="Assets/__Scripts/__SystemsScripts/TrailHandlerS.cs" Line="116" Column="4" />
+      <File FileName="Assets\__Scripts\__SystemsScripts\DamageS.cs" Line="1" Column="1" />
+      <File FileName="Assets\__Scripts\__PlayerScripts\PlayerS.cs" Line="1" Column="1" />
+      <File FileName="Assets\__Scripts\__SystemsScripts\TrailHandlerS.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
