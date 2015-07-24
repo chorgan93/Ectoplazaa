@@ -174,7 +174,7 @@ public class TrailHandlerS : MonoBehaviour {
 	
 					// set velocity
 	
-					currentButtVel = (spawnedDots[0].transform.position-buttObj.transform.position)/(timeBetweenDotsMax*1.5f);
+					currentButtVel = (spawnedDots[0].transform.position-buttObj.transform.position)/(timeBetweenDotsMax);
 					//print ("SetVel!");
 				}
 			}

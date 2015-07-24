@@ -164,6 +164,20 @@ public class PlayerS : MonoBehaviour {
 	public Material [] playerParticleMats; 
 	public Material	 hurtMat; 
 
+	// sound stuff
+	[HideInInspector]
+	public PlayerSoundS soundSource;
+	private bool playedLV1ChargeSound = false;
+	private bool playedLV2ChargeSound = false;
+	private bool playedLV3ChargeSound = false;
+
+	// wall jump detects
+	public WallDetectS leftWallDetect;
+	public WallDetectS rightWallDetect;
+	public float 		wallJumpXForce;
+	public float 		wallDragForce;
+	private bool 		clingingToWall = false;
+
 	// Use this for initialization
 	void Start () {
 
@@ -207,6 +221,9 @@ public class PlayerS : MonoBehaviour {
 	
 					Walk();
 					Jump ();
+
+					//WallJump ();
+
 					MiscAction(); //TRAIL RENDERER UPDATE, OTHER THINGS
 	
 					//Stretch();
@@ -338,6 +355,9 @@ public class PlayerS : MonoBehaviour {
 		}
 		else{
 			stretchButtonDown = false;
+			playedLV1ChargeSound = false;
+			playedLV2ChargeSound = false;
+			playedLV3ChargeSound = false;
 		}
 
 		if (stretchButtonDown && !charging && canCharge){
@@ -345,9 +365,13 @@ public class PlayerS : MonoBehaviour {
 			canCharge = false;
 			chargeTime = 0;
 
+			groundLeeway = 0.5f;
 		}
 
 		if (charging){
+
+			
+			groundLeeway = 0.5f;
 
 			//print ("charging!!");
 
@@ -355,6 +379,20 @@ public class PlayerS : MonoBehaviour {
 			ownRigid.velocity = Vector3.zero;
 
 			chargeTime+=Time.deltaTime*TimeManagerS.timeMult;
+
+			// play sounds when you hit each threshold
+			if (chargeTime > 0 && !playedLV1ChargeSound){
+				soundSource.PlayChargeLv1();
+				playedLV1ChargeSound = true;
+			}
+			if (chargeTime > medChargeTime && !playedLV2ChargeSound){
+				soundSource.PlayChargeLv2();
+				playedLV2ChargeSound = true;
+			}
+			if (chargeTime > maxChargeTime && !playedLV3ChargeSound){
+				soundSource.PlayChargeLv3();
+				playedLV3ChargeSound = true;
+			}
 
 
 
@@ -414,6 +452,9 @@ public class PlayerS : MonoBehaviour {
 				{
 					attackDir.x = 1; 
 				}
+
+				// play attack release sound
+				soundSource.PlayReleaseSound();
 			}
 
 			if (attackToPerform == 2)
@@ -803,7 +844,7 @@ public class PlayerS : MonoBehaviour {
 
 	void Jump () {
 
-		print (groundPounded);
+		//print (groundPounded);
 
 		// turn danger off
 
@@ -855,6 +896,7 @@ public class PlayerS : MonoBehaviour {
 		//if (!attacking && !charging){
 		if (Input.GetButton("AButtonPlayer" + playerNum + platformType) && !jumpButtonDown)
 		{
+
 	
 				//print ("Jump!");
 	
@@ -873,18 +915,18 @@ public class PlayerS : MonoBehaviour {
 						ownRigid.AddForce(jumpForce);
 			
 						Instantiate(jumpParticles, this.transform.position, Quaternion.identity); 
+
+					// play jump sound
+					soundSource.PlayJumpSound();
 	
 						addingJumpTime = 0;
 						stopAddingJump = false;
 						jumped = true;
 				}
 			}
-		}
-
-		else if(Input.GetButton("AButtonPlayer" + playerNum + platformType) && !jumpButtonDown)
-		{
+		
 			// do ground pound if not charging
-			if (!groundPounded && !charging){
+			else if (!groundPounded && !charging && !clingingToWall){
 				Vector3 groundPoundVel = Vector3.zero;
 				groundPoundVel.y = -groundPoundForce*Time.deltaTime*TimeManagerS.timeMult;
 				ownRigid.velocity = groundPoundVel;
@@ -893,6 +935,8 @@ public class PlayerS : MonoBehaviour {
 				attackPriority = 3;
 
 				print ("Groundpound!");
+				// play an attack sound
+				soundSource.PlayChargeLv2();
 
 			GetComponent<TrailHandlerS>().SetButtDelay(0.1f);
 
@@ -900,6 +944,9 @@ public class PlayerS : MonoBehaviour {
 				//dontCorrectSpeed = false;
 
 				//SleepTime(groundPoundPauseTime);
+			}
+			else{
+				// don't do anything
 			}
 		}
 		
@@ -925,6 +972,74 @@ public class PlayerS : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	void WallJump () {
+
+		// allows player to slow descent and jump when "clinging" to a wall
+
+		if (!groundDetect.Grounded()){
+
+		// first, check if player is touching a wall on either side
+		if (leftWallDetect.WallTouching()){
+
+			// trigger "cling" if player is tilting stick towards wall
+			if (Input.GetAxis("HorizontalPlayer" + playerNum + platformType) < 0){
+
+				clingingToWall = true;
+
+
+			}
+
+		}
+
+		if (rightWallDetect.WallTouching()){
+
+			// trigger "cling" if player is tilting stick towards wall
+			if (Input.GetAxis("HorizontalPlayer" + playerNum + platformType) > 0){
+				
+				clingingToWall = true;
+				
+				
+			}
+			
+		}
+
+		if (clingingToWall){
+
+			// start applying cling force against gravity
+			Vector3 clingForce = Vector3.zero;
+			clingForce.y = wallDragForce*Time.deltaTime*TimeManagerS.timeMult;
+			ownRigid.AddForce(clingForce);
+			
+			// check for button press to trigger wall jump
+			if (Input.GetButton("AButtonPlayer"+playerNum+platformType)){
+				Vector3 jumpForce = Vector3.zero;
+
+				// apply x force in opposite direction of wall
+				if (leftWallDetect.WallTouching()){
+					jumpForce.x = wallJumpXForce;
+				}
+				if (rightWallDetect.WallTouching()){
+					jumpForce.x = -wallJumpXForce;
+				}
+
+				// apply normal y jump force
+				jumpForce.y = jumpSpeed;
+
+				jumpForce *= Time.deltaTime;
+
+				ownRigid.AddForce(jumpForce);
+
+				clingingToWall = false;
+			}
+		}
+		}
+		else{
+			clingingToWall = false;
+		}
+
+
 	}
 
 	void MiscAction()
@@ -1231,6 +1346,21 @@ public class PlayerS : MonoBehaviour {
 			}
 
 			CameraShakeS.C.MicroShake();
+
+		}
+
+		// for hit sounds
+		if ((other.gameObject.tag == "Wall" || other.gameObject.tag == "Ground")){
+			
+			// play bounce sound if not groundpounding
+			if (!groundPounded){
+				soundSource.PlayWallHit();
+			//print ("played wall sound");
+			}
+			else{
+				soundSource.PlayGroundPoundHit();
+				//print ("played ground sound");
+			}
 		}
 	}
 
