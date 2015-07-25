@@ -130,6 +130,7 @@ public class TrailHandlerS : MonoBehaviour {
 				spawnedDots.Add(newDot);
 
 				newDot.GetComponent<DotColliderS>().whoCreatedMe = playerRef;
+				newDot.transform.parent = playerRef.transform; 
 			}
 
 		}

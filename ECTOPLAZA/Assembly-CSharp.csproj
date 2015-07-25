@@ -62,6 +62,7 @@
      <Compile Include="Assets\__Scripts\__PlayerScripts\PlayerS.cs" />
      <Compile Include="Assets\__Scripts\__PlayerScripts\PlayerSoundS.cs" />
      <Compile Include="Assets\__Scripts\__SystemsScripts\DamageS.cs" />
+     <Compile Include="Assets\__Scripts\__SystemsScripts\GlobalVars.cs" />
      <Compile Include="Assets\__Scripts\__SystemsScripts\PlatformS.cs" />
      <Compile Include="Assets\__Scripts\__SystemsScripts\PlayerScoreDisplayS.cs" />
      <Compile Include="Assets\__Scripts\__SystemsScripts\ScoreKeeperS.cs" />

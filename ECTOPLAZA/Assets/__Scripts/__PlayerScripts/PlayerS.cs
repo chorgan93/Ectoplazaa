@@ -13,7 +13,8 @@ public class PlayerS : MonoBehaviour {
 	//public ButtObjS buttObj;
 	//private Rigidbody buttObjRigid;
 
-	public int playerNum;
+	public int playerNum; //controller, playernumber for UI 
+	public int characterNum; //skin, character chosen;
 
 	public int score;
 
