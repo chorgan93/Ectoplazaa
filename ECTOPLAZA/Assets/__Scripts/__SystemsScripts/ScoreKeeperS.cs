@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class ScoreKeeperS : MonoBehaviour {
 
-	public List<PlayerS> allPlayers;
+	public GameObject[] scoreTexts;
 
 	private int winningPlayerNum;
 
@@ -27,6 +27,7 @@ public class ScoreKeeperS : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+		
 
 		// once gameEnd is on, start countdown
 		// restart map on countdown (replace this once menu infrastructure is in place
@@ -43,15 +44,29 @@ public class ScoreKeeperS : MonoBehaviour {
 		}
 		else{
 			// check for winner
-			for (int i = 0; i < allPlayers.Count; i++){
-				if (allPlayers[i].score >= scoreThreshold){
-					gameEnd = true;
-					winningPlayerNum = i+1;
-					endGameObj.SetActive(true);
+			for (int i = 0; i < 4; i++){
+				if(GlobalVars.characterNumber[i] != 0)
+				{
+					PlayerS currentPlayer = GlobalVars.playerList[i].GetComponent<PlayerS>();
+					scoreTexts[i].GetComponent<TextMesh>().text = "P" + currentPlayer.playerNum + ": " + currentPlayer.score + "";
 
-					winText.text = "Player " + winningPlayerNum + " wins!!";
-					countdownText.text = "Resetting..." + gameEndMinTime*1.00f;
+
+
+					if (currentPlayer.score >= scoreThreshold){
+						gameEnd = true;
+						winningPlayerNum = i+1;
+						endGameObj.SetActive(true);
+
+						winText.text = "Player " + winningPlayerNum + " wins!!";
+						countdownText.text = "Resetting..." + gameEndMinTime*1.00f;
+					}
 				}
+				else
+				{
+
+					scoreTexts[i].GetComponent<TextMesh>().text = "";
+				}
+
 			}
 		}
 	

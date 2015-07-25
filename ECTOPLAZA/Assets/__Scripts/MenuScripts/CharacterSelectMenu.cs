@@ -169,19 +169,20 @@ public class CharacterSelectMenu : MonoBehaviour {
 				//SET GLOBAL VARS
 				GlobalVars.totalPlayers = totalPlayers; 
 
-				for(int j = 1; j < 4; j++)
+				for(int j = 0; j <= 3; j++)
 				{
-					if(players[j-1] != null)
+					if(players[j] != null)
 					{
-						GlobalVars.characterNumber[j-1] = players[j-1].GetComponent<PlayerS>().characterNum; 
+						GlobalVars.characterNumber[j] = players[j].GetComponent<PlayerS>().characterNum; 
 					}
 					else
 					{
-						GlobalVars.characterNumber[j-1] = 0; 
+						GlobalVars.characterNumber[j] = 0; 
 					}
 				}
 
 				GlobalVars.characterSelected = true; 
+				GlobalVars.launchingFromScene = false; 
 
 				Application.LoadLevel("Protoscene_Colin");
 			}

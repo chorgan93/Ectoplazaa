@@ -189,12 +189,15 @@ public class PlayerS : MonoBehaviour {
 
 		allSpawnPts = GameObject.FindGameObjectsWithTag("Spawn");
 
-		transform.position = spawnPos = spawnPt.transform.position;
+		//transform.position = spawnPos = spawnPt.transform.position;
 		GetComponent<TrailHandlerS>().buttObj.transform.position = spawnPos;
 		
 		//physicsLayerDefault = gameObject.layer;
 
-		characterNum = GlobalVars.characterNumber[playerNum-1]; 
+		if (GlobalVars.characterSelected && GlobalVars.launchingFromScene) { //assign character numbers from global vars when spawning only in game, not while in character select screen
+			characterNum = GlobalVars.characterNumber [playerNum - 1]; 
+		} 
+		
 
 		SetSkin ();
 
