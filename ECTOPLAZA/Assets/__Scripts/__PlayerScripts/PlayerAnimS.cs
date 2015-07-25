@@ -4,6 +4,16 @@ using System.Collections.Generic;
 
 public class PlayerAnimS : MonoBehaviour {
 
+	/*
+	NEILSON NEUROTIC WAY OF ANIMATION
+	ALL HEAD SPRITES FOR ONE CHARACTER ARE IN THE SAME ARRAY, AND ALL THE TAIL SPRITES ARE IN AN ARRAY
+	For each animation the script just references different parts in the array 
+	*/
+
+
+
+	public string Description; 
+
 	public SpriteRenderer headRender;
 	public SpriteRenderer tailRender;
 
@@ -25,6 +35,13 @@ public class PlayerAnimS : MonoBehaviour {
 	private int currentIdleFrame;
 
 	public bool isFacingDirection = false;
+
+	public Sprite [] ninjaHeadSprites, ninjaTailSprites;
+	public Sprite [] mummyHeadSprites, mummyTailSprites; 
+	public Sprite [] acidHeadSprites, acidTailSprites; 
+	public Sprite [] pinkHeadSprites, pinkTailSprites; 
+
+	public Sprite [] currentHeadSprites, currentTailSprites;
 
 	private bool isRunning;
 	public List<Sprite> headRunFrames;
@@ -55,7 +72,7 @@ public class PlayerAnimS : MonoBehaviour {
 	private int currentHeadTurnFrame;
 	private int currentTailTurnFrame;
 
-
+	public int jumpingAnimStart,runAnimStart,idleAnimStart; 
 
 
 
@@ -69,6 +86,18 @@ public class PlayerAnimS : MonoBehaviour {
 		tailRenderSize = tailRender.transform.localScale;
 
 		isFacingDirection = true;
+
+		currentJumpFrame = jumpingAnimStart; 
+		currentRunFrame = runAnimStart;
+		currentIdleFrame = idleAnimStart; 
+
+		if (playerRef.characterNum == 0) {
+			currentHeadSprites = ninjaHeadSprites;
+			currentTailSprites = ninjaTailSprites; 
+		} else
+			SetCurrentSprites (playerRef.characterNum);
+
+
 	
 	}
 	
@@ -112,7 +141,7 @@ public class PlayerAnimS : MonoBehaviour {
 		if (headRigid.velocity.x > 0){
 			Vector3 flipSize = tailRender.transform.localScale;
 			if (flipSize.x != -tailRenderSize.x && !didTurnTail){
-				isTurningTail = true;
+				//isTurningTail = true; //HAD TO COMMENT OUT FOR NOW, SORRY COLIN, THIS IS ALWAYS TURNED ON FOR SOME REASON, it stops the tail from animating
 				//didTurnTail = true;
 				flipSize.x = -tailRenderSize.x;
 			}
@@ -126,7 +155,7 @@ public class PlayerAnimS : MonoBehaviour {
 		if (headRigid.velocity.x < 0){
 			Vector3 flipSize = tailRender.transform.localScale;
 			if (flipSize.x != tailRenderSize.x && !didTurnTail){
-				isTurningTail = true;
+				//isTurningTail = true; //HAD TO COMMENT OUT FOR NOW, SORRY COLIN, THIS IS ALWAYS TURNED ON FOR SOME REASON
 				//didTurnTail = true;
 				flipSize.x = tailRenderSize.x;
 			}
@@ -168,17 +197,17 @@ public class PlayerAnimS : MonoBehaviour {
 			if (jumpFrameAnimCountdown <= 0){
 				jumpFrameAnimCountdown = jumpFrameAnimRate;
 				currentJumpFrame++;
-				if (currentJumpFrame > headJumpFrames.Count-1){
-					currentJumpFrame = 0;
+				if (currentJumpFrame > runAnimStart-1){ //CHANGED BECAUSE ALL ANIM SPRITES IN ONE ARRAY
+					currentJumpFrame = jumpingAnimStart;
 					// end jump animation
 					isJumping = false;
 				}
 			}
 			
-			headRender.sprite = headJumpFrames[currentJumpFrame];
+			headRender.sprite =currentHeadSprites[currentJumpFrame];
 			// set tail frame if tail is not turning
 			if (!isTurningTail){
-				tailRender.sprite = tailJumpFrames[currentJumpFrame];
+				tailRender.sprite = currentTailSprites[currentJumpFrame];
 			}
 		}
 
@@ -188,14 +217,14 @@ public class PlayerAnimS : MonoBehaviour {
 			if (runFrameAnimCountdown <= 0){
 				runFrameAnimCountdown = runFrameAnimRate;
 				currentRunFrame++;
-				if (currentRunFrame > headRunFrames.Count-1){
-					currentRunFrame = 0;
+				if (currentRunFrame > idleAnimStart-1){
+					currentRunFrame = runAnimStart;
 				}
 			}
 			
-			headRender.sprite = headRunFrames[currentRunFrame];
+			headRender.sprite = currentHeadSprites[currentRunFrame];
 			if (!isTurningTail){
-				tailRender.sprite = tailRunFrames[currentRunFrame];
+				tailRender.sprite = currentTailSprites[currentRunFrame];
 			}
 		}
 		else{
@@ -204,15 +233,15 @@ public class PlayerAnimS : MonoBehaviour {
 			if (idleFrameAnimCountdown <= 0){
 				idleFrameAnimCountdown = idleFrameAnimRate;
 				currentIdleFrame++;
-				if (currentIdleFrame > headIdleFrames.Count-1){
-					currentIdleFrame = 0;
+				if (currentIdleFrame > idleAnimStart+3){
+					currentIdleFrame = idleAnimStart;
 				}
 			}
 	
-			headRender.sprite = headIdleFrames[currentIdleFrame];
+			headRender.sprite = currentHeadSprites[currentIdleFrame];
 
 			if (!isTurningTail){
-				tailRender.sprite = tailIdleFrames[currentIdleFrame];
+				tailRender.sprite = currentTailSprites[currentIdleFrame];
 			}
 		}
 
@@ -277,6 +306,30 @@ public class PlayerAnimS : MonoBehaviour {
 			
 		}
 
+	}
+
+	public void SetCurrentSprites (int characterNumber)
+	{
+		if (characterNumber == 1) {
+			currentHeadSprites = ninjaHeadSprites;
+			currentTailSprites= ninjaTailSprites; 
+
+		}
+		else if (characterNumber == 2) {
+			currentHeadSprites = acidHeadSprites;
+			currentTailSprites= acidTailSprites; 
+			
+		}
+		else if (characterNumber == 3) {
+			currentHeadSprites = mummyHeadSprites;
+			currentTailSprites= mummyTailSprites; 
+			
+		}
+		else if (characterNumber == 4) {
+			currentHeadSprites = pinkHeadSprites;
+			currentTailSprites= pinkTailSprites; 
+			
+		}
 	}
 
 }

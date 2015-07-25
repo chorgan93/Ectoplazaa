@@ -46,24 +46,29 @@ public class CharacterSelectMenu : MonoBehaviour {
 						for(int j = 1; j < GlobalVars.totalSkins; j++)
 						{
 
+							bool flag = false;
+
 							foreach(GameObject player in players)
 							{
-								if(defaultSkin != 0)
-									break;
-
 								if(player != null)
 								{
 									if(player.GetComponent<PlayerS>().characterNum != j)
 									{
-										defaultSkin = j;
+										continue;
 									}
-							
-								
+									else
+									{
+										flag = true;
+										break;
+									}
 								}
 							}
-							if(defaultSkin != 0)
-								break; 
 
+							if(!flag)
+							{
+								defaultSkin = j; 
+								break;
+							}
 						}
 					}
 
@@ -75,6 +80,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 					GameObject newPlayer = Instantiate(playerPrefab,spawnPoints[i-1].transform.position,Quaternion.identity) as GameObject;
 					newPlayer.GetComponent<PlayerS>().playerNum = i;
 					newPlayer.GetComponent<PlayerS>().characterNum = defaultSkin;
+					newPlayer.GetComponent<PlayerS>().SetSkin(); 
 
 					newPlayer.GetComponent<PlayerS>().spawnPt = spawnPoints[i-1];
 					players[i-1] = newPlayer; 
@@ -113,15 +119,69 @@ public class CharacterSelectMenu : MonoBehaviour {
 					}
 				}
 			}
+			else if (Input.GetButtonDown ("YButtonPlayer" + i + platformType))
+			{
+				if(hasJoined[i-1])
+				{
+
+					int newSkin = players[i-1].GetComponent<PlayerS>().characterNum; 
+					bool stopLoop = false;
+
+					for(int j= 1; j <= GlobalVars.totalSkins; j++) //loop once through all skins
+					{
+						newSkin += 1; //increment to next skin, check if available; 
+						if(newSkin > GlobalVars.totalSkins) //loop if at end of skins
+							newSkin = 1; 
+
+						bool flag = false; 
+
+						foreach(GameObject p in players)
+						{
+							if(p != null)
+							{
+								if(p.GetComponent<PlayerS>().characterNum != newSkin)
+									continue;
+								else
+								{
+									flag = true;
+									break;
+								}
+							}
+						}
+						 
+						if(!flag)
+							break;
+
+					}
+
+					
+					characterNumText[i-1].GetComponent<TextMesh>().text = "characterNum: " + newSkin;
+
+					players[i-1].GetComponent<PlayerS>().characterNum = newSkin;
+					players[i-1].GetComponent<PlayerS>().SetSkin();
+				}
+
+
+			}
+
 			else if (Input.GetButton ("StartButtonAllPlayers"+ platformType) && totalPlayers >= 2) //START GAME---------------------------------------
 			{
+				//SET GLOBAL VARS
 				GlobalVars.totalPlayers = totalPlayers; 
 
 				for(int j = 1; j < 4; j++)
 				{
 					if(players[j-1] != null)
+					{
 						GlobalVars.characterNumber[j-1] = players[j-1].GetComponent<PlayerS>().characterNum; 
+					}
+					else
+					{
+						GlobalVars.characterNumber[j-1] = 0; 
+					}
 				}
+
+				GlobalVars.characterSelected = true; 
 
 				Application.LoadLevel("Protoscene_Colin");
 			}

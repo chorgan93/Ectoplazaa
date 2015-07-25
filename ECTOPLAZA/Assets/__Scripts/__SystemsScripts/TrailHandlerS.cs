@@ -36,8 +36,9 @@ public class TrailHandlerS : MonoBehaviour {
 		playerRigid = playerRef.GetComponent<Rigidbody>();
 
 		//bodyConnector.material = playerRef.GetComponent<Renderer>().material;
-
-	
+		if (playerRef.characterNum != 0)
+			SetDotMaterial ();
+		
 	}
 	
 	// Update is called once per frame
@@ -47,6 +48,8 @@ public class TrailHandlerS : MonoBehaviour {
 
 			if (!playerRef.respawning){
 					
+				SetDotMaterial(); 
+
 				if (buttDelayCountdown > 0){
 					if (!separated){
 						separated = true;
@@ -192,5 +195,15 @@ public class TrailHandlerS : MonoBehaviour {
 
 		buttDelayCountdown = newDelay;
 
+	}
+
+	public void SetDotMaterial()
+	{
+		if (playerRef.characterNum > 0) {
+			foreach (GameObject d in spawnedDots) {
+				d.GetComponent<Renderer> ().material = playerRef.playerMats [playerRef.characterNum - 1];
+			}
+		}
+			//playerRef.characterNum
 	}
 }

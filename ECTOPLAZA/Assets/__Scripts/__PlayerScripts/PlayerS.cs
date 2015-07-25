@@ -7,6 +7,7 @@ public class PlayerS : MonoBehaviour {
 	private string platformType;
 	private Rigidbody ownRigid;
 
+
 	public GameObject spriteObject;
 	private SpriteRenderer spriteObjRender;
 
@@ -159,8 +160,6 @@ public class PlayerS : MonoBehaviour {
 	public GameObject deathParticles, jumpParticles, hitParticles, groundedParticles; 
 	public GameObject dangerousSprite; 
 
-	private TrailRenderer playerTrailRenderer; 
-	public GameObject tempHeadSphere,tempButtSphere; 
 	public Material [] playerMats;
 	public Material [] playerParticleMats; 
 	public Material	 hurtMat; 
@@ -187,19 +186,18 @@ public class PlayerS : MonoBehaviour {
 		ownRigid = GetComponent<Rigidbody>();
 		spriteObjRender = spriteObject.GetComponent<SpriteRenderer>();
 
-		playerTrailRenderer = this.GetComponent<TrailRenderer>(); 
 
 		allSpawnPts = GameObject.FindGameObjectsWithTag("Spawn");
 
 		transform.position = spawnPos = spawnPt.transform.position;
 		GetComponent<TrailHandlerS>().buttObj.transform.position = spawnPos;
-
-		tempButtSphere.GetComponent<Renderer>().material = playerMats[playerNum-1]; 
-		tempHeadSphere.GetComponent<Renderer>().material = playerMats[playerNum-1]; 
-
-		playerTrailRenderer.material = playerMats[playerNum-1];
-
+		
 		//physicsLayerDefault = gameObject.layer;
+
+		characterNum = GlobalVars.characterNumber[playerNum-1]; 
+
+		SetSkin ();
+
 	
 	}
 
@@ -1249,6 +1247,15 @@ public class PlayerS : MonoBehaviour {
 
 	}
 
+	public void SetSkin() //Ninja, Acid, Mummy, Pink
+	{
+		this.GetComponent<LineRenderer> ().material = playerMats [characterNum-1];
+		spriteObject.GetComponent<PlayerAnimS> ().SetCurrentSprites (characterNum);
+		GetComponent<TrailHandlerS> ().SetDotMaterial ();
+
+
+	}
+
 	void Respawn () {
 
 		if (respawning){
@@ -1322,7 +1329,7 @@ public class PlayerS : MonoBehaviour {
 
 
 		GameObject newParticles =  Instantiate(hitParticles,hitParticleSpawn,Quaternion.identity) as GameObject;
-		newParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[playerNum - 1].GetColor("_TintColor");
+		newParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[characterNum - 1].GetColor("_TintColor");
 
 
 
