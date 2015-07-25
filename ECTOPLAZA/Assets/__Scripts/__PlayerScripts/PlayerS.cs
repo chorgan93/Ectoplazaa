@@ -178,6 +178,8 @@ public class PlayerS : MonoBehaviour {
 	public float 		wallDragForce;
 	private bool 		clingingToWall = false;
 
+	public float respawnInvulnTime = 1.5f;
+
 	// Use this for initialization
 	void Start () {
 
@@ -212,6 +214,8 @@ public class PlayerS : MonoBehaviour {
 		if (!ScoreKeeperS.gameEnd){
 
 			if (!TimeManagerS.paused){
+
+				respawnInvulnTime -= Time.deltaTime*TimeManagerS.timeMult;
 	
 				ManageDelay();
 				//print (leftCheck);
@@ -876,7 +880,10 @@ public class PlayerS : MonoBehaviour {
 		if (jumped){
 			if (groundDetect.Grounded()){
 				jumped = false;
-				//groundPounded = false;
+				if (groundPounded){
+					groundPounded = false;
+					isDangerous = false;
+				}
 			}
 		}
 		else{
@@ -1289,6 +1296,8 @@ public class PlayerS : MonoBehaviour {
 				GetComponent<Collider>().enabled = true;
 				spriteObjRender.enabled = true;
 				respawning = false;
+
+				respawnInvulnTime = 1.5f;
 
 				int randomSpawn = Random.Range(0, allSpawnPts.Length-1);
 				GameObject newSpawn = allSpawnPts[randomSpawn];

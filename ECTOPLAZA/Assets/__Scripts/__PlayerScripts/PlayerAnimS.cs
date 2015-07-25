@@ -206,12 +206,13 @@ public class PlayerAnimS : MonoBehaviour {
 			
 			headRender.sprite =currentHeadSprites[currentJumpFrame];
 			// set tail frame if tail is not turning
-			if (!isTurningTail){
+			//if (!isTurningTail){
 				tailRender.sprite = currentTailSprites[currentJumpFrame];
-			}
+			//}
 		}
 
 		else if (isRunning){
+			print (isRunning);
 			runFrameAnimCountdown -= Time.deltaTime*TimeManagerS.timeMult;
 			
 			if (runFrameAnimCountdown <= 0){
@@ -223,9 +224,9 @@ public class PlayerAnimS : MonoBehaviour {
 			}
 			
 			headRender.sprite = currentHeadSprites[currentRunFrame];
-			if (!isTurningTail){
+			//if (!isTurningTail){
 				tailRender.sprite = currentTailSprites[currentRunFrame];
-			}
+			//}
 		}
 		else{
 			idleFrameAnimCountdown -= Time.deltaTime*TimeManagerS.timeMult;
@@ -240,9 +241,9 @@ public class PlayerAnimS : MonoBehaviour {
 	
 			headRender.sprite = currentHeadSprites[currentIdleFrame];
 
-			if (!isTurningTail){
+			//if (!isTurningTail){
 				tailRender.sprite = currentTailSprites[currentIdleFrame];
-			}
+			//}
 		}
 
 		// seperate clause for tail turning when head is not turning

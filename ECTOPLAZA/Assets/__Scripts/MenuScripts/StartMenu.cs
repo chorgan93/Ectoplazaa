@@ -7,7 +7,12 @@ public class StartMenu : MonoBehaviour {
 	int playerNum = 1; 
 
 	bool started = false; 
-	// Use this for initialization
+
+	float inputDelay = 2f;
+
+	// the following string is just for playtest
+	// will need to connect all of start menu in final version
+	public string nextSceneString;
 
 	public GameObject [] postcards; 
 
@@ -21,7 +26,7 @@ public class StartMenu : MonoBehaviour {
 	{
 		if (!started) 
 		{
-			if (Input.GetButtonDown ("AButtonPlayer" + playerNum + platformType) || Input.GetKey (KeyCode.KeypadEnter)) 
+			if (Input.GetButton ("AButtonPlayer" + playerNum + platformType) || Input.GetKey (KeyCode.KeypadEnter)) 
 			{
 				started = true;
 				foreach (GameObject postcard in postcards) 
@@ -29,6 +34,15 @@ public class StartMenu : MonoBehaviour {
 
 					postcard.GetComponent<Rigidbody> ().AddForce (Vector3.right * Random.Range(5000f,10000f)); 
 					postcard.GetComponent<Rigidbody> ().AddTorque (Vector3.forward * Random.Range(100000f,200000f)); 
+				}
+			}
+		}
+		else{
+			inputDelay -= Time.deltaTime;
+			if (inputDelay <= 0){
+				if (Input.GetButton ("AButtonPlayer" + playerNum + platformType) || Input.GetKey (KeyCode.KeypadEnter)) 
+				{
+					Application.LoadLevel(nextSceneString);
 				}
 			}
 		}

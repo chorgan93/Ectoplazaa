@@ -35,6 +35,8 @@ public class TrailHandlerS : MonoBehaviour {
 		buttRigid = buttObj.GetComponent<Rigidbody>();
 		playerRigid = playerRef.GetComponent<Rigidbody>();
 
+		buttRigid.transform.position = playerRef.transform.position;
+
 		//bodyConnector.material = playerRef.GetComponent<Renderer>().material;
 		if (playerRef.characterNum != 0)
 			SetDotMaterial ();
@@ -98,8 +100,12 @@ public class TrailHandlerS : MonoBehaviour {
 		bodyConnector.SetVertexCount(lineHandlerLength);
 
 		// set head and butt as first and last vertext
+
+		Vector3 endPos = endPoint.transform.position;
+		endPos.z = startPoint.transform.position.z;
+
 		bodyConnector.SetPosition(0,startPoint.position);
-		bodyConnector.SetPosition(lineHandlerLength-1,endPoint.transform.position);
+		bodyConnector.SetPosition(lineHandlerLength-1,endPos);
 
 		// set joints as each other vertex
 		if (spawnedDots.Count > 0){
@@ -107,7 +113,9 @@ public class TrailHandlerS : MonoBehaviour {
 				// make sure we're not adding redundant pts
 				//if (i == 0 || (i > 0 && spawnedDots[i].transform.position != spawnedDots[i-1].transform.position
 				  //             && spawnedDots[i].transform.position != buttObj.transform.position)){
-					bodyConnector.SetPosition(i+1,spawnedDots[spawnedDots.Count-1-i].transform.position);
+				Vector3 newPos = spawnedDots[spawnedDots.Count-1-i].transform.position;
+				newPos.z = startPoint.transform.position.z;
+					bodyConnector.SetPosition(i+1,newPos);
 				//}
 			}
 		}
