@@ -1370,7 +1370,7 @@ public class PlayerS : MonoBehaviour {
 				FlingFastAttack(true); 
 			}
 
-			CameraShakeS.C.MicroShake();
+			//CameraShakeS.C.SmallShake();
 
 		}
 
@@ -1380,12 +1380,24 @@ public class PlayerS : MonoBehaviour {
 			// play bounce sound if not groundpounding
 			if (!groundPounded){
 				soundSource.PlayWallHit();
+				// tiny shake if not attacking, bigger one if you are
+				if (attacking){
+					CameraShakeS.C.SmallShake();
+				}
+				else{
+					CameraShakeS.C.MicroShake();
+				}
+
 			//print ("played wall sound");
 			}
 			else{
 				soundSource.PlayGroundPoundHit();
 				//print ("played ground sound");
+				// bigger shake
+				CameraShakeS.C.SmallShake();
 			}
+
+
 		}
 	}
 
