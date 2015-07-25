@@ -1317,8 +1317,13 @@ public class PlayerS : MonoBehaviour {
 		// end bullet attack
 
 		Vector3 hitParticleSpawn = this.transform.position; 
-		hitParticleSpawn.z +=.5f;
-		Instantiate(hitParticles,hitParticleSpawn,Quaternion.identity);
+		//hitParticleSpawn.z +=.5f;
+
+
+		GameObject newParticles =  Instantiate(hitParticles,hitParticleSpawn,Quaternion.identity) as GameObject;
+		newParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[playerNum - 1].GetColor("_TintColor");
+
+
 
 		if (attacking &&
 		    (other.gameObject.tag == "Ground" || other.gameObject.tag == "Wall") &&groundLeeway <= 0 ){
