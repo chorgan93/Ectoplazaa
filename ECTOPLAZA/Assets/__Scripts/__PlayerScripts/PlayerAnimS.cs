@@ -137,6 +137,7 @@ public class PlayerAnimS : MonoBehaviour {
 			headRender.transform.localScale = flipSize;
 		}
 
+
 		// turn tail according to velocity
 		if (headRigid.velocity.x > 0){
 			Vector3 flipSize = tailRender.transform.localScale;
@@ -212,7 +213,7 @@ public class PlayerAnimS : MonoBehaviour {
 		}
 
 		else if (isRunning){
-			print (isRunning);
+			//print (isRunning);
 			runFrameAnimCountdown -= Time.deltaTime*TimeManagerS.timeMult;
 			
 			if (runFrameAnimCountdown <= 0){
@@ -303,7 +304,7 @@ public class PlayerAnimS : MonoBehaviour {
 				//rotateZTail += 180;
 			}
 			
-			tailRender.transform.rotation = Quaternion.Euler(new Vector3(0,0,rotateZTail));
+			//tailRender.transform.rotation = Quaternion.Euler(new Vector3(0,0,rotateZTail));
 			
 		}
 

@@ -20,6 +20,7 @@ public class GameStartS : MonoBehaviour {
 				GameObject newPlayer = Instantiate (playerPrefab, spawnPts [i].transform.position, Quaternion.identity) as GameObject;
 				newPlayer.GetComponent<PlayerS> ().playerNum = i + 1; 
 				newPlayer.GetComponent<PlayerS>().characterNum = GlobalVars.characterNumber[i]; 
+				newPlayer.gameObject.name = "Player" + (i+1);
 				print("Spawned Player " + (i+1)); 
 				GlobalVars.characterIsPlaying[i] = true; 
 
@@ -36,6 +37,8 @@ public class GameStartS : MonoBehaviour {
 					GameObject newPlayer = Instantiate (playerPrefab, spawnPts [i].transform.position, Quaternion.identity) as GameObject;
 					newPlayer.GetComponent<PlayerS> ().playerNum = i + 1; 
 					newPlayer.GetComponent<PlayerS>().characterNum = GlobalVars.characterNumber[i];
+					newPlayer.gameObject.name = "Player" + (i+1);
+
 					GlobalVars.playerList[i] = newPlayer; 
 				}
 

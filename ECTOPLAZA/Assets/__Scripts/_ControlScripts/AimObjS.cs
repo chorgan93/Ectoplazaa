@@ -63,13 +63,11 @@ public class AimObjS : MonoBehaviour {
 
 			if (playerRef.GetChargeTime() > lv3Min){
 
-				float lv3Size = startSize*lv3SizeMult;
 				chargeBarSprite.GetComponent<SpriteRenderer>().sprite = chargeBarSprites[2]; 
 				//transform.localScale = new Vector3(lv3Size,lv3Size,1);
 			}
 			else if (playerRef.GetChargeTime() > lv2Min){
 				
-				float lv2Size = startSize*lv2SizeMult;
 				chargeBarSprite.GetComponent<SpriteRenderer>().sprite = chargeBarSprites[1]; 
 				//transform.localScale = new Vector3(lv2Size,lv2Size,1);
 			}
