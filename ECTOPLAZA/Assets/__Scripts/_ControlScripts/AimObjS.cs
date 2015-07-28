@@ -85,8 +85,32 @@ public class AimObjS : MonoBehaviour {
 
 			transform.position = playerRef.transform.position + aimDir.normalized*aimRadius;
 
-			//print(aimDir); 
+			
+			float newAngle = 0; 
 
+			if(aimDir.x == 0 && aimDir.y == 0)
+			{
+				newAngle = 90 ; 
+			}
+			else if(aimDir.x >= 0 && aimDir.y >= 0)
+			{
+				newAngle += 45 +((45f*aimDir.x) - (45f*aimDir.y));
+			}
+			else if(aimDir.x >= 0 && aimDir.y <= 0)
+			{
+				newAngle += 135 +((-45f*aimDir.x) - (45f*aimDir.y));
+			}
+			else if(aimDir.x <= 0 && aimDir.y <=0)
+			{
+				newAngle += 225 +((-45f*aimDir.x) + (45f*aimDir.y));
+			}
+			else if(aimDir.x <= 0 && aimDir.y >=0)
+			{
+				newAngle += 315 +((45f*aimDir.x) + (45f*aimDir.y));
+			}
+
+			//print(aimDir); 
+			/*
 			float newAngle = 0; 
 
 			if(aimDir.x >= 0)
@@ -97,7 +121,7 @@ public class AimObjS : MonoBehaviour {
 			{
 				newAngle += 270 + (aimDir.y *90); 
 			}
-
+*/
 			//print(newAngle); 
 			chargeBarSprite.transform.rotation = Quaternion.Euler(0,0,-newAngle); 
 

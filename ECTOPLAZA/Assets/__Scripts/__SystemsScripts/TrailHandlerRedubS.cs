@@ -12,6 +12,10 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	private Rigidbody playerRigid;
 	private Rigidbody buttRigid;
 
+	public GameObject trailRendererGO; 
+
+	private LineRenderer playerLine; 
+
 	public GameObject deathParticles; 
 
 	public Transform startPoint;
@@ -24,7 +28,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	public GameObject dotPrefab;
 	public List<GameObject> spawnedDots;
 
-	int fastLength=150,medLength=25, slowLength=10, minLength=5; 
+	int fastLength=150,medLength=75, slowLength=25, minLength=5; 
 
 	Vector3 lastLocation, currentLocation; 
 
@@ -39,6 +43,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
+
 		buttRigid = buttObj.GetComponent<Rigidbody>();
 		playerRigid = playerRef.GetComponent<Rigidbody>();
 
@@ -48,6 +53,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 		if (playerRef.characterNum != 0)
 			SetDotMaterial ();
 
+		playerLine = playerRef.GetComponent<LineRenderer> (); 
 		lastLocation = playerRef.transform.position; 
 		currentLocation = playerRef.transform.position; 
 	}
@@ -61,6 +67,9 @@ public class TrailHandlerRedubS : MonoBehaviour {
 			PlaceDots (); 
 			RemoveDots ();
 			UpdateTail ();
+		} else {
+			lastLocation = playerRef.transform.position;
+			currentLocation = playerRef.transform.position; 
 		}
 
 		//print (playerRigid.velocity.magnitude); 
@@ -69,47 +78,53 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 	void PlaceDots()
 	{
-		if (playerRef.playerNum == 1) {
-			lastLocation = currentLocation;
-			currentLocation = playerRef.transform.position; 
-			float posDistance = Vector3.Distance (lastLocation, currentLocation); 
-			posDistance = Mathf.RoundToInt(posDistance); 
 
 
-			int newDotNumber = (int)posDistance;
-			//print ("Distance: " + posDistance); 
-			//print ("newDots: " + newDotNumber); 
+		lastLocation = currentLocation;
+		currentLocation = playerRef.transform.position; 
+		float posDistance = Vector3.Distance (lastLocation, currentLocation); 
+		posDistance = Mathf.RoundToInt(posDistance); 
 
-			for( int i = 0; i < newDotNumber; i++)
-			{
-				Vector3 newSpawn = Vector3.Lerp (lastLocation, currentLocation, (float)i/newDotNumber);
-				GameObject newDot = Instantiate(dotPrefab,newSpawn,headSprite.transform.rotation) as GameObject; 
-				newDot.GetComponent<Renderer>().material = playerRef.playerMats[playerRef.characterNum -1] ; 
-				newDot.GetComponent<DotColliderS>().whoCreatedMe = playerRef; 
-				spawnedDots.Add(newDot); 
-			}
 
+		int newDotNumber = (int)posDistance;
+		//print ("Distance: " + posDistance); 
+		//print ("newDots: " + newDotNumber); 
+
+
+
+		//PLACE DOTS LERPED ALONG THE LAST 2 PLAYER POSITIONS
+		for( int i = 0; i < newDotNumber; i++)
+		{
+			Vector3 newSpawn = Vector3.Lerp (lastLocation, currentLocation, (float)i/newDotNumber);
+			GameObject newDot = Instantiate(dotPrefab,newSpawn,headSprite.transform.rotation) as GameObject; 
+			newDot.GetComponent<Renderer>().material = playerRef.playerMats[playerRef.characterNum -1] ; 
+			newDot.GetComponent<DotColliderS>().whoCreatedMe = playerRef; 
+			spawnedDots.Add(newDot); 
+		}
+		if(newDotNumber == 0)
+		{
 			//spawn one dot anyway
-
 			GameObject newNewDot = Instantiate(dotPrefab,playerRef.transform.position,headSprite.transform.rotation) as GameObject; 
 			newNewDot.GetComponent<Renderer>().material = playerRef.playerMats[playerRef.characterNum -1] ; 
 			newNewDot.GetComponent<DotColliderS>().whoCreatedMe = playerRef; 
 			spawnedDots.Add(newNewDot); 
 
-			//print (playerVel); 
 
-			//newDotCounter -= 1; 
-			//newDotCounter -= playerVel / maxVel;  
-		
-			//newDotCounter = newDotSpawnRate;
+		}
 
-			/*
+		//print (playerVel); 
+
+		//newDotCounter -= 1; 
+		//newDotCounter -= playerVel / maxVel;  
+	
+		//newDotCounter = newDotSpawnRate;
+
+		/*
 		GameObject newDot = Instantiate(dotPrefab,playerRef.transform.position,playerRef.transform.rotation) as GameObject; 
 		newDot.GetComponent<Renderer>().material = playerRef.playerMats[playerRef.characterNum -1] ; 
 		newDot.GetComponent<DotColliderS>().whoCreatedMe = playerRef; 
 		spawnedDots.Add(newDot); 
 		*/
-		}
 	}
 
 
@@ -117,6 +132,8 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	{
 		Vector3 newPos;
 		Quaternion newRot; 
+
+		//ROTATE THE FINAL BUTT TO WHAT THE HEAD WAS ROTATED TO, 
 
 		if (spawnedDots.Count > 0) {
 			newPos = spawnedDots [0].transform.position;
@@ -131,6 +148,28 @@ public class TrailHandlerRedubS : MonoBehaviour {
 		buttSprite.transform.position = newPos; 
 		buttSprite.transform.rotation = newRot; 
 
+
+		//SET UP LINERENDERERS //NOT DISPLAYING RIGHT, LINE RENDERER TOO GLITCHY
+		/*
+		//make last dot invisible so trail can fade, no sphere
+		if (spawnedDots.Count > 0) {
+
+			playerLine.SetVertexCount(spawnedDots.Count); 
+
+			//spawnedDots [0].GetComponent<Renderer> ().enabled = false; 
+			trailRendererGO.transform.position = spawnedDots[0].transform.position; 
+
+			for (int j = 0; j < spawnedDots.Count -1; j++) {
+
+				playerLine.SetPosition(j, spawnedDots[j].transform.position); 
+
+			}
+
+			playerLine.SetPosition(spawnedDots.Count-1, headSprite.transform.position ); 
+
+
+		}
+		*/
 
 	}
 
@@ -209,7 +248,8 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 
 			GameObject newParticles = Instantiate (deathParticles,spawnPos,Quaternion.identity) as GameObject;
-			newParticles.GetComponent<ParticleSystemRenderer>().material = playerRef.playerParticleMats [playerRef.characterNum - 1];
+			newParticles.GetComponent<ParticleSystem>().startColor = playerRef.playerParticleMats[playerRef.characterNum - 1].GetColor("_TintColor");
+			newParticles.GetComponent<Rigidbody>().velocity = playerRigid.velocity; 
 
 		}
 	}
@@ -225,6 +265,12 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 		Gizmos.DrawWireSphere (newPos, .5f); 
 		//print (newPos.x + " " + newPos.y); 
+
+		foreach (GameObject d in spawnedDots) {
+
+			Gizmos.DrawWireSphere(d.transform.position,1f);
+
+		}
 	}
 
 }

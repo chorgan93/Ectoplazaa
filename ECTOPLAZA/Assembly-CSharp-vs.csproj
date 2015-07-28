@@ -51,6 +51,7 @@
      <Compile Include="Assets\__Scripts\CameraScripts\CameraShakeS.cs" />
      <Compile Include="Assets\__Scripts\EnvironmentScripts\BGMS.cs" />
      <Compile Include="Assets\__Scripts\EnvironmentScripts\FakeParaS.cs" />
+     <Compile Include="Assets\__Scripts\EnvironmentScripts\ParticleSystemAutoDestroy.cs" />
      <Compile Include="Assets\__Scripts\EnvironmentScripts\SFXObjS.cs" />
      <Compile Include="Assets\__Scripts\MenuScripts\CharacterSelectMenu.cs" />
      <Compile Include="Assets\__Scripts\MenuScripts\LevelSelectMenu.cs" />

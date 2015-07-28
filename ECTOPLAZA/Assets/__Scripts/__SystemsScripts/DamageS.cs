@@ -21,6 +21,68 @@ public class DamageS : MonoBehaviour {
 
 	}
 
+	public void ManageCollision(GameObject other){
+		
+		
+		if (other.gameObject.tag == "Player") {
+			//print (other.name); 
+			
+			PlayerS otherPlayer = other.gameObject.GetComponent<PlayerS> ();
+			
+			if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0) {
+				// only deal damage if higher priority or other player isnt attacking
+				if ((!otherPlayer.attacking) || (otherPlayer.attacking && otherPlayer.attackPriority < playerRef.attackPriority)) {
+					otherPlayer.TakeDamage (50f);
+					otherPlayer.SleepTime (pauseTime);
+					playerRef.SleepTime (pauseTime);
+					
+					MakeExplosion(otherPlayer.gameObject, playerRef.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
+					
+					CameraShakeS.C.LargeShake ();
+					
+					// add to score
+					//playerRef.score++;
+				} else {
+					// apply knockback to both players and end attacks if priority is same
+					if (otherPlayer.attacking && otherPlayer.attackPriority == playerRef.attackPriority) {
+						// apply vel to both players equal to current vel x something
+						MakeExplosion(otherPlayer.gameObject, playerRef.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
+
+						print ("Tie!");
+					}
+				}
+			}
+		}
+
+		 if (other.gameObject.tag == "PlayerTrail"){
+
+
+			//print ("yeah");
+
+			PlayerS otherPlayer = other.GetComponent<DotColliderS>().whoCreatedMe;
+
+			if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0){
+
+				print (other.GetComponent<DotColliderS>().whoCreatedMe); 
+
+				//print (playerRef);
+			
+				otherPlayer.TakeDamage(50f);
+				otherPlayer.SleepTime(pauseTime);
+				playerRef.SleepTime(pauseTime/4);
+
+				CameraShakeS.C.LargeShake();
+
+				
+				// add to score
+				//playerRef.score++;
+
+			}
+		}
+
+	}
+
+	/*
 	void OnTriggerEnter(Collider other){
 
 
@@ -80,8 +142,9 @@ public class DamageS : MonoBehaviour {
 
 			}
 		}
-*/
+
 	}
+	*/
 
 	void MakeExplosion(GameObject object1, GameObject object2, Vector3 exploPos)
 	{

@@ -140,7 +140,6 @@ public class PlayerS : MonoBehaviour {
 	private bool snapReturning = false;
 
 	[HideInInspector]
-	public bool dropDown = false;
 	private float lv1ButtDelay = 1f;
 	public float lv2FlingForce = 100;
 	private float lv3BulletSpeed = 50000; //was 12500
@@ -158,6 +157,7 @@ public class PlayerS : MonoBehaviour {
 	//VISUAL VARS------------------------------------------------
 	public GameObject deathParticles, jumpParticles, hitParticles, groundedParticles; 
 	public GameObject dangerousSprite; 
+	public GameObject trailRendererGO; 
 
 	public Material [] playerMats;
 	public Material [] playerParticleMats; 
@@ -230,24 +230,18 @@ public class PlayerS : MonoBehaviour {
 
 					//WallJump ();
 
-					MiscAction(); //TRAIL RENDERER UPDATE, OTHER THINGS
 	
 	
 					ChargeAttack();
 					AttackRelease();
 	
 				}
+
+				MiscAction(); //TRAIL RENDERER UPDATE, OTHER THINGS
 	
 				Respawn();
 	
-
-				if (dropDown){
-					Vector3 dropVel = ownRigid.velocity;
-					dropVel.x = 0;
-					ownRigid.velocity = dropVel;
-					//print (ownRigid.velocity);
-				}
-	
+				/*
 				if (isDangerous && !respawning){
 					if (!dangerObj.activeSelf){
 						dangerObj.SetActive(true);
@@ -256,6 +250,7 @@ public class PlayerS : MonoBehaviour {
 				else{
 					dangerObj.SetActive(false);
 				}
+				*/
 			}
 	
 		}
@@ -457,7 +452,9 @@ public class PlayerS : MonoBehaviour {
 				FlingFastAttack (false);
 			}
 			if (attackToPerform == 1) {
-				FlingSlowAttack (false);
+				//FlingSlowAttack (false);
+				FlingMiniAttack (false); //replacing for now
+
 				//print ("started slow fling");
 			} else if (attackToPerform == 0) {
 				//JabAttack();
@@ -484,10 +481,9 @@ public class PlayerS : MonoBehaviour {
 
 		if(!performedAttack)
 		{
-			ownRigid.useGravity = false;
-			
+
 			bulletVel = attackDir.normalized*Time.deltaTime*lv1OutRate ;
-			ownRigid.AddForce(bulletVel* (2f*chargeTime),ForceMode.VelocityChange);
+			ownRigid.AddForce(bulletVel* (3f*chargeTime),ForceMode.VelocityChange);
 
 			//print(chargeTime); 
 
@@ -573,7 +569,6 @@ public class PlayerS : MonoBehaviour {
 						
 						// stop vel
 						ownRigid.velocity = Vector3.zero;
-						dropDown = true;
 					}
 				}
 			}
@@ -848,7 +843,6 @@ public class PlayerS : MonoBehaviour {
 			//}
 			//isDangerous = false;
 			canCharge = true;
-			dropDown = false;
 		}
 
 		// turn jump ability on/off depending on grounded status
@@ -1039,12 +1033,12 @@ public class PlayerS : MonoBehaviour {
 		if (hurtCounter < 0) {
 
 			spriteObjRender.color = Color.white;
-			GetComponent<TrailRenderer>().material = playerMats [characterNum -1];
+			trailRendererGO.GetComponent<TrailRenderer>().material = playerMats [characterNum -1];
 
 
 		} else {
 			spriteObjRender.color = hurtTint; 
-			GetComponent<TrailRenderer>().material = playerHurtMats[characterNum -1];
+			trailRendererGO.GetComponent<TrailRenderer>().material = playerHurtMats[characterNum -1];
 		}
 
 	}
@@ -1053,7 +1047,7 @@ public class PlayerS : MonoBehaviour {
 	public void SetSkin() //Ninja, Acid, Mummy, Pink
 	{
 		this.GetComponent<LineRenderer> ().material = playerMats [characterNum-1];
-		this.GetComponent<TrailRenderer> ().material = playerMats [characterNum - 1]; 
+		trailRendererGO.GetComponent<TrailRenderer> ().material = playerMats [characterNum - 1]; 
 		spriteObject.GetComponent<PlayerAnimS> ().SetCurrentSprites (characterNum);
 		GetComponent<TrailHandlerRedubS> ().SetDotMaterial ();
 
@@ -1063,6 +1057,16 @@ public class PlayerS : MonoBehaviour {
 	void Respawn () {
 
 		if (respawning){
+			if(respawnTimeCountdown == respawnTimeMax)
+			{
+				//move player to new respawn position right away so trail renderer has time to update.
+				int randomSpawn = Random.Range(0, allSpawnPts.Length-1);
+				GameObject newSpawn = allSpawnPts[randomSpawn];
+				transform.position = newSpawn.transform.position;
+
+				trailRendererGO.GetComponent<TrailRenderer>().enabled = false ;
+
+			}
 			respawnTimeCountdown -= Time.deltaTime*TimeManagerS.timeMult;
 			ownRigid.useGravity = false;
 			ownRigid.velocity = Vector3.zero;
@@ -1092,12 +1096,8 @@ public class PlayerS : MonoBehaviour {
 
 				respawnInvulnTime = 1.5f;
 
-				int randomSpawn = Random.Range(0, allSpawnPts.Length-1);
-				GameObject newSpawn = allSpawnPts[randomSpawn];
-				transform.position = newSpawn.transform.position;
-
 				ownRigid.useGravity = true;
-				
+				trailRendererGO.GetComponent<TrailRenderer>().enabled = true ;
 				health = maxHealth;
 			}
 		}
@@ -1133,6 +1133,9 @@ public class PlayerS : MonoBehaviour {
 	void OnCollisionEnter(Collision other){
 		// end bullet attack
 
+		if(isDangerous)
+			dangerObj.GetComponent<DamageS> ().ManageCollision (other.gameObject); 
+
 		Vector3 hitParticleSpawn = this.transform.position; 
 		//hitParticleSpawn.z +=.5f;
 
@@ -1159,12 +1162,15 @@ public class PlayerS : MonoBehaviour {
 			}
 			if (attackToPerform == 1)
 			{
-				FlingSlowAttack(true); 
+				FlingMiniAttack(true);
+
+				//FlingSlowAttack(true); 
 			}
 			if (attackToPerform == 2)
 			{
 				FlingFastAttack(true); 
 			}
+
 
 			//CameraShakeS.C.SmallShake();
 
@@ -1195,6 +1201,24 @@ public class PlayerS : MonoBehaviour {
 
 
 		}
+
+
+		attacking = false; 
+		isDangerous = false; 
+		this.GetComponent<SphereCollider>().material = normalPhysics; 
+
+	}
+
+	void OnTriggerEnter(Collider other) 
+	{
+		if(isDangerous)
+			dangerObj.GetComponent<DamageS> ().ManageCollision (other.gameObject); 
+
+
+		//attacking = false; 
+		//isDangerous = false; 
+		//this.GetComponent<SphereCollider>().material = normalPhysics; 
+
 	}
 
 	public void UnlockVel () {
