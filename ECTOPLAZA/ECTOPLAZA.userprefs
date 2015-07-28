@@ -2,8 +2,11 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/__Scripts/MenuScripts/StartMenu.cs">
     <Files>
-      <File FileName="Assets/__Scripts/MenuScripts/StartMenu.cs" Line="21" Column="44" />
-      <File FileName="Assets/__Scripts/MenuScripts/LevelSelectMenu.cs" Line="64" Column="86" />
+      <File FileName="Assets/__Scripts/MenuScripts/StartMenu.cs" Line="52" Column="36" />
+      <File FileName="Assets/__Scripts/MenuScripts/LevelSelectMenu.cs" Line="62" Column="4" />
+      <File FileName="Assets/__Scripts/EnvironmentScripts/SFXObjS.cs" Line="14" Column="40" />
+      <File FileName="Assets/__Scripts/EnvironmentScripts/BGMS.cs" Line="44" Column="48" />
+      <File FileName="Assets/__Scripts/CameraScripts/CameraShakeS.cs" Line="47" Column="81" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

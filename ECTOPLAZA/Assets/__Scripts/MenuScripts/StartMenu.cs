@@ -48,6 +48,8 @@ public class StartMenu : MonoBehaviour {
 
 	void Start () 
 	{
+
+		fullscreenOn = Screen.fullScreen;
 		inputDelay = inputDelayStart;
 
 		platformType = PlatformS.GetPlatform (); 
@@ -286,15 +288,17 @@ public class StartMenu : MonoBehaviour {
 								if (!movedCursorLeftRight){
 									if (Input.GetAxis("HorizontalPlayer" + playerNum + platformType) > 0){
 										// fullscreen off
-										Screen.SetResolution(Screen.width, Screen.height, false);
+										//Screen.SetResolution(Screen.width, Screen.height, false);
 
 										fullscreenOn = false;
+										Screen.fullScreen = fullscreenOn;
 									}
 									// else fullscreen on
 									else{
 										
-										Screen.SetResolution(Screen.width, Screen.height, true);
+										//Screen.SetResolution(Screen.width, Screen.height, true);
 										fullscreenOn = true;
+										Screen.fullScreen = fullscreenOn;
 									}
 									
 									movedCursorLeftRight = true;

@@ -54,6 +54,7 @@
      <Compile Include="Assets\__Scripts\EnvironmentScripts\SFXObjS.cs" />
      <Compile Include="Assets\__Scripts\MenuScripts\CharacterSelectMenu.cs" />
      <Compile Include="Assets\__Scripts\MenuScripts\LevelSelectMenu.cs" />
+     <Compile Include="Assets\__Scripts\MenuScripts\PauseScreenS.cs" />
      <Compile Include="Assets\__Scripts\MenuScripts\StartMenu.cs" />
      <Compile Include="Assets\__Scripts\_ControlScripts\AimObjS.cs" />
      <Compile Include="Assets\__Scripts\_ControlScripts\ButtObjS.cs" />
