@@ -15,12 +15,17 @@ public class CharacterSelectMenu : MonoBehaviour {
 
 	GameObject [] players = new GameObject[4]; 
 
+	public string nextLevelString;
+
 	int totalPlayers = 0; 
 
 	// Use this for initialization
 	void Start () {
 	
 		platformType = PlatformS.GetPlatform (); 
+
+		
+		nextLevelString = LevelSelectMenu.selectedLevelString;
 	}
 	
 	// Update is called once per frame
@@ -184,7 +189,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 				GlobalVars.characterSelected = true; 
 				GlobalVars.launchingFromScene = false; 
 
-				Application.LoadLevel("Protoscene_Colin");
+				Application.LoadLevel(nextLevelString);
 			}
 
 		}

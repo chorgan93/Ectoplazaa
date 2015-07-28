@@ -2,6 +2,9 @@
 using System.Collections;
 
 public class CameraShakeS : MonoBehaviour {
+
+	public static float shakeStrengthMult = 1f;
+
 	// Variables for shaking
 	public Vector3				originPosition;
 	public float				shake_intensity;
@@ -40,8 +43,8 @@ public class CameraShakeS : MonoBehaviour {
 			//print ("SHAKING");
 			
 			Vector3 camPos = originPosition;
-			camPos.x += Random.insideUnitSphere.x * shake_intensity;
-			camPos.y += Random.insideUnitSphere.y/2 * shake_intensity;
+			camPos.x += Random.insideUnitSphere.x * shake_intensity * shakeStrengthMult;
+			camPos.y += Random.insideUnitSphere.y/2 * shake_intensity * shakeStrengthMult;
 			camPos.z = transform.position.z;
 			transform.position = camPos;
 			

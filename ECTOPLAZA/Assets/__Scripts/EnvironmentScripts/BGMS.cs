@@ -6,6 +6,8 @@ public class BGMS : MonoBehaviour {
 	// script for background music player
 	private static BGMS instance;
 
+	public static float bgmVolumeMult = 1f;
+
 	private bool alreadyCreated = false;
 
 	private AudioSource ownSource;
@@ -38,6 +40,8 @@ public class BGMS : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+		ownSource.volume = maxVolume * bgmVolumeMult;
 	
 	}
 }
