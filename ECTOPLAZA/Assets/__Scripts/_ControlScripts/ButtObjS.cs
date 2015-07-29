@@ -103,7 +103,6 @@ public class ButtObjS : MonoBehaviour {
 						isFollowing = true;
 						// stop vel
 						parentObj.GetComponent<Rigidbody>().velocity = Vector3.zero;
-						parentObj.dropDown = true;
 					}
 				}
 			}

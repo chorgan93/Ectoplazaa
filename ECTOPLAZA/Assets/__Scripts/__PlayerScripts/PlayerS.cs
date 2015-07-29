@@ -44,7 +44,6 @@ public class PlayerS : MonoBehaviour {
 	private float triggerSensitivity = 0.5f;
 
 	private bool doFling = false;
-	private bool isSnapping = false;
 
 	public GameObject placeDotPrefab;
 	
@@ -71,8 +70,8 @@ public class PlayerS : MonoBehaviour {
 	//public bool dontCorrectSpeed = false;
 
 	public bool isDangerous = false;
-	public float maxHealth = 3;
-	public float health = 3;
+	public float maxHealth = 100;
+	public float health = 100;
 
 	public bool facingRight = false;
 
@@ -141,7 +140,6 @@ public class PlayerS : MonoBehaviour {
 	private bool snapReturning = false;
 
 	[HideInInspector]
-	public bool dropDown = false;
 	private float lv1ButtDelay = 1f;
 	public float lv2FlingForce = 100;
 	private float lv3BulletSpeed = 50000; //was 12500
@@ -159,10 +157,13 @@ public class PlayerS : MonoBehaviour {
 	//VISUAL VARS------------------------------------------------
 	public GameObject deathParticles, jumpParticles, hitParticles, groundedParticles; 
 	public GameObject dangerousSprite; 
+	public GameObject trailRendererGO; 
 
 	public Material [] playerMats;
 	public Material [] playerParticleMats; 
+	public Material [] playerHurtMats; 
 	public Material	 hurtMat; 
+	Color hurtTint = new Color(255f/255f,130f/255f,130f/255f); 
 
 	// sound stuff
 	[HideInInspector]
@@ -178,6 +179,8 @@ public class PlayerS : MonoBehaviour {
 	public float 		wallDragForce;
 	private bool 		clingingToWall = false;
 
+	int hurtCounter, hurtTimer = 12; 
+
 	public float respawnInvulnTime = 1.5f;
 
 	// Use this for initialization
@@ -191,9 +194,6 @@ public class PlayerS : MonoBehaviour {
 
 		allSpawnPts = GameObject.FindGameObjectsWithTag("Spawn");
 
-		//transform.position = spawnPos = spawnPt.transform.position;
-		GetComponent<TrailHandlerS>().buttObj.transform.position = spawnPos;
-		
 		//physicsLayerDefault = gameObject.layer;
 
 		if (GlobalVars.characterSelected && GlobalVars.launchingFromScene) { //assign character numbers from global vars when spawning only in game, not while in character select screen
@@ -230,31 +230,18 @@ public class PlayerS : MonoBehaviour {
 
 					//WallJump ();
 
-					MiscAction(); //TRAIL RENDERER UPDATE, OTHER THINGS
 	
-					//Stretch();
-					//Snap();
 	
 					ChargeAttack();
 					AttackRelease();
 	
 				}
+
+				MiscAction(); //TRAIL RENDERER UPDATE, OTHER THINGS
 	
 				Respawn();
 	
-	
-				if (lockInPlace){
-					//DISABLED FOR BOUNCINESS ------------------------------------------------------------------------------------------
-					//ownRigid.velocity = Vector3.zero;
-				}
-
-				if (dropDown){
-					Vector3 dropVel = ownRigid.velocity;
-					dropVel.x = 0;
-					ownRigid.velocity = dropVel;
-					//print (ownRigid.velocity);
-				}
-	
+				/*
 				if (isDangerous && !respawning){
 					if (!dangerObj.activeSelf){
 						dangerObj.SetActive(true);
@@ -263,6 +250,7 @@ public class PlayerS : MonoBehaviour {
 				else{
 					dangerObj.SetActive(false);
 				}
+				*/
 			}
 	
 		}
@@ -418,7 +406,6 @@ public class PlayerS : MonoBehaviour {
 					// fully charged attack
 					attackToPerform = 2;
 					attackPriority = 2;
-					GetComponent<TrailHandlerS>().SetButtDelay(0.2f);
 				}
 				else if (chargeTime >= medChargeTime){
 					attackToPerform = 1;
@@ -428,7 +415,6 @@ public class PlayerS : MonoBehaviour {
 				else{
 					attackToPerform = 0;
 					attackPriority = 0;
-					GetComponent<TrailHandlerS>().SetButtDelay(0.1f);
 				}
 			}
 		}
@@ -436,11 +422,11 @@ public class PlayerS : MonoBehaviour {
 	}
 	void AttackRelease () {
 
-		if (attacking){
+		if (attacking) {
 
-			groundLeeway -= Time.deltaTime*TimeManagerS.timeMult;
+			groundLeeway -= Time.deltaTime * TimeManagerS.timeMult;
 
-			if (!performedAttack)
+			if (!performedAttack) 
 			{
 				isDangerous = true;
 					
@@ -451,35 +437,36 @@ public class PlayerS : MonoBehaviour {
 
 
 				attackDir = Vector3.zero;
-				attackDir.x = Input.GetAxis("HorizontalPlayer"+playerNum+platformType);
-				attackDir.y = Input.GetAxis("VerticalPlayer"+playerNum+platformType);
+				attackDir.x = Input.GetAxis ("HorizontalPlayer" + playerNum + platformType);
+				attackDir.y = Input.GetAxis ("VerticalPlayer" + playerNum + platformType);
 
-				if(attackDir.x == 0 && attackDir.y == 0)
-				{
+				if (attackDir.x == 0 && attackDir.y == 0) {
 					attackDir.x = 1; 
 				}
 
 				// play attack release sound
-				soundSource.PlayReleaseSound();
+				soundSource.PlayReleaseSound ();
 			}
 
-			if (attackToPerform == 2)
-			{
-				FlingFastAttack(false);
+			if (attackToPerform == 2) {
+				FlingFastAttack (false);
 			}
-			if (attackToPerform == 1)
-			{
-				FlingSlowAttack(false);
+			if (attackToPerform == 1) {
+				//FlingSlowAttack (false);
+				FlingMiniAttack (false); //replacing for now
+
 				//print ("started slow fling");
-			}
-			else if( attackToPerform == 0)
-			{
+			} else if (attackToPerform == 0) {
 				//JabAttack();
-				FlingMiniAttack(false);
+				FlingMiniAttack (false);
 			}
 			
 			performedAttack = true;
 
+		} 
+		else 
+		{
+			attackPriority = 0; 
 		}
 
 
@@ -494,10 +481,9 @@ public class PlayerS : MonoBehaviour {
 
 		if(!performedAttack)
 		{
-			ownRigid.useGravity = false;
-			
+
 			bulletVel = attackDir.normalized*Time.deltaTime*lv1OutRate ;
-			ownRigid.AddForce(bulletVel* (2f*chargeTime),ForceMode.VelocityChange);
+			ownRigid.AddForce(bulletVel* (3f*chargeTime),ForceMode.VelocityChange);
 
 			//print(chargeTime); 
 
@@ -583,7 +569,6 @@ public class PlayerS : MonoBehaviour {
 						
 						// stop vel
 						ownRigid.velocity = Vector3.zero;
-						dropDown = true;
 					}
 				}
 			}
@@ -677,7 +662,6 @@ public class PlayerS : MonoBehaviour {
 			// have butt go to head
 			//buttObj.isFollowing = true;
 			// lock in place so no sliding
-			lockInPlace = true;
 
 			attacking = false;
 			isDangerous = false;
@@ -726,11 +710,7 @@ public class PlayerS : MonoBehaviour {
 					
 					//print ("DONT ATTACK THRU WALL");
 					
-					// have butt go to head
-					//buttObj.isFollowing = true;
-					// lock in place so no sliding
-					lockInPlace = true;
-					//GetComponent<TrailHandlerS>().SetButtDelay(0.8f);
+
 					// set attack to 2 so butt behaves properly
 					attackToPerform = 2;
 
@@ -760,17 +740,8 @@ public class PlayerS : MonoBehaviour {
 	void Walk () 
 	{
 
-			//print (dontCorrectSpeed);
-
-		// JULY 15: Trying to remove dontCorrectSpeed
-
-			//if (dontCorrectSpeed && groundDetect.Grounded())
-			//{
-			//	dontCorrectSpeed = false;
-			//}
-
-			//if (!isSnapping && !stretching && !groundPounded){
-			if (!charging && canAirStrafe) //&& !attacking)
+	
+			if (!charging && canAirStrafe)
 			{
 				float xForce = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
 				//float xForce = Input.GetAxis("Horizontal");
@@ -872,7 +843,6 @@ public class PlayerS : MonoBehaviour {
 			//}
 			//isDangerous = false;
 			canCharge = true;
-			dropDown = false;
 		}
 
 		// turn jump ability on/off depending on grounded status
@@ -900,9 +870,7 @@ public class PlayerS : MonoBehaviour {
 		}
 
 
-		// detect button press, do jump
-		//if (!isSnapping && !stretching){
-		//if (!attacking && !charging){
+
 		if (Input.GetButton("AButtonPlayer" + playerNum + platformType) && !jumpButtonDown)
 		{
 
@@ -947,7 +915,6 @@ public class PlayerS : MonoBehaviour {
 				// play an attack sound
 				soundSource.PlayChargeLv2();
 
-			GetComponent<TrailHandlerS>().SetButtDelay(0.1f);
 
 				// allow for air control
 				//dontCorrectSpeed = false;
@@ -1061,207 +1028,28 @@ public class PlayerS : MonoBehaviour {
 		else
 			dangerousSprite.GetComponent<SpriteRenderer>().enabled = false; 
 
-	}
+		hurtCounter -= 1;
 
-	void Stretch () {
+		if (hurtCounter < 0) {
 
-		if (!isSnapping){
-
-			// turn stretch button bool on/off
-			if (Input.GetAxis("RightTriggerPlayer" + playerNum + platformType) > triggerSensitivity){
-				stretchButtonDown = true;
-			}
-			else{
-				stretchButtonDown = false;
-			}
-	
-			// when not stretching, check for stretch
-			if (!stretching){
-	
-				if (groundDetect.Grounded()){
-					canStretch = true;
-					isSnapping = false;
-				}
-	
-				// start stretch
-				if (stretchButtonDown && canStretch && groundDetect.Grounded()){
-					stretching = true;
-					canStretch = false;
-
-					//buttObj.transform.position = transform.position;
-
-					placeDotCountdown = placeDotCountdownMax;
-				}
-			}
-			else{
-				if (!stretchButtonDown){
-					stretching = false;
-					if (movePositions.Count > 0){
-						isSnapping = true;
-					}
-					currentTarget = 0;
-				}
-	
-				Vector3 stretchVel = Vector3.zero;
-				stretchVel.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
-				stretchVel.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
-				stretchVel = stretchVel.normalized;
-				stretchVel *= stretchSpeed*TimeManagerS.timeMult*Time.deltaTime;
-
-				ownRigid.velocity = stretchVel;
-
-				if (stretchVel != Vector3.zero){
-					placeDotCountdown -= Time.deltaTime*TimeManagerS.timeMult;
-				}
-
-				// place movement positions
-				if (placeDotCountdown <= 0){
-					placeDotCountdown = placeDotCountdownMax;
-
-					GameObject placeDot = Instantiate(placeDotPrefab, transform.position, Quaternion.identity)
-						as GameObject;
-
-					// change size of dot for now to indicate future power of fling
-					if (placedDots.Count-1 > flingLv2Cap){
-						placeDot.transform.localScale *= 1.25f;
-					}
-					// if inbetween, keep same size
-					if (placedDots.Count-1 < flingLv1Cap){
-						placeDot.transform.localScale *= 0.75f;
-					}
-					
-					placeDot.GetComponent<DotColliderS>().whoCreatedMe = this;
-					
-					placedDots.Add(placeDot);
-					movePositions.Add(transform.position);
-				}
-	
-			}
-		}
+			spriteObjRender.color = Color.white;
+			trailRendererGO.GetComponent<TrailRenderer>().material = playerMats [characterNum -1];
 
 
-	}
-
-	void Snap () {
-
-		if (isSnapping){
-
-			ownRigid.velocity = Vector3.zero;
-
-
-			// check for fling
-			if (Input.GetAxis("RightTriggerPlayer"+playerNum+platformType) >= 1){
-				doFling = true;
-			}
-			
-			
-			
-			moveToNextPosCountdown -= Time.deltaTime*TimeManagerS.timeMult;
-			
-			if (moveToNextPosCountdown <= 0){
-				//print (currentTarget);
-				if (placedDots.Count >= currentTarget-1){
-					Destroy(placedDots[currentTarget]);
-				}
-				currentTarget++;
-				
-				if (currentTarget > movePositions.Count-1){
-					isSnapping = false;
-					isDangerous = true;
-					//buttObjRigid.velocity = Vector3.zero;
-
-					int numDots = movePositions.Count;
-
-					movePositions.Clear();
-					placedDots.Clear();
-					currentTarget = 0;
-
-					//rigidbody.useGravity = true;
-					if (doFling){
-						
-						snapVel.z = 0;
-
-						//snapVel.x = Input.GetAxis("HorizontalPlayer"+playerNum+platformType);
-						//snapVel.y = Input.GetAxis("VerticalPlayer"+playerNum+platformType);
-
-						snapVel = snapVel.normalized;
-
-						if (snapVel != Vector3.zero){
-						
-							if (numDots > flingLv2Cap){
-								snapVel*=flingForceMultLv3*Time.deltaTime;
-							}
-							else if (numDots > flingLv1Cap){
-								snapVel*=flingForceMultLv2*Time.deltaTime;
-							}
-							else{
-								snapVel*=flingForceMult*Time.deltaTime;
-							}
-
-							
-						}
-						else{
-							// CLEAN UP after confirmation of working code
-							snapVel= GetComponent<TrailHandlerS>().buttObj.
-								GetComponent<Rigidbody>().velocity.normalized*flingForceMult*Time.deltaTime;
-						}
-						
-						//CameraShakeS.C.TimeSleep(0.1f);
-						//capturedVel = snapVel;
-						//capturedGravity = true;
-						//attackDelay = attackDelayMax;
-
-
-					}
-					else{
-						snapVel= GetComponent<TrailHandlerS>().buttObj.
-							GetComponent<Rigidbody>().velocity;
-					}
-					prevVel = ownRigid.velocity = snapVel;
-					//buttObjRigid.velocity = Vector3.zero;
-
-					//dontCorrectSpeed = true;
-
-					if (doFling){
-						if (numDots > flingLv2Cap){
-							SleepTime(flingPauseTime*1.25f);
-						}
-						else if (numDots > flingLv1Cap){
-							SleepTime(flingPauseTime);
-						}
-						else{
-							SleepTime(flingPauseTime*0.75f);
-						}
-						
-						doFling = false;
-					}
-
-				}
-				else{
-					
-					Vector3 snapDir = (movePositions[currentTarget]-GetComponent<TrailHandlerS>().buttObj.transform.position);
-					
-					snapVel = snapDir/(placeDotCountdownMax/snapSpeedMult);
-					
-				}
-				
-				moveToNextPosCountdown = placeDotCountdownMax/snapSpeedMult;
-			}
-			
-			
-			//buttObjRigid.velocity = snapVel*TimeManagerS.timeMult;
-			
-			
-		
+		} else {
+			spriteObjRender.color = hurtTint; 
+			trailRendererGO.GetComponent<TrailRenderer>().material = playerHurtMats[characterNum -1];
 		}
 
 	}
+
 
 	public void SetSkin() //Ninja, Acid, Mummy, Pink
 	{
 		this.GetComponent<LineRenderer> ().material = playerMats [characterNum-1];
+		trailRendererGO.GetComponent<TrailRenderer> ().material = playerMats [characterNum - 1]; 
 		spriteObject.GetComponent<PlayerAnimS> ().SetCurrentSprites (characterNum);
-		GetComponent<TrailHandlerS> ().SetDotMaterial ();
+		GetComponent<TrailHandlerRedubS> ().SetDotMaterial ();
 
 
 	}
@@ -1269,6 +1057,16 @@ public class PlayerS : MonoBehaviour {
 	void Respawn () {
 
 		if (respawning){
+			if(respawnTimeCountdown == respawnTimeMax)
+			{
+				//move player to new respawn position right away so trail renderer has time to update.
+				int randomSpawn = Random.Range(0, allSpawnPts.Length-1);
+				GameObject newSpawn = allSpawnPts[randomSpawn];
+				transform.position = newSpawn.transform.position;
+
+				trailRendererGO.GetComponent<TrailRenderer>().enabled = false ;
+
+			}
 			respawnTimeCountdown -= Time.deltaTime*TimeManagerS.timeMult;
 			ownRigid.useGravity = false;
 			ownRigid.velocity = Vector3.zero;
@@ -1277,7 +1075,6 @@ public class PlayerS : MonoBehaviour {
 			GetComponent<Collider>().enabled = false;
 
 			stretching = false;
-			isSnapping = false;
 			isDangerous = false;
 			jumpButtonDown = false;
 			stretchButtonDown = false;
@@ -1299,14 +1096,8 @@ public class PlayerS : MonoBehaviour {
 
 				respawnInvulnTime = 1.5f;
 
-				int randomSpawn = Random.Range(0, allSpawnPts.Length-1);
-				GameObject newSpawn = allSpawnPts[randomSpawn];
-				transform.position = newSpawn.transform.position;
-				GetComponent<TrailHandlerS>().buttObj.transform.position = newSpawn.transform.position;
-
-				GetComponent<TrailHandlerS>().ClearTrail();
 				ownRigid.useGravity = true;
-				
+				trailRendererGO.GetComponent<TrailRenderer>().enabled = true ;
 				health = maxHealth;
 			}
 		}
@@ -1315,11 +1106,17 @@ public class PlayerS : MonoBehaviour {
 
 	public void TakeDamage(float dmg){
 		health -= dmg;
+		hurtCounter = hurtTimer; 
+
 		if (health <= 0){
+			GetComponent<TrailHandlerRedubS>().DestroyPlayerDots(); 
+
 			respawning = true;
 			respawnTimeCountdown = respawnTimeMax;
 
 			Instantiate(deathParticles, this.transform.position, Quaternion.identity); 
+
+
 		}
 	}
 
@@ -1336,6 +1133,9 @@ public class PlayerS : MonoBehaviour {
 	void OnCollisionEnter(Collision other){
 		// end bullet attack
 
+		if(isDangerous)
+			dangerObj.GetComponent<DamageS> ().ManageCollision (other.gameObject); 
+
 		Vector3 hitParticleSpawn = this.transform.position; 
 		//hitParticleSpawn.z +=.5f;
 
@@ -1345,8 +1145,7 @@ public class PlayerS : MonoBehaviour {
 
 
 
-		if (attacking &&
-		    (other.gameObject.tag == "Ground" || other.gameObject.tag == "Wall") &&groundLeeway <= 0 ){
+		if (attacking &&groundLeeway <= 0 ){
 			//attacking = false;
 			//print ("STOP!!");
 
@@ -1355,7 +1154,7 @@ public class PlayerS : MonoBehaviour {
 
 
 			//buttDelayCountdown = 0;
-
+			//TURN OFF THE ATTACKS
 			if (attackToPerform == 0)
 			{
 				//JabAttack();
@@ -1363,12 +1162,15 @@ public class PlayerS : MonoBehaviour {
 			}
 			if (attackToPerform == 1)
 			{
-				FlingSlowAttack(true); 
+				FlingMiniAttack(true);
+
+				//FlingSlowAttack(true); 
 			}
 			if (attackToPerform == 2)
 			{
 				FlingFastAttack(true); 
 			}
+
 
 			//CameraShakeS.C.SmallShake();
 
@@ -1399,6 +1201,24 @@ public class PlayerS : MonoBehaviour {
 
 
 		}
+
+
+		attacking = false; 
+		isDangerous = false; 
+		this.GetComponent<SphereCollider>().material = normalPhysics; 
+
+	}
+
+	void OnTriggerEnter(Collider other) 
+	{
+		if(isDangerous)
+			dangerObj.GetComponent<DamageS> ().ManageCollision (other.gameObject); 
+
+
+		//attacking = false; 
+		//isDangerous = false; 
+		//this.GetComponent<SphereCollider>().material = normalPhysics; 
+
 	}
 
 	public void UnlockVel () {
