@@ -70,8 +70,9 @@ public class PlayerS : MonoBehaviour {
 	//public bool dontCorrectSpeed = false;
 
 	public bool isDangerous = false;
-	public float maxHealth = 100;
-	public float health = 100;
+	public float maxHealth = 50;
+	public float initialHealth = 10;
+	public float health = 10;
 
 	public bool facingRight = false;
 
@@ -1162,7 +1163,7 @@ public class PlayerS : MonoBehaviour {
 
 				ownRigid.useGravity = true;
 				trailRendererGO.GetComponent<TrailRenderer>().enabled = true ;
-				health = maxHealth;
+				health = initialHealth;
 			}
 		}
 
