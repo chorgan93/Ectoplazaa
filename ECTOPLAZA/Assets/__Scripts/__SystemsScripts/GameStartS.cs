@@ -21,7 +21,7 @@ public class GameStartS : MonoBehaviour {
 				newPlayer.GetComponent<PlayerS> ().playerNum = i + 1; 
 				newPlayer.GetComponent<PlayerS>().characterNum = GlobalVars.characterNumber[i]; 
 				newPlayer.gameObject.name = "Player" + (i+1);
-				print("Spawned Player " + (i+1)); 
+				//print("Spawned Player " + (i+1)); 
 				GlobalVars.characterIsPlaying[i] = true; 
 
 				GlobalVars.playerList[i] = newPlayer; 
@@ -45,7 +45,7 @@ public class GameStartS : MonoBehaviour {
 			}
 		}
 
-		print ("Character Skins: " + GlobalVars.characterNumber[0] + "," +GlobalVars.characterNumber[1] + "," + GlobalVars.characterNumber[2] +"," + GlobalVars.characterNumber[3]); 
+		//print ("Character Skins: " + GlobalVars.characterNumber[0] + "," +GlobalVars.characterNumber[1] + "," + GlobalVars.characterNumber[2] +"," + GlobalVars.characterNumber[3]); 
 
 			
 

@@ -107,7 +107,7 @@ public class PlayerS : MonoBehaviour {
 	[HideInInspector]
 	public bool charging = false;
 	private float chargeTime = 0;
-	private float medChargeTime = 1.0f;
+	private float medChargeTime = 0.7f;
 	private float maxChargeTime = 2.0f;
 
 	[HideInInspector]
@@ -134,7 +134,7 @@ public class PlayerS : MonoBehaviour {
 	private float lv1OutRate = 5500f;
 	
 	private float lv2OutRate = 12500f; //original 8000
-	private float lv1OutTimeMax = 0.3f;
+	private float lv1OutTimeMax = 0.2f;
 	public float lv1OutCountdown;
 	private float lv1ReturnRate = 1f;
 	private bool snapReturning = false;
@@ -145,6 +145,12 @@ public class PlayerS : MonoBehaviour {
 	private float lv3BulletSpeed = 50000; //was 12500
 	private bool lockInPlace = false;
 	private Vector3 bulletVel;
+
+	private float lv2AttackPauseTimeMax = 0.06f;
+	private float lv2AttackPauseCountdown;
+	private bool startedLv2Pause = false;
+	private float lv2AttackTimeMax = 0.2f;
+	private float lv2AttackTimeCountdown;
 
 	// physics layer experimentation for attack 0 and 1
 	//private int physicsLayerDefault;
@@ -354,7 +360,7 @@ public class PlayerS : MonoBehaviour {
 			playedLV3ChargeSound = false;
 		}
 
-		if (stretchButtonDown && !charging && canCharge){
+		if (stretchButtonDown && !charging && canCharge && !isDangerous){
 			charging = true;
 			canCharge = false;
 			chargeTime = 0;
@@ -452,8 +458,8 @@ public class PlayerS : MonoBehaviour {
 				FlingFastAttack (false);
 			}
 			if (attackToPerform == 1) {
-				//FlingSlowAttack (false);
-				FlingMiniAttack (false); //replacing for now
+				FlingSlowAttack (false);
+				//FlingMiniAttack (false); //replacing for now
 
 				//print ("started slow fling");
 			} else if (attackToPerform == 0) {
@@ -481,9 +487,12 @@ public class PlayerS : MonoBehaviour {
 
 		if(!performedAttack)
 		{
+			if (attackDir.x == 0 && attackDir.y == 0){
+				attackDir.x = 1;
+			}
 
 			bulletVel = attackDir.normalized*Time.deltaTime*lv1OutRate ;
-			ownRigid.AddForce(bulletVel* (3f*chargeTime),ForceMode.VelocityChange);
+			ownRigid.AddForce(bulletVel* (2.5f*chargeTime),ForceMode.VelocityChange);
 
 			//print(chargeTime); 
 
@@ -520,6 +529,8 @@ public class PlayerS : MonoBehaviour {
 			if(!performedAttack)
 			{
 				ownRigid.useGravity = false;
+
+
 				
 				// set start snap vel
 				bulletVel = attackDir.normalized*Time.deltaTime*lv1OutRate;
@@ -581,6 +592,8 @@ public class PlayerS : MonoBehaviour {
 
 	void FlingSlowAttack(bool endAttack)
 	{
+
+		// this is lv 2 attack
 		if(endAttack)
 		{
 
@@ -589,12 +602,32 @@ public class PlayerS : MonoBehaviour {
 			//attackToPerform = 0;
 			lv1OutCountdown = 0;
 			snapReturning = true;
-			didLv2Fling = false;
-			attacking = false;
-			isDangerous = false;
+			didLv2Fling = true;
+			//attacking = false;
+			//isDangerous = false;
 			ownRigid.useGravity = true;
 			//buttObj.isFollowing = true;
 			canAirStrafe = true; 
+
+			// trigger second half (mini fling)
+
+			//lv2AttackPauseCountdown = lv2AttackPauseTimeMax;
+
+			performedAttack = false;
+			attackDir = ownRigid.velocity;
+
+			float inputX = Input.GetAxis("HorizontalPlayer"+playerNum+platformType);
+			float inputY = Input.GetAxis("VerticalPlayer"+playerNum+platformType);
+
+			// trigger lv 2
+			if (inputY != 0 || inputX != 0){
+				attackDir.x = inputX;
+				attackDir.y = inputY;
+			}
+			chargeTime = medChargeTime;
+			FlingMiniAttack(false);
+			
+			//print ("part 2!");
 			
 		}
 		else
@@ -613,6 +646,8 @@ public class PlayerS : MonoBehaviour {
 				//print (bulletVel); 
 				
 				lv1OutCountdown = lv1OutTimeMax;
+
+				startedLv2Pause = false;
 			}
 			else
 			{
@@ -646,7 +681,31 @@ public class PlayerS : MonoBehaviour {
 				{
 					//butt should return
 					//buttObj.isFollowing = true;
-					canAirStrafe = true; 
+
+					if (!startedLv2Pause){
+
+						//print ("YEAYAEYEYYA");
+
+						//canAirStrafe = true; 
+						startedLv2Pause = true;
+						ownRigid.velocity = Vector3.zero;
+						
+						// allows time for tail to catch up
+						lv2AttackPauseCountdown = lv2AttackTimeMax;
+						//ownRigid.velocity = Vector3.zero;
+					}
+					else{
+						// count down pause time
+						lv2AttackPauseCountdown -= TimeManagerS.timeMult*Time.deltaTime;
+						ownRigid.velocity = Vector3.zero;
+						// once this reaches zero, end the attack
+						if (lv2AttackPauseCountdown <= 0){
+							canAirStrafe = true;
+							FlingSlowAttack(true);
+							//print ("part 2!");
+						}
+
+					}
 				}
 			}
 		}
@@ -911,7 +970,7 @@ public class PlayerS : MonoBehaviour {
 				groundPounded = true;
 				attackPriority = 3;
 
-				print ("Groundpound!");
+				//print ("Groundpound!");
 				// play an attack sound
 				soundSource.PlayChargeLv2();
 
@@ -1041,6 +1100,11 @@ public class PlayerS : MonoBehaviour {
 			trailRendererGO.GetComponent<TrailRenderer>().material = playerHurtMats[characterNum -1];
 		}
 
+		// trying to fix something with lv 2
+		if (!groundDetect.Grounded()){
+			groundLeeway = 0;
+		}
+
 	}
 
 
@@ -1162,9 +1226,10 @@ public class PlayerS : MonoBehaviour {
 			}
 			if (attackToPerform == 1)
 			{
+				//FlingMiniAttack(true);
+				print ("TURN OFF");
 				FlingMiniAttack(true);
-
-				//FlingSlowAttack(true); 
+				FlingSlowAttack(true); 
 			}
 			if (attackToPerform == 2)
 			{
