@@ -11,8 +11,10 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	public GameObject headSprite; 
 	private Rigidbody playerRigid;
 	private Rigidbody buttRigid;
+	public GameObject playerGlob; 
 
-	public GameObject trailRendererGO; 
+	public GameObject trailRendererGO;
+	float trailRenderTime, trailRenderTimeMin = 0.1f, trailRenderTimeMax= 1f; 
 
 	private LineRenderer playerLine; 
 
@@ -23,7 +25,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 	public bool separated = false;
 
-	public float buttDelayCountdown;
+	Vector3 originalScale, smallScale = new Vector3(.5f,.5f,1f); 
 
 	public GameObject dotPrefab;
 	public List<GameObject> spawnedDots;
@@ -31,6 +33,8 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	int fastLength=150,medLength=75, slowLength=25, minLength=5; 
 
 	Vector3 lastLocation, currentLocation; 
+
+	bool lastRespawnVal = false; 
 
 	//float newDotCounter, newDotSpawnRate = 5f; //original spawn rate for tail
 
@@ -43,6 +47,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
+		originalScale = dotPrefab.transform.localScale; 
 
 		buttRigid = buttObj.GetComponent<Rigidbody>();
 		playerRigid = playerRef.GetComponent<Rigidbody>();
@@ -56,13 +61,22 @@ public class TrailHandlerRedubS : MonoBehaviour {
 		playerLine = playerRef.GetComponent<LineRenderer> (); 
 		lastLocation = playerRef.transform.position; 
 		currentLocation = playerRef.transform.position; 
+
+		InitialDotSpawn (); 
 	}
 
 
 	// Update is called once per frame
 	void FixedUpdate () {
 
+
 		if (!playerRef.respawning) {
+
+			if(lastRespawnVal == true)
+			{
+				InitialDotSpawn(); 
+			}
+
 			//PlaceDots (); 
 			PlaceDots (); 
 			RemoveDots ();
@@ -70,9 +84,63 @@ public class TrailHandlerRedubS : MonoBehaviour {
 		} else {
 			lastLocation = playerRef.transform.position;
 			currentLocation = playerRef.transform.position; 
+
+
 		}
+		
+		lastRespawnVal = playerRef.respawning; 
 
 		//print (playerRigid.velocity.magnitude); 
+
+		//DEBUG
+		if (Input.GetKey (KeyCode.Alpha1)) {
+
+			playerRef.health = 10; 
+
+		}
+		if (Input.GetKey (KeyCode.Alpha2)) {
+			
+			playerRef.health = 20; 
+			
+		}
+		if (Input.GetKey (KeyCode.Alpha3)) {
+			
+			playerRef.health = 30; 
+			
+		}
+		if (Input.GetKey (KeyCode.Alpha4)) {
+			
+			playerRef.health = 40; 
+			
+		}
+		if (Input.GetKey (KeyCode.Alpha5)) {
+			
+			playerRef.health = 50; 
+			
+		}
+	}
+
+	void InitialDotSpawn()
+	{
+		if(playerRef.playerNum == 1)
+			print ("InitialDotSpawn for P1");
+
+		for (int i = 0; i < playerRef.health; i++) {
+
+			if(spawnedDots.Count < playerRef.health)
+			{
+				GameObject newNewDot = Instantiate(dotPrefab,playerRef.transform.position,headSprite.transform.rotation) as GameObject; 
+				newNewDot.GetComponent<Renderer>().material = playerRef.playerMats[playerRef.characterNum -1] ; 
+				newNewDot.GetComponent<DotColliderS>().whoCreatedMe = playerRef; 
+				spawnedDots.Add(newNewDot); 
+			}
+			else
+			{
+				break;
+			}
+
+		}
+
 	}
 
 
@@ -100,8 +168,16 @@ public class TrailHandlerRedubS : MonoBehaviour {
 			newDot.GetComponent<Renderer>().material = playerRef.playerMats[playerRef.characterNum -1] ; 
 			newDot.GetComponent<DotColliderS>().whoCreatedMe = playerRef; 
 			spawnedDots.Add(newDot); 
+
+			if(spawnedDots.Count > playerRef.health) //keep placing new dots, start deleting old ones
+			{
+				DestroyDot();
+			}
+		
+
 		}
-		if(newDotNumber == 0)
+
+		if(newDotNumber == 0 && spawnedDots.Count < playerRef.health)
 		{
 			//spawn one dot anyway
 			GameObject newNewDot = Instantiate(dotPrefab,playerRef.transform.position,headSprite.transform.rotation) as GameObject; 
@@ -127,14 +203,40 @@ public class TrailHandlerRedubS : MonoBehaviour {
 		*/
 	}
 
+	public void ChopTail(GameObject dotHit)
+	{
+		int goID = dotHit.GetInstanceID ();
+		int startingIndex = 0; 
+
+		for (int i = 0; i < spawnedDots.Count; i++) {
+			if(spawnedDots[i].GetInstanceID() == goID)
+			{
+				startingIndex = i;
+				break;
+			}
+		}
+
+		playerRef.TakeDamage (startingIndex); 
+
+		DestroyPlayerDotsRange (startingIndex);
+
+	}
 
 	void UpdateTail()
 	{
 		Vector3 newPos;
 		Quaternion newRot; 
 
-		//ROTATE THE FINAL BUTT TO WHAT THE HEAD WAS ROTATED TO, 
+		//SCALE DOTS DOWN AS THEY GO DOWN THE LINE
+		for (int i = 0; i < spawnedDots.Count -1; i++) {
 
+			//print(originalScale.x+ " " + originalScale.y + " " +originalScale.z);
+			//print((float)((float)i)/(float)(spawnedDots.Count-1));
+			spawnedDots[i].transform.localScale  = Vector3.Lerp (originalScale, smallScale, 1f- (float)((float)i)/(float)(spawnedDots.Count-1));
+
+		}
+
+		//ROTATE THE FINAL BUTT TO WHAT THE HEAD WAS ROTATED TO, 
 		if (spawnedDots.Count > 0) {
 			newPos = spawnedDots [0].transform.position;
 			newRot = spawnedDots [0].transform.rotation;
@@ -147,6 +249,9 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 		buttSprite.transform.position = newPos; 
 		buttSprite.transform.rotation = newRot; 
+
+		//TRAIL RENDERER UPDATE
+		trailRendererGO.GetComponent<TrailRenderer> ().time = trailRenderTimeMin + (trailRenderTimeMax * ((float) (float)playerRef.health / (float)playerRef.maxHealth));
 
 
 		//SET UP LINERENDERERS //NOT DISPLAYING RIGHT, LINE RENDERER TOO GLITCHY
@@ -175,6 +280,21 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 	void RemoveDots()
 	{
+		if (spawnedDots.Count > 0) {
+			DestroyDot ();
+
+		}
+
+		if (spawnedDots.Count > 0 && spawnedDots.Count > playerRef.health) {
+
+			int dotsDestroyNum = (int) spawnedDots.Count - (int) playerRef.health;
+
+			for (int i = 0; i < dotsDestroyNum; i++) {
+				DestroyDot(); 
+			}
+
+		}
+		/*
 		if (spawnedDots.Count > 0) {
 			if (spawnedDots.Count > minLength) {
 				DestroyDot();
@@ -211,7 +331,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 				DestroyDot(); 
 			}
 		}
-
+		*/
 	}
 
 	void DestroyDot()
@@ -236,7 +356,9 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	public void DestroyPlayerDots()
 	{
 
+		DestroyPlayerDotsRange (spawnedDots.Count - 1);
 
+		/*
 		while(spawnedDots.Count > 0)
 		{
 
@@ -246,11 +368,29 @@ public class TrailHandlerRedubS : MonoBehaviour {
 			GameObject.Destroy (spawnedDots [0].gameObject);
 			spawnedDots.RemoveAt (0);
 
+			//SKETCHY CODE, REDOING WHAT DESTROYPLAYERDOTSRANGE IS DOING
+			GameObject newGlob = Instantiate(playerGlob, spawnedDots[0].transform.position, Quaternion.identity) as GameObject; 
+			newGlob.GetComponentInChildren<GlobS>().SetVelocityMaterial(spawnedDots[0].GetComponent<Rigidbody>().velocity, playerRef.gameObject); 
+
 
 			GameObject newParticles = Instantiate (deathParticles,spawnPos,Quaternion.identity) as GameObject;
 			newParticles.GetComponent<ParticleSystem>().startColor = playerRef.playerParticleMats[playerRef.characterNum - 1].GetColor("_TintColor");
 			newParticles.GetComponent<Rigidbody>().velocity = playerRigid.velocity; 
 
+		}
+		*/
+
+
+	}
+
+	public void DestroyPlayerDotsRange(int startingIndex)
+	{
+		for (int i = startingIndex; i > 0; i--) {
+
+			GameObject newGlob = Instantiate(playerGlob, spawnedDots[i].transform.position, Quaternion.identity) as GameObject; 
+			newGlob.GetComponentInChildren<GlobS>().SetVelocityMaterial(playerRef.GetComponent<Rigidbody>().velocity, playerRef.gameObject); 
+
+			DestroyDot(); 
 		}
 	}
 
@@ -266,11 +406,12 @@ public class TrailHandlerRedubS : MonoBehaviour {
 		Gizmos.DrawWireSphere (newPos, .5f); 
 		//print (newPos.x + " " + newPos.y); 
 
-		foreach (GameObject d in spawnedDots) {
+		for (int i = 0; i < spawnedDots.Count -1; i++) {
 
-			Gizmos.DrawWireSphere(d.transform.position,1f);
-
+			Gizmos.DrawWireSphere (spawnedDots[i].transform.position, spawnedDots[i].transform.localScale.x/2f);
 		}
+
+
 	}
 
 }

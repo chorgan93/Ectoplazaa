@@ -10,6 +10,8 @@ public class DamageS : MonoBehaviour {
 
 	void Start () {
 		playerRef = transform.parent.GetComponent<PlayerS>();
+
+
 	}
 
 	void FixedUpdate () {
@@ -63,15 +65,21 @@ public class DamageS : MonoBehaviour {
 
 			if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0){
 
-				print (other.GetComponent<DotColliderS>().whoCreatedMe); 
+				otherPlayer.GetComponent<TrailHandlerRedubS>().ChopTail(other.gameObject);
+				if(playerRef.playerNum ==1)
+				{
+					print("P1 TAIL HIT" );
+				}
+
+				//print (other.GetComponent<DotColliderS>().whoCreatedMe); 
 
 				//print (playerRef);
 			
-				otherPlayer.TakeDamage(50f);
 				otherPlayer.SleepTime(pauseTime);
 				playerRef.SleepTime(pauseTime/4);
 
 				CameraShakeS.C.LargeShake();
+
 
 				
 				// add to score
