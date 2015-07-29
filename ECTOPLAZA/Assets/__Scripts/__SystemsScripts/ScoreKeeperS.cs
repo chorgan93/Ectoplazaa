@@ -39,7 +39,7 @@ public class ScoreKeeperS : MonoBehaviour {
 			if (gameEndMinTime <= 0){
 				gameEnd = false;
 				// hard coding in return to character select
-				Application.LoadLevel("3CharacterSelect");
+				Application.LoadLevel("2MapSelect");
 			}
 
 		}

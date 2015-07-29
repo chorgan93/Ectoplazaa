@@ -147,10 +147,10 @@ public class PlayerS : MonoBehaviour {
 	private bool lockInPlace = false;
 	private Vector3 bulletVel;
 
-	private float lv2AttackPauseTimeMax = 0.06f;
+	private float lv2AttackPauseTimeMax = 0.01f;
 	private float lv2AttackPauseCountdown;
 	private bool startedLv2Pause = false;
-	private float lv2AttackTimeMax = 0.2f;
+	private float lv2AttackTimeMax = 0.125f;
 	private float lv2AttackTimeCountdown;
 
 	// physics layer experimentation for attack 0 and 1
@@ -602,7 +602,7 @@ public class PlayerS : MonoBehaviour {
 			
 			//attackToPerform = 0;
 			lv1OutCountdown = 0;
-			snapReturning = true;
+			//snapReturning = true;
 			didLv2Fling = true;
 			//attacking = false;
 			//isDangerous = false;
@@ -614,6 +614,7 @@ public class PlayerS : MonoBehaviour {
 
 			//lv2AttackPauseCountdown = lv2AttackPauseTimeMax;
 
+			attackToPerform = 0;
 			performedAttack = false;
 			attackDir = ownRigid.velocity;
 
@@ -799,7 +800,7 @@ public class PlayerS : MonoBehaviour {
 	*/
 	void Walk () 
 	{
-
+		print (canAirStrafe);
 	
 			if (!charging && canAirStrafe)
 			{
@@ -1106,6 +1107,8 @@ public class PlayerS : MonoBehaviour {
 			groundLeeway = 0;
 		}
 
+		score = Mathf.RoundToInt(health-initialHealth);
+
 	}
 
 
@@ -1160,6 +1163,9 @@ public class PlayerS : MonoBehaviour {
 				respawning = false;
 
 				respawnInvulnTime = 1.5f;
+
+				//reset rotation to avoid wall check error
+				transform.localRotation = Quaternion.identity;
 
 				ownRigid.useGravity = true;
 				trailRendererGO.GetComponent<TrailRenderer>().enabled = true ;
@@ -1228,7 +1234,7 @@ public class PlayerS : MonoBehaviour {
 			if (attackToPerform == 1)
 			{
 				//FlingMiniAttack(true);
-				print ("TURN OFF");
+				//print ("TURN OFF");
 				FlingMiniAttack(true);
 				FlingSlowAttack(true); 
 			}

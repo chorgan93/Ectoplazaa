@@ -6,18 +6,35 @@ public class GlobS : MonoBehaviour {
 	public GameObject parentGO;
 
 	Vector3 originalScale; 
+	float scaleVariance = 0.5f;
 
 	bool activated = false; 
 	float deletionTimer = 24f, deletionCounter; 
+
+	private float startInvuln = 0.6f;
 	// Use this for initialization
 	void Start () {
 		deletionCounter = deletionTimer;
-		originalScale = parentGO.transform.localScale; 
+
+		// vary size a bit
+		originalScale = parentGO.transform.localScale;
+		originalScale.x += Random.insideUnitCircle.x*scaleVariance;
+		originalScale.y += Random.insideUnitCircle.y*scaleVariance;
+		parentGO.transform.localScale = originalScale;
+
+		//print ("created dot");
+
+
 	}
 
 	void FixedUpdate()
 	{
+
+		
+		startInvuln -= Time.deltaTime*TimeManagerS.timeMult;
+
 		if (activated) {
+
 
 			parentGO.transform.localScale = Vector3.Lerp(originalScale,Vector3.zero, 1f- ( deletionCounter/deletionTimer)); 
 
@@ -36,7 +53,7 @@ public class GlobS : MonoBehaviour {
 	void OnTriggerEnter(Collider other) 
 	{
 
-		if (other.tag == "Player") {
+		if (other.tag == "Player" && startInvuln <= 0) {
 			parentGO.GetComponent<SphereCollider> ().enabled = false; 
 			parentGO.GetComponent<Rigidbody> ().useGravity = false;  
 			parentGO.GetComponent<Rigidbody> ().velocity = Vector3.zero; 
@@ -46,6 +63,8 @@ public class GlobS : MonoBehaviour {
 			playerRef.health += 1; 
 
 			this.GetComponent<SphereCollider>().enabled = false ;
+
+			//print ("yeah");
 		}
 	}
 
