@@ -37,9 +37,6 @@ public class DamageS : MonoBehaviour {
 					otherPlayer.TakeDamage (50f);
 					otherPlayer.SleepTime (pauseTime);
 					playerRef.SleepTime (pauseTime);
-
-					// chop all other player's tail
-					otherPlayer.GetComponent<TrailHandlerRedubS>().ChopTail();
 					
 					MakeExplosion(otherPlayer.gameObject, playerRef.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
 					

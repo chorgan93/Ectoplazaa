@@ -13,8 +13,6 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	private Rigidbody buttRigid;
 	public GameObject playerGlob; 
 
-	private float globStartVel = 10000f;
-
 	public GameObject trailRendererGO;
 	float trailRenderTime, trailRenderTimeMin = 0.1f, trailRenderTimeMax= 1f; 
 
@@ -125,7 +123,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	void InitialDotSpawn()
 	{
 		if(playerRef.playerNum == 1)
-			//print ("InitialDotSpawn for P1");
+			print ("InitialDotSpawn for P1");
 
 		for (int i = 0; i < playerRef.health; i++) {
 
@@ -203,27 +201,6 @@ public class TrailHandlerRedubS : MonoBehaviour {
 		newDot.GetComponent<DotColliderS>().whoCreatedMe = playerRef; 
 		spawnedDots.Add(newDot); 
 		*/
-	}
-
-	// adding version of the chop tail function to trigger when hitting head
-	// this will make all dots explode
-	public void ChopTail()
-	{
-		//int goID = dotHit.GetInstanceID ();
-		int startingIndex = 0; 
-		
-		/*for (int i = 0; i < spawnedDots.Count; i++) {
-			if(spawnedDots[i].GetInstanceID() == goID)
-			{
-				startingIndex = i;
-				break;
-			}
-		}*/
-		
-		playerRef.TakeDamage (playerRef.health); 
-		
-		DestroyPlayerDotsRange (startingIndex);
-		
 	}
 
 	public void ChopTail(GameObject dotHit)
@@ -408,23 +385,12 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 	public void DestroyPlayerDotsRange(int startingIndex)
 	{
-
-		//print ("I'm destroying dots: " + startingIndex);
-
 		for (int i = startingIndex; i > 0; i--) {
 
 			GameObject newGlob = Instantiate(playerGlob, spawnedDots[i].transform.position, Quaternion.identity) as GameObject; 
-			//print (newGlob.GetComponentInChildren<GlobS>());
-
-			// adding random vel to glob
-			Vector3 globVel = globStartVel*Random.insideUnitSphere*Time.deltaTime;
-			globVel.z = 0;
-
-			newGlob.GetComponentInChildren<GlobS>().SetVelocityMaterial(globVel, playerRef.gameObject); 
+			newGlob.GetComponentInChildren<GlobS>().SetVelocityMaterial(playerRef.GetComponent<Rigidbody>().velocity, playerRef.gameObject); 
 
 			DestroyDot(); 
-
-			//print ("A glob is born");
 		}
 	}
 
