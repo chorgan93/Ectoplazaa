@@ -60,6 +60,7 @@ public class PlayerS : MonoBehaviour {
 	public float snapSpeedMult;
 	private Vector3 snapVel;
 
+	//private float minFlingForce = 500f;
 	int flingsLeft = 2; 
 	public float flingForceMult = 3f;
 	public float flingForceMultLv2;
@@ -108,8 +109,8 @@ public class PlayerS : MonoBehaviour {
 	[HideInInspector]
 	public bool charging = false;
 	private float chargeTime = 0;
-	private float medChargeTime = 0.7f;
-	private float maxChargeTime = 2.0f;
+	private float medChargeTime = 0.5f;
+	private float maxChargeTime = 1.1f;
 
 	[HideInInspector]
 	public int attackToPerform = 0;
@@ -132,9 +133,9 @@ public class PlayerS : MonoBehaviour {
 
 	//private float lv1AttackForce = 60000f;
 	//private float lv1AttackTargetRange = 12f;
-	private float lv1OutRate = 5500f;
+	private float lv1OutRate = 3350f;
 	
-	private float lv2OutRate = 12500f; //original 8000
+	private float lv2OutRate = 12000f; //original 8000
 	private float lv1OutTimeMax = 0.2f;
 	public float lv1OutCountdown;
 	private float lv1ReturnRate = 1f;
@@ -143,7 +144,7 @@ public class PlayerS : MonoBehaviour {
 	[HideInInspector]
 	private float lv1ButtDelay = 1f;
 	public float lv2FlingForce = 100;
-	private float lv3BulletSpeed = 50000; //was 12500
+	private float lv3BulletSpeed = 12500; //was 12500
 	private bool lockInPlace = false;
 	private Vector3 bulletVel;
 
@@ -220,6 +221,9 @@ public class PlayerS : MonoBehaviour {
 
 		if (!ScoreKeeperS.gameEnd){
 
+			// trying to stop a stop moving bug
+			transform.rotation = Quaternion.identity;
+
 			if (!TimeManagerS.paused){
 
 				respawnInvulnTime -= Time.deltaTime*TimeManagerS.timeMult;
@@ -289,9 +293,10 @@ public class PlayerS : MonoBehaviour {
 		
 			if (rightHit.collider.gameObject.tag != "Player" &&
 			    rightHit.collider.gameObject.tag != "PlayerTrail" &&
-			    rightHit.collider.gameObject.tag != "Butt"){
+			    rightHit.collider.gameObject.tag != "Butt" &&
+			    rightHit.collider.gameObject.tag != "Glob"){
 				rightCheck = true;
-				//print ("HIT!!");
+				print ("HIT!!");
 			}
 			else{
 				rightCheck = false;
@@ -302,13 +307,16 @@ public class PlayerS : MonoBehaviour {
 			rightCheck = false;
 		}
 
+		//print (leftHit.collider);
+
 		if (leftHit.collider != null){
 			
 			if (leftHit.collider.gameObject.tag != "Player" &&
 			    leftHit.collider.gameObject.tag != "PlayerTrail"&&
-			    leftHit.collider.gameObject.tag != "Butt"){
+			    leftHit.collider.gameObject.tag != "Butt" &&
+			    leftHit.collider.gameObject.tag != "Glob"){
 				leftCheck = true;
-				//print (leftHit.collider.name);
+				print (leftHit.collider.name);
 			}
 			else{
 				leftCheck = false;
@@ -493,7 +501,7 @@ public class PlayerS : MonoBehaviour {
 			}
 
 			bulletVel = attackDir.normalized*Time.deltaTime*lv1OutRate ;
-			ownRigid.AddForce(bulletVel* (2.5f*chargeTime),ForceMode.VelocityChange);
+			ownRigid.AddForce(bulletVel* (1+chargeTime),ForceMode.VelocityChange);
 
 			//print(chargeTime); 
 
@@ -626,6 +634,7 @@ public class PlayerS : MonoBehaviour {
 				attackDir.y = inputY;
 			}
 			chargeTime = medChargeTime;
+			attackToPerform = 0;
 			FlingMiniAttack(false);
 			
 			//print ("part 2!");
@@ -723,8 +732,8 @@ public class PlayerS : MonoBehaviour {
 			//buttObj.isFollowing = true;
 			// lock in place so no sliding
 
-			attacking = false;
-			isDangerous = false;
+			//attacking = false;
+			//isDangerous = false;
 			ownRigid.useGravity = true;
 			//buttObj.isFollowing = true;
 			canAirStrafe = true; 
@@ -799,6 +808,13 @@ public class PlayerS : MonoBehaviour {
 	*/
 	void Walk () 
 	{
+
+		if (!groundDetect.Grounded()){
+			groundLeeway = 0;
+		}
+		else{
+			canAirStrafe = true;
+		}
 
 	
 			if (!charging && canAirStrafe)
@@ -969,7 +985,7 @@ public class PlayerS : MonoBehaviour {
 				ownRigid.velocity = groundPoundVel;
 				isDangerous = true;
 				groundPounded = true;
-				attackPriority = 3;
+				attackPriority = 0;
 
 				//print ("Groundpound!");
 				// play an attack sound
@@ -1228,7 +1244,7 @@ public class PlayerS : MonoBehaviour {
 			if (attackToPerform == 1)
 			{
 				//FlingMiniAttack(true);
-				print ("TURN OFF");
+				//print ("TURN OFF");
 				FlingMiniAttack(true);
 				FlingSlowAttack(true); 
 			}
@@ -1268,9 +1284,12 @@ public class PlayerS : MonoBehaviour {
 
 		}
 
-
-		attacking = false; 
-		isDangerous = false; 
+		if (other.gameObject.tag == "Ground"){
+			if (groundDetect.Grounded()){
+				attacking = false; 
+				isDangerous = false; 
+			}
+		}
 		this.GetComponent<SphereCollider>().material = normalPhysics; 
 
 	}

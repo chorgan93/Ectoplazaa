@@ -49,11 +49,11 @@ public class ScoreKeeperS : MonoBehaviour {
 				if(GlobalVars.characterNumber[i] != 0)
 				{
 					PlayerS currentPlayer = GlobalVars.playerList[i].GetComponent<PlayerS>();
-					scoreTexts[i].GetComponent<TextMesh>().text = "P" + currentPlayer.playerNum + ": " + currentPlayer.score + "";
+					scoreTexts[i].GetComponent<TextMesh>().text = "P" + currentPlayer.playerNum + ": " + currentPlayer.health + "";
 
 
 
-					if (currentPlayer.score >= scoreThreshold){
+					if (currentPlayer.health >= scoreThreshold){
 						gameEnd = true;
 						winningPlayerNum = i+1;
 						endGameObj.SetActive(true);

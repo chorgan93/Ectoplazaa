@@ -34,9 +34,16 @@ public class DamageS : MonoBehaviour {
 			if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0) {
 				// only deal damage if higher priority or other player isnt attacking
 				if ((!otherPlayer.attacking) || (otherPlayer.attacking && otherPlayer.attackPriority < playerRef.attackPriority)) {
-					otherPlayer.TakeDamage (50f);
+				
 					otherPlayer.SleepTime (pauseTime);
 					playerRef.SleepTime (pauseTime);
+
+					//chop all of tail off
+					// make sure there are dots to destroy first
+					otherPlayer.GetComponent<TrailHandlerRedubS>().
+						DestroyPlayerDotsRange(Mathf.RoundToInt(otherPlayer.health));
+					otherPlayer.initialHealth = Mathf.RoundToInt((otherPlayer.health/2));
+					otherPlayer.TakeDamage (otherPlayer.health);
 					
 					MakeExplosion(otherPlayer.gameObject, playerRef.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
 					

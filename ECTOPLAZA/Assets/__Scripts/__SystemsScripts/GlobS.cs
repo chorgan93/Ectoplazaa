@@ -9,14 +9,26 @@ public class GlobS : MonoBehaviour {
 
 	bool activated = false; 
 	float deletionTimer = 24f, deletionCounter; 
+
+	float invulnTime = 0.5f;
+
+	float sizeRandomizer = 1.25f;
+
 	// Use this for initialization
 	void Start () {
 		deletionCounter = deletionTimer;
+		Vector3 newSize = parentGO.transform.localScale;
+		newSize.x += sizeRandomizer*Random.insideUnitCircle.x;
+		newSize.y = newSize.x;
+		parentGO.transform.localScale = newSize;
 		originalScale = parentGO.transform.localScale; 
 	}
 
 	void FixedUpdate()
 	{
+
+		invulnTime -= Time.deltaTime*TimeManagerS.timeMult;
+
 		if (activated) {
 
 			parentGO.transform.localScale = Vector3.Lerp(originalScale,Vector3.zero, 1f- ( deletionCounter/deletionTimer)); 
@@ -36,14 +48,14 @@ public class GlobS : MonoBehaviour {
 	void OnTriggerEnter(Collider other) 
 	{
 
-		if (other.tag == "Player") {
+		if (other.tag == "Player" && invulnTime <= 0) {
 			parentGO.GetComponent<SphereCollider> ().enabled = false; 
 			parentGO.GetComponent<Rigidbody> ().useGravity = false;  
 			parentGO.GetComponent<Rigidbody> ().velocity = Vector3.zero; 
 
 			PlayerS playerRef = other.gameObject.GetComponent<PlayerS> ();
 			activated = true; 
-			playerRef.health += 1; 
+			playerRef.health += 2; 
 
 			this.GetComponent<SphereCollider>().enabled = false ;
 		}

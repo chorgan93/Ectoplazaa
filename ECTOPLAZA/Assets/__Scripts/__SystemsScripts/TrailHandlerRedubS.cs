@@ -14,7 +14,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	public GameObject playerGlob; 
 
 	public GameObject trailRendererGO;
-	float trailRenderTime, trailRenderTimeMin = 0.1f, trailRenderTimeMax= 1f; 
+	float trailRenderTime, trailRenderTimeMin = 0.02f, trailRenderTimeMax= 1f; 
 
 	private LineRenderer playerLine; 
 
@@ -35,6 +35,8 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	Vector3 lastLocation, currentLocation; 
 
 	bool lastRespawnVal = false; 
+
+	int dotsToBlowUpInto = 1;
 
 	//float newDotCounter, newDotSpawnRate = 5f; //original spawn rate for tail
 
@@ -123,7 +125,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	void InitialDotSpawn()
 	{
 		if(playerRef.playerNum == 1)
-			print ("InitialDotSpawn for P1");
+			//print ("InitialDotSpawn for P1");
 
 		for (int i = 0; i < playerRef.health; i++) {
 
@@ -133,6 +135,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 				newNewDot.GetComponent<Renderer>().material = playerRef.playerMats[playerRef.characterNum -1] ; 
 				newNewDot.GetComponent<DotColliderS>().whoCreatedMe = playerRef; 
 				spawnedDots.Add(newNewDot); 
+				print ("spawned dot");
 			}
 			else
 			{
@@ -385,12 +388,25 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 	public void DestroyPlayerDotsRange(int startingIndex)
 	{
-		for (int i = startingIndex; i > 0; i--) {
 
-			GameObject newGlob = Instantiate(playerGlob, spawnedDots[i].transform.position, Quaternion.identity) as GameObject; 
-			newGlob.GetComponentInChildren<GlobS>().SetVelocityMaterial(playerRef.GetComponent<Rigidbody>().velocity, playerRef.gameObject); 
+		if (startingIndex < spawnedDots.Count){
 
-			DestroyDot(); 
+			for (int i = startingIndex; i > 0; i--) {
+
+				// adding a nested for loop for spawn more dots per hit
+				for (int k = 0; k < dotsToBlowUpInto; k++) {
+	
+					GameObject newGlob = Instantiate(playerGlob, spawnedDots[i].transform.position, Quaternion.identity) as GameObject; 
+	
+					// set random new velocity
+					Vector3 newGlobVel = Random.insideUnitSphere*6000f*Time.deltaTime;
+					newGlobVel.z = 0;
+					newGlob.GetComponentInChildren<GlobS>().SetVelocityMaterial(newGlobVel, playerRef.gameObject); 
+	
+				}
+				DestroyDot(); 
+
+			}
 		}
 	}
 

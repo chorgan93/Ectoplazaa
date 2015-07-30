@@ -16,6 +16,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 	GameObject [] players = new GameObject[4]; 
 
 	public string nextLevelString;
+	public string backSceneString;
 
 	int totalPlayers = 0; 
 
@@ -31,6 +32,12 @@ public class CharacterSelectMenu : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () 
 	{
+
+		// back function
+		if (Input.GetButton("XButtonPlayer" + playerNum + platformType)){
+			Application.LoadLevel(backSceneString);
+		}
+
 		for(int i = 1; i < 4; i++)
 		{
 			if (Input.GetButton ("AButtonPlayer" + i + platformType))  //ADD PLAYER---------------------------------------

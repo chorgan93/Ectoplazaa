@@ -11,7 +11,7 @@ public class LevelSelectMenu : MonoBehaviour {
 	public List<GameObject> cursorPositions;
 	public List<string> nextLevelStrings;
 
-	public static string selectedLevelString;
+	public static string selectedLevelString = "Protoscene_Colin";
 	public string nextSceneString;
 	public string backSceneString;
 
@@ -25,6 +25,7 @@ public class LevelSelectMenu : MonoBehaviour {
 	void Start () {
 
 		platformType = PlatformS.GetPlatform();
+
 	
 	}
 	
