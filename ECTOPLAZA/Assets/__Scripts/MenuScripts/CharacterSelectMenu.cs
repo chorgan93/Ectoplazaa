@@ -27,21 +27,27 @@ public class CharacterSelectMenu : MonoBehaviour {
 
 		
 		nextLevelString = LevelSelectMenu.selectedLevelString;
+
+		string[] joysticks = Input.GetJoystickNames();
+		print (joysticks.Length);
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () 
 	{
 
+
 		// back function
 		if (Input.GetButton("XButtonPlayer" + playerNum + platformType)){
 			Application.LoadLevel(backSceneString);
 		}
 
-		for(int i = 1; i < 4; i++)
+		for(int i = 1; i <= 4; i++)
 		{
 			if (Input.GetButton ("AButtonPlayer" + i + platformType))  //ADD PLAYER---------------------------------------
 			{
+
+				print ("AButtonPlayer" + i + platformType);
 
 				if(!hasJoined[i-1])
 				{
