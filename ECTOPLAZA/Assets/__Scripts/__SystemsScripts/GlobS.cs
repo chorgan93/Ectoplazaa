@@ -14,6 +14,9 @@ public class GlobS : MonoBehaviour {
 
 	float sizeRandomizer = 1.25f;
 
+	float fadeColRate = 0.005f;
+	private Renderer ownRender;
+
 	// Use this for initialization
 	void Start () {
 		deletionCounter = deletionTimer;
@@ -22,10 +25,30 @@ public class GlobS : MonoBehaviour {
 		newSize.y = newSize.x;
 		parentGO.transform.localScale = newSize;
 		originalScale = parentGO.transform.localScale; 
+
+		ownRender = parentGO.GetComponent<Renderer>();
 	}
 
 	void FixedUpdate()
 	{
+
+		Color parentCol = ownRender.material.color;
+		//print (parentCol);
+		parentCol.r += fadeColRate*TimeManagerS.timeMult*TimeManagerS.timeMult;
+		parentCol.g += fadeColRate*TimeManagerS.timeMult*TimeManagerS.timeMult;
+		parentCol.b += fadeColRate*TimeManagerS.timeMult*TimeManagerS.timeMult;
+
+		if (parentCol.r > 1){
+			parentCol.r = 1;
+		}
+		if (parentCol.b > 1){
+			parentCol.b = 1;
+		}
+		if (parentCol.g > 1){
+			parentCol.g= 1;
+		}
+		//parentCol.g = parentCol.b = parentCol.r;
+		ownRender.material.color = parentCol;
 
 		invulnTime -= Time.deltaTime*TimeManagerS.timeMult;
 

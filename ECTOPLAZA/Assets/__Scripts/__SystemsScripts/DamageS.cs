@@ -6,6 +6,11 @@ public class DamageS : MonoBehaviour {
 	private float pauseTime = 0.8f;
 	public PlayerS playerRef;
 
+	public GameObject damageEffectObj;
+	public GameObject damageEffectObjNoFlash;
+	private float damageEffectStartRange = 100f;
+	public GameObject hitEffectObj;
+
 	private float knockbackMult = 1.5f;
 
 	void Start () {
@@ -33,7 +38,8 @@ public class DamageS : MonoBehaviour {
 			
 			if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0) {
 				// only deal damage if higher priority or other player isnt attacking
-				if ((!otherPlayer.attacking) || (otherPlayer.attacking && otherPlayer.attackPriority < playerRef.attackPriority)) {
+				//if ((!otherPlayer.attacking) || (otherPlayer.attacking && otherPlayer.attackPriority < playerRef.attackPriority)) {
+				if (!otherPlayer.attacking){
 				
 					otherPlayer.SleepTime (pauseTime);
 					playerRef.SleepTime (pauseTime);
@@ -48,6 +54,10 @@ public class DamageS : MonoBehaviour {
 					MakeExplosion(otherPlayer.gameObject, playerRef.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
 					
 					CameraShakeS.C.LargeShake ();
+
+					
+					// spawn slash effect
+					MakeSlashEffect(other.transform.position);
 					
 					// add to score
 					//playerRef.score++;
@@ -92,9 +102,87 @@ public class DamageS : MonoBehaviour {
 				// add to score
 				//playerRef.score++;
 
+				// spawn tail slash effect
+				MakeSlashEffectNoFlash(other.transform.position);
+
 			}
+
 		}
 
+	}
+
+	void MakeSlashEffect(Vector3 otherPos){
+
+		Vector3 spawnPos = transform.position-playerRef.GetComponent<Rigidbody>().velocity.normalized*damageEffectStartRange;
+		spawnPos.z-=1;
+
+		Vector3 effectDir = playerRef.GetComponent<Rigidbody>().velocity.normalized;
+
+		GameObject slashEffect = Instantiate(damageEffectObj,spawnPos,Quaternion.identity)
+			as GameObject;
+
+		slashEffect.GetComponent<SlashEffectS>().moveDir = effectDir;
+
+		spawnPos = (transform.position+otherPos)/2;
+		spawnPos.z = transform.position.z +1;
+
+		GameObject hitEffect = Instantiate(hitEffectObj,spawnPos,Quaternion.identity) as GameObject;
+
+		// rotate hit effect to match slash
+		float rotateZ = 0;
+		
+		if(effectDir.x == 0){
+			rotateZ = 90;
+		}
+		else{
+			rotateZ = Mathf.Rad2Deg*Mathf.Atan((effectDir.y/effectDir.x));
+		}	
+		
+		//print (rotateZ);
+		
+		if (effectDir.x < 0){
+			rotateZ += 180;
+		}
+		
+		hitEffect.transform.Rotate(new Vector3(0,0,rotateZ+90));
+
+	}
+
+	void MakeSlashEffectNoFlash(Vector3 otherPos){
+		
+		Vector3 spawnPos = transform.position-playerRef.GetComponent<Rigidbody>().velocity.normalized*damageEffectStartRange;
+		spawnPos.z-=1;
+		
+		Vector3 effectDir = playerRef.GetComponent<Rigidbody>().velocity.normalized;
+		
+		GameObject slashEffect = Instantiate(damageEffectObjNoFlash,spawnPos,Quaternion.identity)
+			as GameObject;
+		
+		slashEffect.GetComponent<SlashEffectS>().moveDir = effectDir;
+		
+		spawnPos = (transform.position+otherPos)/2;
+		spawnPos.z = transform.position.z +1;
+		
+		GameObject hitEffect = Instantiate(hitEffectObj,spawnPos,Quaternion.identity) as GameObject;
+		
+		// rotate hit effect to match slash
+		float rotateZ = 0;
+		
+		if(effectDir.x == 0){
+			rotateZ = 90;
+		}
+		else{
+			rotateZ = Mathf.Rad2Deg*Mathf.Atan((effectDir.y/effectDir.x));
+		}	
+		
+		//print (rotateZ);
+		
+		if (effectDir.x < 0){
+			rotateZ += 180;
+		}
+		
+		hitEffect.transform.Rotate(new Vector3(0,0,rotateZ+90));
+		
 	}
 
 	/*

@@ -6,11 +6,30 @@ public class CameraFollowS : MonoBehaviour {
 	public float				camEasing = 0.1f; //was 0.1f
 	public Vector3				camOffset;
 	public Vector3				camOffsetOnPause;
+
+	private bool punchedIn = false;
+	private float punchInMult = 0.99f;
+	private float punchInMax = 0.08f;
+	private float punchTimeCountdown;
+	private float currentCamSize;
+	private float targetCamSize;
+	public float camSizeEasing = 0.1f;
+	private Camera ownCam;
 	//public Runner				runnerScript;
 	//public float				zNear = -15;
 	//public float				zFar  = -30;
+
+	private float adaptSizeMult;
+	private float minSize;
+	public float maxSizeDiff;
 	
 	public Vector3 cameraPos;
+
+	public static CameraFollowS F;
+
+	void Awake () {
+		F = this;
+	}
 	
 	void Start(){
 		//poi = GameObject.Find("AdaptiveCameraPt");
@@ -18,6 +37,10 @@ public class CameraFollowS : MonoBehaviour {
 		resetPos.z = camOffset.z;
 		transform.position = resetPos;
 		//camera.backgroundColor = Color.black;
+
+		ownCam = GetComponent<Camera>();
+		minSize = ownCam.orthographicSize;
+		currentCamSize = minSize;
 
 	}
 	
@@ -41,8 +64,35 @@ public class CameraFollowS : MonoBehaviour {
 		//camPos.z = (1-camEasing/4)*camPos.z + camEasing/4*camZ;
 		
 		this.transform.position = cameraPos;
+
+		FindCurrentSize();
+
+		if (punchedIn){
+			punchTimeCountdown -= Time.deltaTime*TimeManagerS.timeMult;
+			ownCam.orthographicSize = currentCamSize*punchInMult;
+			if (punchTimeCountdown <= 0){
+				punchedIn = false;
+			}
+		}
+		else{
+			ownCam.orthographicSize = currentCamSize;
+		}
 		
 
+	}
+
+	void FindCurrentSize(){
+		targetCamSize = minSize + maxSizeDiff*adaptSizeMult;
+		currentCamSize = (1-camSizeEasing)*currentCamSize + camSizeEasing*targetCamSize;
+	}
+
+	public void PunchIn(){
+		punchedIn = true;
+		punchTimeCountdown = punchInMax;
+	}
+
+	public void SetCamMult(float newMult){
+		adaptSizeMult = newMult;
 	}
 }
 

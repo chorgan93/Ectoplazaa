@@ -109,8 +109,8 @@ public class PlayerS : MonoBehaviour {
 	[HideInInspector]
 	public bool charging = false;
 	private float chargeTime = 0;
-	private float medChargeTime = 0.5f;
-	private float maxChargeTime = 1.1f;
+	private float medChargeTime = 0.45f;
+	private float maxChargeTime = 1f;
 
 	[HideInInspector]
 	public int attackToPerform = 0;
@@ -165,7 +165,8 @@ public class PlayerS : MonoBehaviour {
 	//VISUAL VARS------------------------------------------------
 	public GameObject deathParticles, jumpParticles, hitParticles, groundedParticles; 
 	public GameObject dangerousSprite; 
-	public GameObject trailRendererGO; 
+	public GameObject trailRendererGO;
+	public GameObject trailRendererGO2;  
 
 	public Material [] playerMats;
 	public Material [] playerParticleMats; 
@@ -316,7 +317,7 @@ public class PlayerS : MonoBehaviour {
 			    leftHit.collider.gameObject.tag != "Butt" &&
 			    leftHit.collider.gameObject.tag != "Glob"){
 				leftCheck = true;
-				print (leftHit.collider.name);
+				//print (leftHit.collider.name);
 			}
 			else{
 				leftCheck = false;
@@ -1146,6 +1147,7 @@ public class PlayerS : MonoBehaviour {
 				transform.position = newSpawn.transform.position;
 
 				trailRendererGO.GetComponent<TrailRenderer>().enabled = false ;
+				trailRendererGO2.GetComponent<TrailRenderer>().enabled = false ;
 
 			}
 			respawnTimeCountdown -= Time.deltaTime*TimeManagerS.timeMult;
@@ -1179,6 +1181,7 @@ public class PlayerS : MonoBehaviour {
 
 				ownRigid.useGravity = true;
 				trailRendererGO.GetComponent<TrailRenderer>().enabled = true ;
+				trailRendererGO2.GetComponent<TrailRenderer>().enabled = true ;
 				health = initialHealth;
 			}
 		}

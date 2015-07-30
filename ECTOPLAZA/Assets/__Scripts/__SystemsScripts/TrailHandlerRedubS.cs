@@ -14,6 +14,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	public GameObject playerGlob; 
 
 	public GameObject trailRendererGO;
+	public GameObject trailRendererGO2;
 	float trailRenderTime, trailRenderTimeMin = 0.02f, trailRenderTimeMax= 1f; 
 
 	private LineRenderer playerLine; 
@@ -255,6 +256,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 		//TRAIL RENDERER UPDATE
 		trailRendererGO.GetComponent<TrailRenderer> ().time = trailRenderTimeMin + (trailRenderTimeMax * ((float) (float)playerRef.health / (float)playerRef.maxHealth));
+		trailRendererGO2.GetComponent<TrailRenderer> ().time = trailRenderTimeMin + (trailRenderTimeMax * ((float) (float)playerRef.health / (float)playerRef.maxHealth));
 
 
 		//SET UP LINERENDERERS //NOT DISPLAYING RIGHT, LINE RENDERER TOO GLITCHY
@@ -393,17 +395,16 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 			for (int i = startingIndex; i > 0; i--) {
 
-				// adding a nested for loop for spawn more dots per hit
-				for (int k = 0; k < dotsToBlowUpInto; k++) {
+
 	
-					GameObject newGlob = Instantiate(playerGlob, spawnedDots[i].transform.position, Quaternion.identity) as GameObject; 
+				GameObject newGlob = Instantiate(playerGlob, spawnedDots[i].transform.position, Quaternion.identity) as GameObject; 
 	
-					// set random new velocity
-					Vector3 newGlobVel = Random.insideUnitSphere*6000f*Time.deltaTime;
-					newGlobVel.z = 0;
-					newGlob.GetComponentInChildren<GlobS>().SetVelocityMaterial(newGlobVel, playerRef.gameObject); 
+				// set random new velocity
+				Vector3 newGlobVel = Random.insideUnitSphere*6000f*Time.deltaTime;
+				newGlobVel.z = 0;
+				newGlob.GetComponentInChildren<GlobS>().SetVelocityMaterial(newGlobVel, playerRef.gameObject); 
 	
-				}
+
 				DestroyDot(); 
 
 			}
