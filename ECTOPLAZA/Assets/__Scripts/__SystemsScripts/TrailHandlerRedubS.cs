@@ -37,7 +37,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 	bool lastRespawnVal = false; 
 
-	int dotsToBlowUpInto = 1;
+	int dotsToBlowUpInto = 2;
 
 	//float newDotCounter, newDotSpawnRate = 5f; //original spawn rate for tail
 
@@ -125,7 +125,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 	void InitialDotSpawn()
 	{
-		if(playerRef.playerNum == 1)
+		//if(playerRef.playerNum == 1)
 			//print ("InitialDotSpawn for P1");
 
 		for (int i = 0; i < playerRef.health; i++) {
@@ -136,7 +136,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 				newNewDot.GetComponent<Renderer>().material = playerRef.playerMats[playerRef.characterNum -1] ; 
 				newNewDot.GetComponent<DotColliderS>().whoCreatedMe = playerRef; 
 				spawnedDots.Add(newNewDot); 
-				print ("spawned dot");
+				print ("spawned dot" + spawnedDots.Count);
 			}
 			else
 			{
@@ -391,6 +391,9 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	public void DestroyPlayerDotsRange(int startingIndex)
 	{
 
+		print ("dot count " + spawnedDots.Count);
+		print ("num dots to destroy" + startingIndex);
+
 		if (startingIndex < spawnedDots.Count){
 
 			for (int i = startingIndex; i > 0; i--) {
@@ -406,6 +409,8 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	
 
 				DestroyDot(); 
+
+				print ("dot destroyed!");
 
 			}
 		}

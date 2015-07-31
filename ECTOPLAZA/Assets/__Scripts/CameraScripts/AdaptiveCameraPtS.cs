@@ -21,6 +21,20 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 
 	public bool dontDoCameraThing = false;
 
+	Vector3 playerCenterPos;
+
+	float camMult;
+
+	
+	public float minX;
+	public float maxX;
+	public float minY;
+	public float maxY;
+
+	
+	public float xConstraintSizeAdjustMult = 0.1f;
+	public float yConstraintSizeAdjustMult = 0.05f;
+
 	void Awake () {
 		A = this;
 	}
@@ -37,7 +51,7 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
 
 		// create var for changing pos
 		Vector3 adaptPt = centerPt.transform.position;
@@ -47,7 +61,7 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 		// create player centerpt
 
 		if (playerPositions.Count > 0){
-			Vector3 playerCenterPos = Vector3.zero;
+			playerCenterPos = Vector3.zero;
 			for (int i = 0; i < playerPositions.Count; i++){
 				playerCenterPos += playerPositions[i].position;
 			}
@@ -62,16 +76,28 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 		// set pos to adaptPt
 		adaptPt.z = transform.position.z;
 
+		if (adaptPt.x < minX+camMult*xConstraintSizeAdjustMult){
+			adaptPt.x = minX;
+		}
+		if (adaptPt.x > maxX-camMult*xConstraintSizeAdjustMult){
+			adaptPt.x = maxX;
+		}
+		
+		if (adaptPt.y < minY+camMult*yConstraintSizeAdjustMult){
+			adaptPt.y = minY;
+		}
+		if (adaptPt.y > maxY-camMult*yConstraintSizeAdjustMult){
+			adaptPt.y = maxY;
+		}
+
 		transform.position = adaptPt;
+
+		
+		
+		SetCamMult();
 
 
 	
-	}
-
-	void FixedUpdate () {
-
-		SetCamMult();
-
 	}
 
 	void SetCamMult () {
@@ -81,13 +107,17 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 		centerPos2d.x = centerPt.position.x;
 		centerPos2d.y = centerPt.position.y;
 
+		Vector2 playerCenter2d = Vector2.zero;
+		playerCenter2d.x = playerCenterPos.x;
+		playerCenter2d.y = playerCenterPos.y;
+
 		if (playerPositions.Count > 0){
 			for (int i = 0; i < playerPositions.Count; i++){
 				Vector2 playerPos2D = Vector2.zero;
 				playerPos2D.x = playerPositions[i].position.x;
 				playerPos2D.y = playerPositions[i].position.y;
 
-				float newDistance = Vector2.Distance(playerPos2D,centerPos2d);
+				float newDistance = Vector2.Distance(playerPos2D,playerCenter2d);
 				if (newDistance > largestDistance){
 					largestDistance = newDistance;
 				}
@@ -96,6 +126,7 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 
 		if (!dontDoCameraThing){
 			CameraFollowS.F.SetCamMult(largestDistance*sizeAddMult);
+			camMult = largestDistance*sizeAddMult;
 		}
 
 	}

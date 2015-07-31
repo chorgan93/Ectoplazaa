@@ -15,6 +15,7 @@ public class PlayerAnimS : MonoBehaviour {
 	public string Description; 
 
 	public SpriteRenderer headRender;
+	public SpriteRenderer headRenderGreenGlow;
 	public SpriteRenderer tailRender;
 
 	public PlayerS playerRef;
@@ -40,6 +41,8 @@ public class PlayerAnimS : MonoBehaviour {
 	public Sprite [] mummyHeadSprites, mummyTailSprites; 
 	public Sprite [] acidHeadSprites, acidTailSprites; 
 	public Sprite [] pinkHeadSprites, pinkTailSprites; 
+
+	public int myCharNum;
 
 	public Sprite [] currentHeadSprites, currentTailSprites;
 
@@ -308,10 +311,24 @@ public class PlayerAnimS : MonoBehaviour {
 			
 		}
 
+		// make sure green glow sprite have same sprite as main sprite
+		if (headRender.enabled){
+			if (!headRenderGreenGlow.enabled){
+				headRenderGreenGlow.enabled = true;
+			}
+			headRenderGreenGlow.sprite = headRender.sprite;
+		}
+		else{
+			headRenderGreenGlow.enabled = false;
+		}
+
 	}
 
 	public void SetCurrentSprites (int characterNumber)
 	{
+
+		myCharNum = characterNumber;
+
 		if (characterNumber == 1) {
 			currentHeadSprites = ninjaHeadSprites;
 			currentTailSprites= ninjaTailSprites; 

@@ -27,6 +27,8 @@ public class CameraFollowS : MonoBehaviour {
 
 	public static CameraFollowS F;
 
+
+
 	void Awake () {
 		F = this;
 	}
@@ -62,6 +64,8 @@ public class CameraFollowS : MonoBehaviour {
 		//float speedU = (runnerScript.rigidbody.velocity.x)/runnerScript.maxSpeed;
 		//float camZ = (1-speedU)*zNear + speedU*zFar;
 		//camPos.z = (1-camEasing/4)*camPos.z + camEasing/4*camZ;
+
+
 		
 		this.transform.position = cameraPos;
 

@@ -66,6 +66,7 @@
      <Compile Include="Assets\__Scripts\_ControlScripts\GroundDetectS.cs" />
      <Compile Include="Assets\__Scripts\_ControlScripts\WallDetectS.cs" />
      <Compile Include="Assets\__Scripts\__PlayerScripts\PlayerAnimS.cs" />
+     <Compile Include="Assets\__Scripts\__PlayerScripts\PlayerNumDisplayS.cs" />
      <Compile Include="Assets\__Scripts\__PlayerScripts\PlayerS.cs" />
      <Compile Include="Assets\__Scripts\__PlayerScripts\PlayerSoundS.cs" />
      <Compile Include="Assets\__Scripts\__SystemsScripts\DamageS.cs" />
@@ -79,6 +80,7 @@
      <Compile Include="Assets\__Scripts\__SystemsScripts\TimeManagerS.cs" />
      <Compile Include="Assets\__Scripts\__SystemsScripts\TrailHandlerRedubS.cs" />
      <Compile Include="Assets\__Scripts\__SystemsScripts\TrailHandlerS.cs" />
+     <None Include="Assets\Shaders\UnlitWithAlpha.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity/Unity 5.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

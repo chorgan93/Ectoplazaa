@@ -47,8 +47,13 @@ public class DamageS : MonoBehaviour {
 					//chop all of tail off
 					// make sure there are dots to destroy first
 					otherPlayer.GetComponent<TrailHandlerRedubS>().
-						DestroyPlayerDotsRange(Mathf.RoundToInt(otherPlayer.health));
-					otherPlayer.initialHealth = Mathf.RoundToInt((otherPlayer.health/2));
+						DestroyPlayerDotsRange(Mathf.RoundToInt(otherPlayer.health)-1);
+					if (Mathf.RoundToInt((otherPlayer.health/2)) < 5){
+						otherPlayer.initialHealth = 5;
+					}
+					else{
+						otherPlayer.initialHealth = Mathf.RoundToInt((otherPlayer.health/2));
+					}
 					otherPlayer.TakeDamage (otherPlayer.health);
 					
 					MakeExplosion(otherPlayer.gameObject, playerRef.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 

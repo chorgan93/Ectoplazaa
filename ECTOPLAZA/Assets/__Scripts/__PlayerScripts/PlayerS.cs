@@ -212,6 +212,8 @@ public class PlayerS : MonoBehaviour {
 
 		SetSkin ();
 
+		soundSource = GetComponent<PlayerSoundS>();
+
 	
 	}
 
@@ -297,7 +299,7 @@ public class PlayerS : MonoBehaviour {
 			    rightHit.collider.gameObject.tag != "Butt" &&
 			    rightHit.collider.gameObject.tag != "Glob"){
 				rightCheck = true;
-				print ("HIT!!");
+				//print ("HIT!!");
 			}
 			else{
 				rightCheck = false;
@@ -1266,7 +1268,9 @@ public class PlayerS : MonoBehaviour {
 			
 			// play bounce sound if not groundpounding
 			if (!groundPounded){
-				soundSource.PlayWallHit();
+				if (soundSource != null){
+					soundSource.PlayWallHit();
+				}
 				// tiny shake if not attacking, bigger one if you are
 				if (attacking){
 					CameraShakeS.C.SmallShake();
