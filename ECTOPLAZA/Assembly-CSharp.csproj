@@ -67,6 +67,7 @@
      <Compile Include="Assets\__Scripts\_ControlScripts\GroundDetectS.cs" />
      <Compile Include="Assets\__Scripts\_ControlScripts\WallDetectS.cs" />
      <Compile Include="Assets\__Scripts\__PlayerScripts\PlayerAnimS.cs" />
+     <Compile Include="Assets\__Scripts\__PlayerScripts\PlayerEffectS.cs" />
      <Compile Include="Assets\__Scripts\__PlayerScripts\PlayerNumDisplayS.cs" />
      <Compile Include="Assets\__Scripts\__PlayerScripts\PlayerS.cs" />
      <Compile Include="Assets\__Scripts\__PlayerScripts\PlayerSoundS.cs" />
