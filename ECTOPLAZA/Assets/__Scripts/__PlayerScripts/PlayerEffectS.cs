@@ -18,15 +18,35 @@ public class PlayerEffectS : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
+		currentFrame = Mathf.FloorToInt(Random.Range(0,effectFrames.Count));
+
 		ownRender = GetComponent<SpriteRenderer>();
-	
+		if ((playerRef.charging && playerRef.GetChargeTime() > playerRef.GetChargeLv2Min()
+		     && attackNum == 1) ||
+		    (playerRef.charging && playerRef.GetChargeTime() > playerRef.GetChargeLv3Min()
+		 && attackNum == 2)
+		|| (playerRef.attacking && playerRef.attackToPerform >= attackNum)){
+			ownRender.enabled = true;
+		}
+		else{
+			ownRender.enabled = false;
+		}
+		
+		ownRender.sprite = effectFrames[currentFrame];
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () {
 
-		if (playerRef.charging && playerRef.GetChargeTime() > playerRef.GetChargeLv2Min()){
-			ownRender.enabled = true;
+		if (attackNum == 1){
+			if (playerRef.charging && playerRef.GetChargeTime() > playerRef.GetChargeLv2Min()){
+				ownRender.enabled = true;
+			}
+		}
+		if (attackNum == 2){
+			if (playerRef.charging && playerRef.GetChargeTime() > playerRef.GetChargeLv3Min()){
+				ownRender.enabled = true;
+			}
 		}
 		// turn off once not attacking
 		if (!playerRef.isDangerous && !playerRef.charging){
@@ -43,6 +63,16 @@ public class PlayerEffectS : MonoBehaviour {
 				}
 			}
 			ownRender.sprite = effectFrames[currentFrame];
+
+			if (playerRef.charging){
+				transform.localRotation = Quaternion.Euler(new Vector3(0,0,90));
+			}
+			else{
+				Vector3 fixPos = Vector3.zero;
+				fixPos.z = transform.localPosition.z;
+				transform.localPosition = fixPos;
+				transform.localRotation = Quaternion.identity;
+			}
 		}
 	
 	}
