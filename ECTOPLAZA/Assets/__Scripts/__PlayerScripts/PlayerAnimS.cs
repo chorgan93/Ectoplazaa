@@ -109,7 +109,9 @@ public class PlayerAnimS : MonoBehaviour {
 
 		Turn();
 		Animate();
+
 		FaceTarget();
+
 	
 	}
 
@@ -153,7 +155,7 @@ public class PlayerAnimS : MonoBehaviour {
 
 			Vector3 tailOffSetPos = tailRender.transform.localPosition;
 			tailOffSetPos.x = -tailXPosOffset;
-			tailRender.transform.localPosition = tailOffSetPos;
+			//tailRender.transform.localPosition = tailOffSetPos;
 		}
 		
 		if (headRigid.velocity.x < 0){
@@ -167,7 +169,7 @@ public class PlayerAnimS : MonoBehaviour {
 
 			Vector3 tailOffSetPos = tailRender.transform.localPosition;
 			tailOffSetPos.x = tailXPosOffset;
-			tailRender.transform.localPosition = tailOffSetPos;
+			//tailRender.transform.localPosition = tailOffSetPos;
 		}
 
 
@@ -270,6 +272,15 @@ public class PlayerAnimS : MonoBehaviour {
 	void FaceTarget () {
 
 		// rotate head and tail according to velocity
+
+		
+		if (!playerRef.groundDetect.Grounded()){
+			isFacingDirection= true;
+		}
+		else{
+			isFacingDirection = false;
+			headRender.transform.rotation = tailRender.transform.rotation = Quaternion.identity;
+		}
 
 		if (isFacingDirection){
 

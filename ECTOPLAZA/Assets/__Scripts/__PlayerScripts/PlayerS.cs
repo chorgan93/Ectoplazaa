@@ -151,7 +151,7 @@ public class PlayerS : MonoBehaviour {
 	private float lv2AttackPauseTimeMax = 0.06f;
 	private float lv2AttackPauseCountdown;
 	private bool startedLv2Pause = false;
-	private float lv2AttackTimeMax = 0.2f;
+	private float lv2AttackTimeMax = 0.1f;
 	private float lv2AttackTimeCountdown;
 
 	// physics layer experimentation for attack 0 and 1
@@ -192,6 +192,9 @@ public class PlayerS : MonoBehaviour {
 
 	public float respawnInvulnTime = 1.5f;
 
+	private FlashObjS lv2Flash;
+	private FlashObjS lv3Flash;
+
 	// Use this for initialization
 	void Start () {
 
@@ -213,6 +216,13 @@ public class PlayerS : MonoBehaviour {
 		SetSkin ();
 
 		soundSource = GetComponent<PlayerSoundS>();
+
+		if (GameObject.Find("BlueFlash")){
+			lv2Flash = GameObject.Find("BlueFlash").GetComponent<FlashObjS>();
+		}
+		if (GameObject.Find("RedFlash")){
+			lv3Flash = GameObject.Find("RedFlash").GetComponent<FlashObjS>();
+		}
 
 	
 	}
@@ -464,6 +474,12 @@ public class PlayerS : MonoBehaviour {
 
 				// play attack release sound
 				soundSource.PlayReleaseSound ();
+				if (attackToPerform == 2){
+					lv3Flash.ResetFade();
+				}
+				if (attackToPerform == 1){
+					lv2Flash.ResetFade();
+				}
 			}
 
 			if (attackToPerform == 2) {
@@ -636,7 +652,7 @@ public class PlayerS : MonoBehaviour {
 				attackDir.x = inputX;
 				attackDir.y = inputY;
 			}
-			chargeTime = medChargeTime;
+			chargeTime = medChargeTime*1.35f;
 			attackToPerform = 0;
 			FlingMiniAttack(false);
 			
@@ -704,12 +720,13 @@ public class PlayerS : MonoBehaviour {
 						ownRigid.velocity = Vector3.zero;
 						
 						// allows time for tail to catch up
-						lv2AttackPauseCountdown = lv2AttackTimeMax;
+						lv2AttackPauseCountdown = lv2AttackPauseTimeMax;
 						//ownRigid.velocity = Vector3.zero;
 					}
 					else{
 						// count down pause time
 						lv2AttackPauseCountdown -= TimeManagerS.timeMult*Time.deltaTime;
+						//print (lv2AttackPauseCountdown);
 						ownRigid.velocity = Vector3.zero;
 						// once this reaches zero, end the attack
 						if (lv2AttackPauseCountdown <= 0){

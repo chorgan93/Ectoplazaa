@@ -66,8 +66,8 @@ public class CameraFollowS : MonoBehaviour {
 		//camPos.z = (1-camEasing/4)*camPos.z + camEasing/4*camZ;
 
 
-		
 		this.transform.position = cameraPos;
+
 
 		FindCurrentSize();
 

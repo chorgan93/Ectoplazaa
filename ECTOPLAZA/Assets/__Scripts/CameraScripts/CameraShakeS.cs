@@ -22,6 +22,8 @@ public class CameraShakeS : MonoBehaviour {
 	public float				sleepDuration;
 	public bool 				shaking = false; // true when camera is shaking
 	public bool					sleeping = false; // true when time is sleeping
+
+	private CameraFollowS ownFollow;
 	
 	public float microShakeDiv = 8;
 	
@@ -34,6 +36,8 @@ public class CameraShakeS : MonoBehaviour {
 		C = this;
 		
 		originPosition = transform.position;
+		ownFollow =GetComponent<CameraFollowS>();
+		//print (ownFollow);
 		
 	}
 	
@@ -70,7 +74,8 @@ public class CameraShakeS : MonoBehaviour {
 		else{
 			
 			if (shake_intensity <= 0 && shaking){
-				originPosition = transform.position;
+				//originPosition = transform.position;
+				originPosition = ownFollow.transform.position;
 				this.transform.position = originPosition;
 				shaking = false;
 			}
@@ -81,7 +86,8 @@ public class CameraShakeS : MonoBehaviour {
 	
 	// tiniest shake
 	public void MicroShake(){
-		originPosition = transform.position;
+		//originPosition = transform.position;
+		originPosition = ownFollow.transform.position;
 		shake_intensity = smallShakeIntensity/microShakeDiv;
 		shake_decay = smallShakeIntensity/(microShakeDiv*smallShakeDuration);
 		shaking = true;
@@ -89,7 +95,8 @@ public class CameraShakeS : MonoBehaviour {
 	
 	// small amount of shake
 	public void SmallShake(){
-		originPosition = transform.position;
+		//originPosition = transform.position;
+		originPosition = ownFollow.transform.position;
 		shake_intensity = smallShakeIntensity;
 		shake_decay = smallShakeIntensity/smallShakeDuration;
 		shaking = true;
@@ -97,7 +104,8 @@ public class CameraShakeS : MonoBehaviour {
 	
 	// large amount of shake
 	public void LargeShake(){
-		originPosition = transform.position;
+		//originPosition = transform.position;
+		originPosition = ownFollow.transform.position;
 		shake_intensity = largeShakeIntensity;
 		shake_decay = largeShakeIntensity/largeShakeDuration;
 		shaking = true;

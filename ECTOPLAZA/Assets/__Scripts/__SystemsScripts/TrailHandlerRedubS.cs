@@ -15,7 +15,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 	public GameObject trailRendererGO;
 	public GameObject trailRendererGO2;
-	float trailRenderTime, trailRenderTimeMin = 0.02f, trailRenderTimeMax= 1f; 
+	float trailRenderTime, trailRenderTimeMin = 0.02f, trailRenderTimeMax= .75f; 
 
 	private LineRenderer playerLine; 
 
@@ -56,6 +56,8 @@ public class TrailHandlerRedubS : MonoBehaviour {
 		playerRigid = playerRef.GetComponent<Rigidbody>();
 
 		buttRigid.transform.position = playerRef.transform.position;
+
+		//buttSprite.transform.parent = null;
 
 		//bodyConnector.material = playerRef.GetComponent<Renderer>().material;
 		if (playerRef.characterNum != 0)
@@ -244,15 +246,18 @@ public class TrailHandlerRedubS : MonoBehaviour {
 		if (spawnedDots.Count > 0) {
 			newPos = spawnedDots [0].transform.position;
 			newRot = spawnedDots [0].transform.rotation;
-			newRot = Quaternion.Euler (newRot.eulerAngles.x, newRot.eulerAngles.y, newRot.eulerAngles.z + 180f);
+			newRot = Quaternion.Euler (newRot.eulerAngles.x, newRot.eulerAngles.y, newRot.eulerAngles.z);
 		} else {
 			newPos = buttAnchor.position;
 			newRot = headSprite.transform.rotation;
-			newRot = Quaternion.Euler (newRot.eulerAngles.x, newRot.eulerAngles.y, newRot.eulerAngles.z + 180f);
+			newRot = Quaternion.Euler (newRot.eulerAngles.x, newRot.eulerAngles.y, newRot.eulerAngles.z);
 		}
 
 		buttSprite.transform.position = newPos; 
 		buttSprite.transform.rotation = newRot; 
+
+		
+		//print (buttSprite.transform.position + " compare " + spawnedDots[0].transform.position);
 
 		//TRAIL RENDERER UPDATE
 		trailRendererGO.GetComponent<TrailRenderer> ().time = trailRenderTimeMin + (trailRenderTimeMax * ((float) (float)playerRef.health / (float)playerRef.maxHealth));
