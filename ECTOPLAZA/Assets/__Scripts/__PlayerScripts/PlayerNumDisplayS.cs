@@ -10,7 +10,7 @@ public class PlayerNumDisplayS : MonoBehaviour {
 
 	private string thisIsMyString;
 
-	public List<Color> colorsToPick;
+	public List<Material> colorsToPick;
 
 	// Use this for initialization
 	void Start () {
@@ -18,7 +18,7 @@ public class PlayerNumDisplayS : MonoBehaviour {
 		ownText = GetComponent<TextMesh>();
 		ownText.text = "P" + playerRef.playerNum;
 		thisIsMyString = ownText.text;
-		ownText.color = colorsToPick[playerAnimRef.myCharNum-1];
+		ownText.color = colorsToPick [playerAnimRef.myCharNum - 1].GetColor ("_TintColor");
 	
 	}
 
