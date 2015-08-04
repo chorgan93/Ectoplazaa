@@ -6,11 +6,18 @@ public class ScoreBar : MonoBehaviour {
 
 
 	//set these vars on spawn
-	public int playerNum; 
 	public int scoreThreshold; 
 	public float scoreNumber; //scoreboard position, which scoreboard it is 
 
-	public GameObject headObj, barObj, barOutlineObj; 
+	bool isInitialized; 
+
+	PlayerS [] playerRefs = new PlayerS[4];
+	public GameObject [] barObjs= new GameObject[4]; 
+	GameObject[] heads = new GameObject[4];
+
+	int totalPlayers; 
+
+	public GameObject barObj; 
 
 	public GameObject startTransform, endTransform; 
 
@@ -19,60 +26,130 @@ public class ScoreBar : MonoBehaviour {
 	float animSpeed = 0.1f; 
 	float scaleSpeed = 0.1f; 
 
+	public GameObject headPrefab;
 
-	PlayerS playerRef; 
 
 	void Start()
 	{
-		Update (); 
+	
+		//Update (); 
 	}
 
 	// Update is called once per frame
 	void Update () 
 	{
-		GameObject [] playerGO = GameObject.FindGameObjectsWithTag ("Player"); 
 
-		foreach (GameObject player in playerGO) {
-
-			if(player.GetComponent<PlayerS>().playerNum == playerNum)
-			{
-				playerRef = player.GetComponent<PlayerS>(); 
-				UpdateScoreboard(); 
-			}
+		if (isInitialized) 
+		{
+			UpdateScoreboard (); 
 		}
 	}
 
-	void UpdateScoreboard()
+	public void SpawnScoreboard()
 	{
-		startTransform.GetComponent<Renderer> ().material = playerRef.playerMats [playerRef.playerNum - 1];
-		headObj.GetComponentInChildren<SpriteRenderer> ().sprite = playerRef.spriteObject.GetComponent<SpriteRenderer>().sprite;
-		barObj.GetComponentInChildren<Renderer> ().material = playerRef.playerMats [playerRef.playerNum - 1];
+		isInitialized = true; 
 
+		GameObject [] existingPlayers = GameObject.FindGameObjectsWithTag ("Player"); 
 
-		float health = Mathf.Clamp (playerRef.health, 0f, (float)scoreThreshold); 
+		for(int i = 0; i < 4; i++)
+		{
+			if(i < existingPlayers.Length)
+			{
+				totalPlayers+=1; 
+				playerRefs[i] = existingPlayers[i].GetComponent<PlayerS>(); 
+				
+				Vector3 spawnPos = barObjs[i].transform.position;
+				spawnPos.z = -8f; 
+				GameObject newHead = Instantiate(headPrefab, spawnPos, Quaternion.identity) as GameObject; 
+				newHead.GetComponentInChildren<SpriteRenderer>().sprite = playerRefs[i].spriteObject.GetComponent<SpriteRenderer>().sprite; 
+				newHead.transform.parent = this.transform; 
+				heads[i] = newHead; 
+				barObjs[i].GetComponentInChildren<Renderer> ().material = playerRefs[i].playerMats [playerRefs[i].playerNum - 1];
 
-		float lerpVal =  health/ (float)scoreThreshold;
-		//print ("LerpVal = " + lerpVal); 
+			}
+			else
+			{
+				barObjs[i].SetActive(false); 
+			}
+		}
 
-		Vector3 newHeadPos = Vector3.Lerp (startTransform.transform.position, endTransform.transform.position, lerpVal);
-		Vector3 headAnim = Vector3.Lerp (headObj.transform.position, newHeadPos, animSpeed); 
-
-		headObj.transform.position = headAnim; 
-
-		Vector3 newBarScale = new Vector3 (0f, barObj.transform.localScale.y, barObj.transform.localScale.z) ; 
-
-		newBarScale.x =  lerpVal; 
-
-		Vector3 scaleAnim = Vector3.Lerp ( barObj.transform.localScale, newBarScale, scaleSpeed); 
-		barObj.transform.localScale = scaleAnim;
-
-		newBarScale.y = barOutlineObj.transform.localScale.y; 
-		newBarScale.z = barOutlineObj.transform.localScale.z; 
-
-		scaleAnim = Vector3.Lerp(barOutlineObj.transform.localScale,  newBarScale, scaleSpeed); 
-
-		//barOutlineObj.transform.localScale = scaleAnim; 
 	}
+
+
+	void UpdateScoreboard()
+	{ 
+
+
+		float mostHealth = -1f; 
+		float leastHealth = scoreThreshold+1f; 
+
+		for (int i = 0; i < totalPlayers; i++) {
+
+			Vector3 resetBarPos = barObjs[i].transform.position; 
+			resetBarPos.z = -8f; 
+			barObjs[i].transform.position = resetBarPos; 
+
+			Vector3 resetHeadPos = heads[i].transform.position; 
+			resetHeadPos.z = -8f; 
+			heads[i].transform.position = resetHeadPos; 
+
+			//MOVE HEADS
+			
+			float health = Mathf.Clamp (playerRefs[i].health, 0f, (float)scoreThreshold); //make sure health doesnt exceed max
+			
+			float lerpVal = health / (float)scoreThreshold;
+			//print ("LerpVal = " + lerpVal); 
+			
+			Vector3 newHeadPos = Vector3.Lerp (startTransform.transform.position, endTransform.transform.position, lerpVal);
+			newHeadPos.z = heads[i].transform.position.z; 
+			Vector3 headAnim = Vector3.Lerp (heads[i].transform.position, newHeadPos, animSpeed); 
+			
+			heads[i].transform.position = headAnim; 
+
+
+			//CHANGE BAR SCALE
+			Vector3 newBarScale = new Vector3 (0f, barObjs[i].transform.localScale.y, barObjs[i].transform.localScale.z); 
+			
+			newBarScale.x = lerpVal; 
+			
+			Vector3 scaleAnim = Vector3.Lerp (barObjs[i].transform.localScale, newBarScale, scaleSpeed); 
+			barObjs[i].transform.localScale = scaleAnim;
+
+			//CHECK FOR LEADER AND CHANGE END CIRCLE COLOR 
+
+			if(playerRefs[i].health >= mostHealth)
+			{
+				mostHealth = playerRefs[i].health; 
+				endTransform.GetComponent<Renderer> ().material = playerRefs[i].playerMats [playerRefs[i].playerNum - 1];
+			}
+			if (playerRefs[i].health <= leastHealth)
+			{
+				leastHealth = playerRefs[i].health;
+				startTransform.GetComponent<Renderer> ().material = playerRefs[i].playerMats [playerRefs[i].playerNum - 1];
+				
+			}
+
+			for(int j = 0; j < totalPlayers; j++)
+			{
+				if(playerRefs[i].health < playerRefs[j].health || ((playerRefs[i].health == playerRefs[j].health) && (i > j) ))
+				{
+					Vector3 newBarPos = barObjs[i].transform.position; 
+					newBarPos.z -= .2f; 
+					barObjs[i].transform.position = newBarPos; 
+
+					Vector3 newNewHeadPos = heads[i].transform.position; 
+					newNewHeadPos.z -=0.1f; 
+					heads[i].transform.position = newNewHeadPos; 
+				}
+			}
+
+		}
+
+
+
+				
+	}
+	
 
 
 

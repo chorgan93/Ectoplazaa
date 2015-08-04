@@ -412,6 +412,10 @@ public class TrailHandlerRedubS : MonoBehaviour {
 				newGlobVel.z = 0;
 				newGlob.GetComponentInChildren<GlobS>().SetVelocityMaterial(newGlobVel, playerRef.gameObject); 
 	
+				GameObject newParticles = Instantiate (deathParticles,spawnedDots[i].transform.position,Quaternion.identity) as GameObject;
+				newParticles.GetComponent<ParticleSystem>().startColor = playerRef.playerParticleMats[playerRef.characterNum - 1].GetColor("_TintColor");
+				newParticles.GetComponent<Rigidbody>().velocity = playerRigid.velocity;
+
 
 				DestroyDot(); 
 
