@@ -120,7 +120,6 @@ public class ScoreBar : MonoBehaviour {
 			if(playerRefs[i].health >= mostHealth)
 			{
 				mostHealth = playerRefs[i].health; 
-				endTransform.GetComponent<Renderer> ().material = playerRefs[i].playerMats [playerRefs[i].playerNum - 1];
 			}
 			if (playerRefs[i].health <= leastHealth)
 			{
@@ -139,6 +138,12 @@ public class ScoreBar : MonoBehaviour {
 
 					Vector3 newNewHeadPos = heads[i].transform.position; 
 					newNewHeadPos.z -=0.1f; 
+					heads[i].transform.position = newNewHeadPos; 
+				}
+				if((playerRefs[i].health == playerRefs[j].health) && (i < j) )
+				{
+					Vector3 newNewHeadPos = heads[i].transform.position; 
+					newNewHeadPos.x +=0.175f; 
 					heads[i].transform.position = newNewHeadPos; 
 				}
 			}

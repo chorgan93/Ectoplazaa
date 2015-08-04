@@ -8,7 +8,9 @@ public class ScoreKeeperS : MonoBehaviour {
 	public GameObject scoreBarObj; 
 	public GameObject uiObj; 
 	private int winningPlayerNum;
-	public GameObject winningSphere; 
+	public GameObject winningPlayerTail, winningPlayerSprite; 
+
+	public Sprite [] playerHighResSprites; 
 
 	public int scoreThreshold;
 
@@ -45,16 +47,16 @@ public class ScoreKeeperS : MonoBehaviour {
 		else
 		{
 			UpdateScoreboard(); 
-			RepositionScoreboard(); 
 		}
+
+		RepositionScoreboard(); 
+
 	}
 
 
 	void UpdateScoreboard()
 	{
-
-
-
+	
 		for (int i = 0; i < 4; i++) {
 			if (GlobalVars.characterNumber [i] != 0) {
 				PlayerS currentPlayer = GlobalVars.playerList [i].GetComponent<PlayerS> ();
@@ -102,14 +104,15 @@ public class ScoreKeeperS : MonoBehaviour {
 		scoreBarObj.SetActive (false); 
 
 		endGameObj.SetActive (true);
-		winText.text = "Player " + winningPlayerNum + " wins!!";
-	
+		Vector3 newPos = endGameObj.transform.position; 
+		newPos.x = Camera.main.ViewportToWorldPoint (new Vector3 (1f, .5f, 0f)).x + 50f;
 
-		winningSphere.SetActive (true); 
-		Vector3 spawnPos = GlobalVars.playerList [winningPlayerNum - 1].transform.position; 
-		spawnPos.z = winningSphere.transform.position.z; 
-		winningSphere.transform.position = spawnPos; 
-		winningSphere.GetComponent<Renderer> ().material = GlobalVars.playerList [winningPlayerNum - 1].GetComponent<PlayerS> ().playerMats [winningPlayerNum-1]; 
+		endGameObj.transform.position = newPos; 
+
+		winText.text = "P" + winningPlayerNum + "\nwins!";
+		winningPlayerSprite.GetComponent<SpriteRenderer> ().sprite = playerHighResSprites [winningPlayerNum - 1];
+		winningPlayerTail.GetComponent<Renderer> ().material = GlobalVars.playerList [winningPlayerNum - 1].GetComponent<PlayerS> ().playerMats [winningPlayerNum - 1]; 
+	
 
 		foreach (GameObject p in GlobalVars.playerList) {
 
@@ -126,12 +129,18 @@ public class ScoreKeeperS : MonoBehaviour {
 	void UpdateEndScreen()
 	{
 
-		winningSphere.transform.localScale = Vector3.Lerp (winningSphere.transform.localScale, new Vector3 (300f, 300, 0.1f), 0.075f); 
 
 		// once gameEnd is on, start countdown
 		// restart map on countdown (replace this once menu infrastructure is in place
 
+
+
 		gameEndMinTime -= Time.deltaTime;
+
+		Vector3 newPos = endGameObj.transform.position; 
+		newPos.x = Camera.main.ViewportToWorldPoint (new Vector3 (0.0f, .5f, 0f)).x ;
+
+		endGameObj.transform.position = Vector3.Lerp (endGameObj.transform.position, newPos, 0.2f); 
 		
 		if (Input.GetButton ("StartButtonAllPlayers"+	PlatformS.GetPlatform ()) && gameEndMinTime < 0) 
 		{
@@ -139,5 +148,12 @@ public class ScoreKeeperS : MonoBehaviour {
 			// hard coding in return to character select
 			Application.LoadLevel("3CharacterSelect");
 		}
+		if (Input.GetButton ("AButtonPlayer1" + PlatformS.GetPlatform ()) && gameEndMinTime < 0) {
+
+			print("RESETTINGLEVEL"); 
+			//GlobalVars.ResetVariables(); 
+			//Application.LoadLevel(Application.loadedLevel); THIS DOESNT WORK, CAUSES GLITCHES ON RESTART, MIGHT HAVE TO LOAD BACK THROUGH CHARACTER SELECT SCREEN? 
+		}
+
 	}
 }
