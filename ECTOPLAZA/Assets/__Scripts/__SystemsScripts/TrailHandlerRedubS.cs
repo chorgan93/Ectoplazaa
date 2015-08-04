@@ -136,7 +136,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 			{
 				GameObject newNewDot = Instantiate(dotPrefab,playerRef.transform.position,headSprite.transform.rotation) as GameObject; 
 				newNewDot.GetComponent<Renderer>().material = playerRef.playerMats[playerRef.characterNum -1] ; 
-				newNewDot.GetComponent<DotColliderS>().whoCreatedMe = playerRef; 
+				newNewDot.GetComponent<DotColliderS>().whoCreatedMe = playerRef;
 				spawnedDots.Add(newNewDot); 
 				print ("spawned dot" + spawnedDots.Count);
 			}
