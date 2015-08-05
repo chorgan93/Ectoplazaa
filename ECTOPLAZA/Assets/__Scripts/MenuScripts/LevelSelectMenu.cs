@@ -11,7 +11,7 @@ public class LevelSelectMenu : MonoBehaviour {
 	public List<GameObject> cursorPositions;
 	public List<string> nextLevelStrings;
 
-	public static string selectedLevelString = "Protoscene_Colin";
+	public static string selectedLevelString = "4Concierge";
 	public string nextSceneString;
 	public string backSceneString;
 
