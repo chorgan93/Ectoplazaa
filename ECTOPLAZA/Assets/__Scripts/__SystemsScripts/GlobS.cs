@@ -10,7 +10,7 @@ public class GlobS : MonoBehaviour {
 	bool activated = false; 
 	float deletionTimer = 24f, deletionCounter; 
 
-	float invulnTime = 0.5f;
+	float invulnTime = .75f;
 
 	float sizeRandomizer = 1.25f;
 

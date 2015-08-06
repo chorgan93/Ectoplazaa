@@ -138,7 +138,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 				newNewDot.GetComponent<Renderer>().material = playerRef.playerMats[playerRef.characterNum -1] ; 
 				newNewDot.GetComponent<DotColliderS>().whoCreatedMe = playerRef;
 				spawnedDots.Add(newNewDot); 
-				print ("spawned dot" + spawnedDots.Count);
+				//print ("spawned dot" + spawnedDots.Count);
 			}
 			else
 			{
@@ -413,7 +413,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 				DestroyDot(); 
 
-				print ("dot destroyed!");
+				//print ("dot destroyed!");
 
 			}
 		}

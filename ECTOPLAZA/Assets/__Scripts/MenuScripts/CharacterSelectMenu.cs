@@ -47,7 +47,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 			if (Input.GetButton ("AButtonPlayer" + i + platformType))  //ADD PLAYER---------------------------------------
 			{
 
-				print ("AButtonPlayer" + i + platformType);
+				//print ("AButtonPlayer" + i + platformType);
 
 				if(!hasJoined[i-1])
 				{

@@ -92,7 +92,7 @@ public class PlayerS : MonoBehaviour {
 
 	public GameObject dangerObj;
 	public bool respawning = false;
-	public float respawnTimeMax = 2f;
+	public float respawnTimeMax = 1f;
 	private float respawnTimeCountdown;
 
 	private Vector3 spawnPos;
@@ -195,6 +195,13 @@ public class PlayerS : MonoBehaviour {
 	private FlashObjS lv2Flash;
 	private FlashObjS lv3Flash;
 
+	public GameObject respawnParticlePrefab, spawnParticlePrefab;
+	GameObject respawnParticles; 
+	Vector3 deathPos; 
+
+	public GameObject chargingParticlePrefab;
+	GameObject chargingParticles;
+
 	// Use this for initialization
 	void Start () {
 
@@ -282,7 +289,7 @@ public class PlayerS : MonoBehaviour {
 			ownRigid.velocity = Vector3.zero;
 		}
 
-		if(Input.GetKey(KeyCode.K))
+		if(Input.GetKeyDown(KeyCode.K))
 		{
 				TakeDamage(100000f);
 		}
@@ -391,8 +398,12 @@ public class PlayerS : MonoBehaviour {
 		}
 
 		if (charging){
+			if(chargingParticles == null)
+			{
+				chargingParticles = Instantiate( chargingParticlePrefab, this.transform.position, Quaternion.identity) as GameObject; 
+				chargingParticles.transform.parent = this.transform; 
+			}
 
-			
 			groundLeeway = 0.5f;
 
 			//print ("charging!!");
@@ -419,6 +430,8 @@ public class PlayerS : MonoBehaviour {
 
 
 			if (!stretchButtonDown){
+				GameObject.Destroy( chargingParticles.gameObject); 
+
 				groundLeeway = attackGroundLeewayMaxTime;
 				attacking = true;
 				charging = false;
@@ -1160,6 +1173,16 @@ public class PlayerS : MonoBehaviour {
 		if (respawning){
 			if(respawnTimeCountdown == respawnTimeMax)
 			{
+				if(chargingParticles!= null)
+				{
+					GameObject.Destroy(chargingParticles.gameObject); 
+				}
+				respawnParticles = Instantiate(respawnParticlePrefab, this.transform.position, Quaternion.identity) as GameObject;
+				respawnParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[characterNum - 1].GetColor("_TintColor");
+				respawnParticles.GetComponent<ParticleSystem>().startLifetime = respawnTimeCountdown;
+
+				deathPos = this.transform.position; 
+
 				//move player to new respawn position right away so trail renderer has time to update.
 				int randomSpawn = Random.Range(0, allSpawnPts.Length-1);
 				GameObject newSpawn = allSpawnPts[randomSpawn];
@@ -1167,8 +1190,12 @@ public class PlayerS : MonoBehaviour {
 
 				trailRendererGO.GetComponent<TrailRenderer>().enabled = false ;
 				trailRendererGO2.GetComponent<TrailRenderer>().enabled = false ;
-
 			}
+
+
+			respawnParticles.transform.position = Vector3.Lerp(deathPos, this.transform.position, respawnParticles.GetComponent<ParticleSystem>().time/respawnTimeMax); 
+
+
 			respawnTimeCountdown -= Time.deltaTime*TimeManagerS.timeMult;
 			ownRigid.useGravity = false;
 			ownRigid.velocity = Vector3.zero;
@@ -1192,6 +1219,8 @@ public class PlayerS : MonoBehaviour {
 				spriteObjRender.enabled = false;
 			}
 			if (respawnTimeCountdown <= 0){
+				Instantiate(spawnParticlePrefab,this.transform.position, Quaternion.identity); 
+
 				GetComponent<Collider>().enabled = true;
 				spriteObjRender.enabled = true;
 				respawning = false;
@@ -1202,6 +1231,8 @@ public class PlayerS : MonoBehaviour {
 				trailRendererGO.GetComponent<TrailRenderer>().enabled = true ;
 				trailRendererGO2.GetComponent<TrailRenderer>().enabled = true ;
 				health = initialHealth;
+
+				DisableAttacks(); 
 			}
 		}
 
@@ -1337,7 +1368,7 @@ public class PlayerS : MonoBehaviour {
 
 	}
 
-	void DisableAttacks()
+	public void DisableAttacks()
 	{
 		attacking = false; 
 		isDangerous = false; 
