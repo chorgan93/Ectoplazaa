@@ -90,6 +90,7 @@ public class PlayerS : MonoBehaviour {
 	//private float groundPoundPauseTime = 0.3f;
 	private float flingPauseTime = 0.45f;
 
+
 	public GameObject dangerObj;
 	public bool respawning = false;
 	public float respawnTimeMax = 1f;
@@ -202,8 +203,16 @@ public class PlayerS : MonoBehaviour {
 	public GameObject chargingParticlePrefab;
 	GameObject chargingParticles;
 
+	public GameObject initialSpawnParticlesPrefab; 
+	GameObject initialSpawnParticles; 
+	bool isSpawning; 
+
 	// Use this for initialization
 	void Start () {
+
+
+
+	
 
 		platformType = PlatformS.GetPlatform();
 
@@ -231,6 +240,10 @@ public class PlayerS : MonoBehaviour {
 			lv3Flash = GameObject.Find("RedFlash").GetComponent<FlashObjS>();
 		}
 
+
+		initialSpawnParticles =  Instantiate (initialSpawnParticlesPrefab, this.transform.position, Quaternion.identity) as GameObject; 
+		initialSpawnParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[characterNum - 1].GetColor("_TintColor");
+
 	
 	}
 
@@ -238,39 +251,38 @@ public class PlayerS : MonoBehaviour {
 	void FixedUpdate () {
 
 
-
-		if (!ScoreKeeperS.gameEnd){
+		if (!ScoreKeeperS.gameEnd) {
 
 			// trying to stop a stop moving bug
 			transform.rotation = Quaternion.identity;
 
-			if (!TimeManagerS.paused){
+			if (!TimeManagerS.paused) {
 
-				respawnInvulnTime -= Time.deltaTime*TimeManagerS.timeMult;
+				respawnInvulnTime -= Time.deltaTime * TimeManagerS.timeMult;
 	
-				ManageDelay();
+				ManageDelay ();
 				//print (leftCheck);
 	
-				if (!effectPause && !respawning){
+				if (!effectPause && !respawning) {
 	
 					
-					CheckWallCast();
+					CheckWallCast ();
 	
-					Walk();
+					Walk ();
 					Jump ();
 
 					//WallJump ();
 
 	
 	
-					ChargeAttack();
-					AttackRelease();
+					ChargeAttack ();
+					AttackRelease ();
 	
 				}
 
-				MiscAction(); //TRAIL RENDERER UPDATE, OTHER THINGS
+				MiscAction (); //TRAIL RENDERER UPDATE, OTHER THINGS
 	
-				Respawn();
+				Respawn ();
 	
 				/*
 				if (isDangerous && !respawning){
@@ -284,14 +296,14 @@ public class PlayerS : MonoBehaviour {
 				*/
 			}
 	
-		}
-		else{
+		} else {
 			ownRigid.velocity = Vector3.zero;
 		}
 
+
 		if(Input.GetKeyDown(KeyCode.K))
 		{
-				TakeDamage(100000f);
+				//TakeDamage(100000f);
 		}
 	
 	}
@@ -1153,6 +1165,25 @@ public class PlayerS : MonoBehaviour {
 		// trying to fix something with lv 2
 		if (!groundDetect.Grounded()){
 			groundLeeway = 0;
+		}
+
+		if (isSpawning) {
+			if (initialSpawnParticles != null) {
+
+				spriteObject.GetComponent<Renderer> ().enabled = false; 
+				trailRendererGO.GetComponent<TrailRenderer> ().enabled = false; 
+				trailRendererGO2.GetComponent<TrailRenderer> ().enabled = false; 
+
+			} else {
+				if(!isSpawning)
+				{
+					Instantiate(spawnParticlePrefab,this.transform.position, Quaternion.identity); 
+					isSpawning = true; 
+					spriteObject.GetComponent<Renderer> ().enabled = true; 
+					trailRendererGO.GetComponent<TrailRenderer> ().enabled = true; 
+					trailRendererGO2.GetComponent<TrailRenderer> ().enabled = true; 
+				}
+			}
 		}
 
 	}
