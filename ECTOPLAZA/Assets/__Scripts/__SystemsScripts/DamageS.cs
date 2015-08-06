@@ -35,29 +35,48 @@ public class DamageS : MonoBehaviour {
 			//print (other.name); 
 			
 			PlayerS otherPlayer = other.gameObject.GetComponent<PlayerS> ();
-			
+
+			print("HIT PLAYER " +  otherPlayer.playerNum); 
+
 			if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0) {
 				// only deal damage if higher priority or other player isnt attacking
 				//if ((!otherPlayer.attacking) || (otherPlayer.attacking && otherPlayer.attackPriority < playerRef.attackPriority)) {
 				if (!otherPlayer.attacking){
 				
+					print ("DAMAGING PLAYER " + otherPlayer.playerNum); 
+
 					otherPlayer.SleepTime (pauseTime);
 					playerRef.SleepTime (pauseTime);
 
 					//chop all of tail off
 					// make sure there are dots to destroy first
-					otherPlayer.GetComponent<TrailHandlerRedubS>().
-						DestroyPlayerDotsRange(Mathf.RoundToInt(otherPlayer.health)-1);
+					//otherPlayer.TakeDamage (otherPlayer.health);
+					/*
 					if (Mathf.RoundToInt((otherPlayer.health/2)) < 5){
 						otherPlayer.initialHealth = 5;
 					}
 					else{
 						otherPlayer.initialHealth = Mathf.RoundToInt((otherPlayer.health/2));
 					}
-					otherPlayer.TakeDamage (otherPlayer.health);
-					
+					*/
+
+					if(otherPlayer.health < 5)
+					{
+						otherPlayer.GetComponent<TrailHandlerRedubS>().SpawnGlobs(otherPlayer.transform.position,5); 
+					}
+					else
+					{
+
+						int damageTaken = Mathf.RoundToInt((otherPlayer.health/2f));
+
+						otherPlayer.GetComponent<TrailHandlerRedubS>().DestroyPlayerDotsRange(damageTaken);
+						otherPlayer.TakeDamage (damageTaken);
+
+
+					}
+
 					MakeExplosion(otherPlayer.gameObject, playerRef.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
-					
+
 					CameraShakeS.C.LargeShake ();
 
 					
@@ -78,7 +97,7 @@ public class DamageS : MonoBehaviour {
 			}
 		}
 
-		 if (other.gameObject.tag == "PlayerTrail"){
+		if (other.gameObject.tag == "PlayerTrail"){
 
 
 			//print ("yeah");
@@ -90,7 +109,7 @@ public class DamageS : MonoBehaviour {
 				otherPlayer.GetComponent<TrailHandlerRedubS>().ChopTail(other.gameObject);
 				if(playerRef.playerNum ==1)
 				{
-					print("P1 TAIL HIT" );
+					//print("P1 TAIL HIT" );
 				}
 
 				//print (other.GetComponent<DotColliderS>().whoCreatedMe); 

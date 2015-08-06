@@ -1239,6 +1239,7 @@ public class PlayerS : MonoBehaviour {
 		if(isDangerous)
 			dangerObj.GetComponent<DamageS> ().ManageCollision (other.gameObject); 
 
+
 		Vector3 hitParticleSpawn = this.transform.position; 
 		//hitParticleSpawn.z +=.5f;
 
@@ -1314,19 +1315,37 @@ public class PlayerS : MonoBehaviour {
 				isDangerous = false; 
 			}
 		}
-		this.GetComponent<SphereCollider>().material = normalPhysics; 
+
+		//DisableAttacks (); 
+
 
 	}
 
 	void OnTriggerEnter(Collider other) 
 	{
-		if(isDangerous)
+
+		if (isDangerous) {
 			dangerObj.GetComponent<DamageS> ().ManageCollision (other.gameObject); 
+			//DisableAttacks(); 
+
+		}
 
 
 		//attacking = false; 
 		//isDangerous = false; 
 		//this.GetComponent<SphereCollider>().material = normalPhysics; 
+
+	}
+
+	void DisableAttacks()
+	{
+		attacking = false; 
+		isDangerous = false; 
+
+		ownRigid.useGravity = true;
+		canAirStrafe = true; 
+		
+		this.GetComponent<SphereCollider>().material = normalPhysics; 
 
 	}
 

@@ -15,7 +15,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 	public GameObject trailRendererGO;
 	public GameObject trailRendererGO2;
-	float trailRenderTime, trailRenderTimeMin = 0.02f, trailRenderTimeMax= .75f; 
+	float trailRenderTime, trailRenderTimeMin = 0.05f, trailRenderTimeMax= .85f; 
 
 	private LineRenderer playerLine; 
 
@@ -396,21 +396,15 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	public void DestroyPlayerDotsRange(int startingIndex)
 	{
 
-		print ("dot count " + spawnedDots.Count);
-		print ("num dots to destroy" + startingIndex);
+		//print ("dot count " + spawnedDots.Count);
+		//print ("num dots to destroy" + startingIndex);
 
 		if (startingIndex < spawnedDots.Count){
 
 			for (int i = startingIndex; i > 0; i--) {
 
 
-	
-				GameObject newGlob = Instantiate(playerGlob, spawnedDots[i].transform.position, Quaternion.identity) as GameObject; 
-	
-				// set random new velocity
-				Vector3 newGlobVel = Random.insideUnitSphere*6000f*Time.deltaTime;
-				newGlobVel.z = 0;
-				newGlob.GetComponentInChildren<GlobS>().SetVelocityMaterial(newGlobVel, playerRef.gameObject); 
+				SpawnGlobs(spawnedDots[i].transform.position,1);
 	
 				GameObject newParticles = Instantiate (deathParticles,spawnedDots[i].transform.position,Quaternion.identity) as GameObject;
 				newParticles.GetComponent<ParticleSystem>().startColor = playerRef.playerParticleMats[playerRef.characterNum - 1].GetColor("_TintColor");
@@ -422,6 +416,20 @@ public class TrailHandlerRedubS : MonoBehaviour {
 				print ("dot destroyed!");
 
 			}
+		}
+	}
+
+	public void SpawnGlobs(Vector3 spawnPos, int numberOfGlobs)
+	{
+		for (int i = 0; i < numberOfGlobs; i++) {
+			
+			
+			GameObject newGlob = Instantiate (playerGlob, spawnPos, Quaternion.identity) as GameObject; 
+			
+			// set random new velocity
+			Vector3 newGlobVel = Random.insideUnitSphere * 6000f * Time.deltaTime;
+			newGlobVel.z = 0;
+			newGlob.GetComponentInChildren<GlobS> ().SetVelocityMaterial (newGlobVel, playerRef.gameObject); 
 		}
 	}
 
