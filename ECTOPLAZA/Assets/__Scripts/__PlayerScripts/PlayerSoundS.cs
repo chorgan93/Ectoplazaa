@@ -11,17 +11,33 @@ public class PlayerSoundS : MonoBehaviour {
 	public List<GameObject> jumpSoundObjs;
 
 	public GameObject lv1ChargeSoundObj;
+	public List<GameObject> lv1CharChargeSoundObj;
 	public GameObject lv2ChargeSoundObj;
+	public List<GameObject> lv2CharChargeSoundObj;
 	public GameObject lv3ChargeSoundObj;
+	public List<GameObject> lv3CharChargeSoundObj;
 
 	public List<GameObject> attackReleaseSoundObjs;
+	public List<GameObject> groundPoundReleaseSoundObjs;
+	public List<GameObject> charIntroSoundObjs;
+	public List<GameObject> joinSoundObjs;
+	public List<GameObject> deathSoundObjs;
+
+
+	private int characterNum;
 
 	// Use this for initialization
 	void Start () {
 
 		playerRef = GetComponent<PlayerS>();
 		playerRef.soundSource = this;
+		characterNum = playerRef.characterNum;
 	
+	}
+
+	void FixedUpdate () {
+		
+		characterNum = playerRef.characterNum;
 	}
 	
 	public void PlayWallHit(){
@@ -56,11 +72,51 @@ public class PlayerSoundS : MonoBehaviour {
 		
 	}
 
+	public void PlayGroundPoundReleaseSound(){
+		
+		//int releaseToPlay = Mathf.FloorToInt(Random.Range(0,groundPoundReleaseSoundObjs.Count));
+		
+		Instantiate(groundPoundReleaseSoundObjs[characterNum-1]);
+		//print (characterNum);
+		
+	}
+
+	public void PlayCharIntroSound(){
+		
+		//int releaseToPlay = Mathf.FloorToInt(Random.Range(0,groundPoundReleaseSoundObjs.Count));
+
+		int numToPlay = characterNum;
+		if (numToPlay < 0){
+			numToPlay = 0;
+		}
+		if (numToPlay > charIntroSoundObjs.Count-1){
+			numToPlay = 0;
+		}
+
+		Instantiate(charIntroSoundObjs[numToPlay]);
+		//print (characterNum);
+		
+	}
+
+	public void PlayPlayerJoinSound(int numToPlay){
+		Instantiate(joinSoundObjs[numToPlay]);
+	}
+
 
 	public void PlayChargeLv1(){
 
 		
 		Instantiate(lv1ChargeSoundObj);
+
+		int numToPlay = characterNum-1;
+		if (numToPlay < 0){
+			numToPlay = 0;
+		}
+		if (numToPlay > charIntroSoundObjs.Count-1){
+			numToPlay = 0;
+		}
+
+		Instantiate(lv1CharChargeSoundObj[numToPlay]);
 		
 	}
 
@@ -68,13 +124,50 @@ public class PlayerSoundS : MonoBehaviour {
 		
 		
 		Instantiate(lv2ChargeSoundObj);
+
+		int numToPlay = characterNum-1;
+		if (numToPlay < 0){
+			numToPlay = 0;
+		}
+		if (numToPlay > charIntroSoundObjs.Count-1){
+			numToPlay = 0;
+		}
 		
+		Instantiate(lv2CharChargeSoundObj[numToPlay]);
+
 	}
 
 	public void PlayChargeLv3(){
 		
 		
 		Instantiate(lv3ChargeSoundObj);
+
+		int numToPlay = characterNum-1;
+		if (numToPlay < 0){
+			numToPlay = 0;
+		}
+		if (numToPlay > charIntroSoundObjs.Count-1){
+			numToPlay = 0;
+		}
+		
+		Instantiate(lv3CharChargeSoundObj[numToPlay]);
+		
+	}
+
+	public void PlayDeathSounds(){
+		
+		
+		//Instantiate(lv3ChargeSoundObj);
+		
+		int numToPlay = characterNum-1;
+		if (numToPlay < 0){
+			numToPlay = 0;
+		}
+		if (numToPlay > charIntroSoundObjs.Count-1){
+			numToPlay = 0;
+		}
+		
+		Instantiate(deathSoundObjs[numToPlay]);
 		
 	}
 }

@@ -1034,8 +1034,8 @@ public class PlayerS : MonoBehaviour {
 
 				//print ("Groundpound!");
 				// play an attack sound
-				soundSource.PlayChargeLv2();
-
+				//soundSource.PlayChargeLv2();
+				soundSource.PlayGroundPoundReleaseSound();
 
 				// allow for air control
 				//dontCorrectSpeed = false;
@@ -1280,6 +1280,7 @@ public class PlayerS : MonoBehaviour {
 			respawnTimeCountdown = respawnTimeMax;
 
 			Instantiate(deathParticles, this.transform.position, Quaternion.identity); 
+			soundSource.PlayDeathSounds();
 
 
 		}
