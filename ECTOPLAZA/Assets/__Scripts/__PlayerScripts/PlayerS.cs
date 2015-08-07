@@ -207,6 +207,11 @@ public class PlayerS : MonoBehaviour {
 	GameObject initialSpawnParticles; 
 	bool isSpawning; 
 
+	private AudioSource chargeSource;
+	private float currentChargeVolume;
+	private float maxChargeVolume = 1;
+	private float chargeFadeRate = 2f;
+
 	// Use this for initialization
 	void Start () {
 
@@ -245,10 +250,14 @@ public class PlayerS : MonoBehaviour {
 		initialSpawnParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[characterNum - 1].GetColor("_TintColor");
 
 	
+		chargeSource = GetComponent<AudioSource>();
+
 	}
 
 
 	void FixedUpdate () {
+
+		ManageCharge();
 
 
 		if (!ScoreKeeperS.gameEnd) {
@@ -404,6 +413,9 @@ public class PlayerS : MonoBehaviour {
 		if (stretchButtonDown && !charging && canCharge && !isDangerous){
 			charging = true;
 			canCharge = false;
+
+			TriggerCharge();
+
 			chargeTime = 0;
 
 			groundLeeway = 0.5f;
@@ -427,15 +439,15 @@ public class PlayerS : MonoBehaviour {
 
 			// play sounds when you hit each threshold
 			if (chargeTime > 0 && !playedLV1ChargeSound){
-				soundSource.PlayChargeLv1();
+				//soundSource.PlayChargeLv1();
 				playedLV1ChargeSound = true;
 			}
 			if (chargeTime > medChargeTime && !playedLV2ChargeSound){
-				soundSource.PlayChargeLv2();
+				//soundSource.PlayChargeLv2();
 				playedLV2ChargeSound = true;
 			}
 			if (chargeTime > maxChargeTime && !playedLV3ChargeSound){
-				soundSource.PlayChargeLv3();
+				//soundSource.PlayChargeLv3();
 				playedLV3ChargeSound = true;
 			}
 
@@ -501,9 +513,15 @@ public class PlayerS : MonoBehaviour {
 				soundSource.PlayReleaseSound ();
 				if (attackToPerform == 2){
 					lv3Flash.ResetFade();
+					soundSource.PlayChargeLv3();
 				}
 				if (attackToPerform == 1){
 					lv2Flash.ResetFade();
+					soundSource.PlayChargeLv2();
+				}
+				if (attackToPerform == 0){
+					
+					soundSource.PlayChargeLv1();
 				}
 			}
 
@@ -512,12 +530,13 @@ public class PlayerS : MonoBehaviour {
 			}
 			if (attackToPerform == 1) {
 				FlingSlowAttack (false);
+
 				//FlingMiniAttack (false); //replacing for now
 
-				//print ("started slow fling");
 			} else if (attackToPerform == 0) {
 				//JabAttack();
 				FlingMiniAttack (false);
+
 			}
 			
 			performedAttack = true;
@@ -680,6 +699,8 @@ public class PlayerS : MonoBehaviour {
 			chargeTime = medChargeTime*1.35f;
 			attackToPerform = 0;
 			FlingMiniAttack(false);
+
+			soundSource.PlayChargeLv1();
 			
 			//print ("part 2!");
 			
@@ -1034,8 +1055,8 @@ public class PlayerS : MonoBehaviour {
 
 				//print ("Groundpound!");
 				// play an attack sound
-				soundSource.PlayChargeLv2();
-
+				//soundSource.PlayChargeLv2();
+				soundSource.PlayGroundPoundReleaseSound();
 
 				// allow for air control
 				//dontCorrectSpeed = false;
@@ -1264,6 +1285,8 @@ public class PlayerS : MonoBehaviour {
 				health = initialHealth;
 
 				DisableAttacks(); 
+
+				soundSource.PlayCharIntroSound();
 			}
 		}
 
@@ -1280,6 +1303,7 @@ public class PlayerS : MonoBehaviour {
 			respawnTimeCountdown = respawnTimeMax;
 
 			Instantiate(deathParticles, this.transform.position, Quaternion.identity); 
+			soundSource.PlayDeathSounds();
 
 
 		}
@@ -1349,7 +1373,15 @@ public class PlayerS : MonoBehaviour {
 			// play bounce sound if not groundpounding
 			if (!groundPounded){
 				if (soundSource != null){
-					soundSource.PlayWallHit();
+					if (other.gameObject.GetComponent<PlatformSoundS>() != null){
+						other.gameObject.GetComponent<PlatformSoundS>().PlayPlatformSounds();
+						print ("Played platform sound");
+					}
+					else{
+						soundSource.PlayWallHit();
+					}
+
+					
 				}
 				// tiny shake if not attacking, bigger one if you are
 				if (attacking){
@@ -1363,6 +1395,9 @@ public class PlayerS : MonoBehaviour {
 			}
 			else{
 				soundSource.PlayGroundPoundHit();
+				if (other.gameObject.GetComponent<PlatformSoundS>() != null){
+					other.gameObject.GetComponent<PlatformSoundS>().PlayPlatformSounds();
+				}
 				//print ("played ground sound");
 				// bigger shake
 				CameraShakeS.C.SmallShake();
@@ -1410,6 +1445,27 @@ public class PlayerS : MonoBehaviour {
 		this.GetComponent<SphereCollider>().material = normalPhysics; 
 
 	}
+
+	public void TriggerCharge(){
+		chargeSource.volume = maxChargeVolume;
+		chargeSource.Play ();
+	}
+
+	void ManageCharge () {
+		if (chargeSource.volume > 0){
+			if (!charging){
+				chargeSource.volume -= chargeFadeRate*Time.deltaTime*TimeManagerS.timeMult;
+			}
+			else{
+				chargeSource.volume = maxChargeVolume;
+			}
+		}
+		else{
+			chargeSource.volume = 0;
+			chargeSource.Stop();
+		}
+	}
+
 
 	public void UnlockVel () {
 		lockInPlace = false;

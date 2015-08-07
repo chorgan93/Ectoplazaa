@@ -28,8 +28,8 @@ public class CharacterSelectMenu : MonoBehaviour {
 		
 		nextLevelString = LevelSelectMenu.selectedLevelString;
 
-		string[] joysticks = Input.GetJoystickNames();
-		print (joysticks.Length);
+	//	string[] joysticks = Input.GetJoystickNames();
+	//	print (joysticks.Length);
 	}
 	
 	// Update is called once per frame
@@ -103,7 +103,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 					newPlayer.GetComponent<PlayerS>().spawnPt = spawnPoints[i-1];
 					players[i-1] = newPlayer; 
 					//joinTexts[i-1].GetComponent<Renderer>().enabled = false; 
-					print("Total Players: " + totalPlayers); 
+					//print("Total Players: " + totalPlayers); 
 
 					Renderer [] renderers = joinTexts[i-1].GetComponentsInChildren<Renderer>();
 
@@ -111,6 +111,12 @@ public class CharacterSelectMenu : MonoBehaviour {
 					{
 						r.enabled = false; 
 					}
+
+					
+					// play char intro sound
+					players[i-1].GetComponent<PlayerSoundS>().PlayCharIntroSound();
+					players[i-1].GetComponent<PlayerSoundS>().PlayPlayerJoinSound(totalPlayers-1);
+					//print (players[i-1].GetComponent<PlayerS>().characterNum);
 				
 				
 				}
@@ -175,8 +181,13 @@ public class CharacterSelectMenu : MonoBehaviour {
 					
 					characterNumText[i-1].GetComponent<TextMesh>().text = "characterNum: " + newSkin;
 
+
 					players[i-1].GetComponent<PlayerS>().characterNum = newSkin;
 					players[i-1].GetComponent<PlayerS>().SetSkin();
+
+					
+					// play char intro sound
+					players[i-1].GetComponent<PlayerSoundS>().PlayCharIntroSound();
 				}
 
 

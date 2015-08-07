@@ -15,6 +15,13 @@ public class BGMS : MonoBehaviour {
 	public float fadeInRate = 1f;
 	public float maxVolume = 1f;
 
+	private float duckRecover = 0.8f;
+
+	private float targetVolume;
+	private float currentVolume;
+
+	private float duckVolumeMult = 0.5f;
+
 	// Use this for initialization
 	void Awake () {
 
@@ -41,7 +48,23 @@ public class BGMS : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		ownSource.volume = maxVolume * bgmVolumeMult;
+		targetVolume = maxVolume * bgmVolumeMult;
+
+		currentVolume = ownSource.volume;
+
+		if (currentVolume < targetVolume){
+			currentVolume += Time.deltaTime*TimeManagerS.timeMult*fadeInRate;
+		}
+		else{
+			currentVolume = targetVolume;
+		}
+
+		ownSource.volume = currentVolume;
 	
+	}
+
+	public void DuckVolume(){
+		currentVolume = targetVolume*duckVolumeMult;
+		print ("duck volume");
 	}
 }
