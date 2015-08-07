@@ -57,6 +57,7 @@
      <Compile Include="Assets\__Scripts\EnvironmentScripts\LightningScreenS.cs" />
      <Compile Include="Assets\__Scripts\EnvironmentScripts\MCBlobs.cs" />
      <Compile Include="Assets\__Scripts\EnvironmentScripts\ParticleSystemAutoDestroy.cs" />
+     <Compile Include="Assets\__Scripts\EnvironmentScripts\PlatformSoundS.cs" />
      <Compile Include="Assets\__Scripts\EnvironmentScripts\SFXObjS.cs" />
      <Compile Include="Assets\__Scripts\EnvironmentScripts\SingleAnimObjS.cs" />
      <Compile Include="Assets\__Scripts\MenuScripts\CharacterSelectMenu.cs" />

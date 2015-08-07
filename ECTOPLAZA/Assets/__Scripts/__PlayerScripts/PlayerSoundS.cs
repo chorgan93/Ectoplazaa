@@ -46,6 +46,8 @@ public class PlayerSoundS : MonoBehaviour {
 
 		Instantiate(wallHitSoundObjs[wallHitToPlay]);
 
+		print ("played wall hit sound");
+
 	}
 
 	public void PlayGroundPoundHit(){
@@ -82,10 +84,12 @@ public class PlayerSoundS : MonoBehaviour {
 	}
 
 	public void PlayCharIntroSound(){
+
+		// need to hear these
 		
 		//int releaseToPlay = Mathf.FloorToInt(Random.Range(0,groundPoundReleaseSoundObjs.Count));
 
-		int numToPlay = characterNum;
+		int numToPlay = characterNum-1;
 		if (numToPlay < 0){
 			numToPlay = 0;
 		}
@@ -106,7 +110,7 @@ public class PlayerSoundS : MonoBehaviour {
 	public void PlayChargeLv1(){
 
 		
-		Instantiate(lv1ChargeSoundObj);
+		//Instantiate(lv1ChargeSoundObj);
 
 		int numToPlay = characterNum-1;
 		if (numToPlay < 0){
@@ -140,7 +144,7 @@ public class PlayerSoundS : MonoBehaviour {
 	public void PlayChargeLv3(){
 		
 		
-		Instantiate(lv3ChargeSoundObj);
+		//Instantiate(lv3ChargeSoundObj);
 
 		int numToPlay = characterNum-1;
 		if (numToPlay < 0){

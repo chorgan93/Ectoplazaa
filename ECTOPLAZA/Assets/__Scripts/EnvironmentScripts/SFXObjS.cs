@@ -5,6 +5,8 @@ public class SFXObjS : MonoBehaviour {
 
 	private AudioSource ownSource;
 
+	public bool duckMusic = false;
+
 	public static float sfxVolumeMult = 1;
 
 	// Use this for initialization
@@ -14,6 +16,12 @@ public class SFXObjS : MonoBehaviour {
 		// multiply volume by sfx volume mult
 		ownSource.volume *= sfxVolumeMult;
 		ownSource.Play();
+
+		if (duckMusic){
+			if (GameObject.Find("MusicPlayer")){
+				GameObject.Find("MusicPlayer").GetComponent<BGMS>().DuckVolume();
+			}
+		}
 	
 	}
 	
