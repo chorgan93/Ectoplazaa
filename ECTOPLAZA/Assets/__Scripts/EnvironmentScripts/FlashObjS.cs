@@ -9,13 +9,20 @@ public class FlashObjS : MonoBehaviour {
 
 	private Color currentCol;
 
+	public bool startFlash = false;
+
 	// Use this for initialization
 	void Start () {
 	
 		ownRender = GetComponent<Renderer>();
 
 		currentCol = ownRender.material.color;
-		currentCol.a = 0;
+		if (!startFlash){
+			currentCol.a = 0;
+		}
+		else{
+			currentCol.a = fadeMax;
+		}
 		ownRender.material.color = currentCol;
 
 	}

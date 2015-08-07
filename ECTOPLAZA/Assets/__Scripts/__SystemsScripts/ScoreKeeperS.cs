@@ -21,6 +21,17 @@ public class ScoreKeeperS : MonoBehaviour {
 
 	bool spawnedScoreboard = false;
 
+	public static bool gameStarted = false;
+
+	public GameObject timer3;
+	public GameObject timer2;
+	public GameObject timer1;
+	public GameObject goText;
+	private int currentText = 4;
+
+	private float countdownRateMax = .5f;
+	private float startCountdown;
+
 	// don't allow exit of game until this time is up
 	public float gameEndMinTime = 2f;
 
@@ -31,6 +42,10 @@ public class ScoreKeeperS : MonoBehaviour {
 	void Start () 
 	{
 		endGameObj.SetActive(false);
+		gameStarted = false;
+		gameEnd = false;
+
+		startCountdown = countdownRateMax;
 	}
 
 	
@@ -50,6 +65,30 @@ public class ScoreKeeperS : MonoBehaviour {
 		}
 
 		RepositionScoreboard(); 
+
+		// start game stuff
+		if (!gameStarted){
+			startCountdown -= Time.deltaTime;
+			if (startCountdown <= 0){
+				currentText --;
+				startCountdown = countdownRateMax;
+
+				if (currentText == 0){
+					gameStarted = true;
+					goText.SetActive(true);
+					CameraShakeS.C.LargeShake();
+				}
+				if (currentText == 1){
+					timer1.SetActive(true);
+				}
+				if (currentText == 2){
+					timer2.SetActive(true);
+				}
+				if (currentText == 3){
+					timer3.SetActive(true);
+				}
+			}
+		}
 
 	}
 

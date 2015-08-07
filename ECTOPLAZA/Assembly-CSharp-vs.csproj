@@ -62,6 +62,7 @@
      <Compile Include="Assets\__Scripts\EnvironmentScripts\PlatformSoundS.cs" />
      <Compile Include="Assets\__Scripts\EnvironmentScripts\SFXObjS.cs" />
      <Compile Include="Assets\__Scripts\EnvironmentScripts\SingleAnimObjS.cs" />
+     <Compile Include="Assets\__Scripts\EnvironmentScripts\StartCountTextS.cs" />
      <Compile Include="Assets\__Scripts\MenuScripts\CharacterSelectMenu.cs" />
      <Compile Include="Assets\__Scripts\MenuScripts\LevelSelectMenu.cs" />
      <Compile Include="Assets\__Scripts\MenuScripts\PauseScreenS.cs" />

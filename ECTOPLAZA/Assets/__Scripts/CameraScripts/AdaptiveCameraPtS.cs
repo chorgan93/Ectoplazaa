@@ -89,6 +89,9 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 		if (adaptPt.y > maxY-camMult*yConstraintSizeAdjustMult){
 			adaptPt.y = maxY;
 		}
+		if (!ScoreKeeperS.gameStarted){
+			adaptPt = centerPt.transform.position;
+		}
 
 		transform.position = adaptPt;
 
