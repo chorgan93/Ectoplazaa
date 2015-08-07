@@ -1385,13 +1385,13 @@ public class PlayerS : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other) 
 	{
+		if (other.gameObject.tag != "Debris") {
+			if (isDangerous) {
+				dangerObj.GetComponent<DamageS> ().ManageCollision (other.gameObject); 
+				//DisableAttacks(); 
 
-		if (isDangerous) {
-			dangerObj.GetComponent<DamageS> ().ManageCollision (other.gameObject); 
-			//DisableAttacks(); 
-
+			}
 		}
-
 
 		//attacking = false; 
 		//isDangerous = false; 
