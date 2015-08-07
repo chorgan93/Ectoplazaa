@@ -18,6 +18,15 @@ public class CharacterSelectMenu : MonoBehaviour {
 	public string nextLevelString;
 	public string backSceneString;
 
+	public GameObject loadPt;
+	private CameraFollowS followRef;
+
+	private float inputDelay = 0.8f;
+	private float loadDelay = 0.5f;
+	private bool startedLoadDelay = false;
+	private bool startedLoading = false;
+	AsyncOperation async;
+
 	int totalPlayers = 0; 
 
 	// Use this for initialization
@@ -28,6 +37,8 @@ public class CharacterSelectMenu : MonoBehaviour {
 		
 		nextLevelString = LevelSelectMenu.selectedLevelString;
 
+		followRef = GetComponent<CameraFollowS>();
+
 	//	string[] joysticks = Input.GetJoystickNames();
 	//	print (joysticks.Length);
 	}
@@ -36,6 +47,27 @@ public class CharacterSelectMenu : MonoBehaviour {
 	void FixedUpdate () 
 	{
 
+		inputDelay -= Time.deltaTime;
+		if (inputDelay <= 0){
+
+		if (startedLoading){
+			if (async.progress >= 0.9f){
+				ActivateScene();
+			}
+				CameraShakeS.C.DisableShaking();
+		}
+		
+		else if (startedLoadDelay){
+			loadDelay -= Time.deltaTime;
+			followRef.poi = loadPt;
+			if (loadDelay <= 0){
+				startedLoading = true;
+				StartLoading();
+			}
+				
+				CameraShakeS.C.DisableShaking();
+		}
+		else{
 
 		// back function
 		if (Input.GetButton("XButtonPlayer" + playerNum + platformType)){
@@ -213,10 +245,29 @@ public class CharacterSelectMenu : MonoBehaviour {
 				GlobalVars.characterSelected = true; 
 				GlobalVars.launchingFromScene = false; 
 
-				Application.LoadLevel(nextLevelString);
+				//Application.LoadLevel(nextLevelString);
+					startedLoadDelay = true;
 			}
 
 		}
+		}
+		}
 
+	}
+
+	public void StartLoading() {
+		StartCoroutine("load");
+	}
+	
+	IEnumerator load() {
+		Debug.LogWarning("ASYNC LOAD STARTED - " +
+		                 "DO NOT EXIT PLAY MODE UNTIL SCENE LOADS... UNITY WILL CRASH");
+		async = Application.LoadLevelAsync(nextLevelString);
+		async.allowSceneActivation = false;
+		yield return async;
+	}
+	
+	public void ActivateScene() {
+		async.allowSceneActivation = true;
 	}
 }

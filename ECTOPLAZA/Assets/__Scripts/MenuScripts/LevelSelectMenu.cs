@@ -21,16 +21,53 @@ public class LevelSelectMenu : MonoBehaviour {
 	public int playerNum = 1;
 	private string platformType; 
 
+	private float delayInput = 0.5f;
+	private float loadDelay = 0.5f;
+	private bool startedLoadDelay = false;
+	private bool startedLoading = false;
+
+	public GameObject loadPt;
+
+	private CameraFollowS followRef;
+
+	AsyncOperation async;
+
+
 	// Use this for initialization
 	void Start () {
 
 		platformType = PlatformS.GetPlatform();
+
+		cursorObj.transform.position = cursorPositions[currentCursorPos].transform.position;
+
+		followRef = GetComponent<CameraFollowS>();
 
 	
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () {
+
+		if (startedLoading){
+			if (async.progress >= 0.9f){
+				ActivateScene();
+			}
+		}
+
+		else if (startedLoadDelay){
+			loadDelay -= Time.deltaTime;
+			followRef.poi = loadPt;
+			if (loadDelay <= 0){
+				startedLoading = true;
+				StartLoading();
+			}
+		}
+
+		else {
+		if (delayInput > 0){
+			delayInput -= Time.deltaTime;
+		}
+		else{
 
 		// back function
 		if (Input.GetButton("XButtonPlayer" + playerNum + platformType)){
@@ -68,8 +105,27 @@ public class LevelSelectMenu : MonoBehaviour {
 		// move to character select function
 		if (Input.GetButton("AButtonPlayer" + playerNum + platformType)){
 			selectedLevelString = nextLevelStrings[currentCursorPos];
-			Application.LoadLevel(nextSceneString);
+			//Application.LoadLevel(nextSceneString);
+					startedLoadDelay = true;
+		}
+		}
 		}
 	
+	}
+
+	public void StartLoading() {
+		StartCoroutine("load");
+	}
+	
+	IEnumerator load() {
+		Debug.LogWarning("ASYNC LOAD STARTED - " +
+		                 "DO NOT EXIT PLAY MODE UNTIL SCENE LOADS... UNITY WILL CRASH");
+		async = Application.LoadLevelAsync(nextSceneString);
+		async.allowSceneActivation = false;
+		yield return async;
+	}
+	
+	public void ActivateScene() {
+		async.allowSceneActivation = true;
 	}
 }

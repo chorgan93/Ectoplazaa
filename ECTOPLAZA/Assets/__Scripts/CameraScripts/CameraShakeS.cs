@@ -23,6 +23,8 @@ public class CameraShakeS : MonoBehaviour {
 	public bool 				shaking = false; // true when camera is shaking
 	public bool					sleeping = false; // true when time is sleeping
 
+	private float delayShakeTime = 1f;
+
 	private CameraFollowS ownFollow;
 	
 	public float microShakeDiv = 8;
@@ -43,6 +45,13 @@ public class CameraShakeS : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update(){
+
+		// don't shake for first second of game
+		if (delayShakeTime > 0){
+			delayShakeTime -= Time.deltaTime;
+		}
+		else{
+
 		if(shake_intensity > 0 && !sleeping){
 			//print ("SHAKING");
 			
@@ -53,6 +62,7 @@ public class CameraShakeS : MonoBehaviour {
 			transform.position = camPos;
 			
 			shake_intensity -= shake_decay*Time.deltaTime;
+		}
 		}
 		
 	}
@@ -81,6 +91,7 @@ public class CameraShakeS : MonoBehaviour {
 			}
 			
 		}
+		
 		
 	}
 	
@@ -119,6 +130,10 @@ public class CameraShakeS : MonoBehaviour {
 		//print ("SLEEPING");
 		sleepDuration = sleepTime;
 		sleeping = true;
+	}
+
+	public void DisableShaking(){
+		delayShakeTime = 1f;
 	}
 }
 

@@ -27,6 +27,8 @@ public class CameraFollowS : MonoBehaviour {
 
 	public static CameraFollowS F;
 
+	public bool newStartPos = false;
+
 
 
 	void Awake () {
@@ -35,9 +37,11 @@ public class CameraFollowS : MonoBehaviour {
 	
 	void Start(){
 		//poi = GameObject.Find("AdaptiveCameraPt");
+		if (!newStartPos){
 		Vector3 resetPos = poi.transform.position;
 		resetPos.z = camOffset.z;
 		transform.position = resetPos;
+		}
 		//camera.backgroundColor = Color.black;
 
 		ownCam = GetComponent<Camera>();

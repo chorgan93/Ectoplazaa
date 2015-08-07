@@ -26,6 +26,7 @@ public class StartMenu : MonoBehaviour {
 	private int currentCursorPos = 0;
 
 	public GameObject mainMenuCenterPt;
+	public GameObject loadingCenterPt;
 	public GameObject creditsCenterPt;
 	private bool onCredits = false;
 	public GameObject optionsCenterPt;
@@ -45,6 +46,12 @@ public class StartMenu : MonoBehaviour {
 
 	private bool fullscreenOn = true;
 	public TextMesh fullScreenDisplay;
+
+	private bool startedLoading = false;
+	private bool startCountdown = false;
+	private float delayLoadTime = 0.5f;
+	
+	AsyncOperation async;
 
 	void Start () 
 	{
@@ -70,6 +77,24 @@ public class StartMenu : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
+
+		// for loading next scene
+		
+		
+		if (startCountdown && !startedLoading){
+			delayLoadTime -= Time.deltaTime;
+			if (delayLoadTime <= 0){
+				StartLoading();
+				startedLoading = true;
+			}
+
+			inputDelay = 1000f;
+		}
+
+		if (startedLoading &&  async.progress >= 0.9f){
+			ActivateScene();
+		}
+
 		if (!started) 
 		{
 			if (Input.GetButton ("AButtonPlayer" + playerNum + platformType) || Input.GetKey (KeyCode.KeypadEnter)) 
@@ -145,7 +170,13 @@ public class StartMenu : MonoBehaviour {
 					{
 						// "play" option
 						if (currentCursorPos == 0){
-							Application.LoadLevel(nextSceneString);
+							//Application.LoadLevel(nextSceneString);
+
+							// start level select load
+							//StartLoading();
+							//startedLoading = true;
+							startCountdown = true;
+							cameraFollow.poi = loadingCenterPt;
 						}
 	
 						// "options" option
@@ -327,6 +358,24 @@ public class StartMenu : MonoBehaviour {
 			}
 			
 		}
+
+	// for pre loading of level select
+
+	public void StartLoading() {
+		StartCoroutine("load");
+	}
+	
+	IEnumerator load() {
+		Debug.LogWarning("ASYNC LOAD STARTED - " +
+		                 "DO NOT EXIT PLAY MODE UNTIL SCENE LOADS... UNITY WILL CRASH");
+		async = Application.LoadLevelAsync(nextSceneString);
+		async.allowSceneActivation = false;
+		yield return async;
+	}
+	
+	public void ActivateScene() {
+		async.allowSceneActivation = true;
+	}
 
 
 }

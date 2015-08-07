@@ -64,7 +64,9 @@ public class ScoreBar : MonoBehaviour {
 				newHead.GetComponentInChildren<SpriteRenderer>().sprite = playerRefs[i].spriteObject.GetComponent<SpriteRenderer>().sprite; 
 				newHead.transform.parent = this.transform; 
 				heads[i] = newHead; 
-				barObjs[i].GetComponentInChildren<Renderer> ().material = playerRefs[i].playerMats [playerRefs[i].playerNum - 1];
+				if (barObjs[i].GetComponentInChildren<Renderer>() != null){
+					barObjs[i].GetComponentInChildren<Renderer> ().material = playerRefs[i].playerMats [playerRefs[i].playerNum - 1];
+				}
 
 			}
 			else

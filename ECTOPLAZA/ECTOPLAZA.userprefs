@@ -1,10 +1,12 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\__Scripts\DestructionScripts\EmitDebris.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/__Scripts/MenuScripts/CharacterSelectMenu.cs">
     <Files>
-      <File FileName="Assets\__Scripts\DestructionScripts\EmitDebris.cs" Line="10" Column="37" />
-      <File FileName="Assets\__Scripts\__PlayerScripts\PlayerS.cs" Line="1387" Column="3" />
-      <File FileName="Assets\__Scripts\DestructionScripts\DestroyObject.cs" Line="12" Column="51" />
+      <File FileName="Assets/__Scripts/MenuScripts/StartMenu.cs" Line="364" Column="2" />
+      <File FileName="../../Unity Games/PostSchool/glamourshot/Assets/__Scripts/CameraScripts/GameOverScreenS.cs" Line="21" Column="2" />
+      <File FileName="Assets/__Scripts/MenuScripts/LevelSelectMenu.cs" Line="32" Column="1" />
+      <File FileName="Assets/__Scripts/CameraScripts/CameraFollowS.cs" Line="44" Column="4" />
+      <File FileName="Assets/__Scripts/MenuScripts/CharacterSelectMenu.cs" Line="257" Column="53" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

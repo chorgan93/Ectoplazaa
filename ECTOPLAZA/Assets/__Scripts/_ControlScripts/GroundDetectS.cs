@@ -8,13 +8,13 @@ public class GroundDetectS : MonoBehaviour {
 
 
 	void OnTriggerEnter(Collider other){
-		if (other.gameObject.tag == "Ground"){
+		if (other.gameObject.tag == "Ground" || other.gameObject.tag == "Player"){
 			groundObjs.Add(other.gameObject);
 		}
 	}
 
 	void OnTriggerExit(Collider other){
-		if (other.gameObject.tag == "Ground"){
+		if (other.gameObject.tag == "Ground" || other.gameObject.tag == "Player"){
 			groundObjs.Remove(other.gameObject);
 		}
 	}
