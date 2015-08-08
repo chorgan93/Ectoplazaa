@@ -181,17 +181,17 @@ public class ScoreKeeperS : MonoBehaviour {
 
 		endGameObj.transform.position = Vector3.Lerp (endGameObj.transform.position, newPos, 0.2f); 
 		
-		if (Input.GetButton ("StartButtonAllPlayers"+	PlatformS.GetPlatform ()) && gameEndMinTime < 0) 
+		if (Input.GetButton ("BButtonAllPlayers"+	PlatformS.GetPlatform ()) && gameEndMinTime < 0) 
 		{
 			gameEnd = false;
 			// hard coding in return to character select
 			Application.LoadLevel("3CharacterSelect");
 		}
-		if (Input.GetButton ("AButtonPlayer1" + PlatformS.GetPlatform ()) && gameEndMinTime < 0) {
+		if (Input.GetButton ("AButtonAllPlayers" + PlatformS.GetPlatform ()) && gameEndMinTime < 0) {
 
 			print("RESETTINGLEVEL"); 
 			//GlobalVars.ResetVariables(); 
-			//Application.LoadLevel(Application.loadedLevel); THIS DOESNT WORK, CAUSES GLITCHES ON RESTART, MIGHT HAVE TO LOAD BACK THROUGH CHARACTER SELECT SCREEN? 
+			Application.LoadLevel(Application.loadedLevel);// THIS DOESNT WORK, CAUSES GLITCHES ON RESTART, MIGHT HAVE TO LOAD BACK THROUGH CHARACTER SELECT SCREEN? 
 		}
 
 	}

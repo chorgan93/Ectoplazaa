@@ -10,7 +10,7 @@ public class GameStartS : MonoBehaviour {
 	void Start () 
 	{
 
-		if (!GlobalVars.characterSelected) //create players when opening level scenes directly from unity based on total joysticks
+		if (!GlobalVars.characterSelected) //create a default 4 players on scene open if they didnt come from character select 
 		{ 
 			//string [] joystickNames = Input.GetJoystickNames ();
 			//int numberOfPlayers = joystickNames.Length; 
@@ -28,7 +28,7 @@ public class GameStartS : MonoBehaviour {
 
 			}
 		} 
-		else 
+		else //CHARACTERS WENT THROUGH CHARACTER SELECT
 		{
 			for (int i = 0; i < 4; i++) {
 				if (GlobalVars.characterNumber [i] != 0) {

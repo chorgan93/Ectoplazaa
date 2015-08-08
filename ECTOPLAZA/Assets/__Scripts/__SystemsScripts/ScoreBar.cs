@@ -61,6 +61,7 @@ public class ScoreBar : MonoBehaviour {
 				Vector3 spawnPos = barObjs[i].transform.position;
 				spawnPos.z = -8f; 
 				GameObject newHead = Instantiate(headPrefab, spawnPos, Quaternion.identity) as GameObject; 
+				playerRefs[i].GetComponent<PlayerS>().SetSkin(); 
 				newHead.GetComponentInChildren<SpriteRenderer>().sprite = playerRefs[i].spriteObject.GetComponent<SpriteRenderer>().sprite; 
 				newHead.transform.parent = this.transform; 
 				heads[i] = newHead; 
@@ -107,6 +108,7 @@ public class ScoreBar : MonoBehaviour {
 			Vector3 headAnim = Vector3.Lerp (heads[i].transform.position, newHeadPos, animSpeed); 
 			
 			heads[i].transform.position = headAnim; 
+			heads[i].GetComponentInChildren<SpriteRenderer>().sprite = playerRefs[i].spriteObject.GetComponent<SpriteRenderer>().sprite; 
 
 
 			//CHANGE BAR SCALE

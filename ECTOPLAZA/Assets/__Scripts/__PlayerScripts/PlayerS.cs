@@ -1218,6 +1218,7 @@ public class PlayerS : MonoBehaviour {
 		GetComponent<TrailHandlerRedubS> ().SetDotMaterial ();
 
 
+
 	}
 
 	void Respawn () {

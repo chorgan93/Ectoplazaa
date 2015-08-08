@@ -26,6 +26,7 @@ public class PlayerNumDisplayS : MonoBehaviour {
 
 		if (playerRef.health > 0){
 
+			ownText.color = colorsToPick [playerAnimRef.myCharNum - 1].GetColor ("_TintColor");
 			ownText.text = thisIsMyString;
 
 		}

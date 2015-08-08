@@ -95,7 +95,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 					else
 					{
 
-						for(int j = 1; j < GlobalVars.totalSkins; j++)
+						for(int j = 1; j <= GlobalVars.totalSkins; j++)
 						{
 
 							bool flag = false;
@@ -155,7 +155,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 				
 				}
 			}
-			else if (Input.GetButton ("XButtonPlayer" + i + platformType)) //REMOVE PLAYER---------------------------------------
+			else if (Input.GetButton ("BButtonPlayer" + i + platformType)) //REMOVE PLAYER---------------------------------------
 			{
 				if(hasJoined[i-1])
 				{
@@ -188,7 +188,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 					for(int j= 1; j <= GlobalVars.totalSkins; j++) //loop once through all skins
 					{
 						newSkin += 1; //increment to next skin, check if available; 
-						if(newSkin > GlobalVars.totalSkins-1) //loop if at end of skins
+						if(newSkin > GlobalVars.totalSkins) //loop if at end of skins
 							newSkin = 1; 
 
 						bool flag = false; 
