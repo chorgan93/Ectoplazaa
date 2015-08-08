@@ -39,6 +39,8 @@ public class CharacterSelectMenu : MonoBehaviour {
 
 		followRef = GetComponent<CameraFollowS>();
 
+		ScoreKeeperS.gameStarted = true;
+
 	//	string[] joysticks = Input.GetJoystickNames();
 	//	print (joysticks.Length);
 	}

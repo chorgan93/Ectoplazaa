@@ -260,7 +260,7 @@ public class PlayerS : MonoBehaviour {
 		ManageCharge();
 
 
-		if (!ScoreKeeperS.gameEnd && !ScoreKeeperS.gameStarted) {
+		if (!ScoreKeeperS.gameEnd && ScoreKeeperS.gameStarted) {
 
 			// trying to stop a stop moving bug
 			transform.rotation = Quaternion.identity;
