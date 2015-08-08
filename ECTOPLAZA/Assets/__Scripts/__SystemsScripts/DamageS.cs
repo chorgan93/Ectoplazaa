@@ -67,7 +67,7 @@ public class DamageS : MonoBehaviour {
 					}
 					else
 					{
-						int damageTaken = Mathf.RoundToInt((otherPlayer.health/2f));
+						int damageTaken = (int)otherPlayer.health+1;  //Mathf.RoundToInt((otherPlayer.health/2f));
 
 						otherPlayer.GetComponent<TrailHandlerRedubS>().DestroyPlayerDotsRange(damageTaken);
 						otherPlayer.TakeDamage (damageTaken);

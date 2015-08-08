@@ -811,7 +811,8 @@ public class PlayerS : MonoBehaviour {
 		{
 			if(!performedAttack)
 			{
-				this.GetComponent<SphereCollider>().material = bouncyPhysics; 
+				if(!groundDetect.Grounded())
+					this.GetComponent<SphereCollider>().material = bouncyPhysics; 
 
 				// bullet snap
 				bulletVel = attackDir.normalized*Time.deltaTime*lv3BulletSpeed;
@@ -1246,7 +1247,8 @@ public class PlayerS : MonoBehaviour {
 			}
 
 
-			respawnParticles.transform.position = Vector3.Lerp(deathPos, this.transform.position, respawnParticles.GetComponent<ParticleSystem>().time/respawnTimeMax); 
+			if(respawnParticles!= null)
+				respawnParticles.transform.position = Vector3.Lerp(deathPos, this.transform.position, respawnParticles.GetComponent<ParticleSystem>().time/respawnTimeMax); 
 
 
 			respawnTimeCountdown -= Time.deltaTime*TimeManagerS.timeMult;

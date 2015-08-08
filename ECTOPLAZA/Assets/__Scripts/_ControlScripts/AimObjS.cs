@@ -19,6 +19,7 @@ public class AimObjS : MonoBehaviour {
 
 	private string platformType;
 
+
 	public Sprite [] chargeBarSprites; 
 	public GameObject chargeBarSprite; 
 
@@ -83,6 +84,7 @@ public class AimObjS : MonoBehaviour {
 			aimDir.x = Input.GetAxis("HorizontalPlayer"+playerRef.playerNum+platformType);
 			aimDir.y = Input.GetAxis("VerticalPlayer"+playerRef.playerNum+platformType);
 
+
 			transform.position = playerRef.transform.position + aimDir.normalized*aimRadius;
 
 			
@@ -124,6 +126,7 @@ public class AimObjS : MonoBehaviour {
 */
 			//print(newAngle); 
 			chargeBarSprite.transform.rotation = Quaternion.Euler(0,0,-newAngle); 
+
 
 		}
 
