@@ -20,6 +20,7 @@ public class StartMenu : MonoBehaviour {
 	public GameObject [] postcards; 
 
 	public GameObject cursorObj;
+	float cursorSpeed = 0.2f; 
 	public List<GameObject> cursorPositions;
 	private bool movedCursor = false;
 	public float cursorSensitivity = 0.8f;
@@ -97,14 +98,21 @@ public class StartMenu : MonoBehaviour {
 
 		if (!started) 
 		{
-			if (Input.GetButton ("AButtonPlayer" + playerNum + platformType) || Input.GetKey (KeyCode.KeypadEnter)) 
+			if (Input.GetButton ("AButtonAllPlayers" + platformType) || Input.GetKey (KeyCode.KeypadEnter)) 
 			{
 				started = true;
+				int i = 1; 
 				foreach (GameObject postcard in postcards) 
 				{
+					int direction = 0; 
+					if(i>=0)
+						direction = 1; 
+					else
+						direction = -1; 
 
-					postcard.GetComponent<Rigidbody> ().AddForce (Vector3.right * Random.Range(5000f,10000f)); 
-					postcard.GetComponent<Rigidbody> ().AddTorque (Vector3.forward * Random.Range(100000f,200000f)); 
+					postcard.GetComponent<Rigidbody> ().AddForce (Vector3.right * Random.Range(10000,20000f)*direction); 
+					postcard.GetComponent<Rigidbody> ().AddTorque (Vector3.forward * Random.Range(10000000f,20000000f)*direction); 
+					i--; 
 				}
 			}
 		}
@@ -162,10 +170,10 @@ public class StartMenu : MonoBehaviour {
 				if (!onCredits && !onOptions){
 	
 					// move cursor obj to correct pos
-					cursorObj.transform.position = cursorPositions[currentCursorPos].transform.position;
+					cursorObj.transform.position = Vector3.Lerp(cursorObj.transform.position, cursorPositions[currentCursorPos].transform.position, cursorSpeed);
 
 					// select menu option
-					if (Input.GetButton ("AButtonPlayer" + playerNum + platformType) 
+					if (Input.GetButton ("AButtonAllPlayers" + platformType) 
 					    || Input.GetKey (KeyCode.KeypadEnter)) 
 					{
 						// "play" option
@@ -198,7 +206,7 @@ public class StartMenu : MonoBehaviour {
 
 				else{
 					// when not in main menu, give option to go back (catch-all)
-					if (Input.GetButton ("XButtonPlayer" + playerNum + platformType)) {
+					if (Input.GetButton ("BButtonAllPlayers" + platformType)) {
 						onCredits = false;
 						onOptions = false;
 						cameraFollow.poi = mainMenuCenterPt;
@@ -211,7 +219,7 @@ public class StartMenu : MonoBehaviour {
 					if (onOptions){
 
 						// set cursor pos to correct options cursor pos
-						cursorObj.transform.position = optionsCursorPositions[currentCursorPos].transform.position;
+						cursorObj.transform.position = Vector3.Lerp(cursorObj.transform.position,  optionsCursorPositions[currentCursorPos].transform.position, cursorSpeed);
 
 						// allow for different options to change 
 

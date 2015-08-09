@@ -7,7 +7,7 @@ public class LevelSelectMenu : MonoBehaviour {
 	public int currentCursorPos;
 
 	public GameObject cursorObj;
-
+	float cursorSpeed= .25f;
 	public List<GameObject> cursorPositions;
 	public List<string> nextLevelStrings;
 
@@ -38,7 +38,7 @@ public class LevelSelectMenu : MonoBehaviour {
 
 		platformType = PlatformS.GetPlatform();
 
-		cursorObj.transform.position = cursorPositions[currentCursorPos].transform.position;
+		cursorObj.transform.position = Vector3.Lerp( cursorObj.transform.position, cursorPositions[currentCursorPos].transform.position,cursorSpeed);
 
 		followRef = GetComponent<CameraFollowS>();
 
@@ -70,7 +70,7 @@ public class LevelSelectMenu : MonoBehaviour {
 		else{
 
 		// back function
-		if (Input.GetButton("XButtonPlayer" + playerNum + platformType)){
+		if (Input.GetButton("BButtonAllPlayers" + platformType)){
 			Application.LoadLevel(backSceneString);
 		}
 
@@ -100,10 +100,10 @@ public class LevelSelectMenu : MonoBehaviour {
 		}
 
 		// set position of cursor
-		cursorObj.transform.position = cursorPositions[currentCursorPos].transform.position;
+		cursorObj.transform.position = Vector3.Lerp( cursorObj.transform.position, cursorPositions[currentCursorPos].transform.position,cursorSpeed);
 
 		// move to character select function
-		if (Input.GetButton("AButtonPlayer" + playerNum + platformType)){
+		if (Input.GetButton("AButtonAllPlayers" + platformType)){
 			selectedLevelString = nextLevelStrings[currentCursorPos];
 			//Application.LoadLevel(nextSceneString);
 					startedLoadDelay = true;

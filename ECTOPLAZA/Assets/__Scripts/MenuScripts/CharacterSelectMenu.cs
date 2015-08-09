@@ -72,7 +72,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 		else{
 
 		// back function
-		if (Input.GetButton("XButtonPlayer" + playerNum + platformType)){
+		if (Input.GetButtonDown("BButtonAllPlayers" + platformType) && totalPlayers == 0){
 			Application.LoadLevel(backSceneString);
 		}
 

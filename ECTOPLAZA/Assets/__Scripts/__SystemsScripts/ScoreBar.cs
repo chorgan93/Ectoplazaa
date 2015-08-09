@@ -66,7 +66,7 @@ public class ScoreBar : MonoBehaviour {
 				newHead.transform.parent = this.transform; 
 				heads[i] = newHead; 
 				if (barObjs[i].GetComponentInChildren<Renderer>() != null){
-					barObjs[i].GetComponentInChildren<Renderer> ().material = playerRefs[i].playerMats [playerRefs[i].playerNum - 1];
+					barObjs[i].GetComponentInChildren<Renderer> ().material = playerRefs[i].playerMats [playerRefs[i].characterNum - 1];
 				}
 
 			}
@@ -110,7 +110,7 @@ public class ScoreBar : MonoBehaviour {
 			heads[i].transform.position = headAnim; 
 			heads[i].GetComponentInChildren<SpriteRenderer>().sprite = playerRefs[i].spriteObject.GetComponent<SpriteRenderer>().sprite; 
 
-
+			barObjs[i].GetComponentInChildren<Renderer> ().material = playerRefs[i].playerMats [playerRefs[i].characterNum - 1];
 			//CHANGE BAR SCALE
 			Vector3 newBarScale = new Vector3 (0f, barObjs[i].transform.localScale.y, barObjs[i].transform.localScale.z); 
 			
@@ -128,7 +128,7 @@ public class ScoreBar : MonoBehaviour {
 			if (playerRefs[i].health <= leastHealth)
 			{
 				leastHealth = playerRefs[i].health;
-				startTransform.GetComponent<Renderer> ().material = playerRefs[i].playerMats [playerRefs[i].playerNum - 1];
+				startTransform.GetComponent<Renderer> ().material = playerRefs[i].playerMats [playerRefs[i].characterNum - 1];
 				
 			}
 
