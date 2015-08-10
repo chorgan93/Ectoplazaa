@@ -52,7 +52,7 @@ public class CameraShakeS : MonoBehaviour {
 		}
 		else{
 
-		if(shake_intensity > 0 && !sleeping){
+		if(shake_intensity > 0 && !sleeping && ScoreKeeperS.gameStarted){
 			//print ("SHAKING");
 			
 			Vector3 camPos = originPosition;

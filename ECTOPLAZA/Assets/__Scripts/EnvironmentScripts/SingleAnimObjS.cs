@@ -13,6 +13,8 @@ public class SingleAnimObjS : MonoBehaviour {
 
 	public bool addToCamFollow;
 
+	public bool dontDestroy = false;
+
 	// Use this for initialization
 	void Start () {
 
@@ -41,7 +43,13 @@ public class SingleAnimObjS : MonoBehaviour {
 				if (addToCamFollow){
 					AdaptiveCameraPtS.A.hitPositions.Remove(transform);
 				}
-				Destroy(gameObject);
+				if (!dontDestroy){
+					Destroy(gameObject);
+				}
+				else{
+					currentFrame = 0;
+					ownRender.sprite = animFrames[currentFrame];
+				}
 			}else{
 				ownRender.sprite = animFrames[currentFrame];
 			}

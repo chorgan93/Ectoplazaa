@@ -21,6 +21,7 @@ public class PlayerEffectS : MonoBehaviour {
 		currentFrame = Mathf.FloorToInt(Random.Range(0,effectFrames.Count));
 
 		ownRender = GetComponent<SpriteRenderer>();
+		if (playerRef != null){
 		if ((playerRef.charging && playerRef.GetChargeTime() > playerRef.GetChargeLv2Min()
 		     && attackNum == 1) ||
 		    (playerRef.charging && playerRef.GetChargeTime() > playerRef.GetChargeLv3Min()
@@ -31,12 +32,15 @@ public class PlayerEffectS : MonoBehaviour {
 		else{
 			ownRender.enabled = false;
 		}
+		}
 		
 		ownRender.sprite = effectFrames[currentFrame];
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () {
+
+		if (playerRef != null){
 
 		if (attackNum == 1){
 			if (playerRef.charging && playerRef.GetChargeTime() > playerRef.GetChargeLv2Min()){
@@ -73,6 +77,8 @@ public class PlayerEffectS : MonoBehaviour {
 				transform.localPosition = fixPos;
 				transform.localRotation = Quaternion.identity;
 			}
+		}
+
 		}
 	
 	}

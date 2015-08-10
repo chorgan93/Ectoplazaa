@@ -429,6 +429,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 			// set random new velocity
 			Vector3 newGlobVel = Random.insideUnitSphere * 6000f * Time.deltaTime;
 			newGlobVel.z = 0;
+			newGlob.GetComponentInChildren<SpriteRenderer>().color = playerRef.playerParticleMats[playerRef.characterNum - 1].GetColor("_TintColor");
 			newGlob.GetComponentInChildren<GlobS> ().SetVelocityMaterial (newGlobVel, playerRef.gameObject); 
 		}
 	}

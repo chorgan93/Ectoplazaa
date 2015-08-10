@@ -149,7 +149,7 @@ public class PlayerS : MonoBehaviour {
 	private bool lockInPlace = false;
 	private Vector3 bulletVel;
 
-	private float lv2AttackPauseTimeMax = 0.06f;
+	private float lv2AttackPauseTimeMax = 0.14f;
 	private float lv2AttackPauseCountdown;
 	private bool startedLv2Pause = false;
 	private float lv2AttackTimeMax = 0.1f;

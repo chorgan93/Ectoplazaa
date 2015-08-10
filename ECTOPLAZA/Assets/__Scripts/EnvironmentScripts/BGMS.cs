@@ -15,12 +15,15 @@ public class BGMS : MonoBehaviour {
 	public float fadeInRate = 1f;
 	public float maxVolume = 1f;
 
-	private float duckRecover = 0.8f;
+	private float duckRecover = 0.5f;
 
 	private float targetVolume;
 	private float currentVolume;
 
-	private float duckVolumeMult = 0.5f;
+	private float duckVolumeMult = 0.8f;
+
+	private AudioClip nextMusic;
+	private float changeMusicRate = 5f;
 
 	// Use this for initialization
 	void Awake () {
@@ -34,12 +37,18 @@ public class BGMS : MonoBehaviour {
 			DontDestroyOnLoad(gameObject);
 		}
 
+		
+		ownSource = GetComponent<AudioSource>();
 	}
 
 	void Start () {
 
-		ownSource = GetComponent<AudioSource>();
 		//maxVolume = ownSource.volume;
+
+		if (GameObject.Find("NewMusic")){
+			ReplaceMusic(GameObject.Find("NewMusic").GetComponent<AudioSource>().clip);
+			print ("change music!");
+		}
 
 		// in future, allow for multiple bgm players that fade out when going into new scene
 	
@@ -48,23 +57,44 @@ public class BGMS : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		targetVolume = maxVolume * bgmVolumeMult;
-
-		currentVolume = ownSource.volume;
-
-		if (currentVolume < targetVolume){
-			currentVolume += Time.deltaTime*TimeManagerS.timeMult*fadeInRate;
+		if (nextMusic){
+			if (ownSource.volume > 0){
+				ownSource.volume -= fadeInRate*bgmVolumeMult*Time.deltaTime;
+			}
+			else{
+				print ("play new thing");
+				ownSource.clip = nextMusic;
+				ownSource.Play();
+				nextMusic = null;
+				ownSource.volume = maxVolume*bgmVolumeMult;
+			}
 		}
 		else{
-			currentVolume = targetVolume;
+			targetVolume = maxVolume * bgmVolumeMult;
+	
+			currentVolume = ownSource.volume;
+	
+			if (currentVolume < targetVolume){
+				currentVolume += Time.deltaTime*TimeManagerS.timeMult*fadeInRate;
+			}
+			else{
+				currentVolume = targetVolume;
+			}
+	
+			ownSource.volume = currentVolume;
 		}
-
-		ownSource.volume = currentVolume;
 	
 	}
 
 	public void DuckVolume(){
 		currentVolume = targetVolume*duckVolumeMult;
-		print ("duck volume");
+		ownSource.volume = currentVolume;
+		//print ("duck volume");
+	}
+
+	public void ReplaceMusic(AudioClip muse){
+		if (ownSource.clip != muse){
+			nextMusic = muse;
+		}
 	}
 }
