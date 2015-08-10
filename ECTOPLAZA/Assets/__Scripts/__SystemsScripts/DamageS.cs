@@ -10,6 +10,7 @@ public class DamageS : MonoBehaviour {
 	public GameObject damageEffectObjNoFlash;
 	private float damageEffectStartRange = 100f;
 	public GameObject hitEffectObj;
+	public GameObject hitEffectFastObj;
 
 	private float knockbackMult = 1.5f;
 
@@ -90,7 +91,13 @@ public class DamageS : MonoBehaviour {
 						// apply vel to both players equal to current vel x something
 						MakeExplosion(otherPlayer.gameObject, playerRef.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
 
-						print ("Tie!");
+						Vector3 spawnPos = (otherPlayer.transform.position + transform.position)/2;
+
+						GameObject hitEffect = Instantiate(hitEffectFastObj,spawnPos,Quaternion.identity) as GameObject;
+					//	MakeExplosion(otherPlayer.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
+						playerRef.InstantiateDeathParticles();
+						CameraShakeS.C.TimeSleep(0.2f);
+						//print ("Tie!");
 					}
 				}
 			}

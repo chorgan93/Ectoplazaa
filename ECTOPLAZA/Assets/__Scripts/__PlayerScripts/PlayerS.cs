@@ -1337,6 +1337,11 @@ public class PlayerS : MonoBehaviour {
 		}
 	}
 
+	public void InstantiateDeathParticles(){
+		
+		Instantiate(deathParticles, this.transform.position, Quaternion.identity); 
+	}
+
 	public void SleepTime(float delayTime){
 		//pauseDelay = delayTime;
 		//prevGravState = ownRigid.useGravity;
