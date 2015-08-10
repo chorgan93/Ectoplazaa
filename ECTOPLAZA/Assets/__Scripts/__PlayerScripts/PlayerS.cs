@@ -270,7 +270,7 @@ public class PlayerS : MonoBehaviour {
 
 				respawnInvulnTime -= Time.deltaTime * TimeManagerS.timeMult;
 	
-				ManageDelay ();
+				//ManageDelay ();
 				//print (leftCheck);
 	
 				if (!effectPause && !respawning) {
@@ -307,7 +307,10 @@ public class PlayerS : MonoBehaviour {
 			}
 	
 		} else {
-			ownRigid.velocity = Vector3.zero;
+			if (ScoreKeeperS.gameStarted){
+
+				ownRigid.velocity = Vector3.zero;
+			}
 		}
 
 
@@ -336,7 +339,8 @@ public class PlayerS : MonoBehaviour {
 			if (rightHit.collider.gameObject.tag != "Player" &&
 			    rightHit.collider.gameObject.tag != "PlayerTrail" &&
 			    rightHit.collider.gameObject.tag != "Butt" &&
-			    rightHit.collider.gameObject.tag != "Glob"){
+			    rightHit.collider.gameObject.tag != "Glob" &&
+			    rightHit.collider.gameObject.tag != "Spawn"){
 				rightCheck = true;
 				//print ("HIT!!");
 			}
@@ -356,7 +360,8 @@ public class PlayerS : MonoBehaviour {
 			if (leftHit.collider.gameObject.tag != "Player" &&
 			    leftHit.collider.gameObject.tag != "PlayerTrail"&&
 			    leftHit.collider.gameObject.tag != "Butt" &&
-			    leftHit.collider.gameObject.tag != "Glob"){
+			    leftHit.collider.gameObject.tag != "Glob" &&
+			    leftHit.collider.gameObject.tag != "Spawn"){
 				leftCheck = true;
 				//print (leftHit.collider.name);
 			}
@@ -918,13 +923,15 @@ public class PlayerS : MonoBehaviour {
 					if((ownRigid.velocity.x > maxSpeed) && (xForce > 0))
 					{
 							applyForce = false; 
-					//print ("Dont apply force!");
+					//print ("Dont apply force right!");
 					}
 					else if((ownRigid.velocity.x < -maxSpeed) && (xForce < 0))
 					{
 					applyForce = false; 
-					//print ("Dont apply force!");
+					//print ("Dont apply force left!");
 					}
+
+				//print (applyForce);
 	
 					if(applyForce)
 						ownRigid.AddForce(new Vector3(xForce,0,0));
@@ -956,6 +963,7 @@ public class PlayerS : MonoBehaviour {
 		
 					//ownRigid.velocity = fixVel;
 				}
+
 		
 				//print (Input.GetAxis("Horizontal"));
 
@@ -1174,7 +1182,7 @@ public class PlayerS : MonoBehaviour {
 		//this.GetComponent<LineRenderer>().SetPosition(0,this.transform.position);
 		//this.GetComponent<LineRenderer>().SetPosition(1,buttObj.transform.position);
 
-		if(isDangerous)
+		if(isDangerous && ScoreKeeperS.gameStarted)
 			dangerousSprite.GetComponent<SpriteRenderer>().enabled = true; 
 		else
 			dangerousSprite.GetComponent<SpriteRenderer>().enabled = false; 

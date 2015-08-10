@@ -46,7 +46,7 @@ public class PlayerSoundS : MonoBehaviour {
 
 		Instantiate(wallHitSoundObjs[wallHitToPlay]);
 
-		print ("played wall hit sound");
+		//print ("played wall hit sound");
 
 	}
 

@@ -115,7 +115,7 @@ public class ScoreKeeperS : MonoBehaviour {
 	void SpawnScoreboard()
 	{
 		spawnedScoreboard = true; 
-		print ("trying to set up scoreboard"); 
+		//print ("trying to set up scoreboard"); 
 			
 		scoreBarObj.GetComponent<ScoreBar>().scoreThreshold = scoreThreshold; 
 		scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 

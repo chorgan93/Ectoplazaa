@@ -15,7 +15,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 	public GameObject trailRendererGO;
 	public GameObject trailRendererGO2;
-	float trailRenderTime, trailRenderTimeMin = 0.05f, trailRenderTimeMax= .85f; 
+	float trailRenderTime, trailRenderTimeMin = 0.2f, trailRenderTimeMax= 1f; 
 
 	private LineRenderer playerLine; 
 
@@ -238,7 +238,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 			//print(originalScale.x+ " " + originalScale.y + " " +originalScale.z);
 			//print((float)((float)i)/(float)(spawnedDots.Count-1));
-			spawnedDots[i].transform.localScale  = Vector3.Lerp (originalScale, smallScale, 1f- (float)((float)i)/(float)(spawnedDots.Count-1));
+			spawnedDots[i].transform.localScale  = Vector3.Lerp (originalScale, smallScale, 5f- (float)((float)i)/(float)(spawnedDots.Count-1));
 
 		}
 
