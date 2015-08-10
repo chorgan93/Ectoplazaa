@@ -1238,8 +1238,17 @@ public class PlayerS : MonoBehaviour {
 				deathPos = this.transform.position; 
 
 				//move player to new respawn position right away so trail renderer has time to update.
-				int randomSpawn = Random.Range(0, allSpawnPts.Length-1);
-				GameObject newSpawn = allSpawnPts[randomSpawn];
+
+				// look for spawn positions that don't have a player attached
+				List<GameObject> newSpawnPts = new List<GameObject>(0);
+				for (int i = 0; i < allSpawnPts.Length; i++){
+					if (!allSpawnPts[i].GetComponent<SpawnPtS>().playerInRange()){
+						newSpawnPts.Add (allSpawnPts[i]);
+					}
+				}
+
+				int randomSpawn = Mathf.FloorToInt( Random.Range(0, newSpawnPts.Count));
+				GameObject newSpawn = newSpawnPts[randomSpawn];
 				transform.position = newSpawn.transform.position;
 
 				trailRendererGO.GetComponent<TrailRenderer>().enabled = false ;

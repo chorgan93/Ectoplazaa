@@ -73,6 +73,8 @@ public class StartMenu : MonoBehaviour {
 
 			inputDelay = 0;
 		}
+
+		cursorObj.transform.position = cursorPositions[currentCursorPos].transform.position;
 	}
 	
 	// Update is called once per frame
@@ -110,8 +112,8 @@ public class StartMenu : MonoBehaviour {
 					else
 						direction = -1; 
 
-					postcard.GetComponent<Rigidbody> ().AddForce (Vector3.right * Random.Range(10000,20000f)*direction); 
-					postcard.GetComponent<Rigidbody> ().AddTorque (Vector3.forward * Random.Range(10000000f,20000000f)*direction); 
+					postcard.GetComponent<Rigidbody> ().AddForce (Vector3.right * Random.Range(200000,400000f)*direction*Time.deltaTime); 
+					postcard.GetComponent<Rigidbody> ().AddTorque (Vector3.forward * Random.Range(200000000f,400000000f)*direction*Time.deltaTime); 
 					i--; 
 				}
 			}

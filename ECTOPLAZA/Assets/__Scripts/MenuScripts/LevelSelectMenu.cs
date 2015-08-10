@@ -38,7 +38,8 @@ public class LevelSelectMenu : MonoBehaviour {
 
 		platformType = PlatformS.GetPlatform();
 
-		cursorObj.transform.position = Vector3.Lerp( cursorObj.transform.position, cursorPositions[currentCursorPos].transform.position,cursorSpeed);
+		//cursorObj.transform.position = Vector3.Lerp( cursorObj.transform.position, cursorPositions[currentCursorPos].transform.position,cursorSpeed);
+		cursorObj.transform.position = cursorPositions[currentCursorPos].transform.position;
 
 		followRef = GetComponent<CameraFollowS>();
 
