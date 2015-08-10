@@ -9,6 +9,8 @@ public class SlashEffectS : MonoBehaviour {
 
 	private Rigidbody ownRigid;
 
+	public LightningScreenS attachedLightning;
+
 	// Use this for initialization
 	void Start () {
 	

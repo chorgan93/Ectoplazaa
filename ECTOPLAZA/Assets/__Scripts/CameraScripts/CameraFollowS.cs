@@ -8,7 +8,7 @@ public class CameraFollowS : MonoBehaviour {
 	public Vector3				camOffsetOnPause;
 
 	private bool punchedIn = false;
-	private float punchInMult = 0.99f;
+	private float punchInMult = 0.975f;
 	private float punchInMax = 0.08f;
 	private float punchTimeCountdown;
 	private float currentCamSize;
@@ -75,12 +75,19 @@ public class CameraFollowS : MonoBehaviour {
 
 		FindCurrentSize();
 
-		if (punchedIn){
+		/*if (punchedIn){
 			punchTimeCountdown -= Time.deltaTime*TimeManagerS.timeMult;
 			ownCam.orthographicSize = currentCamSize*punchInMult;
 			if (punchTimeCountdown <= 0){
 				punchedIn = false;
 			}
+		}
+		else{
+			ownCam.orthographicSize = currentCamSize;
+		}*/
+
+		if (CameraShakeS.C.sleeping){
+			ownCam.orthographicSize = currentCamSize*punchInMult;
 		}
 		else{
 			ownCam.orthographicSize = currentCamSize;

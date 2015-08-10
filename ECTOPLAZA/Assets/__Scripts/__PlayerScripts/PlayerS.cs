@@ -80,8 +80,9 @@ public class PlayerS : MonoBehaviour {
 	private bool groundPounded = false;
 	public float groundPoundForce;
 
-	private float pauseDelay;
-	//private bool prevGravState;
+	//private float pauseDelay;
+	private bool resetFromPause = false;
+	private bool prevGravState;
 	private Vector3 prevVel;
 	private Vector3 prevButtVel;
 	[HideInInspector]
@@ -371,21 +372,28 @@ public class PlayerS : MonoBehaviour {
 	}
 
 	void ManageDelay(){
-		if (effectPause){
+		if (TimeManagerS.timeMult != 1){
+
+			resetFromPause = false;
 
 			ownRigid.velocity = Vector3.zero;
 		//	buttObjRigid.velocity = Vector3.zero;
 
-			pauseDelay -= Time.deltaTime*TimeManagerS.timeMult;
+			//pauseDelay -= Time.deltaTime*TimeManagerS.timeMult;
 
 			ownRigid.useGravity = false;
 
-			if (pauseDelay <= 0){
-				effectPause = false;
+
+		}
+		else{
+			if (!resetFromPause){
+				
 				ownRigid.velocity = prevVel;
-				//ownRigid.useGravity = prevGravState;
-				//buttObjRigid.velocity = prevButtVel;
+				ownRigid.useGravity = prevGravState;
 			}
+			prevVel = ownRigid.velocity;
+			prevGravState = ownRigid.useGravity;
+			resetFromPause = true;
 		}
 	}
 

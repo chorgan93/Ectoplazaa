@@ -48,6 +48,9 @@ public class DamageS : MonoBehaviour {
 					otherPlayer.SleepTime (pauseTime);
 					playerRef.SleepTime (pauseTime);
 
+					
+					CameraShakeS.C.TimeSleep(0.2f);
+
 					//chop all of tail off
 					// make sure there are dots to destroy first
 					//otherPlayer.TakeDamage (otherPlayer.health);
@@ -116,8 +119,10 @@ public class DamageS : MonoBehaviour {
 
 				//print (playerRef);
 			
-				otherPlayer.SleepTime(pauseTime);
-				playerRef.SleepTime(pauseTime/4);
+			//	otherPlayer.SleepTime(pauseTime);
+			//	playerRef.SleepTime(pauseTime/4);
+
+				CameraShakeS.C.TimeSleep(0.1f);
 
 				CameraShakeS.C.LargeShake();
 
@@ -148,6 +153,8 @@ public class DamageS : MonoBehaviour {
 			as GameObject;
 
 		slashEffect.GetComponent<SlashEffectS>().moveDir = effectDir;
+		slashEffect.GetComponent<SlashEffectS>().attachedLightning.GetComponent<Renderer>().material.color = playerRef.playerParticleMats
+			[playerRef.characterNum-1].GetColor("_TintColor");
 
 		spawnPos = (transform.position+otherPos)/2;
 		spawnPos.z = transform.position.z +1;

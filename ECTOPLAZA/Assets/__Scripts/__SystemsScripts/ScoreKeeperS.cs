@@ -76,7 +76,7 @@ public class ScoreKeeperS : MonoBehaviour {
 				if (currentText == 0){
 					gameStarted = true;
 					goText.SetActive(true);
-					CameraShakeS.C.LargeShake();
+					CameraShakeS.C.SmallShake();
 				}
 				if (currentText == 1){
 					timer1.SetActive(true);
