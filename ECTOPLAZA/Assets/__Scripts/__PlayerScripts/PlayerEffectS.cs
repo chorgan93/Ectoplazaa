@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class PlayerEffectS : MonoBehaviour {
 
-	public int attackNum = 1; // 1 is electric, 2 is fire
+	public int attackNum = 1; // 1 is electric, 2 is fire, 0 is air
 
 	public List<Sprite> effectFrames;
 	public float animRateMax;
@@ -41,6 +41,11 @@ public class PlayerEffectS : MonoBehaviour {
 	void FixedUpdate () {
 
 		if (playerRef != null){
+
+			if (attackNum == 0){
+				if (playerRef.attacking){ownRender.enabled = true;}
+				else{ownRender.enabled = false;}
+			}
 
 		if (attackNum == 1){
 			if (playerRef.charging && playerRef.GetChargeTime() > playerRef.GetChargeLv2Min()){

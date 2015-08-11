@@ -114,7 +114,7 @@ public class GlobS : MonoBehaviour {
 
 			// kinesthetics?
 			CameraShakeS.C.MicroShake();
-			CameraShakeS.C.TimeSleep(0.4f*playerRef.health/playerRef.maxHealth);
+			CameraShakeS.C.TimeSleep(0.3f*playerRef.health/playerRef.maxHealth);
 
 			// sfx
 			GameObject newSFX = Instantiate(sfxObj) as GameObject;

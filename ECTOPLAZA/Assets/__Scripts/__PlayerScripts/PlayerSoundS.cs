@@ -89,7 +89,7 @@ public class PlayerSoundS : MonoBehaviour {
 		
 		//int releaseToPlay = Mathf.FloorToInt(Random.Range(0,groundPoundReleaseSoundObjs.Count));
 
-		int numToPlay = characterNum;
+		int numToPlay = characterNum-1;
 		if (numToPlay < 0){
 			numToPlay = 0;
 		}

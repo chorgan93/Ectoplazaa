@@ -137,7 +137,7 @@ public class PlayerS : MonoBehaviour {
 	//private float lv1AttackTargetRange = 12f;
 	private float lv1OutRate = 3350f;
 	
-	private float lv2OutRate = 12000f; //original 8000
+	private float lv2OutRate = 15000f; //original 8000
 	private float lv1OutTimeMax = 0.2f;
 	public float lv1OutCountdown;
 	private float lv1ReturnRate = 1f;
@@ -146,7 +146,7 @@ public class PlayerS : MonoBehaviour {
 	[HideInInspector]
 	private float lv1ButtDelay = 1f;
 	public float lv2FlingForce = 100;
-	private float lv3BulletSpeed = 12500; //was 12500
+	private float lv3BulletSpeed = 18000; //was 12500
 	private bool lockInPlace = false;
 	private Vector3 bulletVel;
 
@@ -581,7 +581,7 @@ public class PlayerS : MonoBehaviour {
 			}
 
 			bulletVel = attackDir.normalized*Time.deltaTime*lv1OutRate ;
-			ownRigid.AddForce(bulletVel* (1+chargeTime),ForceMode.VelocityChange);
+			ownRigid.AddForce(bulletVel* (1+chargeTime*1.45f),ForceMode.VelocityChange);
 
 			//print(chargeTime); 
 
@@ -713,7 +713,7 @@ public class PlayerS : MonoBehaviour {
 				attackDir.x = inputX;
 				attackDir.y = inputY;
 			}
-			chargeTime = medChargeTime*1.35f;
+			chargeTime = medChargeTime*2f;
 			attackToPerform = 0;
 			FlingMiniAttack(false);
 
