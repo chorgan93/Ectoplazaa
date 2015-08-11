@@ -469,7 +469,7 @@ public class PlayerS : MonoBehaviour {
 
 
 
-			if (!stretchButtonDown){
+			if (!stretchButtonDown || !chargeSource.isPlaying){
 				GameObject.Destroy( chargingParticles.gameObject); 
 
 				groundLeeway = attackGroundLeewayMaxTime;
