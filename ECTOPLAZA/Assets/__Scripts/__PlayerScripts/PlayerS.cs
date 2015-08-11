@@ -515,6 +515,7 @@ public class PlayerS : MonoBehaviour {
 
 				//buttDelayCountdown = lv1ButtDelay;
 
+				GlobalVars.totalFlings[playerNum-1]++; 
 
 
 				attackDir = Vector3.zero;

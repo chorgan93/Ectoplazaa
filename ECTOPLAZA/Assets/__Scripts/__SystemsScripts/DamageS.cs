@@ -68,6 +68,8 @@ public class DamageS : MonoBehaviour {
 					{
 						otherPlayer.GetComponent<TrailHandlerRedubS>().SpawnGlobs(otherPlayer.transform.position,2); 
 						otherPlayer.TakeDamage(otherPlayer.health);
+						GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
+						GlobalVars.totalKills[playerRef.playerNum-1] ++; 
 					}
 					else
 					{
@@ -75,7 +77,11 @@ public class DamageS : MonoBehaviour {
 
 						otherPlayer.GetComponent<TrailHandlerRedubS>().DestroyPlayerDotsRange(damageTaken);
 						otherPlayer.TakeDamage (damageTaken);
+						GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
+						GlobalVars.totalKills[playerRef.playerNum-1] ++; 
 					}
+
+					//print ("KILL!"); 
 
 					MakeExplosion(otherPlayer.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
 

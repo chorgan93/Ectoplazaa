@@ -29,6 +29,8 @@ public class ScoreKeeperS : MonoBehaviour {
 	public GameObject goText;
 	private int currentText = 4;
 
+	public GameObject statText1, statText2, statText3, statText4; 
+
 	private float countdownRateMax = .5f;
 	private float startCountdown;
 
@@ -149,9 +151,12 @@ public class ScoreKeeperS : MonoBehaviour {
 		endGameObj.transform.position = newPos; 
 
 		winText.text = "P" + winningPlayerNum + "\nwins!";
-		winningPlayerSprite.GetComponent<SpriteRenderer> ().sprite = playerHighResSprites [winningPlayerNum - 1];
-		winningPlayerTail.GetComponent<Renderer> ().material = GlobalVars.playerList [winningPlayerNum - 1].GetComponent<PlayerS> ().playerMats [winningPlayerNum - 1]; 
+
+		int characterNum = GlobalVars.playerList [winningPlayerNum - 1].GetComponent<PlayerS> ().characterNum-1;
+		winningPlayerSprite.GetComponent<SpriteRenderer> ().sprite = playerHighResSprites [characterNum];
+		winningPlayerTail.GetComponent<Renderer> ().material = GlobalVars.playerList [winningPlayerNum - 1].GetComponent<PlayerS> ().playerMats [characterNum]; 
 	
+		SpawnEndText(); 
 
 		foreach (GameObject p in GlobalVars.playerList) {
 
@@ -163,6 +168,70 @@ public class ScoreKeeperS : MonoBehaviour {
 
 		}
 
+	}
+
+	void SpawnEndText()
+	{
+		int maxVal = 0; 
+		int maxIndex = 0; 
+	
+		for(int i = 0; i < 4; i++)
+		{
+			if(GlobalVars.totalGlobsEaten[i] > maxVal)
+			{
+				maxVal = GlobalVars.totalGlobsEaten[i]; 
+				maxIndex = i; 
+			}
+		}
+
+		statText1.GetComponent<TextMesh>().text = "P" + (maxIndex+1) + " had a huge appetite"; 
+
+		maxVal = 0;
+		maxIndex = 0; 
+
+		for(int i = 0; i < 4; i++)
+		{
+			if(GlobalVars.totalDeaths[i] > maxVal)
+			{
+				maxVal = GlobalVars.totalDeaths[i]; 
+				maxIndex = i; 
+			}
+		}
+		
+		statText2.GetComponent<TextMesh>().text = "P" + (maxIndex+1) + " was eviscerated most"; 
+		
+		maxVal = 0;
+		maxIndex = 0; 
+
+		for(int i = 0; i < 4; i++)
+		{
+			if(GlobalVars.totalFlings[i] > maxVal)
+			{
+				maxVal = GlobalVars.totalFlings[i]; 
+				maxIndex = i; 
+			}
+		}
+		
+		statText3.GetComponent<TextMesh>().text = "P" + (maxIndex+1) + " fling king"; 
+		
+		maxVal = 0;
+		maxIndex = 0; 
+
+		for(int i = 0; i < 4; i++)
+		{
+			if(GlobalVars.totalKills[i] > maxVal)
+			{
+				maxVal = GlobalVars.totalKills[i]; 
+				maxIndex = i; 
+			}
+		}
+		
+		statText4.GetComponent<TextMesh>().text = "P" + (maxIndex+1) + " at large"; 
+		
+		maxVal = 0;
+		maxIndex = 0; 
+
+		GlobalVars.ResetGameStats(); 
 	}
 	
 	void UpdateEndScreen()

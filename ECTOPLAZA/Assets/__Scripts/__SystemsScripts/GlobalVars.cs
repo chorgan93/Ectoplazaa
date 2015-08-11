@@ -16,11 +16,22 @@ public class GlobalVars : MonoBehaviour
 	public static bool characterSelected = false; //check if players have gone through character select screen, for using in unity to check if spawn characters with default properties or unique ones
 	public static bool launchingFromScene = true; 
 
+	public static int [] totalFlings = new int[4], totalDeaths = new int[4], totalKills = new int[4], totalJumps = new int[4], totalGroundPounds= new int[4] , totalGlobsEaten = new int[4];  
 
 	public static void ResetVariables()
 	{
 		characterIsPlaying = new bool[4]{false,false,false,false};
 		characterNumber = new int[4]{1,2,3,4};
+	}
+
+	public static void ResetGameStats()
+	{
+		totalFlings = new int[4];
+		totalDeaths = new int[4];
+		totalKills = new int[4];
+		totalJumps = new int[4];
+		totalGroundPounds = new int[4];
+		totalGlobsEaten = new int[4];
 	}
 
 }
