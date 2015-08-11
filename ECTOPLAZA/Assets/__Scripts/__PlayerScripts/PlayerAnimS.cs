@@ -213,17 +213,18 @@ public class PlayerAnimS : MonoBehaviour {
 			headRender.sprite =currentHeadSprites[currentJumpFrame];
 			// set tail frame if tail is not turning
 			//if (!isTurningTail){
-				tailRender.sprite = currentTailSprites[currentJumpFrame];
+				//tailRender.sprite = currentTailSprites[currentJumpFrame];
 			//}
 		}
 
 		else if (isRunning){
-			//print (isRunning);
+			print ("I'm running");
 			runFrameAnimCountdown -= Time.deltaTime*TimeManagerS.timeMult;
 			
 			if (runFrameAnimCountdown <= 0){
 				runFrameAnimCountdown = runFrameAnimRate;
 				currentRunFrame++;
+				print (currentRunFrame);
 				if (currentRunFrame > idleAnimStart-1){
 					currentRunFrame = runAnimStart;
 				}
@@ -231,7 +232,7 @@ public class PlayerAnimS : MonoBehaviour {
 			
 			headRender.sprite = currentHeadSprites[currentRunFrame];
 			//if (!isTurningTail){
-				tailRender.sprite = currentTailSprites[currentRunFrame];
+				//tailRender.sprite = currentTailSprites[currentRunFrame];
 			//}
 		}
 		else{
@@ -248,7 +249,7 @@ public class PlayerAnimS : MonoBehaviour {
 			headRender.sprite = currentHeadSprites[currentIdleFrame];
 
 			//if (!isTurningTail){
-				tailRender.sprite = currentTailSprites[currentIdleFrame];
+				//tailRender.sprite = currentTailSprites[currentIdleFrame];
 			//}
 		}
 
