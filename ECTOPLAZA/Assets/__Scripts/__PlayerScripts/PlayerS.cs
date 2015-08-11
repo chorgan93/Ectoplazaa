@@ -225,6 +225,8 @@ public class PlayerS : MonoBehaviour {
 		ownRigid = GetComponent<Rigidbody>();
 		spriteObjRender = spriteObject.GetComponent<SpriteRenderer>();
 
+		dangerousSprite.GetComponent<SpriteRenderer>().enabled = false;
+
 
 		allSpawnPts = GameObject.FindGameObjectsWithTag("Spawn");
 
@@ -439,6 +441,7 @@ public class PlayerS : MonoBehaviour {
 			{
 				chargingParticles = Instantiate( chargingParticlePrefab, this.transform.position, Quaternion.identity) as GameObject; 
 				chargingParticles.transform.parent = this.transform; 
+				chargingParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[characterNum-1].GetColor("_TintColor");
 			}
 
 			groundLeeway = 0.5f;
@@ -1182,7 +1185,7 @@ public class PlayerS : MonoBehaviour {
 		//this.GetComponent<LineRenderer>().SetPosition(0,this.transform.position);
 		//this.GetComponent<LineRenderer>().SetPosition(1,buttObj.transform.position);
 
-		if(isDangerous && ScoreKeeperS.gameStarted)
+		if(isDangerous)
 			dangerousSprite.GetComponent<SpriteRenderer>().enabled = true; 
 		else
 			dangerousSprite.GetComponent<SpriteRenderer>().enabled = false; 

@@ -86,7 +86,7 @@ public class CameraFollowS : MonoBehaviour {
 			ownCam.orthographicSize = currentCamSize;
 		}*/
 
-		if (CameraShakeS.C.sleeping){
+		if (CameraShakeS.C.sleeping && !CameraShakeS.C.dontPunch){
 			ownCam.orthographicSize = currentCamSize*punchInMult;
 		}
 		else{

@@ -12,10 +12,18 @@ public class GlobS : MonoBehaviour {
 
 	float invulnTime = .75f;
 
-	float sizeRandomizer = 1.25f;
+	float sizeRandomizer = 0.25f;
 
 	float fadeColRate = 0.005f;
 	private Renderer ownRender;
+	public SpriteRenderer ownSprite;
+
+	public SpriteRenderer ectoGlow;
+	private float ectoAlpha = 0.5f;
+
+	public GameObject sfxObj;
+
+	public GameObject touchEffect;
 
 	// Use this for initialization
 	void Start () {
@@ -26,7 +34,14 @@ public class GlobS : MonoBehaviour {
 		parentGO.transform.localScale = newSize;
 		originalScale = parentGO.transform.localScale; 
 
+
 		ownRender = parentGO.GetComponent<Renderer>();
+
+		
+		Color ectoColor = ownSprite.color;
+		ectoColor.a = ectoAlpha;
+		ectoGlow.color = ectoColor;
+		//activated = true;
 	}
 
 	void FixedUpdate()
@@ -59,6 +74,11 @@ public class GlobS : MonoBehaviour {
 			deletionCounter -= 1f; 
 
 		}
+		else{
+			parentGO.transform.localScale = Vector3.Lerp(originalScale,Vector3.zero, 1f- ( deletionCounter/deletionTimer)); 
+			
+			deletionCounter -= 2f*Time.deltaTime*TimeManagerS.timeMult; 
+		}
 
 		if (deletionCounter < 0) {
 
@@ -66,6 +86,8 @@ public class GlobS : MonoBehaviour {
 			GameObject.Destroy(this.gameObject);
 
 		}
+
+		ectoGlow.transform.rotation = Quaternion.Euler(Vector3.zero);
 	}
 
 	void OnTriggerEnter(Collider other) 
@@ -81,6 +103,22 @@ public class GlobS : MonoBehaviour {
 			playerRef.health += 2; 
 
 			this.GetComponent<SphereCollider>().enabled = false ;
+
+			// instantiate touch effect
+			GameObject newTouch = Instantiate(touchEffect,transform.position,Quaternion.identity)
+				as GameObject;
+			newTouch.GetComponent<SpriteRenderer>().color = playerRef.playerParticleMats[playerRef.characterNum-1].GetColor("_TintColor");
+			//newTouch.GetComponent<SpriteRenderer>().sprite = ectoGlow.sprite;
+			newTouch.transform.localScale = ectoGlow.transform.localScale;
+
+			// kinesthetics?
+			CameraShakeS.C.MicroShake();
+			CameraShakeS.C.TimeSleep(0.4f*playerRef.health/playerRef.maxHealth);
+
+			// sfx
+			GameObject newSFX = Instantiate(sfxObj) as GameObject;
+			// pitch shift?
+			newSFX.GetComponent<AudioSource>().pitch += 1*(playerRef.health/playerRef.maxHealth);
 		}
 	}
 

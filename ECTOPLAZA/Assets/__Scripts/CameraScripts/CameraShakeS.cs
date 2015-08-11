@@ -23,6 +23,8 @@ public class CameraShakeS : MonoBehaviour {
 	public bool 				shaking = false; // true when camera is shaking
 	public bool					sleeping = false; // true when time is sleeping
 
+	public bool dontPunch = false;
+
 	private float delayShakeTime = 1f;
 
 	private CameraFollowS ownFollow;
@@ -77,6 +79,7 @@ public class CameraShakeS : MonoBehaviour {
 			if (sleepDuration <= 0){
 				Time.timeScale = 1;
 				sleeping = false;
+				dontPunch = false;
 			}
 			
 		}
@@ -102,6 +105,7 @@ public class CameraShakeS : MonoBehaviour {
 		shake_intensity = smallShakeIntensity/microShakeDiv;
 		shake_decay = smallShakeIntensity/(microShakeDiv*smallShakeDuration);
 		shaking = true;
+		dontPunch = true;
 	}
 	
 	// small amount of shake

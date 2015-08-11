@@ -11,6 +11,8 @@ public class DestroyObject : MonoBehaviour {
 		GetComponent<Collider> ().enabled = false; 
 		GetComponent<SpriteRenderer> ().enabled = false;
 		GetComponent<ParticleSystemAutoDestroy> ().enabled = true; 
+
+		CameraShakeS.C.MicroShake();
 	}
 
 }
