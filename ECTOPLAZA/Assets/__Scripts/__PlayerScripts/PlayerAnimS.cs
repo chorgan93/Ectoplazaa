@@ -111,6 +111,7 @@ public class PlayerAnimS : MonoBehaviour {
 		Animate();
 
 		FaceTarget();
+		//print(isFacingDirection);
 
 	
 	}
@@ -218,13 +219,13 @@ public class PlayerAnimS : MonoBehaviour {
 		}
 
 		else if (isRunning){
-			print ("I'm running");
+			//print ("I'm running");
 			runFrameAnimCountdown -= Time.deltaTime*TimeManagerS.timeMult;
 			
 			if (runFrameAnimCountdown <= 0){
 				runFrameAnimCountdown = runFrameAnimRate;
 				currentRunFrame++;
-				print (currentRunFrame);
+				//print (currentRunFrame);
 				if (currentRunFrame > idleAnimStart-1){
 					currentRunFrame = runAnimStart;
 				}
@@ -275,7 +276,7 @@ public class PlayerAnimS : MonoBehaviour {
 		// rotate head and tail according to velocity
 
 		
-		if (!playerRef.groundDetect.Grounded()){
+		if (!playerRef.groundDetect.Grounded() && !playerRef.charging){
 			isFacingDirection= true;
 		}
 		else{
@@ -285,12 +286,19 @@ public class PlayerAnimS : MonoBehaviour {
 
 		if (isFacingDirection){
 
+			//print(playerRef.playerNum + " " + isFacingDirection);
+
 			// for head
 
 			float rotateZHead = 0;
 		
 			if(headRigid.velocity.x == 0){
-				rotateZHead = 0;
+				if (headRigid.velocity.y > 0){
+					rotateZHead = 90;
+				}
+				else{
+					rotateZHead = -90;
+				}
 			}
 			else{
 				rotateZHead = Mathf.Rad2Deg*Mathf.Atan((headRigid.velocity.y/headRigid.velocity.x));

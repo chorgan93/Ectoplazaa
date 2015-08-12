@@ -37,6 +37,8 @@ public class PauseScreenS : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+		if (ScoreKeeperS.gameStarted && !ScoreKeeperS.gameEnd){
+
 		// check for player to pause
 		for(int i = 1; i < 4; i++){
 
@@ -243,6 +245,7 @@ public class PauseScreenS : MonoBehaviour {
 			currentCursorPos = 0;
 			Time.timeScale = 1;
 			ownRender.enabled = false;
+		}
 		}
 
 	

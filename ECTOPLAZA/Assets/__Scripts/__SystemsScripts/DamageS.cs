@@ -102,7 +102,7 @@ public class DamageS : MonoBehaviour {
 						GameObject hitEffect = Instantiate(hitEffectFastObj,spawnPos,Quaternion.identity) as GameObject;
 					//	MakeExplosion(otherPlayer.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
 						playerRef.InstantiateDeathParticles();
-						CameraShakeS.C.TimeSleep(0.2f);
+						CameraShakeS.C.TimeSleep(0.12f);
 						//print ("Tie!");
 					}
 				}

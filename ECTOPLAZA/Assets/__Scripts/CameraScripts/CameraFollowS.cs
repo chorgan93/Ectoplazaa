@@ -48,6 +48,23 @@ public class CameraFollowS : MonoBehaviour {
 		minSize = ownCam.orthographicSize;
 		currentCamSize = minSize;
 
+		Cursor.visible = false;
+
+	}
+
+	void Update () {
+		if (Input.GetKeyDown(KeyCode.Escape)){
+			if (Cursor.visible){
+				Application.Quit();
+			}
+			else{
+				Cursor.visible = true;
+			}
+		}
+		if (Input.GetMouseButtonDown(0)){
+			Cursor.visible = false;
+		}
+
 	}
 	
 	// Update is called once per frame

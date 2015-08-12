@@ -23,7 +23,9 @@ public class BGMS : MonoBehaviour {
 	private float duckVolumeMult = 0.8f;
 
 	private AudioClip nextMusic;
-	private float changeMusicRate = 5f;
+	private float changeMusicRate = 10f;
+
+	public float delayChange = 0;
 
 	// Use this for initialization
 	void Awake () {
@@ -57,6 +59,11 @@ public class BGMS : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+		if (delayChange > 0){
+			delayChange -= Time.deltaTime;
+
+		}
+		else{
 		if (nextMusic){
 			if (ownSource.volume > 0){
 				ownSource.volume -= fadeInRate*bgmVolumeMult*Time.deltaTime;
@@ -83,12 +90,24 @@ public class BGMS : MonoBehaviour {
 	
 			ownSource.volume = currentVolume;
 		}
+		}
 	
 	}
 
 	public void DuckVolume(){
-		currentVolume = targetVolume*duckVolumeMult;
-		ownSource.volume = currentVolume;
+		if (!nextMusic){
+			currentVolume = targetVolume*duckVolumeMult;
+			ownSource.volume = currentVolume;
+		}
+		//print ("duck volume");
+	}
+
+	public void DuckVolumeLonger(float delayTime){
+		if (!nextMusic){
+			currentVolume = 0;
+			ownSource.volume = currentVolume;
+			delayChange = delayTime;
+		}
 		//print ("duck volume");
 	}
 

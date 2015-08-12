@@ -27,6 +27,8 @@ public class CharacterSelectMenu : MonoBehaviour {
 	private bool startedLoading = false;
 	AsyncOperation async;
 
+	public GameObject selectSFXObj;
+
 	int totalPlayers = 0; 
 
 	// Use this for initialization
@@ -148,7 +150,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 
 					
 					// play char intro sound
-					players[i-1].GetComponent<PlayerSoundS>().PlayCharIntroSound();
+					//players[i-1].GetComponent<PlayerSoundS>().PlayCharIntroSound();
 					players[i-1].GetComponent<PlayerSoundS>().PlayPlayerJoinSound(totalPlayers-1);
 					//print (players[i-1].GetComponent<PlayerS>().characterNum);
 				
@@ -221,7 +223,8 @@ public class CharacterSelectMenu : MonoBehaviour {
 
 					
 					// play char intro sound
-					players[i-1].GetComponent<PlayerSoundS>().PlayCharIntroSound();
+							//players[i-1].GetComponent<PlayerSoundS>().PlayCharIntroSound();
+							players[i-1].GetComponent<PlayerSoundS>().PlayCharIntroSoundQuickFix();
 				}
 
 
@@ -249,6 +252,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 
 				//Application.LoadLevel(nextLevelString);
 					startedLoadDelay = true;
+						Instantiate(selectSFXObj);
 			}
 
 		}

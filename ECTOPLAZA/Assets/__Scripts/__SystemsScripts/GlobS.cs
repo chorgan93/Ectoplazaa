@@ -21,9 +21,13 @@ public class GlobS : MonoBehaviour {
 	public SpriteRenderer ectoGlow;
 	private float ectoAlpha = 0.5f;
 
+	public float gravTime = 3f;
+
 	public GameObject sfxObj;
 
 	public GameObject touchEffect;
+
+	public Rigidbody ownRigid;
 
 	// Use this for initialization
 	void Start () {
@@ -73,11 +77,13 @@ public class GlobS : MonoBehaviour {
 
 			deletionCounter -= 1f; 
 
+			ownRigid.useGravity = false;
+
 		}
 		else{
 			parentGO.transform.localScale = Vector3.Lerp(originalScale,Vector3.zero, 1f- ( deletionCounter/deletionTimer)); 
 			
-			deletionCounter -= 2f*Time.deltaTime*TimeManagerS.timeMult; 
+			deletionCounter -= 1f*Time.deltaTime*TimeManagerS.timeMult; 
 		}
 
 		if (deletionCounter < 0) {
@@ -88,6 +94,16 @@ public class GlobS : MonoBehaviour {
 		}
 
 		ectoGlow.transform.rotation = Quaternion.Euler(Vector3.zero);
+
+		gravTime -= Time.deltaTime*TimeManagerS.timeMult;
+		if (gravTime <= 0){
+			if (!activated){
+				ownRigid.useGravity = true;
+			}
+			else{
+				ownRigid.useGravity = false;
+			}
+		}
 	}
 
 	void OnTriggerEnter(Collider other) 
@@ -114,7 +130,7 @@ public class GlobS : MonoBehaviour {
 
 			// kinesthetics?
 			CameraShakeS.C.MicroShake();
-			CameraShakeS.C.TimeSleep(0.3f*playerRef.health/playerRef.maxHealth);
+			CameraShakeS.C.TimeSleep(0.1f*playerRef.health/playerRef.maxHealth);
 
 			// sfx
 			GameObject newSFX = Instantiate(sfxObj) as GameObject;

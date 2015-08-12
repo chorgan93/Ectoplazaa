@@ -30,6 +30,9 @@ public class LevelSelectMenu : MonoBehaviour {
 
 	private CameraFollowS followRef;
 
+	public GameObject levelSelectSFXObj;
+	public List<GameObject> scrollSFXObjs;
+
 	AsyncOperation async;
 
 
@@ -92,7 +95,9 @@ public class LevelSelectMenu : MonoBehaviour {
 						currentCursorPos = cursorPositions.Count-1;
 					}
 				}
-	
+					int soundToPlay = Mathf.FloorToInt(Random.Range(0,scrollSFXObjs.Count));
+
+						Instantiate(scrollSFXObjs[soundToPlay]);
 				movedCursor = true;
 			}
 		}
@@ -108,6 +113,7 @@ public class LevelSelectMenu : MonoBehaviour {
 			selectedLevelString = nextLevelStrings[currentCursorPos];
 			//Application.LoadLevel(nextSceneString);
 					startedLoadDelay = true;
+					Instantiate(levelSelectSFXObj);
 		}
 		}
 		}

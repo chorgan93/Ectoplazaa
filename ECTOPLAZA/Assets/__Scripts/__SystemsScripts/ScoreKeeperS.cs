@@ -34,6 +34,10 @@ public class ScoreKeeperS : MonoBehaviour {
 	private float countdownRateMax = .5f;
 	private float startCountdown;
 
+	public GameObject endFlash;
+
+	//public GameObject endGameSound;
+
 	// don't allow exit of game until this time is up
 	public float gameEndMinTime = 2f;
 
@@ -142,17 +146,28 @@ public class ScoreKeeperS : MonoBehaviour {
 	
 	void SpawnEndScreen()
 	{
+
+		
+		int characterNum = GlobalVars.playerList [winningPlayerNum - 1].GetComponent<PlayerS> ().characterNum-1;
+
 		scoreBarObj.SetActive (false); 
 
 		endGameObj.SetActive (true);
+
+		CameraShakeS.C.LargeShake();
+		CameraShakeS.C.HalfTimeSleep(1.5f);
+
 		Vector3 newPos = endGameObj.transform.position; 
 		newPos.x = Camera.main.ViewportToWorldPoint (new Vector3 (1f, .5f, 0f)).x + 50f;
 
 		endGameObj.transform.position = newPos; 
 
+		endFlash.GetComponent<Renderer>().material.color = GlobalVars.playerList 
+			[winningPlayerNum - 1].GetComponent<PlayerS> ().playerParticleMats [characterNum].GetColor("_TintColor"); 
+
+
 		winText.text = "P" + winningPlayerNum + "\nwins!";
 
-		int characterNum = GlobalVars.playerList [winningPlayerNum - 1].GetComponent<PlayerS> ().characterNum-1;
 		winningPlayerSprite.GetComponent<SpriteRenderer> ().sprite = playerHighResSprites [characterNum];
 		winningPlayerTail.GetComponent<Renderer> ().material = GlobalVars.playerList [winningPlayerNum - 1].GetComponent<PlayerS> ().playerMats [characterNum]; 
 	
@@ -248,13 +263,14 @@ public class ScoreKeeperS : MonoBehaviour {
 		Vector3 newPos = endGameObj.transform.position; 
 		newPos.x = Camera.main.ViewportToWorldPoint (new Vector3 (0.0f, .5f, 0f)).x ;
 
-		endGameObj.transform.position = Vector3.Lerp (endGameObj.transform.position, newPos, 0.2f); 
+		endGameObj.transform.position = Vector3.Lerp (endGameObj.transform.position, newPos, 0.2f
+		                                              *Time.deltaTime*TimeManagerS.timeMult*50f); 
 		
 		if (Input.GetButton ("BButtonAllPlayers"+	PlatformS.GetPlatform ()) && gameEndMinTime < 0) 
 		{
 			gameEnd = false;
 			// hard coding in return to character select
-			Application.LoadLevel("3CharacterSelect");
+			Application.LoadLevel("2MapSelect");
 		}
 		if (Input.GetButton ("AButtonAllPlayers" + PlatformS.GetPlatform ()) && gameEndMinTime < 0) {
 

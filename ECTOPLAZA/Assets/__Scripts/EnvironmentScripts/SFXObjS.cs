@@ -6,6 +6,7 @@ public class SFXObjS : MonoBehaviour {
 	private AudioSource ownSource;
 
 	public bool duckMusic = false;
+	public bool longDuck = false;
 
 	public static float sfxVolumeMult = 1;
 
@@ -19,7 +20,26 @@ public class SFXObjS : MonoBehaviour {
 
 		if (duckMusic){
 			if (GameObject.Find("MusicPlayer")){
-				GameObject.Find("MusicPlayer").GetComponent<BGMS>().DuckVolume();
+				if(longDuck){
+					GameObject.Find("MusicPlayer").GetComponent<BGMS>().DuckVolumeLonger(ownSource.clip.length);
+					print ("long duck!!");
+				}
+				else{
+					GameObject.Find("MusicPlayer").GetComponent<BGMS>().DuckVolume();
+				}
+			}
+			else if (GameObject.Find("MusicPlayer(Clone)")){
+				if(longDuck){
+					GameObject.Find("MusicPlayer(Clone)").GetComponent<BGMS>().DuckVolumeLonger(ownSource.clip.length);
+					print ("long duck!!");
+				}
+				else{
+					GameObject.Find("MusicPlayer(Clone)").GetComponent<BGMS>().DuckVolume();
+				}
+			}
+			else{
+				
+				print ("didn't find it");
 			}
 		}
 	

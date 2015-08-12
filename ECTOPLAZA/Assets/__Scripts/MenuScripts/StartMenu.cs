@@ -51,7 +51,11 @@ public class StartMenu : MonoBehaviour {
 	private bool startedLoading = false;
 	private bool startCountdown = false;
 	private float delayLoadTime = 0.5f;
-	
+
+	public List<GameObject> scrollSoundObjs;
+	public List<GameObject> selectSoundObjs;
+	public GameObject advSoundObj;
+
 	AsyncOperation async;
 
 	void Start () 
@@ -70,7 +74,7 @@ public class StartMenu : MonoBehaviour {
 				postcard.SetActive(false); 
 
 			}
-
+			Instantiate(selectSoundObjs[0]);
 			inputDelay = 0;
 		}
 
@@ -116,6 +120,8 @@ public class StartMenu : MonoBehaviour {
 					postcard.GetComponent<Rigidbody> ().AddTorque (Vector3.forward * Random.Range(200000000f,400000000f)*direction*Time.deltaTime); 
 					i--; 
 				}
+
+				Instantiate(advSoundObj);
 			}
 		}
 
@@ -161,6 +167,9 @@ public class StartMenu : MonoBehaviour {
 						}
 
 						movedCursor = true;
+
+						int soundToPlay = Mathf.FloorToInt(Random.Range(0,scrollSoundObjs.Count));
+						Instantiate(scrollSoundObjs[soundToPlay]);
 					}
 				}
 				else{
@@ -187,6 +196,8 @@ public class StartMenu : MonoBehaviour {
 							//startedLoading = true;
 							startCountdown = true;
 							cameraFollow.poi = loadingCenterPt;
+
+							Instantiate(advSoundObj);
 						}
 	
 						// "options" option
@@ -195,6 +206,8 @@ public class StartMenu : MonoBehaviour {
 							cameraFollow.poi = optionsCenterPt;
 							inputDelay = inputDelayTransition;
 							currentCursorPos = 0;
+							int soundToPlay = Mathf.FloorToInt(Random.Range(0,selectSoundObjs.Count));
+							Instantiate(selectSoundObjs[soundToPlay]);
 						}
 		
 						// "credits" option
@@ -202,6 +215,8 @@ public class StartMenu : MonoBehaviour {
 							onCredits = true;
 							cameraFollow.poi = creditsCenterPt;
 							inputDelay = inputDelayTransition;
+							int soundToPlay = Mathf.FloorToInt(Random.Range(0,selectSoundObjs.Count));
+							Instantiate(selectSoundObjs[soundToPlay]);
 						}
 					}
 				}
@@ -215,6 +230,9 @@ public class StartMenu : MonoBehaviour {
 						movedCursor = false;
 						currentCursorPos = 0;
 						inputDelay = inputDelayTransition;
+
+						int soundToPlay = Mathf.FloorToInt(Random.Range(0,scrollSoundObjs.Count));
+						Instantiate(scrollSoundObjs[soundToPlay]);
 					}
 					
 					// options menu navigation
@@ -249,6 +267,8 @@ public class StartMenu : MonoBehaviour {
 									}
 									
 									movedCursorLeftRight = true;
+									int soundToPlay = Mathf.FloorToInt(Random.Range(0,scrollSoundObjs.Count));
+									Instantiate(scrollSoundObjs[soundToPlay]);
 								}
 							}
 							else{
@@ -282,6 +302,8 @@ public class StartMenu : MonoBehaviour {
 									}
 									
 									movedCursorLeftRight = true;
+									int soundToPlay = Mathf.FloorToInt(Random.Range(0,scrollSoundObjs.Count));
+									Instantiate(scrollSoundObjs[soundToPlay]);
 								}
 							}
 							else{
@@ -313,6 +335,8 @@ public class StartMenu : MonoBehaviour {
 									}
 									
 									movedCursorLeftRight = true;
+									int soundToPlay = Mathf.FloorToInt(Random.Range(0,scrollSoundObjs.Count));
+									Instantiate(scrollSoundObjs[soundToPlay]);
 								}
 							}
 							else{
@@ -343,6 +367,8 @@ public class StartMenu : MonoBehaviour {
 									}
 									
 									movedCursorLeftRight = true;
+									int soundToPlay = Mathf.FloorToInt(Random.Range(0,scrollSoundObjs.Count));
+									Instantiate(scrollSoundObjs[soundToPlay]);
 								}
 							}
 							else{

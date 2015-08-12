@@ -427,7 +427,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 			GameObject newGlob = Instantiate (playerGlob, spawnPos, Quaternion.identity) as GameObject; 
 			
 			// set random new velocity
-			Vector3 newGlobVel = Random.insideUnitSphere * 6000f * Time.deltaTime;
+			Vector3 newGlobVel = Random.insideUnitSphere * 8000f * Time.deltaTime;
 			newGlobVel.z = 0;
 			newGlob.GetComponentInChildren<SpriteRenderer>().color = playerRef.playerParticleMats[playerRef.characterNum - 1].GetColor("_TintColor");
 			newGlob.GetComponentInChildren<GlobS> ().SetVelocityMaterial (newGlobVel, playerRef.gameObject); 

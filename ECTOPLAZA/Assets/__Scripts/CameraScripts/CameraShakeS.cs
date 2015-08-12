@@ -23,6 +23,8 @@ public class CameraShakeS : MonoBehaviour {
 	public bool 				shaking = false; // true when camera is shaking
 	public bool					sleeping = false; // true when time is sleeping
 
+	private bool 				halfSleep = false;
+
 	public bool dontPunch = false;
 
 	private float delayShakeTime = 1f;
@@ -72,13 +74,19 @@ public class CameraShakeS : MonoBehaviour {
 	void FixedUpdate () {
 		
 		if (sleeping){
-			
-			Time.timeScale = 0.1f;
+
+			if (halfSleep){
+				Time.timeScale = 0.5f;
+			}
+			else{
+				Time.timeScale = 0.1f;
+			}
 			
 			sleepDuration -= Time.deltaTime/Time.timeScale;
 			if (sleepDuration <= 0){
 				Time.timeScale = 1;
 				sleeping = false;
+				halfSleep = false;
 				dontPunch = false;
 			}
 			
@@ -134,6 +142,17 @@ public class CameraShakeS : MonoBehaviour {
 		//print ("SLEEPING");
 		sleepDuration = sleepTime;
 		sleeping = true;
+	}
+
+	// time freeze
+	public void HalfTimeSleep(float sleepTime) {
+		
+		Time.timeScale = 0.4f;
+		
+		//print ("SLEEPING");
+		sleepDuration = sleepTime;
+		sleeping = true;
+		halfSleep = true;
 	}
 
 	public void DisableShaking(){

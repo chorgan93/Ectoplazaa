@@ -88,6 +88,8 @@ public class PlayerSoundS : MonoBehaviour {
 		// need to hear these
 		
 		//int releaseToPlay = Mathf.FloorToInt(Random.Range(0,groundPoundReleaseSoundObjs.Count));
+		
+		//characterNum = playerRef.characterNum;
 
 		int numToPlay = characterNum-1;
 		if (numToPlay < 0){
@@ -97,6 +99,28 @@ public class PlayerSoundS : MonoBehaviour {
 			numToPlay = 0;
 		}
 
+		Instantiate(charIntroSoundObjs[numToPlay]);
+		print (characterNum);
+		
+	}
+
+	public void PlayCharIntroSoundQuickFix(){
+
+		
+		characterNum = playerRef.characterNum;
+		
+		// need to hear these
+		
+		//int releaseToPlay = Mathf.FloorToInt(Random.Range(0,groundPoundReleaseSoundObjs.Count));
+		
+		int numToPlay = characterNum-1;
+		if (numToPlay < 0){
+			numToPlay = 0;
+		}
+		if (numToPlay > charIntroSoundObjs.Count-1){
+			numToPlay = 0;
+		}
+		
 		Instantiate(charIntroSoundObjs[numToPlay]);
 		print (characterNum);
 		

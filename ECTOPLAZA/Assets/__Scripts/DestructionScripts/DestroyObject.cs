@@ -3,7 +3,7 @@ using System.Collections;
 
 public class DestroyObject : MonoBehaviour {
 
-
+	public GameObject audioObj;
 
 	void OnTriggerEnter(Collider other) 
 	{
@@ -13,6 +13,10 @@ public class DestroyObject : MonoBehaviour {
 		GetComponent<ParticleSystemAutoDestroy> ().enabled = true; 
 
 		CameraShakeS.C.MicroShake();
+
+		if (audioObj != null){
+			Instantiate(audioObj);
+		}
 	}
 
 }
