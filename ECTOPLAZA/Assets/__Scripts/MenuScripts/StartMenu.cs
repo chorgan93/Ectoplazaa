@@ -137,9 +137,9 @@ public class StartMenu : MonoBehaviour {
 				cursorObj.SetActive(true);
 
 				// move cursor function
-				if (Mathf.Abs(Input.GetAxis("VerticalPlayer" + playerNum + platformType)) > cursorSensitivity){
+				if (Mathf.Abs(Input.GetAxis("Vertical")) > cursorSensitivity){
 					if (!movedCursor){
-						if (Input.GetAxis("VerticalPlayer" + playerNum + platformType) < 0){
+						if (Input.GetAxis("Vertical") < 0){
 							// add to current level selected
 							currentCursorPos ++;
 							if (onOptions){
@@ -248,10 +248,10 @@ public class StartMenu : MonoBehaviour {
 
 							// allow movement of option up/down using left/right control
 
-							if (Mathf.Abs(Input.GetAxis("HorizontalPlayer" + playerNum + platformType)) 
+							if (Mathf.Abs(Input.GetAxis("Horizontal")) 
 							    > cursorSensitivity){
 								if (!movedCursorLeftRight){
-									if (Input.GetAxis("HorizontalPlayer" + playerNum + platformType) > 0){
+									if (Input.GetAxis("Horizontal") > 0){
 										// increase option
 										BGMS.bgmVolumeMult += musicVolumeChangeStep;
 										if (BGMS.bgmVolumeMult > 1){
@@ -283,10 +283,10 @@ public class StartMenu : MonoBehaviour {
 
 							// allow movement of option up/down using left/right control
 							
-							if (Mathf.Abs(Input.GetAxis("HorizontalPlayer" + playerNum + platformType)) 
+							if (Mathf.Abs(Input.GetAxis("Horizontal")) 
 							    > cursorSensitivity){
 								if (!movedCursorLeftRight){
-									if (Input.GetAxis("HorizontalPlayer" + playerNum + platformType) > 0){
+									if (Input.GetAxis("Horizontal") > 0){
 										// increase option
 										SFXObjS.sfxVolumeMult += sfxVolumeChangeStep;
 										if (SFXObjS.sfxVolumeMult > 1){
@@ -316,10 +316,10 @@ public class StartMenu : MonoBehaviour {
 
 						// screenshake options
 						if (currentCursorPos == 2){
-							if (Mathf.Abs(Input.GetAxis("HorizontalPlayer" + playerNum + platformType)) 
+							if (Mathf.Abs(Input.GetAxis("Horizontal")) 
 							    > cursorSensitivity){
 								if (!movedCursorLeftRight){
-									if (Input.GetAxis("HorizontalPlayer" + playerNum + platformType) > 0){
+									if (Input.GetAxis("Horizontal") > 0){
 										// increase option
 										CameraShakeS.shakeStrengthMult += screenShakeChangeStep;
 										if (CameraShakeS.shakeStrengthMult > 2){
@@ -348,10 +348,10 @@ public class StartMenu : MonoBehaviour {
 
 						// fullscreen options
 						if (currentCursorPos == 3){
-							if (Mathf.Abs(Input.GetAxis("HorizontalPlayer" + playerNum + platformType)) 
+							if (Mathf.Abs(Input.GetAxis("Horizontal")) 
 							    > cursorSensitivity){
 								if (!movedCursorLeftRight){
-									if (Input.GetAxis("HorizontalPlayer" + playerNum + platformType) > 0){
+									if (Input.GetAxis("Horizontal") > 0){
 										// fullscreen off
 										//Screen.SetResolution(Screen.width, Screen.height, false);
 

@@ -54,6 +54,7 @@
      <Compile Include="Assets\__Scripts\EnvironmentScripts\BGMS.cs" />
      <Compile Include="Assets\__Scripts\EnvironmentScripts\BedParticles.cs" />
      <Compile Include="Assets\__Scripts\EnvironmentScripts\BedSoundS.cs" />
+     <Compile Include="Assets\__Scripts\EnvironmentScripts\BokehS.cs" />
      <Compile Include="Assets\__Scripts\EnvironmentScripts\FadeObjS.cs" />
      <Compile Include="Assets\__Scripts\EnvironmentScripts\FadeSpriteS.cs" />
      <Compile Include="Assets\__Scripts\EnvironmentScripts\FakeParaS.cs" />

@@ -13,6 +13,8 @@ public class GlobalVars : MonoBehaviour
 	public static bool [] characterIsPlaying = new bool[4]{false,false,false,false};
 	public static int mapNumber; //current map selection
 
+	public static int lastWinningPlayer = 1;
+
 	public static bool characterSelected = false; //check if players have gone through character select screen, for using in unity to check if spawn characters with default properties or unique ones
 	public static bool launchingFromScene = true; 
 

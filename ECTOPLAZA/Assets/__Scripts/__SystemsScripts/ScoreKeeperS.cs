@@ -162,6 +162,10 @@ public class ScoreKeeperS : MonoBehaviour {
 
 		endGameObj.transform.position = newPos; 
 
+		GlobalVars.playerList[winningPlayerNum-1].GetComponent<PlayerSoundS>().PlayCharIntroSound();
+
+		GlobalVars.lastWinningPlayer = winningPlayerNum;
+
 		endFlash.GetComponent<Renderer>().material.color = GlobalVars.playerList 
 			[winningPlayerNum - 1].GetComponent<PlayerS> ().playerParticleMats [characterNum].GetColor("_TintColor"); 
 

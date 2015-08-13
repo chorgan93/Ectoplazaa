@@ -48,7 +48,7 @@ public class BGMS : MonoBehaviour {
 		//maxVolume = ownSource.volume;
 
 		if (GameObject.Find("NewMusic")){
-			ReplaceMusic(GameObject.Find("NewMusic").GetComponent<AudioSource>().clip);
+			ReplaceMusic(GameObject.Find("NewMusic").GetComponent<AudioSource>().clip, maxVolume);
 			print ("change music!");
 		}
 
@@ -111,9 +111,10 @@ public class BGMS : MonoBehaviour {
 		//print ("duck volume");
 	}
 
-	public void ReplaceMusic(AudioClip muse){
+	public void ReplaceMusic(AudioClip muse, float newVolume){
 		if (ownSource.clip != muse){
 			nextMusic = muse;
+			maxVolume = newVolume;
 		}
 	}
 }

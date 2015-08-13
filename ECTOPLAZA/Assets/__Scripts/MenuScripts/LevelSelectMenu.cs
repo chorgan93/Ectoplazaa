@@ -15,9 +15,11 @@ public class LevelSelectMenu : MonoBehaviour {
 	public string nextSceneString;
 	public string backSceneString;
 
+	public TextMesh cursorLabel;
+	public List<Color> cursorCols;
 	private float moveCursorSensitivity = 0.8f;
 	private bool movedCursor = false;
-
+	
 	public int playerNum = 1;
 	private string platformType; 
 
@@ -45,6 +47,11 @@ public class LevelSelectMenu : MonoBehaviour {
 		cursorObj.transform.position = cursorPositions[currentCursorPos].transform.position;
 
 		followRef = GetComponent<CameraFollowS>();
+
+		//playerNum = GlobalVars.lastWinningPlayer;
+		//cursorLabel.color = cursorCols[GlobalVars.lastWinningPlayer-1];
+		//cursorLabel.text = "P" + GlobalVars.lastWinningPlayer;
+		cursorLabel.text = "";
 
 	
 	}
@@ -79,9 +86,9 @@ public class LevelSelectMenu : MonoBehaviour {
 		}
 
 		// select level function
-		if (Mathf.Abs(Input.GetAxis("HorizontalPlayer" + playerNum + platformType)) > moveCursorSensitivity){
+		if (Mathf.Abs(Input.GetAxis("Horizontal")) > moveCursorSensitivity){
 			if (!movedCursor){
-				if (Input.GetAxis("HorizontalPlayer" + playerNum + platformType) > 0){
+				if (Input.GetAxis("Horizontal") > 0){
 					// add to current level selected
 					currentCursorPos ++;
 					if (currentCursorPos > cursorPositions.Count-1){

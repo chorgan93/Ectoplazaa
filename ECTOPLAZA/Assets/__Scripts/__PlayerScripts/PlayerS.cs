@@ -261,7 +261,7 @@ public class PlayerS : MonoBehaviour {
 	void FixedUpdate () {
 
 		ManageCharge();
-
+		BackToMenu();
 
 		if (!ScoreKeeperS.gameEnd && ScoreKeeperS.gameStarted) {
 
@@ -692,6 +692,7 @@ public class PlayerS : MonoBehaviour {
 			lv1OutCountdown = 0;
 			snapReturning = true;
 			didLv2Fling = true;
+			groundLeeway = 0;
 			//attacking = false;
 			//isDangerous = false;
 			ownRigid.useGravity = true;
@@ -1455,6 +1456,14 @@ public class PlayerS : MonoBehaviour {
 
 	}
 
+	/*void OnCollisionStay(Collision other){
+		if (other.gameObject.tag == "Ground" || other.gameObject.tag == "Wall"){
+			if (groundLeeway <= 0){
+				ownRigid.useGravity = true;
+			}
+		}
+	}*/
+
 	void OnTriggerEnter(Collider other) 
 	{
 		if (other.gameObject.tag != "Debris") {
@@ -1527,5 +1536,15 @@ public class PlayerS : MonoBehaviour {
 
 	public float GetChargeLv3Min(){
 		return (maxChargeTime);
+	}
+
+	void BackToMenu(){
+		if (Input.GetButton("StartButtonPlayer"+playerNum+platformType) &&
+		    Input.GetButton("AButtonPlayer"+playerNum+platformType) &&
+		    Input.GetButton("BButtonPlayer"+playerNum+platformType) &&
+		    Input.GetButton("XButtonPlayer"+playerNum+platformType) &&
+		    Input.GetButton("YButtonPlayer"+playerNum+platformType)){
+			Application.LoadLevel("1StartMenu");
+		}
 	}
 }
