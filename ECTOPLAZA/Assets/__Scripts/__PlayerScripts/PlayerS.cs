@@ -415,7 +415,7 @@ public class PlayerS : MonoBehaviour {
 	void ChargeAttack () {
 
 		// turn stretch button bool on/off
-		if (Input.GetAxis("RightTriggerPlayer" + playerNum + platformType) > triggerSensitivity){
+		if ((Input.GetAxis("RightTriggerPlayer" + playerNum + platformType) > triggerSensitivity) || Input.GetButton("RightBumperPlayer" + playerNum + platformType) || Input.GetButton("XButtonPlayer" + playerNum + platformType)){
 			stretchButtonDown = true;
 		}
 		else{
