@@ -13,14 +13,14 @@ ECTOPLAZA/sysinfo.txt
 # ===================================== #
 [Ee]xported[Oo]bj/
 .vs/
-/*.userprefs
-/*.csproj
-/*.pidb
-/*.suo
-/*.sln*
-/*.user
-/*.unityproj
-/*.booproj
+ECTOPLAZA/*.userprefs
+ECTOPLAZA/*.csproj
+ECTOPLAZA/*.pidb
+ECTOPLAZA/*.suo
+ECTOPLAZA/*.sln*
+ECTOPLAZA/*.user
+ECTOPLAZA/*.unityproj
+ECTOPLAZA/*.booproj
  
 # ============ #
 # OS generated #
