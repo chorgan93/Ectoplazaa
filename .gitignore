@@ -1,11 +1,11 @@
 # =============== #
 # Unity generated #
 # =============== #
-ECTOPLAZA/[Tt]emp/
-ECTOPLAZA/[Oo]bj/
-ECTOPLAZA/[Bb]uild
-ECTOPLAZA/[Ll]ibrary/
-ECTOPLAZA/sysinfo.txt
+[Tt]emp/
+[Oo]bj/
+[Bb]uild
+[Ll]ibrary/
+sysinfo.txt
 *.stackdump
  
 # ===================================== #
@@ -13,14 +13,14 @@ ECTOPLAZA/sysinfo.txt
 # ===================================== #
 [Ee]xported[Oo]bj/
 .vs/
-ECTOPLAZA/*.userprefs
-ECTOPLAZA/*.csproj
-ECTOPLAZA/*.pidb
-ECTOPLAZA/*.suo
-ECTOPLAZA/*.sln*
-ECTOPLAZA/*.user
-ECTOPLAZA/*.unityproj
-ECTOPLAZA/*.booproj
+*.userprefs
+*.csproj
+*.pidb
+*.suo
+*.sln*
+*.user
+*.unityproj
+*.booproj
  
 # ============ #
 # OS generated #
