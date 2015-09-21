@@ -83,6 +83,7 @@
      <Compile Include="Assets\__Scripts\__PlayerScripts\PlayerS.cs" />
      <Compile Include="Assets\__Scripts\__PlayerScripts\PlayerSoundS.cs" />
      <Compile Include="Assets\__Scripts\__PlayerScripts\SpawnPtS.cs" />
+     <Compile Include="Assets\__Scripts\__SystemsScripts\CurrentModeS.cs" />
      <Compile Include="Assets\__Scripts\__SystemsScripts\DamageS.cs" />
      <Compile Include="Assets\__Scripts\__SystemsScripts\GameStartS.cs" />
      <Compile Include="Assets\__Scripts\__SystemsScripts\GlobS.cs" />
