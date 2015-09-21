@@ -1,11 +1,11 @@
 # =============== #
 # Unity generated #
 # =============== #
-[Tt]emp/
-[Oo]bj/
-[Bb]uild
-[Ll]ibrary/
-sysinfo.txt
+ECTOPLAZA/[Tt]emp/
+ECTOPLAZA/[Oo]bj/
+ECTOPLAZA/[Bb]uild
+ECTOPLAZA/[Ll]ibrary/
+ECTOPLAZA/sysinfo.txt
 *.stackdump
  
 # ===================================== #
