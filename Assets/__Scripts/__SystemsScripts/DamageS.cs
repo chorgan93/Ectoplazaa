@@ -3,6 +3,8 @@ using System.Collections;
 
 public class DamageS : MonoBehaviour {
 
+	// hi git
+
 	private float pauseTime = 0.8f;
 	public PlayerS playerRef;
 
