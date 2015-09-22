@@ -98,7 +98,7 @@ public class ScoreBar : MonoBehaviour {
 
 			//MOVE HEADS
 			
-			float health = Mathf.Clamp (playerRefs[i].health, 0f, (float)scoreThreshold); //make sure health doesnt exceed max
+			float health = Mathf.Clamp (playerRefs[i].score, 0f, (float)scoreThreshold); //make sure health doesnt exceed max
 			
 			float lerpVal = health / (float)scoreThreshold;
 			//print ("LerpVal = " + lerpVal); 
@@ -121,20 +121,20 @@ public class ScoreBar : MonoBehaviour {
 
 			//CHECK FOR LEADER AND CHANGE END CIRCLE COLOR 
 
-			if(playerRefs[i].health >= mostHealth)
+			if(playerRefs[i].score >= mostHealth)
 			{
-				mostHealth = playerRefs[i].health; 
+				mostHealth = playerRefs[i].score; 
 			}
-			if (playerRefs[i].health <= leastHealth)
+			if (playerRefs[i].score <= leastHealth)
 			{
-				leastHealth = playerRefs[i].health;
+				leastHealth = playerRefs[i].score;
 				startTransform.GetComponent<Renderer> ().material = playerRefs[i].playerMats [playerRefs[i].characterNum - 1];
 				
 			}
 
 			for(int j = 0; j < totalPlayers; j++)
 			{
-				if(playerRefs[i].health < playerRefs[j].health || ((playerRefs[i].health == playerRefs[j].health) && (i > j) ))
+				if(playerRefs[i].score < playerRefs[j].score || ((playerRefs[i].score == playerRefs[j].score) && (i > j) ))
 				{
 					Vector3 newBarPos = barObjs[i].transform.position; 
 					newBarPos.z -= .2f; 
@@ -144,7 +144,7 @@ public class ScoreBar : MonoBehaviour {
 					newNewHeadPos.z -=0.1f; 
 					heads[i].transform.position = newNewHeadPos; 
 				}
-				if((playerRefs[i].health == playerRefs[j].health) && (i < j) )
+				if((playerRefs[i].score == playerRefs[j].score) && (i < j) )
 				{
 					Vector3 newNewHeadPos = heads[i].transform.position; 
 					newNewHeadPos.x +=0.175f; 

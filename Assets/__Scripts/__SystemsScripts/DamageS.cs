@@ -34,7 +34,7 @@ public class DamageS : MonoBehaviour {
 	public void ManageCollision(GameObject other){
 		
 		
-		if (other.gameObject.tag == "Player") {
+		if (other.gameObject.tag == "Player" ) {
 			//print (other.name); 
 			
 			PlayerS otherPlayer = other.gameObject.GetComponent<PlayerS> ();
@@ -124,30 +124,52 @@ public class DamageS : MonoBehaviour {
 
 			if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0){
 
-				otherPlayer.GetComponent<TrailHandlerRedubS>().ChopTail(other.gameObject);
-				if(playerRef.playerNum ==1)
-				{
-					//print("P1 TAIL HIT" );
-				}
-
-				//print (other.GetComponent<DotColliderS>().whoCreatedMe); 
-
-				//print (playerRef);
-			
-			//	otherPlayer.SleepTime(pauseTime);
-			//	playerRef.SleepTime(pauseTime/4);
-
-				CameraShakeS.C.TimeSleep(0.1f);
-
-				CameraShakeS.C.LargeShake();
-
-
+				//print ("DAMAGING PLAYER " + otherPlayer.playerNum); 
 				
-				// add to score
-				//playerRef.score++;
-
-				// spawn tail slash effect
-				MakeSlashEffectNoFlash(other.transform.position);
+				otherPlayer.SleepTime (pauseTime);
+				playerRef.SleepTime (pauseTime);
+				
+				
+				CameraShakeS.C.TimeSleep(0.2f);
+				
+				//chop all of tail off
+				// make sure there are dots to destroy first
+				//otherPlayer.TakeDamage (otherPlayer.health);
+				/*
+					if (Mathf.RoundToInt((otherPlayer.health/2)) < 5){
+						otherPlayer.initialHealth = 5;
+					}
+					else{
+						otherPlayer.initialHealth = Mathf.RoundToInt((otherPlayer.health/2));
+					}
+					*/
+				
+				if(otherPlayer.health < 5)
+				{
+					otherPlayer.GetComponent<TrailHandlerRedubS>().SpawnGlobs(otherPlayer.transform.position,2); 
+					otherPlayer.TakeDamage(otherPlayer.health);
+					GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
+					GlobalVars.totalKills[playerRef.playerNum-1] ++; 
+				}
+				else
+				{
+					int damageTaken = (int)otherPlayer.health+1;  //Mathf.RoundToInt((otherPlayer.health/2f));
+					
+					otherPlayer.GetComponent<TrailHandlerRedubS>().DestroyPlayerDotsRange(damageTaken);
+					otherPlayer.TakeDamage (damageTaken);
+					GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
+					GlobalVars.totalKills[playerRef.playerNum-1] ++; 
+				}
+				
+				//print ("KILL!"); 
+				
+				MakeExplosion(otherPlayer.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
+				
+				CameraShakeS.C.LargeShake ();
+				
+				
+				// spawn slash effect
+				MakeSlashEffect(other.transform.position);
 
 			}
 

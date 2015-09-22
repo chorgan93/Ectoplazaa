@@ -106,7 +106,7 @@ public class ScoreKeeperS : MonoBehaviour {
 			if (GlobalVars.characterNumber [i] != 0) {
 				PlayerS currentPlayer = GlobalVars.playerList [i].GetComponent<PlayerS> ();
 				
-				if (currentPlayer.health >= scoreThreshold) {
+				if (currentPlayer.score >= scoreThreshold) {
 
 					gameEnd = true;
 					winningPlayerNum = i + 1;

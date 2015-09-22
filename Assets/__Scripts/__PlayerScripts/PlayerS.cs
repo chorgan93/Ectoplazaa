@@ -74,6 +74,7 @@ public class PlayerS : MonoBehaviour {
 	public float maxHealth = 50;
 	public float initialHealth = 10;
 	public float health = 10;
+	public float ectoScore;
 
 	public bool facingRight = false;
 
