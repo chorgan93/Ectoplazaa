@@ -3,7 +3,10 @@ using System.Collections;
 
 public class DamageS : MonoBehaviour {
 
-	// hi git
+	// for damage collider attached to all players
+	// turns on/off according to attacking state of player
+	// deals damage to other players when hits their collider or tail collider
+	// also spawns hit effects
 
 	private float pauseTime = 0.8f;
 	public PlayerS playerRef;
@@ -117,6 +120,8 @@ public class DamageS : MonoBehaviour {
 
 		if (other.gameObject.tag == "PlayerTrail"){
 
+			// auto kill player tail is attached to
+
 
 			//print ("yeah");
 
@@ -181,6 +186,8 @@ public class DamageS : MonoBehaviour {
 
 	void MakeSlashEffect(Vector3 otherPos){
 
+		// makes the cool slash thing when a player is hit
+
 		Vector3 spawnPos = transform.position-playerRef.GetComponent<Rigidbody>().velocity.normalized*damageEffectStartRange;
 		spawnPos.z-=1;
 
@@ -219,6 +226,8 @@ public class DamageS : MonoBehaviour {
 	}
 
 	void MakeSlashEffectNoFlash(Vector3 otherPos){
+
+		// for a non-lethal hit (probably aren't many of these now due to redesigns)
 		
 		Vector3 spawnPos = transform.position-playerRef.GetComponent<Rigidbody>().velocity.normalized*damageEffectStartRange;
 		spawnPos.z-=1;

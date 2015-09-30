@@ -3,7 +3,8 @@ using System.Collections;
 
 public class ScoreBar : MonoBehaviour {
 
-
+	// manages white score bar ui at top of screen based on player score
+	// currently only works with ecto mode, will need to be repurposed for multiple modes
 
 	//set these vars on spawn
 	public int scoreThreshold; 

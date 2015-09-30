@@ -3,6 +3,9 @@ using System.Collections;
 
 public class PlayerScoreDisplayS : MonoBehaviour {
 
+	// for early debug purposes, no longer in use
+	// displays player score through simple attached text
+
 	public PlayerS playerRef;
 
 	private TextMesh ownText;

@@ -3,6 +3,8 @@ using System.Collections;
 
 public class GlobS : MonoBehaviour {
 
+	// script for ecto mode ectoplasm orbs
+
 	public GameObject parentGO;
 
 	Vector3 originalScale; 
@@ -32,6 +34,9 @@ public class GlobS : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		deletionCounter = deletionTimer;
+
+		// randomize size of orbs
+
 		Vector3 newSize = parentGO.transform.localScale;
 		newSize.x += sizeRandomizer*Random.insideUnitCircle.x;
 		newSize.y = newSize.x;
@@ -41,7 +46,7 @@ public class GlobS : MonoBehaviour {
 
 		ownRender = parentGO.GetComponent<Renderer>();
 
-		
+		// set color to player color from which ecto was spawned
 		Color ectoColor = ownSprite.color;
 		ectoColor.a = ectoAlpha;
 		ectoGlow.color = ectoColor;
@@ -69,8 +74,10 @@ public class GlobS : MonoBehaviour {
 		//parentCol.g = parentCol.b = parentCol.r;
 		ownRender.material.color = parentCol;
 
+		// set short delay for pick up so they're not immediately picked up on spawn
 		invulnTime -= Time.deltaTime*TimeManagerS.timeMult;
 
+		// globs decrease in size as time goes on, then destroy selves at end of lifespan
 		if (activated) {
 
 			parentGO.transform.localScale = Vector3.Lerp(originalScale,Vector3.zero, 1f- ( deletionCounter/deletionTimer)); 
@@ -95,6 +102,7 @@ public class GlobS : MonoBehaviour {
 
 		ectoGlow.transform.rotation = Quaternion.Euler(Vector3.zero);
 
+		// globs start at zero grav, then drop after gravTime hits zero
 		gravTime -= Time.deltaTime*TimeManagerS.timeMult;
 		if (gravTime <= 0){
 			if (!activated){
@@ -109,6 +117,7 @@ public class GlobS : MonoBehaviour {
 	void OnTriggerEnter(Collider other) 
 	{
 
+		// when colliding with player, add to player score (ectomode)
 		if (other.tag == "Player" && invulnTime <= 0) {
 			parentGO.GetComponent<SphereCollider> ().enabled = false; 
 			parentGO.GetComponent<Rigidbody> ().useGravity = false;  

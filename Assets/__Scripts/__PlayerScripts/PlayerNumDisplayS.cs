@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 public class PlayerNumDisplayS : MonoBehaviour {
 
+	// script that handles player number dispay in game (P1, P2, etc. over character head)
+	// sets appropriate color and text according to character and player num respectively
+
 	private TextMesh ownText;
 	public PlayerS playerRef;
 	public PlayerAnimS playerAnimRef;
@@ -24,6 +27,7 @@ public class PlayerNumDisplayS : MonoBehaviour {
 
 	void FixedUpdate () {
 
+		// only display while player is alive
 		if (playerRef.health > 0){
 
 			ownText.color = colorsToPick [playerAnimRef.myCharNum - 1].GetColor ("_TintColor");

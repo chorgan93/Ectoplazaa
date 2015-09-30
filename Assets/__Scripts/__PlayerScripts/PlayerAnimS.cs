@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 public class PlayerAnimS : MonoBehaviour {
 
+	// script to handle player character animations
+	// scroll through appropriate list of sprites according to player state
+
 	/*
 	NEILSON NEUROTIC WAY OF ANIMATION
 	ALL HEAD SPRITES FOR ONE CHARACTER ARE IN THE SAME ARRAY, AND ALL THE TAIL SPRITES ARE IN AN ARRAY
@@ -107,10 +110,10 @@ public class PlayerAnimS : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 
-		Turn();
-		Animate();
+		Turn(); // currently not in use for actual animation
+		Animate(); // actual animation
 
-		FaceTarget();
+		FaceTarget(); // rotates head when character is in air to face direction of movement
 		//print(isFacingDirection);
 
 	
@@ -346,6 +349,7 @@ public class PlayerAnimS : MonoBehaviour {
 
 	public void SetCurrentSprites (int characterNumber)
 	{
+
 
 		myCharNum = characterNumber;
 

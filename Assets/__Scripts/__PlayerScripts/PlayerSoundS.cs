@@ -4,7 +4,13 @@ using System.Collections.Generic;
 
 public class PlayerSoundS : MonoBehaviour {
 
+	// script placed on player controller that holds all player sound effects and source
+	// referenced in player script whenever player needs to made a noise
+
 	private PlayerS playerRef;
+
+	// all sound effects are kept as objects that are instantiated when needed
+	// this allows us to play multiple sounds at once when needed without overloading one audiosource
 
 	public List<GameObject> wallHitSoundObjs;
 	public List<GameObject> groundPoundHitSoundObjs;

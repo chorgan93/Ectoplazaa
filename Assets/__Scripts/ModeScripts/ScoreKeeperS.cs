@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 public class ScoreKeeperS : MonoBehaviour {
 
+	// keeps track of player scores and initializes scoreboard ui
+	// currently only works with ecto mode, will need to be repurposed for multiple modes
+
 
 	public GameObject scoreBarObj; 
 	public GameObject uiObj; 

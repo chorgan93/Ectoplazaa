@@ -3,6 +3,9 @@ using System.Collections;
 
 public class BokehS : MonoBehaviour {
 
+	// currently unused visual effect script
+	// fades a sprite in and out randomly
+
 	public float sizeDiff = 0.5f;
 	private Vector3 startSize;
 
@@ -35,19 +38,30 @@ public class BokehS : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
+		// start at a random size
+
 		startSize = transform.localScale;
 		startSize += Random.insideUnitSphere*sizeDiff;
 		startSize.z = 1;
 
 		transform.localScale = startSize;
 
+		// set target max alpha
+
 		targetFade = Random.Range(minFade,maxFade);
+
+		// set time between fade in and out
 
 		delayFade = Random.Range(delayFadeMin,delayFadeMax);
 
+		// set actual fade rate
+
 		fadeRate = Random.Range(fadeRateMin,fadeRateMax);
 
+		// get sprite renderer component (attached to gameObject)
 		ownRender = GetComponent<SpriteRenderer>();
+
+		// start bokeh at random stage of fade in/delay/fade out
 		Color startCol = ownRender.color;
 
 		int StageToStart = Mathf.FloorToInt(Random.Range(0,3));
@@ -63,6 +77,7 @@ public class BokehS : MonoBehaviour {
 			delayFadeCountdown = delayFade;
 		}
 
+		// set color/transparency according to appropriate stage
 		ownRender.color = startCol;
 
 		startPos = transform.position;
@@ -73,6 +88,7 @@ public class BokehS : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+		// in between fade out/fade in
 		if (delaying){
 			delayFadeCountdown -= Time.deltaTime*TimeManagerS.timeMult;
 			if (delayFadeCountdown <= 0){
@@ -81,6 +97,7 @@ public class BokehS : MonoBehaviour {
 			}
 		}
 		else if (fadingIn){
+			// fade in to max alpha, then fade out
 			currentCol = ownRender.color;
 			currentCol.a -= Time.deltaTime*TimeManagerS.timeMult*fadeRate;
 			ownRender.color = currentCol;
@@ -90,6 +107,7 @@ public class BokehS : MonoBehaviour {
 			}
 		}
 		else{
+			// fade out to zero alpha, then delay
 			currentCol = ownRender.color;
 			currentCol.a -= Time.deltaTime*TimeManagerS.timeMult*fadeRate;
 			ownRender.color = currentCol;
@@ -101,6 +119,7 @@ public class BokehS : MonoBehaviour {
 			}
 		}
 
+		// if bokeh drift, move vertical position
 		if (driftDown){
 			Vector3 driftPos = transform.position;
 			driftPos.y -= Time.deltaTime*TimeManagerS.timeMult*driftRate;

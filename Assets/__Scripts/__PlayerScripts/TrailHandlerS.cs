@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 public class TrailHandlerS : MonoBehaviour {
 
+	// THIS SCRIPT IS OUT OF USE
+	// PLEASE REFER TO TrailHandlerRedubS INSTEAD
+
 	public PlayerS playerRef;
 	public GameObject buttObj;
 	private Rigidbody playerRigid;

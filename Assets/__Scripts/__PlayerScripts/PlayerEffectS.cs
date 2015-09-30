@@ -4,6 +4,12 @@ using System.Collections.Generic;
 
 public class PlayerEffectS : MonoBehaviour {
 
+	// script for attack effect that is placed on effect sprite
+	// there is an effect sprite behind every player sprite and player tail collider
+	// turns on once player reaches level 2 charge
+	// animates as electricity at level 2
+	// animates as fire at level 3
+
 	public int attackNum = 1; // 1 is electric, 2 is fire, 0 is air
 
 	public List<Sprite> effectFrames;
@@ -21,6 +27,8 @@ public class PlayerEffectS : MonoBehaviour {
 		currentFrame = Mathf.FloorToInt(Random.Range(0,effectFrames.Count));
 
 		ownRender = GetComponent<SpriteRenderer>();
+
+		// turn on if player is at appropriate charge
 		if (playerRef != null){
 		if ((playerRef.charging && playerRef.GetChargeTime() > playerRef.GetChargeLv2Min()
 		     && attackNum == 1) ||
@@ -40,6 +48,7 @@ public class PlayerEffectS : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 
+		// turn on at appropriate charge
 		if (playerRef != null){
 
 			if (attackNum == 0){
@@ -62,6 +71,7 @@ public class PlayerEffectS : MonoBehaviour {
 			ownRender.enabled = false;
 		}
 
+			// animate while sprite is rendered
 		if (ownRender.enabled){
 			animRateCountdown -= Time.deltaTime*TimeManagerS.timeMult;
 			if (animRateCountdown <= 0){
@@ -73,6 +83,7 @@ public class PlayerEffectS : MonoBehaviour {
 			}
 			ownRender.sprite = effectFrames[currentFrame];
 
+				// rotate according to player head direction (flat while charging, in same dir when flinging)
 			if (playerRef.charging){
 				transform.localRotation = Quaternion.Euler(new Vector3(0,0,90));
 			}

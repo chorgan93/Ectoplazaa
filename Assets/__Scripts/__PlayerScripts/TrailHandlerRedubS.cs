@@ -4,6 +4,10 @@ using System.Collections.Generic;
 
 public class TrailHandlerRedubS : MonoBehaviour {
 
+	// script that was originally for handling tail position, though that function is out of use
+	// remnants remain, feel free to ignore
+	// now handles tail length and color based on game need
+
 	public PlayerS playerRef;
 	public GameObject buttObj;
 	public GameObject buttSprite; 
@@ -13,9 +17,9 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	private Rigidbody buttRigid;
 	public GameObject playerGlob; 
 
-	public GameObject trailRendererGO;
-	public GameObject trailRendererGO2;
-	float trailRenderTime, trailRenderTimeMin = 0.2f, trailRenderTimeMax= 1f; 
+	public GameObject trailRendererGO; // for main color
+	public GameObject trailRendererGO2; // for green highlight
+	float trailRenderTime, trailRenderTimeMin = 0.2f, trailRenderTimeMax= 1f; // handle tail length
 
 	private LineRenderer playerLine; 
 
@@ -37,7 +41,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 	bool lastRespawnVal = false; 
 
-	int dotsToBlowUpInto = 2;
+	int dotsToBlowUpInto = 2; // num ecto each tail length will spawn on death
 
 	//float newDotCounter, newDotSpawnRate = 5f; //original spawn rate for tail
 
@@ -67,6 +71,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 		lastLocation = playerRef.transform.position; 
 		currentLocation = playerRef.transform.position; 
 
+		// spawn tail lengths based on initial health
 		InitialDotSpawn (); 
 	}
 
@@ -79,13 +84,14 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 			if(lastRespawnVal == true)
 			{
+				// make sure to do initial dot spawn on respawn
 				InitialDotSpawn(); 
 			}
 
 			//PlaceDots (); 
-			PlaceDots (); 
-			RemoveDots ();
-			UpdateTail ();
+			PlaceDots ();  // spawns new dots and replaces old ones
+			RemoveDots (); // removes old dots at end of tail
+			UpdateTail (); // handles trail renderer
 		} else {
 			lastLocation = playerRef.transform.position;
 			currentLocation = playerRef.transform.position; 
@@ -98,6 +104,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 		//print (playerRigid.velocity.magnitude); 
 
 		//DEBUG
+		/*
 		if (Input.GetKey (KeyCode.Alpha1)) {
 
 			playerRef.health = 10; 
@@ -122,11 +129,14 @@ public class TrailHandlerRedubS : MonoBehaviour {
 			
 			playerRef.health = 50; 
 			
-		}
+		}*/
 	}
 
 	void InitialDotSpawn()
 	{
+
+		// spawns tail length based on player health
+
 		//if(playerRef.playerNum == 1)
 			//print ("InitialDotSpawn for P1");
 
@@ -211,6 +221,9 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 	public void ChopTail(GameObject dotHit)
 	{
+
+		// used to destroy tail lengths (probably will become redundant due to ecto mode redesign)
+
 		int goID = dotHit.GetInstanceID ();
 		int startingIndex = 0; 
 
@@ -253,6 +266,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 			newRot = Quaternion.Euler (newRot.eulerAngles.x, newRot.eulerAngles.y, newRot.eulerAngles.z);
 		}
 
+		// anything relating to butt sprite is out of use at the moment
 		buttSprite.transform.position = newPos; 
 		buttSprite.transform.rotation = newRot; 
 
@@ -264,27 +278,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 		trailRendererGO2.GetComponent<TrailRenderer> ().time = trailRenderTimeMin + (trailRenderTimeMax * ((float) (float)playerRef.health / (float)playerRef.maxHealth));
 
 
-		//SET UP LINERENDERERS //NOT DISPLAYING RIGHT, LINE RENDERER TOO GLITCHY
-		/*
-		//make last dot invisible so trail can fade, no sphere
-		if (spawnedDots.Count > 0) {
 
-			playerLine.SetVertexCount(spawnedDots.Count); 
-
-			//spawnedDots [0].GetComponent<Renderer> ().enabled = false; 
-			trailRendererGO.transform.position = spawnedDots[0].transform.position; 
-
-			for (int j = 0; j < spawnedDots.Count -1; j++) {
-
-				playerLine.SetPosition(j, spawnedDots[j].transform.position); 
-
-			}
-
-			playerLine.SetPosition(spawnedDots.Count-1, headSprite.transform.position ); 
-
-
-		}
-		*/
 
 	}
 
@@ -304,44 +298,8 @@ public class TrailHandlerRedubS : MonoBehaviour {
 			}
 
 		}
-		/*
-		if (spawnedDots.Count > 0) {
-			if (spawnedDots.Count > minLength) {
-				DestroyDot();
-			}
-					
-			if (playerRigid.velocity.magnitude > 200 && spawnedDots.Count > fastLength) {
 
-				int startingCount = spawnedDots.Count;
 
-				for (int i = 0; i < (startingCount - fastLength); i++) {
-					DestroyDot(); 
-				}
-
-			}
-			else if(playerRigid.velocity.magnitude > 100 && spawnedDots.Count > medLength)
-			{
-				int startingCount = spawnedDots.Count;
-				
-				for (int i = 0; i < (startingCount - medLength); i++) {
-					DestroyDot(); 
-				}
-			}
-			else if(playerRigid.velocity.magnitude > 25 && spawnedDots.Count > slowLength)
-			{
-				int startingCount = spawnedDots.Count;
-				
-				for (int i = 0; i < (startingCount - slowLength); i++) {
-					DestroyDot(); 
-				}
-			}
-
-			if (playerRigid.velocity.magnitude < 5) {
-
-				DestroyDot(); 
-			}
-		}
-		*/
 	}
 
 	void DestroyDot()
@@ -354,41 +312,19 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	public void SetDotMaterial()
 	{
 
-
 		if (playerRef.characterNum > 0) {
 			foreach (GameObject d in spawnedDots) {
 				d.GetComponent<Renderer> ().material = playerRef.playerMats [playerRef.characterNum - 1];
 			}
 		}
-			//playerRef.characterNum
 	}
 
 	public void DestroyPlayerDots()
 	{
 
+		// destroy entire tail
+
 		DestroyPlayerDotsRange (spawnedDots.Count - 1);
-
-		/*
-		while(spawnedDots.Count > 0)
-		{
-
-			Vector3 spawnPos = spawnedDots[0].transform.position;
-
-			
-			GameObject.Destroy (spawnedDots [0].gameObject);
-			spawnedDots.RemoveAt (0);
-
-			//SKETCHY CODE, REDOING WHAT DESTROYPLAYERDOTSRANGE IS DOING
-			GameObject newGlob = Instantiate(playerGlob, spawnedDots[0].transform.position, Quaternion.identity) as GameObject; 
-			newGlob.GetComponentInChildren<GlobS>().SetVelocityMaterial(spawnedDots[0].GetComponent<Rigidbody>().velocity, playerRef.gameObject); 
-
-
-			GameObject newParticles = Instantiate (deathParticles,spawnPos,Quaternion.identity) as GameObject;
-			newParticles.GetComponent<ParticleSystem>().startColor = playerRef.playerParticleMats[playerRef.characterNum - 1].GetColor("_TintColor");
-			newParticles.GetComponent<Rigidbody>().velocity = playerRigid.velocity; 
-
-		}
-		*/
 
 
 	}
@@ -396,8 +332,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	public void DestroyPlayerDotsRange(int startingIndex)
 	{
 
-		//print ("dot count " + spawnedDots.Count);
-		//print ("num dots to destroy" + startingIndex);
+		// destroy a portion of tail
 
 		if (startingIndex < spawnedDots.Count){
 
@@ -413,7 +348,6 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 				DestroyDot(); 
 
-				//print ("dot destroyed!");
 
 			}
 		}
@@ -421,6 +355,10 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 	public void SpawnGlobs(Vector3 spawnPos, int numberOfGlobs)
 	{
+
+		// spawn ecto orbs in ecto mode when tail/player is destroyed
+
+
 		for (int i = 0; i < numberOfGlobs; i++) {
 			
 			

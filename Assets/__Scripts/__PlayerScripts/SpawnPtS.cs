@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 public class SpawnPtS : MonoBehaviour {
 
+	// script placed on any spawn pt in level
+	// detects when player is in range so that player won't spawn in occupied space
+
 	public List<GameObject> playersInRange ;
 
 	void LateUpdate(){

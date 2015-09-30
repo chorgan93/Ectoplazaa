@@ -157,9 +157,9 @@ public class PlayerS : MonoBehaviour {
 	private float lv2AttackTimeMax = 0.1f;
 	private float lv2AttackTimeCountdown;
 
-	// physics layer experimentation for attack 0 and 1
-	//private int physicsLayerDefault;
-	//private string physicsLayerNoWalls = "IgnoreWallCollider";
+	// physics layer experimentation for bullet fling
+	private int physicsLayerDefault;
+	private string physicsLayerNoWalls = "IgnoreWallCollider";
 	private RaycastHit newHit;
 
 	//[HideInInspector]
@@ -262,7 +262,7 @@ public class PlayerS : MonoBehaviour {
 	void FixedUpdate () {
 
 		ManageCharge();
-		BackToMenu();
+		//BackToMenu();
 
 		if (!ScoreKeeperS.gameEnd && ScoreKeeperS.gameStarted) {
 
@@ -273,21 +273,17 @@ public class PlayerS : MonoBehaviour {
 
 				respawnInvulnTime -= Time.deltaTime * TimeManagerS.timeMult;
 	
-				//ManageDelay ();
-				//print (leftCheck);
 	
+				// if game is active
 				if (!effectPause && !respawning) {
 	
-					
+					// movement methods
 					CheckWallCast ();
-	
 					Walk ();
 					Jump ();
 
-					//WallJump ();
-
-	
-	
+					// attack methods
+					
 					ChargeAttack ();
 					AttackRelease ();
 	
@@ -295,37 +291,32 @@ public class PlayerS : MonoBehaviour {
 
 				MiscAction (); //TRAIL RENDERER UPDATE, OTHER THINGS
 	
-				Respawn ();
+				Respawn (); // handles respawn during death
 	
-				/*
-				if (isDangerous && !respawning){
-					if (!dangerObj.activeSelf){
-						dangerObj.SetActive(true);
-					}
-				}
-				else{
-					dangerObj.SetActive(false);
-				}
-				*/
 			}
 	
 		} else {
 			if (ScoreKeeperS.gameStarted){
 
+				// don't allow movement once game is over
+
 				ownRigid.velocity = Vector3.zero;
 			}
 		}
 
-
-		if(Input.GetKeyDown(KeyCode.K))
+		// kill code for testing purposes
+		/*if(Input.GetKeyDown(KeyCode.K))
 		{
 				//TakeDamage(100000f);
-		}
+		}*/
 	
 	}
 
 	void CheckWallCast(){
 
+		// makes sure player goes not try to apply velocity into wall, to avoid getting stuck
+
+		// uses raycasts
 		RaycastHit rightHit;
 		RaycastHit leftHit;
 
@@ -380,6 +371,9 @@ public class PlayerS : MonoBehaviour {
 	}
 
 	void ManageDelay(){
+
+		// was used for early kinesthetic purposes, is now outdated
+
 		if (TimeManagerS.timeMult != 1){
 
 			resetFromPause = false;
@@ -414,6 +408,8 @@ public class PlayerS : MonoBehaviour {
 	*/
 
 	void ChargeAttack () {
+
+		// method for handling attack charge
 
 		// turn stretch button bool on/off
 		if ((Input.GetAxis("RightTriggerPlayer" + playerNum + platformType) > triggerSensitivity) || Input.GetButton("RightBumperPlayer" + playerNum + platformType) || Input.GetButton("XButtonPlayer" + playerNum + platformType)){
@@ -504,8 +500,11 @@ public class PlayerS : MonoBehaviour {
 	}
 	void AttackRelease () {
 
+		// method for triggering appropriate attack once charge button is released, based on charge time
+
 		if (attacking) {
 
+			// allow for short attacks on the ground
 			groundLeeway -= Time.deltaTime * TimeManagerS.timeMult;
 
 			if (!performedAttack) 
@@ -610,6 +609,9 @@ public class PlayerS : MonoBehaviour {
 	
 	void JabAttack(bool endAttack)
 	{
+
+		// attack code that is currently unused
+
 		if(endAttack)
 		{
 			
@@ -665,7 +667,7 @@ public class PlayerS : MonoBehaviour {
 						ownRigid.useGravity = true;
 						isDangerous = false;
 						attacking = false;
-						TurnOffIgnoreWalls();
+						//TurnOffIgnoreWalls();
 						//buttObj.isFollowing = true;
 						
 						// stop vel
@@ -683,7 +685,7 @@ public class PlayerS : MonoBehaviour {
 	void FlingSlowAttack(bool endAttack)
 	{
 
-		// this is lv 2 attack
+		// this is beginning of lv 2 attack (before the pikachu up-b direction change)
 		if(endAttack)
 		{
 
@@ -717,6 +719,8 @@ public class PlayerS : MonoBehaviour {
 			}
 			chargeTime = medChargeTime*2f;
 			attackToPerform = 0;
+
+			// trigger lv 1 fling at end of attack
 			FlingMiniAttack(false);
 
 			soundSource.PlayChargeLv1();
@@ -728,6 +732,8 @@ public class PlayerS : MonoBehaviour {
 		{
 			if(!performedAttack)
 			{
+
+				// start of first fling
 
 				//print ("Start slow fling");
 
@@ -810,6 +816,8 @@ public class PlayerS : MonoBehaviour {
 
 	void FlingFastAttack(bool endAttack)
 	{
+
+		// lv 3 attack
 
 		if(endAttack)
 		{
@@ -1117,6 +1125,9 @@ public class PlayerS : MonoBehaviour {
 
 	void WallJump () {
 
+		// early mechanic we wanted to test but couldn't work with bouncy system without major redesign
+		// currently out of commision and probably won't be put into game
+
 		// allows player to slow descent and jump when "clinging" to a wall
 
 		if (!groundDetect.Grounded()){
@@ -1185,13 +1196,23 @@ public class PlayerS : MonoBehaviour {
 
 	void MiscAction()
 	{
+
+		// handles various things including dangerous states and trail renderers
+
 		//this.GetComponent<LineRenderer>().SetPosition(0,this.transform.position);
 		//this.GetComponent<LineRenderer>().SetPosition(1,buttObj.transform.position);
 
-		if(isDangerous)
+		if(isDangerous){
 			dangerousSprite.GetComponent<SpriteRenderer>().enabled = true; 
-		else
+			if (attackToPerform == 2){
+				// turn on platform ghosting
+				TurnOnIgnoreWalls();
+			}
+		}
+		else{
 			dangerousSprite.GetComponent<SpriteRenderer>().enabled = false; 
+			//TurnOffIgnoreWalls();
+		}
 
 		hurtCounter -= 1;
 
@@ -1449,6 +1470,7 @@ public class PlayerS : MonoBehaviour {
 			if (groundDetect.Grounded()){
 				attacking = false; 
 				isDangerous = false; 
+				TurnOffIgnoreWalls();
 			}
 		}
 
@@ -1519,11 +1541,11 @@ public class PlayerS : MonoBehaviour {
 	}
 
 	public void TurnOnIgnoreWalls(){
-		//gameObject.layer = LayerMask.NameToLayer(physicsLayerNoWalls);
+		gameObject.layer = LayerMask.NameToLayer(physicsLayerNoWalls);
 	}
 
 	public void TurnOffIgnoreWalls(){
-		//gameObject.layer = physicsLayerDefault;
+		gameObject.layer = physicsLayerDefault;
 	}
 
 	// for aim obj
@@ -1540,6 +1562,7 @@ public class PlayerS : MonoBehaviour {
 	}
 
 	void BackToMenu(){
+		// reset for festival demo purposes
 		if (Input.GetButton("StartButtonPlayer"+playerNum+platformType) &&
 		    Input.GetButton("AButtonPlayer"+playerNum+platformType) &&
 		    Input.GetButton("BButtonPlayer"+playerNum+platformType) &&

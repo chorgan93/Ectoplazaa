@@ -6,6 +6,8 @@ public class GameStartS : MonoBehaviour {
 	public GameObject playerPrefab; 
 	public GameObject [] spawnPts; 
 
+	// spawns players appropriately at start of match
+
 	// Use this for initialization
 	void Start () 
 	{

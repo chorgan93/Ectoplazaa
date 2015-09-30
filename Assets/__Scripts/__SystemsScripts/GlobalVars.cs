@@ -4,6 +4,9 @@ using System.Collections;
 public class GlobalVars : MonoBehaviour 
 
 {
+
+	// various variables we want to keep track of between scenes
+
 	public static int totalPlayers = 4; //amount of players added during character select, DEFAULT IS 4 FOR TESTING IN UNITY
 
 	public static GameObject []  playerList = new GameObject [4]; 
