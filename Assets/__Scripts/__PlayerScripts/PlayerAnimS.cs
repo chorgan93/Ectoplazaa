@@ -80,6 +80,8 @@ public class PlayerAnimS : MonoBehaviour {
 
 	public int jumpingAnimStart,runAnimStart,idleAnimStart; 
 
+	private float invulnAlpha = 0.5f;
+
 
 
 	// Use this for initialization
@@ -116,7 +118,33 @@ public class PlayerAnimS : MonoBehaviour {
 		FaceTarget(); // rotates head when character is in air to face direction of movement
 		//print(isFacingDirection);
 
+		ManageAlpha();
+
 	
+	}
+
+	void ManageAlpha () {
+
+		// reduce alpha when invuln
+		if (playerRef.respawnInvulnTime > 0){
+			Color animColHead = headRender.color;
+			Color animColGlow = headRenderGreenGlow.color;
+
+			animColGlow.a = animColHead.a = invulnAlpha;
+
+			headRender.color = animColHead;
+			headRenderGreenGlow.color = animColGlow;
+		}
+		else{
+			Color animColHead = headRender.color;
+			Color animColGlow = headRenderGreenGlow.color;
+			
+			animColGlow.a = animColHead.a = 1f;
+			
+			headRender.color = animColHead;
+			headRenderGreenGlow.color = animColGlow;
+		}
+
 	}
 
 	void Turn(){

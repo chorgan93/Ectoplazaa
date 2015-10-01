@@ -49,7 +49,7 @@ public class BGMS : MonoBehaviour {
 
 		if (GameObject.Find("NewMusic")){
 			ReplaceMusic(GameObject.Find("NewMusic").GetComponent<AudioSource>().clip, maxVolume);
-			print ("change music!");
+			//print ("change music!");
 		}
 
 		// in future, allow for multiple bgm players that fade out when going into new scene
@@ -69,7 +69,7 @@ public class BGMS : MonoBehaviour {
 				ownSource.volume -= fadeInRate*bgmVolumeMult*Time.deltaTime;
 			}
 			else{
-				print ("play new thing");
+				//print ("play new thing");
 				ownSource.clip = nextMusic;
 				ownSource.Play();
 				nextMusic = null;

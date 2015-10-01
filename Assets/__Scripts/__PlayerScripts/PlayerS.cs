@@ -214,6 +214,13 @@ public class PlayerS : MonoBehaviour {
 	private float maxChargeVolume = 1;
 	private float chargeFadeRate = 2f;
 
+	// dodge variables
+	private bool canDodge = true; // allow infinite dodges on ground, one in air
+	public float dodgeTimeMax; // length of time dodge is active
+	private float dodgeTimeCountdown;
+	public float dodgeForce; // force to apply to character at start of dodge
+
+
 	// Use this for initialization
 	void Start () {
 
@@ -281,6 +288,8 @@ public class PlayerS : MonoBehaviour {
 					CheckWallCast ();
 					Walk ();
 					Jump ();
+
+					Dodge ();
 
 					// attack methods
 					
@@ -412,7 +421,7 @@ public class PlayerS : MonoBehaviour {
 		// method for handling attack charge
 
 		// turn stretch button bool on/off
-		if ((Input.GetAxis("RightTriggerPlayer" + playerNum + platformType) > triggerSensitivity) || Input.GetButton("RightBumperPlayer" + playerNum + platformType) || Input.GetButton("XButtonPlayer" + playerNum + platformType)){
+		if ((Input.GetAxis("RightTriggerPlayer" + playerNum + platformType) > triggerSensitivity) || Input.GetButton("RightBumperPlayer" + playerNum + platformType) || Input.GetButton("BButtonPlayer" + playerNum + platformType)){
 			stretchButtonDown = true;
 		}
 		else{
@@ -422,7 +431,9 @@ public class PlayerS : MonoBehaviour {
 			playedLV3ChargeSound = false;
 		}
 
-		if (stretchButtonDown && !charging && canCharge && !isDangerous){
+		// don't allow charge if already attacking, charging, or dodging
+
+		if (stretchButtonDown && !charging && canCharge && !isDangerous && dodgeTimeCountdown <= 0){
 			charging = true;
 			canCharge = false;
 
@@ -903,11 +914,13 @@ public class PlayerS : MonoBehaviour {
 	void Walk () 
 	{
 
-		if (!groundDetect.Grounded()){
+		// turn variables related to being on the ground on/off
+		if (!groundDetect.Grounded()){ // if in the air
 			groundLeeway = 0;
 		}
-		else{
+		else{ // if not the air
 			canAirStrafe = true;
+			canDodge = true;
 		}
 
 	
@@ -1121,6 +1134,43 @@ public class PlayerS : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	void Dodge () {
+
+		if (!TimeManagerS.paused){
+			dodgeTimeCountdown -= Time.deltaTime;
+		}
+
+		// read for dodge input and do dodge
+		if (canDodge && dodgeTimeCountdown <= 0){
+			if (Input.GetButton("XButtonPlayer"+playerNum+platformType)){
+
+				print ("DODGED");
+
+				// reset dodge time, add invuln, and add dodge force
+
+				// read direction from left stick
+				Vector3 dodgeDir = Vector3.zero;
+				dodgeDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
+				dodgeDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+
+				// add force
+				ownRigid.velocity = Vector3.zero;
+				ownRigid.AddForce(dodgeDir*dodgeForce*Time.deltaTime, ForceMode.Impulse);
+
+				print (dodgeDir*dodgeForce*Time.deltaTime);
+				print (ownRigid.velocity);
+
+				// reset times
+				dodgeTimeCountdown = respawnInvulnTime = dodgeTimeMax;
+
+				// only allow one dodge in air; should reset if on ground
+				canDodge = false;
+
+			}
+		}
+
 	}
 
 	void WallJump () {
@@ -1435,7 +1485,7 @@ public class PlayerS : MonoBehaviour {
 				if (soundSource != null){
 					if (other.gameObject.GetComponent<PlatformSoundS>() != null){
 						other.gameObject.GetComponent<PlatformSoundS>().PlayPlatformSounds();
-						print ("Played platform sound");
+						//print ("Played platform sound");
 					}
 					else{
 						soundSource.PlayWallHit();

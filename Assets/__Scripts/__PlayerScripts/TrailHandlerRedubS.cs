@@ -19,6 +19,10 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 	public GameObject trailRendererGO; // for main color
 	public GameObject trailRendererGO2; // for green highlight
+
+	private TrailRenderer trailRendererMain; 
+	private TrailRenderer trailRendererGlow; 
+
 	float trailRenderTime, trailRenderTimeMin = 0.2f, trailRenderTimeMax= 1f; // handle tail length
 
 	private LineRenderer playerLine; 
@@ -49,6 +53,8 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 	private Vector3 currentButtVel;
 
+	private float invulnAlpha = 0.5f;
+
 
 
 	// Use this for initialization
@@ -73,6 +79,9 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 		// spawn tail lengths based on initial health
 		InitialDotSpawn (); 
+
+		trailRendererMain = trailRendererGO.GetComponent<TrailRenderer>();
+		trailRendererGlow = trailRendererGO2.GetComponent<TrailRenderer>();
 	}
 
 
@@ -130,6 +139,32 @@ public class TrailHandlerRedubS : MonoBehaviour {
 			playerRef.health = 50; 
 			
 		}*/
+
+		ManageAlpha();
+	}
+
+	void ManageAlpha () {
+
+		// make sure trails are appropriate transparency based on vulnerability
+		if (playerRef.respawnInvulnTime > 0){
+			Color mainCol = trailRendererMain.materials[0].color;
+			Color greenCol = trailRendererGlow.materials[0].color;
+
+			mainCol.a = greenCol.a = invulnAlpha;
+
+			trailRendererMain.materials[0].color = mainCol;
+			trailRendererGlow.materials[0].color = greenCol;
+		}
+		else{
+			Color mainCol = trailRendererMain.materials[0].color;
+			Color greenCol = trailRendererGlow.materials[0].color;
+			
+			mainCol.a = greenCol.a = 1;
+			
+			trailRendererMain.materials[0].color = mainCol;
+			trailRendererGlow.materials[0].color = greenCol;
+		}
+
 	}
 
 	void InitialDotSpawn()
@@ -274,8 +309,8 @@ public class TrailHandlerRedubS : MonoBehaviour {
 		//print (buttSprite.transform.position + " compare " + spawnedDots[0].transform.position);
 
 		//TRAIL RENDERER UPDATE
-		trailRendererGO.GetComponent<TrailRenderer> ().time = trailRenderTimeMin + (trailRenderTimeMax * ((float) (float)playerRef.health / (float)playerRef.maxHealth));
-		trailRendererGO2.GetComponent<TrailRenderer> ().time = trailRenderTimeMin + (trailRenderTimeMax * ((float) (float)playerRef.health / (float)playerRef.maxHealth));
+		trailRendererMain.time = trailRenderTimeMin + (trailRenderTimeMax * ((float) (float)playerRef.health / (float)playerRef.maxHealth));
+		trailRendererGlow.time = trailRenderTimeMin + (trailRenderTimeMax * ((float) (float)playerRef.health / (float)playerRef.maxHealth));
 
 
 

@@ -22,7 +22,7 @@ public class PlatformSoundS : MonoBehaviour {
 	
 			Instantiate(impactSoundObjs[soundToPlay]);
 	
-			print ("played!!");
+			//print ("played!!");
 	
 			delaySound = 0.1f;
 
