@@ -112,8 +112,8 @@ public class PlayerS : MonoBehaviour {
 	[HideInInspector]
 	public bool charging = false;
 	private float chargeTime = 0;
-	private float medChargeTime = 0.45f;
-	private float maxChargeTime = 1f;
+	private float medChargeTime = 0.65f;
+	private float maxChargeTime = 1.3f;
 
 	[HideInInspector]
 	public int attackToPerform = 0;
@@ -139,7 +139,7 @@ public class PlayerS : MonoBehaviour {
 	private float lv1OutRate = 3350f;
 	
 	private float lv2OutRate = 15000f; //original 8000
-	private float lv1OutTimeMax = 0.2f;
+	private float lv1OutTimeMax = 0.125f;
 	public float lv1OutCountdown;
 	private float lv1ReturnRate = 1f;
 	private bool snapReturning = false;
@@ -215,10 +215,22 @@ public class PlayerS : MonoBehaviour {
 	private float chargeFadeRate = 2f;
 
 	// dodge variables
+	private bool dodgeButtonDown = false;
+	private bool dodging = false; // true when dodging
 	private bool canDodge = true; // allow infinite dodges on ground, one in air
 	public float dodgeTimeMax; // length of time dodge is active
+	public float dodgeInvulnTimeMax; // time to be invuln while dodging
 	private float dodgeTimeCountdown;
 	public float dodgeForce; // force to apply to character at start of dodge
+
+	// NEW Lv0 "Chomp" attack vars
+	private float lv0MaxChargeTime = 0.3f; // if charge time is under this time, trigger lv0
+	private bool doingChomp = false;
+	public float chompMaxTime;
+	private float chompTimeCountdown;
+	public GameObject chompHitObj; // obj to spawn on chomp
+	public float chompForce; // force to add to vel on chomp attack
+
 
 
 	// Use this for initialization
@@ -433,6 +445,7 @@ public class PlayerS : MonoBehaviour {
 
 		// don't allow charge if already attacking, charging, or dodging
 
+		if (!doingChomp){
 		if (stretchButtonDown && !charging && canCharge && !isDangerous && dodgeTimeCountdown <= 0){
 			charging = true;
 			canCharge = false;
@@ -462,7 +475,7 @@ public class PlayerS : MonoBehaviour {
 			chargeTime+=Time.deltaTime*TimeManagerS.timeMult;
 
 			// play sounds when you hit each threshold
-			if (chargeTime > 0 && !playedLV1ChargeSound){
+			if (chargeTime > lv0MaxChargeTime && !playedLV1ChargeSound){
 				//soundSource.PlayChargeLv1();
 				playedLV1ChargeSound = true;
 			}
@@ -491,20 +504,69 @@ public class PlayerS : MonoBehaviour {
 				// butt should not follow
 				//buttObj.isFollowing = false;
 
+
 				if (chargeTime >= maxChargeTime){
 					// fully charged attack
 					attackToPerform = 2;
 					attackPriority = 2;
 				}
+				// do redirect attack
 				else if (chargeTime >= medChargeTime){
 					attackToPerform = 1;
 					attackPriority = 1;
 					//print ("do attack 1");
 				}
-				else{
+				// do fling
+				else if (chargeTime > lv0MaxChargeTime){
 					attackToPerform = 0;
 					attackPriority = 0;
 				}
+				// do chomp
+				else{
+					// activate chomp vars
+					doingChomp = true;
+					ownRigid.useGravity = false;
+					canAirStrafe = false;
+					//attacking = true;
+					attackPriority = -1;
+					attackToPerform = -1;
+					ownRigid.velocity = Vector3.zero;
+
+					Vector3 attackDir = Vector3.zero;
+					attackDir.x = Input.GetAxis ("HorizontalPlayer" + playerNum + platformType);
+					attackDir.y = Input.GetAxis ("VerticalPlayer" + playerNum + platformType);
+					
+					if (attackDir.x == 0 && attackDir.y == 0) {
+						attackDir.x = 1; 
+					}
+
+					ownRigid.AddForce(attackDir.normalized*chompForce*Time.deltaTime, ForceMode.Impulse);
+					GameObject chompObj = Instantiate(chompHitObj, transform.position, Quaternion.identity)
+						as GameObject;
+					chompObj.GetComponent<ChompColliderS>().SetDirection(attackDir.normalized, this);
+
+					chompTimeCountdown = chompMaxTime;
+				}
+			}
+
+
+		}
+		}
+
+		// get out of chomp state
+		if (doingChomp){
+			//print (ownRigid.useGravity);
+			//print (chompTimeCountdown);
+			//print (canAirStrafe);
+			chompTimeCountdown -= Time.deltaTime*TimeManagerS.timeMult;
+			if (chompTimeCountdown <= 0){
+				//print ("CHOMP OVER");
+				doingChomp = false;
+				ownRigid.useGravity = true;
+				canAirStrafe = true;
+				ownRigid.velocity = Vector3.zero;
+				attacking = false;
+				chargeTime = 0;
 			}
 		}
 
@@ -513,6 +575,7 @@ public class PlayerS : MonoBehaviour {
 
 		// method for triggering appropriate attack once charge button is released, based on charge time
 
+		if (!doingChomp){
 		if (attacking) {
 
 			// allow for short attacks on the ground
@@ -561,9 +624,11 @@ public class PlayerS : MonoBehaviour {
 
 				//FlingMiniAttack (false); //replacing for now
 
-			} else if (attackToPerform == 0) {
+			}  if (attackToPerform == 0) {
 				//JabAttack();
 				FlingMiniAttack (false);
+
+				//print ("IM DOING THE FLING");
 
 			}
 			
@@ -573,6 +638,7 @@ public class PlayerS : MonoBehaviour {
 		else 
 		{
 			attackPriority = 0; 
+		}
 		}
 
 
@@ -838,7 +904,7 @@ public class PlayerS : MonoBehaviour {
 
 			//attacking = false;
 			//isDangerous = false;
-			ownRigid.useGravity = true;
+			ownRigid.useGravity = true;;
 			//buttObj.isFollowing = true;
 			canAirStrafe = true; 
 
@@ -1140,11 +1206,21 @@ public class PlayerS : MonoBehaviour {
 
 		if (!TimeManagerS.paused){
 			dodgeTimeCountdown -= Time.deltaTime;
+			if (dodging && dodgeTimeCountdown <= 0){
+				dodging = false;
+				canAirStrafe = true;
+				ownRigid.velocity = Vector3.zero;
+				ownRigid.useGravity = true;;
+			}
+		}
+
+		if (!Input.GetButton("XButtonPlayer"+playerNum+platformType) && dodgeButtonDown){
+			dodgeButtonDown = false;
 		}
 
 		// read for dodge input and do dodge
-		if (canDodge && dodgeTimeCountdown <= 0){
-			if (Input.GetButton("XButtonPlayer"+playerNum+platformType)){
+		if (!dodging && canDodge && dodgeTimeCountdown <= 0){
+			if (Input.GetButton("XButtonPlayer"+playerNum+platformType) && !dodgeButtonDown){
 
 				print ("DODGED");
 
@@ -1159,14 +1235,24 @@ public class PlayerS : MonoBehaviour {
 				ownRigid.velocity = Vector3.zero;
 				ownRigid.AddForce(dodgeDir*dodgeForce*Time.deltaTime, ForceMode.Impulse);
 
-				print (dodgeDir*dodgeForce*Time.deltaTime);
-				print (ownRigid.velocity);
+
+
+				//print (dodgeDir*dodgeForce*Time.deltaTime);
+				//print (ownRigid.velocity);
 
 				// reset times
-				dodgeTimeCountdown = respawnInvulnTime = dodgeTimeMax;
+				dodgeTimeCountdown = dodgeTimeMax;
+				respawnInvulnTime = dodgeInvulnTimeMax;
 
 				// only allow one dodge in air; should reset if on ground
 				canDodge = false;
+
+				// turn off grav for dodge
+				ownRigid.useGravity = false;
+				dodging = true;
+				canAirStrafe = false;
+
+				dodgeButtonDown = true;
 
 			}
 		}
@@ -1384,12 +1470,12 @@ public class PlayerS : MonoBehaviour {
 
 				respawnInvulnTime = 1.5f;
 
-				ownRigid.useGravity = true;
+				ownRigid.useGravity = true;;
 				trailRendererGO.GetComponent<TrailRenderer>().enabled = true ;
 				trailRendererGO2.GetComponent<TrailRenderer>().enabled = true ;
 				health = initialHealth;
 
-				DisableAttacks(); 
+				//DisableAttacks(); 
 
 				soundSource.PlayCharIntroSound();
 			}
@@ -1532,7 +1618,7 @@ public class PlayerS : MonoBehaviour {
 	/*void OnCollisionStay(Collision other){
 		if (other.gameObject.tag == "Ground" || other.gameObject.tag == "Wall"){
 			if (groundLeeway <= 0){
-				ownRigid.useGravity = true;
+				//ownRigid.useGravity = true;;
 			}
 		}
 	}*/
@@ -1558,7 +1644,7 @@ public class PlayerS : MonoBehaviour {
 		attacking = false; 
 		isDangerous = false; 
 
-		ownRigid.useGravity = true;
+		//ownRigid.useGravity = true;;
 		canAirStrafe = true; 
 		
 		this.GetComponent<SphereCollider>().material = normalPhysics; 
