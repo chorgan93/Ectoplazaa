@@ -234,6 +234,7 @@ public class PlayerS : MonoBehaviour {
 	public float chompForce; // force to add to vel on chomp attack
 	private float startDrag; // reg drag
 	private float chompDrag = 8; // drag for chomp attack
+	private float dodgeDrag = 12;
 
 
 
@@ -1142,8 +1143,8 @@ public class PlayerS : MonoBehaviour {
 			if (!jumped)
 			{
 
-				// don't do regular jump while attacking or charging
-				if (!attacking && !charging)
+				// don't do regular jump while attacking or charging or dodging
+				if (!attacking && !charging && !dodging)
 				{
 						Vector3 jumpForce = Vector3.zero;
 					
@@ -1162,8 +1163,8 @@ public class PlayerS : MonoBehaviour {
 				}
 			}
 		
-			// do ground pound if not charging
-			else if (!groundPounded && !charging && !clingingToWall){
+			// do ground pound if not charging or dodging
+			else if (!groundPounded && !charging && !clingingToWall && !dodging){
 				Vector3 groundPoundVel = Vector3.zero;
 				groundPoundVel.y = -groundPoundForce*Time.deltaTime*TimeManagerS.timeMult;
 				ownRigid.velocity = groundPoundVel;
@@ -1218,7 +1219,8 @@ public class PlayerS : MonoBehaviour {
 				dodging = false;
 				canAirStrafe = true;
 				ownRigid.velocity = Vector3.zero;
-				ownRigid.useGravity = true;;
+				ownRigid.useGravity = true;
+				ownRigid.drag = startDrag;
 			}
 		}
 
@@ -1259,6 +1261,8 @@ public class PlayerS : MonoBehaviour {
 				ownRigid.useGravity = false;
 				dodging = true;
 				canAirStrafe = false;
+
+				ownRigid.drag = dodgeDrag;
 
 				dodgeButtonDown = true;
 
