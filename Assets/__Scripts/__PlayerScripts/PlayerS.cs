@@ -136,18 +136,20 @@ public class PlayerS : MonoBehaviour {
 
 	//private float lv1AttackForce = 60000f;
 	//private float lv1AttackTargetRange = 12f;
-	private float lv1OutRate = 3350f;
+	private float lv1OutRate = 3350f; // deprecated
+
+	private float lv1Force = 6000f; // locked fling speed (NEW)
 	
 	private float lv2OutRate = 15000f; //original 8000
 	private float lv1OutTimeMax = 0.125f;
 	public float lv1OutCountdown;
-	private float lv1ReturnRate = 1f;
-	private bool snapReturning = false;
+	private float lv1ReturnRate = 1f; // deprecated
+	private bool snapReturning = false; // deprecated
 
 	[HideInInspector]
 	private float lv1ButtDelay = 1f;
 	public float lv2FlingForce = 100;
-	private float lv3BulletSpeed = 18000; //was 12500
+	private float lv3BulletSpeed = 21000; //was 12500
 	private bool lockInPlace = false;
 	private Vector3 bulletVel;
 
@@ -230,6 +232,8 @@ public class PlayerS : MonoBehaviour {
 	private float chompTimeCountdown;
 	public GameObject chompHitObj; // obj to spawn on chomp
 	public float chompForce; // force to add to vel on chomp attack
+	private float startDrag; // reg drag
+	private float chompDrag = 8; // drag for chomp attack
 
 
 
@@ -274,6 +278,8 @@ public class PlayerS : MonoBehaviour {
 
 	
 		chargeSource = GetComponent<AudioSource>();
+
+		startDrag = ownRigid.drag;
 
 	}
 
@@ -531,6 +537,7 @@ public class PlayerS : MonoBehaviour {
 					attackPriority = -1;
 					attackToPerform = -1;
 					ownRigid.velocity = Vector3.zero;
+						ownRigid.drag = chompDrag;
 
 					Vector3 attackDir = Vector3.zero;
 					attackDir.x = Input.GetAxis ("HorizontalPlayer" + playerNum + platformType);
@@ -567,6 +574,7 @@ public class PlayerS : MonoBehaviour {
 				ownRigid.velocity = Vector3.zero;
 				attacking = false;
 				chargeTime = 0;
+				ownRigid.drag = startDrag;
 			}
 		}
 
@@ -657,8 +665,8 @@ public class PlayerS : MonoBehaviour {
 				attackDir.x = 1;
 			}
 
-			bulletVel = attackDir.normalized*Time.deltaTime*lv1OutRate ;
-			ownRigid.AddForce(bulletVel* (1+chargeTime*1.45f),ForceMode.VelocityChange);
+			bulletVel = attackDir.normalized*Time.deltaTime*lv1Force ;
+			ownRigid.AddForce(bulletVel,ForceMode.VelocityChange);
 
 			//print(chargeTime); 
 
