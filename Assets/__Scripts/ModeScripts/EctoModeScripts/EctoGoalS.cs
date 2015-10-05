@@ -48,8 +48,15 @@ public class EctoGoalS : MonoBehaviour {
 
 				// add to player score
 				int numToAdd = Mathf.RoundToInt(myPlayer.health-myPlayer.initialHealth);
-				myPlayer.health = myPlayer.initialHealth;
-				myPlayer.score += numToAdd;
+				//myPlayer.health = myPlayer.initialHealth;
+
+				print (numToAdd);
+				if (numToAdd > 0){
+					myPlayer.initialHealth = myPlayer.health;
+					myPlayer.score += numToAdd;
+	
+					myPlayer.GetComponent<TrailHandlerRedubS>().updateDots = true;
+				}
 			}
 		}
 	}

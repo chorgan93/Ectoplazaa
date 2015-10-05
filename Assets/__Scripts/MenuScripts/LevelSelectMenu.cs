@@ -117,7 +117,7 @@ public class LevelSelectMenu : MonoBehaviour {
 
 		// move to character select function
 		if (Input.GetButton("AButtonAllPlayers" + platformType)){
-			selectedLevelString = nextLevelStrings[currentCursorPos];
+			nextSceneString = selectedLevelString = nextLevelStrings[currentCursorPos];
 			//Application.LoadLevel(nextSceneString);
 					startedLoadDelay = true;
 					Instantiate(levelSelectSFXObj);

@@ -138,8 +138,8 @@ public class GlobS : MonoBehaviour {
 			newTouch.transform.localScale = ectoGlow.transform.localScale;
 
 			// kinesthetics?
-			CameraShakeS.C.MicroShake();
-			CameraShakeS.C.TimeSleep(0.1f*playerRef.health/playerRef.maxHealth);
+			//CameraShakeS.C.MicroShake();
+			//CameraShakeS.C.TimeSleep(0.1f*playerRef.health/playerRef.maxHealth);
 
 			// sfx
 			GameObject newSFX = Instantiate(sfxObj) as GameObject;

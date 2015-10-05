@@ -73,6 +73,8 @@ public class PlayerS : MonoBehaviour {
 	public bool isDangerous = false;
 	public float maxHealth = 50;
 	public float initialHealth = 10;
+	[HideInInspector]
+	public float startEctoNum;
 	public float health = 10;
 	public float ectoScore;
 
@@ -233,7 +235,7 @@ public class PlayerS : MonoBehaviour {
 	public GameObject chompHitObj; // obj to spawn on chomp
 	public float chompForce; // force to add to vel on chomp attack
 	private float startDrag; // reg drag
-	private float chompDrag = 8; // drag for chomp attack
+	private float chompDrag = 15; // drag for chomp attack
 	private float dodgeDrag = 12;
 
 
@@ -281,6 +283,8 @@ public class PlayerS : MonoBehaviour {
 		chargeSource = GetComponent<AudioSource>();
 
 		startDrag = ownRigid.drag;
+
+		startEctoNum = initialHealth; // for ecto mode tail generation
 
 	}
 
@@ -1232,7 +1236,7 @@ public class PlayerS : MonoBehaviour {
 		if (!dodging && canDodge && dodgeTimeCountdown <= 0){
 			if (Input.GetButton("XButtonPlayer"+playerNum+platformType) && !dodgeButtonDown){
 
-				print ("DODGED");
+				//print ("DODGED");
 
 				// reset dodge time, add invuln, and add dodge force
 

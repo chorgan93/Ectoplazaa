@@ -55,6 +55,8 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 	private float invulnAlpha = 0.5f;
 
+	public bool updateDots = false; // turn to TRUE when we want tail size to readjust
+
 
 
 	// Use this for initialization
@@ -170,12 +172,12 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	void InitialDotSpawn()
 	{
 
-		// spawns tail length based on player health
+		// spawns tail length based on player initial health
 
 		//if(playerRef.playerNum == 1)
 			//print ("InitialDotSpawn for P1");
 
-		for (int i = 0; i < playerRef.health; i++) {
+		for (int i = 0; i < playerRef.initialHealth; i++) {
 
 			if(spawnedDots.Count < playerRef.health)
 			{
@@ -220,7 +222,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 			newDot.GetComponent<DotColliderS>().whoCreatedMe = playerRef; 
 			spawnedDots.Add(newDot); 
 
-			if(spawnedDots.Count > playerRef.health) //keep placing new dots, start deleting old ones
+			if(spawnedDots.Count > playerRef.score+playerRef.startEctoNum) //keep placing new dots, start deleting old ones
 			{
 				DestroyDot();
 			}
@@ -228,7 +230,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 		}
 
-		if(newDotNumber == 0 && spawnedDots.Count < playerRef.health)
+		if(newDotNumber == 0 && spawnedDots.Count < playerRef.score+playerRef.startEctoNum)
 		{
 			//spawn one dot anyway
 			GameObject newNewDot = Instantiate(dotPrefab,playerRef.transform.position,headSprite.transform.rotation) as GameObject; 
@@ -278,6 +280,8 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 	void UpdateTail()
 	{
+		//if (updateDots){
+
 		Vector3 newPos;
 		Quaternion newRot; 
 
@@ -309,10 +313,12 @@ public class TrailHandlerRedubS : MonoBehaviour {
 		//print (buttSprite.transform.position + " compare " + spawnedDots[0].transform.position);
 
 		//TRAIL RENDERER UPDATE
-		trailRendererMain.time = trailRenderTimeMin + (trailRenderTimeMax * ((float) (float)playerRef.health / (float)playerRef.maxHealth));
-		trailRendererGlow.time = trailRenderTimeMin + (trailRenderTimeMax * ((float) (float)playerRef.health / (float)playerRef.maxHealth));
+		trailRendererMain.time = trailRenderTimeMin + (trailRenderTimeMax * ((float) (float)playerRef.score / (float)playerRef.maxHealth));
+		trailRendererGlow.time = trailRenderTimeMin + (trailRenderTimeMax * ((float) (float)playerRef.score / (float)playerRef.maxHealth));
 
+			//updateDots = false;
 
+		//}
 
 
 	}

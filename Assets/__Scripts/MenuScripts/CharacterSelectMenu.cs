@@ -37,7 +37,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 		platformType = PlatformS.GetPlatform (); 
 
 		
-		nextLevelString = LevelSelectMenu.selectedLevelString;
+		//nextLevelString = LevelSelectMenu.selectedLevelString;
 
 		followRef = GetComponent<CameraFollowS>();
 
