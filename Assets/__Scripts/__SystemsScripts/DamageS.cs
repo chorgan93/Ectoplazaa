@@ -17,10 +17,26 @@ public class DamageS : MonoBehaviour {
 	public GameObject hitEffectObj;
 	public GameObject hitEffectFastObj;
 
+	private float collSizeMult = 2.25f;
+	private Vector3 startSize;
+
+	private int startPhysicsLayer;
+
 	private float knockbackMult = 1.5f;
+	private Vector3 groundPoundSize;
+
+	private Collider ownColl;
 
 	void Start () {
 		playerRef = transform.parent.GetComponent<PlayerS>();
+
+		startPhysicsLayer = gameObject.layer;
+
+		startSize = transform.localScale;
+
+		ownColl = GetComponent<Collider>();
+
+		groundPoundSize = new Vector3(0.5f, 0.8f, 0.5f);
 
 
 	}
@@ -31,36 +47,65 @@ public class DamageS : MonoBehaviour {
 		if (playerRef == null){
 			playerRef = transform.parent.GetComponent<PlayerS>();
 		}
+		else{
+			// increase in size for lv3, reset otherwise
+			if (playerRef.attacking && playerRef.attackToPerform == 2){
+				transform.localScale = startSize*collSizeMult;
+			}
+			else if (playerRef.groundPounded){
+				transform.localScale = groundPoundSize;
+			}
+			else{
+				transform.localScale = startSize;
+			}
+
+			if (playerRef.isDangerous){
+				ownColl.enabled = true;
+			}
+			else{
+				ownColl.enabled = false;
+			}
+		}
+
+		if (gameObject.layer != startPhysicsLayer){
+			gameObject.layer = startPhysicsLayer;
+		}
+
+
 
 	}
 
-	public void ManageCollision(GameObject other){
+	//public void ManageCollision(GameObject other){
+	void OnTriggerEnter (Collider other){	
 		
-		
-		if (other.gameObject.tag == "Player" ) {
+		if (other.gameObject.tag == "Player") {
 			//print (other.name); 
-			
-			PlayerS otherPlayer = other.gameObject.GetComponent<PlayerS> ();
-
-			//print("HIT PLAYER " +  otherPlayer.playerNum); 
-
-			if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0) {
-				// only deal damage if higher priority or other player isnt attacking
-				//if ((!otherPlayer.attacking) || (otherPlayer.attacking && otherPlayer.attackPriority < playerRef.attackPriority)) {
-				if (!otherPlayer.attacking){
+			// check to make sure they have a player script, and then do stuff if its not our player
+			if (other.gameObject.GetComponent<PlayerS>()){
 				
-					//print ("DAMAGING PLAYER " + otherPlayer.playerNum); 
+				PlayerS otherPlayer = other.gameObject.GetComponent<PlayerS> ();
 
-					otherPlayer.SleepTime (pauseTime);
-					playerRef.SleepTime (pauseTime);
-
+				if (otherPlayer != playerRef){
+					//print("HIT PLAYER " +  otherPlayer.playerNum); 
 					
-					CameraShakeS.C.TimeSleep(0.2f);
+					if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0) {
+						// only deal damage if higher priority or other player isnt attacking
 
-					//chop all of tail off
-					// make sure there are dots to destroy first
-					//otherPlayer.TakeDamage (otherPlayer.health);
-					/*
+						if (!otherPlayer.attacking || 
+						    (otherPlayer.attacking && otherPlayer.attackPriority < playerRef.attackPriority)){
+							
+							//print ("DAMAGING PLAYER " + otherPlayer.playerNum); 
+							
+							otherPlayer.SleepTime (pauseTime);
+							playerRef.SleepTime (pauseTime);
+							
+							
+							CameraShakeS.C.TimeSleep(0.2f);
+							
+							//chop all of tail off
+							// make sure there are dots to destroy first
+							//otherPlayer.TakeDamage (otherPlayer.health);
+							/*
 					if (Mathf.RoundToInt((otherPlayer.health/2)) < 5){
 						otherPlayer.initialHealth = 5;
 					}
@@ -68,53 +113,57 @@ public class DamageS : MonoBehaviour {
 						otherPlayer.initialHealth = Mathf.RoundToInt((otherPlayer.health/2));
 					}
 					*/
+							
+							if(otherPlayer.health < 5)
+							{
+								otherPlayer.GetComponent<TrailHandlerRedubS>().SpawnGlobs(otherPlayer.transform.position,2); 
+								otherPlayer.TakeDamage(otherPlayer.health);
+								GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
+								GlobalVars.totalKills[playerRef.playerNum-1] ++; 
+							}
+							else
+							{
+								int damageTaken = (int)otherPlayer.health+1;  //Mathf.RoundToInt((otherPlayer.health/2f));
+								
+								otherPlayer.GetComponent<TrailHandlerRedubS>().DestroyPlayerDotsRange(damageTaken);
+								otherPlayer.TakeDamage (damageTaken);
+								GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
+								GlobalVars.totalKills[playerRef.playerNum-1] ++; 
+							}
+							
+							//print ("KILL!"); 
+							
+							MakeExplosion(otherPlayer.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
+							
+							CameraShakeS.C.LargeShake ();
+							
+							
+							// spawn slash effect
+							MakeSlashEffect(other.transform.position);
+							
+						} else {
+							// apply knockback to both players and end attacks if priority is same
+							// apply vel to both players equal to current vel x something
+							MakeExplosion(otherPlayer.gameObject, playerRef.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
 
-					if(otherPlayer.health < 5)
-					{
-						otherPlayer.GetComponent<TrailHandlerRedubS>().SpawnGlobs(otherPlayer.transform.position,2); 
-						otherPlayer.TakeDamage(otherPlayer.health);
-						GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
-						GlobalVars.totalKills[playerRef.playerNum-1] ++; 
+							Vector3 spawnPos = (otherPlayer.transform.position + transform.position)/2;
+
+							GameObject hitEffect = Instantiate(hitEffectFastObj,spawnPos,Quaternion.identity) as GameObject;
+							//	MakeExplosion(otherPlayer.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
+							playerRef.InstantiateDeathParticles();
+							CameraShakeS.C.TimeSleep(0.12f);
+							print ("Tie!");
+
+						}
 					}
-					else
-					{
-						int damageTaken = (int)otherPlayer.health+1;  //Mathf.RoundToInt((otherPlayer.health/2f));
-
-						otherPlayer.GetComponent<TrailHandlerRedubS>().DestroyPlayerDotsRange(damageTaken);
-						otherPlayer.TakeDamage (damageTaken);
-						GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
-						GlobalVars.totalKills[playerRef.playerNum-1] ++; 
-					}
-
-					//print ("KILL!"); 
-
-					MakeExplosion(otherPlayer.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
-
-					CameraShakeS.C.LargeShake ();
-
 					
-					// spawn slash effect
-					MakeSlashEffect(other.transform.position);
-					
-				} else {
-					// apply knockback to both players and end attacks if priority is same
-					if (otherPlayer.attacking && otherPlayer.attackPriority == playerRef.attackPriority) {
-						// apply vel to both players equal to current vel x something
-						MakeExplosion(otherPlayer.gameObject, playerRef.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
-
-						Vector3 spawnPos = (otherPlayer.transform.position + transform.position)/2;
-
-						GameObject hitEffect = Instantiate(hitEffectFastObj,spawnPos,Quaternion.identity) as GameObject;
-					//	MakeExplosion(otherPlayer.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
-						playerRef.InstantiateDeathParticles();
-						CameraShakeS.C.TimeSleep(0.12f);
-						//print ("Tie!");
-					}
+					//playerRef.DisableAttacks ();
+					otherPlayer.DisableAttacks();
 				}
 			}
+			
 
-			playerRef.DisableAttacks ();
-			otherPlayer.DisableAttacks();
+
 
 		}
 

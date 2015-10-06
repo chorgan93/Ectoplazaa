@@ -23,7 +23,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	private TrailRenderer trailRendererMain; 
 	private TrailRenderer trailRendererGlow; 
 
-	float trailRenderTime, trailRenderTimeMin = 0.2f, trailRenderTimeMax= 1f; // handle tail length
+	float trailRenderTime, trailRenderTimeMin = 0.2f, trailRenderTimeMax= 2f; // handle tail length
 
 	private LineRenderer playerLine; 
 

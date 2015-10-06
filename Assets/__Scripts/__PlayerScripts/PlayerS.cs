@@ -80,7 +80,8 @@ public class PlayerS : MonoBehaviour {
 
 	public bool facingRight = false;
 
-	private bool groundPounded = false;
+	[HideInInspector]
+	public bool groundPounded = false;
 	public float groundPoundForce;
 
 	//private float pauseDelay;
@@ -237,6 +238,7 @@ public class PlayerS : MonoBehaviour {
 	private float startDrag; // reg drag
 	private float chompDrag = 15; // drag for chomp attack
 	private float dodgeDrag = 12;
+	//private float chompRad = 10f;
 
 
 
@@ -538,8 +540,10 @@ public class PlayerS : MonoBehaviour {
 					doingChomp = true;
 					ownRigid.useGravity = false;
 					canAirStrafe = false;
-					//attacking = true;
-					attackPriority = -1;
+					attacking = true;
+
+						// attack priority of 1 to defeat ground pound
+					attackPriority = 1;
 					attackToPerform = -1;
 					ownRigid.velocity = Vector3.zero;
 						ownRigid.drag = chompDrag;
@@ -553,6 +557,8 @@ public class PlayerS : MonoBehaviour {
 					}
 
 					ownRigid.AddForce(attackDir.normalized*chompForce*Time.deltaTime, ForceMode.Impulse);
+						Vector3 chompSpawn = transform.position;
+						//chompSpawn += attackDir.normalized*chompRad;
 					GameObject chompObj = Instantiate(chompHitObj, transform.position, Quaternion.identity)
 						as GameObject;
 					chompObj.GetComponent<ChompColliderS>().SetDirection(attackDir.normalized, this);
@@ -672,6 +678,9 @@ public class PlayerS : MonoBehaviour {
 				attackDir.x = 1;
 			}
 
+			// attack priority of 2 (beat ground pound and chomp)
+			attackPriority = 2;
+
 			bulletVel = attackDir.normalized*Time.deltaTime*lv1Force ;
 			ownRigid.AddForce(bulletVel,ForceMode.VelocityChange);
 
@@ -782,6 +791,7 @@ public class PlayerS : MonoBehaviour {
 		{
 
 			//print ("I ended attack");
+
 			
 			//attackToPerform = 0;
 			lv1OutCountdown = 0;
@@ -828,6 +838,9 @@ public class PlayerS : MonoBehaviour {
 				// start of first fling
 
 				//print ("Start slow fling");
+
+				// attack priority of 3 to defeat everything below mini fling
+				attackPriority = 3;
 
 				canAirStrafe = false; 
 				ownRigid.useGravity = false;
@@ -930,6 +943,14 @@ public class PlayerS : MonoBehaviour {
 		{
 			if(!performedAttack)
 			{
+
+				// attack priority of 4 to beat everything 
+				attackPriority = 4;
+
+					// turn on platform ghosting
+					TurnOnIgnoreWalls();
+
+
 				if(!groundDetect.Grounded())
 					this.GetComponent<SphereCollider>().material = bouncyPhysics; 
 
@@ -1180,6 +1201,8 @@ public class PlayerS : MonoBehaviour {
 				ownRigid.velocity = groundPoundVel;
 				isDangerous = true;
 				groundPounded = true;
+
+				// lowest attack priority
 				attackPriority = 0;
 
 				//print ("Groundpound!");
@@ -1362,10 +1385,7 @@ public class PlayerS : MonoBehaviour {
 
 		if(isDangerous){
 			dangerousSprite.GetComponent<SpriteRenderer>().enabled = true; 
-			if (attackToPerform == 2){
-				// turn on platform ghosting
-				TurnOnIgnoreWalls();
-			}
+
 		}
 		else{
 			dangerousSprite.GetComponent<SpriteRenderer>().enabled = false; 
@@ -1540,8 +1560,8 @@ public class PlayerS : MonoBehaviour {
 	void OnCollisionEnter(Collision other){
 		// end bullet attack
 
-		if(isDangerous)
-			dangerObj.GetComponent<DamageS> ().ManageCollision (other.gameObject); 
+		//if(isDangerous)
+			//dangerObj.GetComponent<DamageS> ().ManageCollision (other.gameObject); 
 
 
 		Vector3 hitParticleSpawn = this.transform.position; 
@@ -1551,7 +1571,7 @@ public class PlayerS : MonoBehaviour {
 		GameObject newParticles =  Instantiate(hitParticles,hitParticleSpawn,Quaternion.identity) as GameObject;
 		newParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[characterNum - 1].GetColor("_TintColor");
 
-
+		if (other.gameObject.tag == "Ground"){
 
 		if (attacking &&groundLeeway <= 0 ){
 			//attacking = false;
@@ -1580,6 +1600,7 @@ public class PlayerS : MonoBehaviour {
 				FlingFastAttack(true); 
 			}
 
+			}
 
 			//CameraShakeS.C.SmallShake();
 
@@ -1648,11 +1669,11 @@ public class PlayerS : MonoBehaviour {
 		}
 	}*/
 
-	void OnTriggerEnter(Collider other) 
+	/*void OnTriggerEnter(Collider other) 
 	{
 		if (other.gameObject.tag != "Debris") {
 			if (isDangerous) {
-				dangerObj.GetComponent<DamageS> ().ManageCollision (other.gameObject); 
+				//dangerObj.GetComponent<DamageS> ().ManageCollision (other.gameObject); 
 				//DisableAttacks(); 
 
 			}
@@ -1662,7 +1683,7 @@ public class PlayerS : MonoBehaviour {
 		//isDangerous = false; 
 		//this.GetComponent<SphereCollider>().material = normalPhysics; 
 
-	}
+	}*/
 
 	public void DisableAttacks()
 	{
@@ -1702,10 +1723,13 @@ public class PlayerS : MonoBehaviour {
 	}
 
 	public void TurnOnIgnoreWalls(){
+		ownRigid.useGravity = false;
 		gameObject.layer = LayerMask.NameToLayer(physicsLayerNoWalls);
 	}
 
 	public void TurnOffIgnoreWalls(){
+		print ("USE GRAV!!");
+		ownRigid.useGravity = true;
 		gameObject.layer = physicsLayerDefault;
 	}
 

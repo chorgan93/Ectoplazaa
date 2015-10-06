@@ -8,7 +8,7 @@ public class ChompColliderS : MonoBehaviour {
 
 	private Vector3 attackDir;
 
-	private Rigidbody ownRigid;
+	//private Rigidbody ownRigid;
 	private Collider ownCollider;
 	// for testing purposes only
 	private Renderer ownRender;
@@ -24,6 +24,8 @@ public class ChompColliderS : MonoBehaviour {
 	private float damageEffectStartRange = 100f;
 	public GameObject hitEffectObj;
 	public GameObject hitEffectFastObj;
+
+	private float chompRad = 3f;
 	
 	private float knockbackMult = 1.5f;
 
@@ -57,7 +59,7 @@ public class ChompColliderS : MonoBehaviour {
 
 	public void SetDirection(Vector3 newDir, PlayerS newPlayer){
 
-		ownRigid = GetComponent<Rigidbody>();
+		//ownRigid = GetComponent<Rigidbody>();
 
 		playerRef = newPlayer;
 
@@ -84,7 +86,11 @@ public class ChompColliderS : MonoBehaviour {
 		
 		transform.rotation = Quaternion.Euler(new Vector3(0,0,rotateZ));
 
-		ownRigid.AddForce(newDir*attackSpeed*Time.deltaTime, ForceMode.Impulse);
+		//ownRigid.AddForce(newDir*attackSpeed*Time.deltaTime, ForceMode.Impulse);
+
+		// parent to player
+		transform.parent = playerRef.transform;
+		transform.localPosition = attackDir.normalized*chompRad;
 	}
 
 	void OnTriggerEnter(Collider other){
