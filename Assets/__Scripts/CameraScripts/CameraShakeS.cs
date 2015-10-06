@@ -59,7 +59,7 @@ public class CameraShakeS : MonoBehaviour {
 		if(shake_intensity > 0 && !sleeping && ScoreKeeperS.gameStarted){
 			//print ("SHAKING");
 			
-			Vector3 camPos = originPosition;
+			Vector3 camPos = ownFollow.cameraPos;
 			camPos.x += Random.insideUnitSphere.x * shake_intensity * shakeStrengthMult;
 			camPos.y += Random.insideUnitSphere.y/2 * shake_intensity * shakeStrengthMult;
 			camPos.z = transform.position.z;
