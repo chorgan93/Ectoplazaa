@@ -184,7 +184,7 @@ public class DamageS : MonoBehaviour {
 
 	}
 
-	void MakeSlashEffect(Vector3 otherPos){
+	public void MakeSlashEffect(Vector3 otherPos){
 
 		// makes the cool slash thing when a player is hit
 

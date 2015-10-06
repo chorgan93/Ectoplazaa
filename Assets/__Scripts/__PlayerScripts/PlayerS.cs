@@ -257,7 +257,7 @@ public class PlayerS : MonoBehaviour {
 
 		allSpawnPts = GameObject.FindGameObjectsWithTag("Spawn");
 
-		//physicsLayerDefault = gameObject.layer;
+		physicsLayerDefault = gameObject.layer;
 
 		if (GlobalVars.characterSelected && GlobalVars.launchingFromScene) { //assign character numbers from global vars when spawning only in game, not while in character select screen
 			characterNum = GlobalVars.characterNumber [playerNum - 1]; 
@@ -592,7 +592,9 @@ public class PlayerS : MonoBehaviour {
 		if (attacking) {
 
 			// allow for short attacks on the ground
-			groundLeeway -= Time.deltaTime * TimeManagerS.timeMult;
+				if (groundDetect.Grounded()){
+					groundLeeway -= Time.deltaTime * TimeManagerS.timeMult;
+				}
 
 			if (!performedAttack) 
 			{
@@ -958,6 +960,10 @@ public class PlayerS : MonoBehaviour {
 					ownRigid.AddForce(bulletVel,ForceMode.VelocityChange);
 					
 					ownRigid.useGravity = true;
+
+					// kinesthetics
+					CameraShakeS.C.TimeSleep(0.2f);
+					dangerObj.GetComponent<DamageS>().MakeSlashEffect(transform.position+bulletVel.normalized);
 				}
 				else{
 					
@@ -1581,6 +1587,9 @@ public class PlayerS : MonoBehaviour {
 
 		// for hit sounds
 		if ((other.gameObject.tag == "Wall" || other.gameObject.tag == "Ground")){
+
+			// turn off lv3 ability
+			TurnOffIgnoreWalls();
 			
 			// play bounce sound if not groundpounding
 			if (!groundPounded){
@@ -1622,7 +1631,7 @@ public class PlayerS : MonoBehaviour {
 			if (groundDetect.Grounded()){
 				attacking = false; 
 				isDangerous = false; 
-				TurnOffIgnoreWalls();
+				//TurnOffIgnoreWalls();
 			}
 		}
 

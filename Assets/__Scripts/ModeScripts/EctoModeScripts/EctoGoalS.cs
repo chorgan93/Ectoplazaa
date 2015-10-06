@@ -6,6 +6,7 @@ public class EctoGoalS : MonoBehaviour {
 
 
 	public int playerNum; // what player i'm attached to
+	// set player num to 5 for one goal
 	public PlayerS myPlayer; // playerRef
 
 	public List<Color> playerCols;
@@ -17,6 +18,8 @@ public class EctoGoalS : MonoBehaviour {
 	void Start () {
 
 		// determine if needed based on playerNum
+
+		if (playerNum != 5){
 		if (GlobalVars.totalPlayers < playerNum){
 			gameObject.SetActive(false);
 		}
@@ -25,13 +28,18 @@ public class EctoGoalS : MonoBehaviour {
 			transform.position = spawnPts[GlobalVars.totalPlayers-2].transform.position;
 
 		}
+		}
+		else{
+			transform.position = spawnPts[GlobalVars.totalPlayers-2].transform.position;
+		}
+		
 
 
 	
 	}
 
 	void Update () {
-		if (!myPlayer){
+		if (!myPlayer && playerNum != 5){
 			myPlayer = GameObject.Find("Player"+playerNum).GetComponent<PlayerS>();
 			
 			mySprite = GetComponent<SpriteRenderer>();
@@ -41,16 +49,18 @@ public class EctoGoalS : MonoBehaviour {
 	
 	void OnTriggerEnter (Collider other) {
 		if (other.gameObject.tag == "Player"){
-			if (other.gameObject.GetComponent<PlayerS>().playerNum == playerNum){
+			if (other.gameObject.GetComponent<PlayerS>().playerNum == playerNum || playerNum == 5){
+				myPlayer = other.gameObject.GetComponent<PlayerS>();
 				GameObject newParticles =  Instantiate(myPlayer.deathParticles,transform.position,Quaternion.identity) as GameObject;
+
 				newParticles.GetComponent<ParticleSystem>().startColor = 
-					mySprite.color;
+					playerCols[myPlayer.characterNum-1];
 
 				// add to player score
 				int numToAdd = Mathf.RoundToInt(myPlayer.health-myPlayer.initialHealth);
 				//myPlayer.health = myPlayer.initialHealth;
 
-				print (numToAdd);
+				//print (numToAdd);
 				if (numToAdd > 0){
 					myPlayer.initialHealth = myPlayer.health;
 					myPlayer.score += numToAdd;
