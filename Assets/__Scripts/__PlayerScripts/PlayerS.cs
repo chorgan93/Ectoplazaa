@@ -120,7 +120,7 @@ public class PlayerS : MonoBehaviour {
 
 	[HideInInspector]
 	public int attackToPerform = 0;
-	[HideInInspector]
+	//[HideInInspector]
 	public bool attacking = false;
 
 	[HideInInspector]
@@ -1484,7 +1484,7 @@ public class PlayerS : MonoBehaviour {
 			respawnTimeCountdown -= Time.deltaTime*TimeManagerS.timeMult;
 			ownRigid.useGravity = false;
 			ownRigid.velocity = Vector3.zero;
-			dangerObj.SetActive(false);
+			//dangerObj.SetActive(false);
 
 			GetComponent<Collider>().enabled = false;
 
@@ -1728,7 +1728,7 @@ public class PlayerS : MonoBehaviour {
 	}
 
 	public void TurnOffIgnoreWalls(){
-		print ("USE GRAV!!");
+		//print ("USE GRAV!!");
 		ownRigid.useGravity = true;
 		gameObject.layer = physicsLayerDefault;
 	}

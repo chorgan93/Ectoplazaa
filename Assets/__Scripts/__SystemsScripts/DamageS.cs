@@ -77,6 +77,8 @@ public class DamageS : MonoBehaviour {
 
 	//public void ManageCollision(GameObject other){
 	void OnTriggerEnter (Collider other){	
+
+		print (other.name + " touches " + playerRef.name);
 		
 		if (other.gameObject.tag == "Player") {
 			//print (other.name); 
@@ -86,7 +88,7 @@ public class DamageS : MonoBehaviour {
 				PlayerS otherPlayer = other.gameObject.GetComponent<PlayerS> ();
 
 				if (otherPlayer != playerRef){
-					//print("HIT PLAYER " +  otherPlayer.playerNum); 
+					print("HIT PLAYER " +  otherPlayer.playerNum); 
 					
 					if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0) {
 						// only deal damage if higher priority or other player isnt attacking
