@@ -108,8 +108,10 @@ public class ScoreKeeperS : MonoBehaviour {
 		for (int i = 0; i < 4; i++) {
 			if (GlobalVars.characterNumber [i] != 0) {
 				PlayerS currentPlayer = GlobalVars.playerList [i].GetComponent<PlayerS> ();
-				
-				if (currentPlayer.score >= scoreThreshold) {
+
+				// for ecto mode
+				if (currentPlayer.score >= scoreThreshold 
+				    || currentPlayer.health-currentPlayer.startEctoNum >= scoreThreshold) {
 
 					gameEnd = true;
 					winningPlayerNum = i + 1;
@@ -276,14 +278,14 @@ public class ScoreKeeperS : MonoBehaviour {
 		if (Input.GetButton ("BButtonAllPlayers"+	PlatformS.GetPlatform ()) && gameEndMinTime < 0) 
 		{
 			gameEnd = false;
-			// hard coding in return to character select
+			// hard coding in return to map select
 			Application.LoadLevel("2MapSelect");
 		}
 		if (Input.GetButton ("AButtonAllPlayers" + PlatformS.GetPlatform ()) && gameEndMinTime < 0) {
 
 			print("RESETTINGLEVEL"); 
 			//GlobalVars.ResetVariables(); 
-			Application.LoadLevel(Application.loadedLevel);// THIS DOESNT WORK, CAUSES GLITCHES ON RESTART, MIGHT HAVE TO LOAD BACK THROUGH CHARACTER SELECT SCREEN? 
+			Application.LoadLevel(Application.loadedLevel);
 		}
 
 	}

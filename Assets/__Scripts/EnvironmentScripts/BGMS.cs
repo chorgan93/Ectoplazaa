@@ -57,11 +57,12 @@ public class BGMS : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
 
 		if (delayChange > 0){
+			//print ("Delaying!");
 			delayChange -= Time.deltaTime;
-
+			print (ownSource.volume);
 		}
 		else{
 		if (nextMusic){
@@ -95,7 +96,7 @@ public class BGMS : MonoBehaviour {
 	}
 
 	public void DuckVolume(){
-		if (!nextMusic){
+		if (!nextMusic && !ScoreKeeperS.gameEnd){
 			currentVolume = targetVolume*duckVolumeMult;
 			ownSource.volume = currentVolume;
 		}
@@ -103,11 +104,12 @@ public class BGMS : MonoBehaviour {
 	}
 
 	public void DuckVolumeLonger(float delayTime){
-		if (!nextMusic){
-			currentVolume = 0;
-			ownSource.volume = currentVolume;
-			delayChange = delayTime;
-		}
+
+		currentVolume = 0;
+		ownSource.volume = currentVolume;
+		delayChange = delayTime;
+		print (ownSource.volume);
+
 		//print ("duck volume");
 	}
 

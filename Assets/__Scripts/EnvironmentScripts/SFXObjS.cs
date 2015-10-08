@@ -22,7 +22,7 @@ public class SFXObjS : MonoBehaviour {
 			if (GameObject.Find("MusicPlayer")){
 				if(longDuck){
 					GameObject.Find("MusicPlayer").GetComponent<BGMS>().DuckVolumeLonger(ownSource.clip.length);
-					print ("long duck!!");
+					//print ("long duck!!");
 				}
 				else{
 					GameObject.Find("MusicPlayer").GetComponent<BGMS>().DuckVolume();
@@ -31,7 +31,7 @@ public class SFXObjS : MonoBehaviour {
 			else if (GameObject.Find("MusicPlayer(Clone)")){
 				if(longDuck){
 					GameObject.Find("MusicPlayer(Clone)").GetComponent<BGMS>().DuckVolumeLonger(ownSource.clip.length);
-					print ("long duck!!");
+					//print ("long duck!!");
 				}
 				else{
 					GameObject.Find("MusicPlayer(Clone)").GetComponent<BGMS>().DuckVolume();
@@ -39,7 +39,7 @@ public class SFXObjS : MonoBehaviour {
 			}
 			else{
 				
-				print ("didn't find it");
+				//print ("didn't find it");
 			}
 		}
 	

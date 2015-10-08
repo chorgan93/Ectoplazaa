@@ -78,7 +78,7 @@ public class DamageS : MonoBehaviour {
 	//public void ManageCollision(GameObject other){
 	void OnTriggerEnter (Collider other){	
 
-		print (other.name + " touches " + playerRef.name);
+		//print (other.name + " touches " + playerRef.name);
 		
 		if (other.gameObject.tag == "Player") {
 			//print (other.name); 

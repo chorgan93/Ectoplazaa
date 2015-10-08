@@ -15,6 +15,7 @@ public class ScoreBar : MonoBehaviour {
 	PlayerS [] playerRefs = new PlayerS[4];
 	public GameObject [] barObjs= new GameObject[4]; 
 	GameObject[] heads = new GameObject[4];
+	GameObject[] ghostHeads = new GameObject[4]; // for use in ecto mode
 
 	int totalPlayers; 
 
@@ -28,6 +29,7 @@ public class ScoreBar : MonoBehaviour {
 	float scaleSpeed = 0.1f; 
 
 	public GameObject headPrefab;
+	public GameObject ghostHeadPrefab; // for health count in ecto mode
 
 
 	void Start()
@@ -68,6 +70,20 @@ public class ScoreBar : MonoBehaviour {
 				heads[i] = newHead; 
 				if (barObjs[i].GetComponentInChildren<Renderer>() != null){
 					barObjs[i].GetComponentInChildren<Renderer> ().material = playerRefs[i].playerMats [playerRefs[i].characterNum - 1];
+				}
+
+				// if ecto mode, add ghost heads
+				if (CurrentModeS.currentMode == 0){
+					Vector3 spawnPosGhostHead = barObjs[i].transform.position;
+					spawnPosGhostHead.z = -8f; 
+					GameObject newGhostHead = Instantiate(ghostHeadPrefab, spawnPosGhostHead, Quaternion.identity) as GameObject; 
+					//playerRefs[i].GetComponent<PlayerS>().SetSkin(); 
+					newGhostHead.GetComponentInChildren<SpriteRenderer>().sprite = playerRefs[i].spriteObject.GetComponent<SpriteRenderer>().sprite; 
+					Color ghostCol = newGhostHead.GetComponentInChildren<SpriteRenderer>().color;
+					ghostCol.a = 0.5f;
+					newGhostHead.GetComponentInChildren<SpriteRenderer>().color = ghostCol;
+					newGhostHead.transform.parent = this.transform; 
+					ghostHeads[i] = newGhostHead; 
 				}
 
 			}
@@ -112,6 +128,23 @@ public class ScoreBar : MonoBehaviour {
 			heads[i].GetComponentInChildren<SpriteRenderer>().sprite = playerRefs[i].spriteObject.GetComponent<SpriteRenderer>().sprite; 
 
 			barObjs[i].GetComponentInChildren<Renderer> ().material = playerRefs[i].playerMats [playerRefs[i].characterNum - 1];
+
+			// in ecto mode, repeat head move for ghost head if health
+			if (CurrentModeS.currentMode == 0){
+			float ghostHealth = Mathf.Clamp (playerRefs[i].health-playerRefs[i].startEctoNum, 0f, (float)scoreThreshold); //make sure health doesnt exceed max
+			
+			float lerpValGhost = ghostHealth / (float)scoreThreshold;
+			//print ("LerpVal = " + lerpVal); 
+			
+			Vector3 newGhostHeadPos = Vector3.Lerp (startTransform.transform.position, endTransform.transform.position, lerpValGhost);
+			newGhostHeadPos.z = ghostHeads[i].transform.position.z; 
+			Vector3 ghostHeadAnim = Vector3.Lerp (ghostHeads[i].transform.position, newGhostHeadPos, animSpeed); 
+			
+			ghostHeads[i].transform.position = ghostHeadAnim; 
+			ghostHeads[i].GetComponentInChildren<SpriteRenderer>().sprite = playerRefs[i].spriteObject.GetComponent<SpriteRenderer>().sprite; 
+			}
+
+
 			//CHANGE BAR SCALE
 			Vector3 newBarScale = new Vector3 (0f, barObjs[i].transform.localScale.y, barObjs[i].transform.localScale.z); 
 			
@@ -121,6 +154,7 @@ public class ScoreBar : MonoBehaviour {
 			barObjs[i].transform.localScale = scaleAnim;
 
 			//CHECK FOR LEADER AND CHANGE END CIRCLE COLOR 
+			// this will need to be changed per mode
 
 			if(playerRefs[i].score >= mostHealth)
 			{
