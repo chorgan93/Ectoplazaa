@@ -13,9 +13,6 @@ public class StartMenu : MonoBehaviour {
 	public float inputDelayTransition = 0.5f;
 	private float inputDelay = 2f;
 
-	// the following string is just for playtest
-	// will need to connect all of start menu in final version
-	public string nextSceneString;
 
 	public GameObject [] postcards; 
 
@@ -55,6 +52,10 @@ public class StartMenu : MonoBehaviour {
 	public List<GameObject> scrollSoundObjs;
 	public List<GameObject> selectSoundObjs;
 	public GameObject advSoundObj;
+
+	private string competitiveNextScene = "7CompetitiveModeSelect";
+	private string partyNextScene = "8PartyModeSelect";
+	private string nextScene;
 
 	AsyncOperation async;
 
@@ -196,12 +197,25 @@ public class StartMenu : MonoBehaviour {
 							//startedLoading = true;
 							startCountdown = true;
 							cameraFollow.poi = loadingCenterPt;
+							nextScene = competitiveNextScene;
+							Instantiate(advSoundObj);
+						}
 
+						// "party" option
+						if (currentCursorPos == 1){
+							//Application.LoadLevel(nextSceneString);
+							
+							// start level select load
+							//StartLoading();
+							//startedLoading = true;
+							startCountdown = true;
+							cameraFollow.poi = loadingCenterPt;
+							nextScene = partyNextScene;
 							Instantiate(advSoundObj);
 						}
 	
 						// "options" option
-						if (currentCursorPos == 1){
+						if (currentCursorPos == 2){
 							onOptions = true;
 							cameraFollow.poi = optionsCenterPt;
 							inputDelay = inputDelayTransition;
@@ -211,7 +225,7 @@ public class StartMenu : MonoBehaviour {
 						}
 		
 						// "credits" option
-						if (currentCursorPos == 2){
+						if (currentCursorPos == 3){
 							onCredits = true;
 							cameraFollow.poi = creditsCenterPt;
 							inputDelay = inputDelayTransition;
@@ -404,7 +418,7 @@ public class StartMenu : MonoBehaviour {
 	IEnumerator load() {
 		Debug.LogWarning("ASYNC LOAD STARTED - " +
 		                 "DO NOT EXIT PLAY MODE UNTIL SCENE LOADS... UNITY WILL CRASH");
-		async = Application.LoadLevelAsync(nextSceneString);
+		async = Application.LoadLevelAsync(nextScene);
 		async.allowSceneActivation = false;
 		yield return async;
 	}
