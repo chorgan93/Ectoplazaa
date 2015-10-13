@@ -701,7 +701,7 @@ public class PlayerS : MonoBehaviour {
 		if(endAttack)
 		{
 			// trigger return early
-			isDangerous = false;
+			//isDangerous = false;
 			attacking = false;
 			//snapReturning = true;
 		}
@@ -766,7 +766,7 @@ public class PlayerS : MonoBehaviour {
 					else{
 						//print ("USE GRAV");
 						ownRigid.useGravity = true;
-						isDangerous = false;
+						//isDangerous = false;
 						attacking = false;
 						//TurnOffIgnoreWalls();
 						//buttObj.isFollowing = true;
@@ -799,7 +799,6 @@ public class PlayerS : MonoBehaviour {
 			didLv2Fling = true;
 			groundLeeway = 0;
 			//attacking = false;
-			//isDangerous = false;
 			ownRigid.useGravity = true;
 			//buttObj.isFollowing = true;
 			canAirStrafe = true; 
@@ -930,8 +929,7 @@ public class PlayerS : MonoBehaviour {
 			//buttObj.isFollowing = true;
 			// lock in place so no sliding
 
-			//attacking = false;
-			//isDangerous = false;
+			attacking = false;
 			ownRigid.useGravity = true;;
 			//buttObj.isFollowing = true;
 			canAirStrafe = true; 
@@ -1119,22 +1117,27 @@ public class PlayerS : MonoBehaviour {
 
 		// allow charge attack
 
-		if (groundDetect.Grounded()){
-			// end a fling attack on ground hit
-			//if (attackToPerform == 1 && attacking){
-			if (groundLeeway <= 0){
-				isDangerous = false;
-				attacking = false;
-				didLv2Fling = false;
-			ownRigid.useGravity = true;
+		// don't do during lv 3
+		if (attacking && attackToPerform == 2){
+		}
+		else{
 
-				groundPounded = false;
-				
-				charging = false;
+			if (groundDetect.Grounded()){
+				// end a fling attack on ground hit
+				//if (attackToPerform == 1 && attacking){
+				if (groundLeeway <= 0){
+					isDangerous = false;
+					attacking = false;
+					didLv2Fling = false;
+					ownRigid.useGravity = true;
+	
+					groundPounded = false;
+					
+					charging = false;
+				}
+				//}
+				canCharge = true;
 			}
-			//}
-			//isDangerous = false;
-			canCharge = true;
 		}
 
 		// turn jump ability on/off depending on grounded status
@@ -1144,7 +1147,7 @@ public class PlayerS : MonoBehaviour {
 				jumped = false;
 				if (groundPounded){
 					groundPounded = false;
-					isDangerous = false;
+					//isDangerous = false;
 				}
 			}
 		}
@@ -1407,7 +1410,13 @@ public class PlayerS : MonoBehaviour {
 
 		// trying to fix something with lv 2
 		if (!groundDetect.Grounded()){
-			groundLeeway = 0;
+			if (attackToPerform == 1){
+				groundLeeway = 0;
+			}
+		}
+		else{
+			
+			this.GetComponent<SphereCollider>().material = normalPhysics; 
 		}
 
 		if (isSpawning) {
@@ -1489,7 +1498,7 @@ public class PlayerS : MonoBehaviour {
 			GetComponent<Collider>().enabled = false;
 
 			stretching = false;
-			isDangerous = false;
+			//isDangerous = false;
 			jumpButtonDown = false;
 			stretchButtonDown = false;
 			charging = false;
@@ -1573,7 +1582,7 @@ public class PlayerS : MonoBehaviour {
 
 		if (other.gameObject.tag == "Ground"){
 
-		if (attacking &&groundLeeway <= 0 ){
+		if (attacking){
 			//attacking = false;
 			//print ("STOP!!");
 
@@ -1601,6 +1610,10 @@ public class PlayerS : MonoBehaviour {
 			}
 
 			}
+
+			// turn off bounciness
+			this.GetComponent<SphereCollider>().material = normalPhysics; 
+
 
 			//CameraShakeS.C.SmallShake();
 
@@ -1649,9 +1662,11 @@ public class PlayerS : MonoBehaviour {
 		}
 
 		if (other.gameObject.tag == "Ground"){
+			//print ("HIT GROUND!!");
 			if (groundDetect.Grounded()){
 				attacking = false; 
 				isDangerous = false; 
+				//print ("Turn off dangerous!!");
 				//TurnOffIgnoreWalls();
 			}
 		}
@@ -1688,7 +1703,7 @@ public class PlayerS : MonoBehaviour {
 	public void DisableAttacks()
 	{
 		attacking = false; 
-		isDangerous = false; 
+		//isDangerous = false; 
 
 		//ownRigid.useGravity = true;;
 		canAirStrafe = true; 
