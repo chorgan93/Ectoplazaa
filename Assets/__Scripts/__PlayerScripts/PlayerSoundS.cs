@@ -128,7 +128,7 @@ public class PlayerSoundS : MonoBehaviour {
 		}
 		
 		Instantiate(charIntroSoundObjs[numToPlay]);
-		print (characterNum);
+		//print (characterNum);
 		
 	}
 

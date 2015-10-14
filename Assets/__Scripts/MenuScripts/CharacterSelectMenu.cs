@@ -122,9 +122,17 @@ public class CharacterSelectMenu : MonoBehaviour {
 						}
 				else if(!hasJoined[i-1])
 				{
-					int defaultSkin = 0; 
+					int defaultSkin = 0;
 
-					if(totalPlayers == 0)
+							int numJoined = 0;
+
+							foreach (bool player in hasJoined){
+								if (player){
+									numJoined++;
+								}
+							}
+
+					if(numJoined == 0)
 					{
 						//print("First Player Skinned"); 
 						defaultSkin = 1; 
@@ -216,7 +224,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 					GameObject.Destroy( players[i-1].gameObject);
 					players[i-1]= null; 
 
-					print("Total Players: " + totalPlayers); 
+					//print("Total Players: " + totalPlayers); 
 
 					characterNumText[i-1].GetComponent<TextMesh>().text = "";
 
@@ -238,6 +246,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 						{
 							
 							int newSkin = players[i-1].GetComponent<PlayerS>().characterNum; 
+							int newColor = 0;
 							bool stopLoop = false;
 							
 							for(int j= 1; j <= GlobalVars.totalSkins; j++) //loop once through all skins
@@ -252,12 +261,15 @@ public class CharacterSelectMenu : MonoBehaviour {
 								{
 									if(p != null)
 									{
-										if(p.GetComponent<PlayerS>().characterNum != newSkin)
+										if(p.GetComponent<PlayerS>().characterNum != newSkin){
+											newColor = 0;
 											continue;
+										}
 										else
 										{
-											flag = true;
-											break;
+											newColor = p.GetComponent<PlayerS>().colorNum+1;
+											//flag = true;
+											continue;
 										}
 									}
 								}
@@ -272,7 +284,10 @@ public class CharacterSelectMenu : MonoBehaviour {
 							
 							
 							players[i-1].GetComponent<PlayerS>().characterNum = newSkin;
+							players[i-1].GetComponent<PlayerS>().colorNum = newColor;
 							players[i-1].GetComponent<PlayerS>().SetSkin();
+
+							print(newColor);
 							
 							
 							// play char intro sound
@@ -289,6 +304,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 						{
 							
 							int newSkin = players[i-1].GetComponent<PlayerS>().characterNum; 
+							int newColor = 0;
 							bool stopLoop = false;
 							
 							for(int j= 1; j <= GlobalVars.totalSkins; j++) //loop once through all skins
@@ -303,12 +319,15 @@ public class CharacterSelectMenu : MonoBehaviour {
 								{
 									if(p != null)
 									{
-										if(p.GetComponent<PlayerS>().characterNum != newSkin)
+										if(p.GetComponent<PlayerS>().characterNum != newSkin){
+											newColor = 0;
 											continue;
+										}
 										else
 										{
-											flag = true;
-											break;
+											newColor = p.GetComponent<PlayerS>().colorNum+1;
+											//flag = true;
+											continue;
 										}
 									}
 								}
@@ -323,8 +342,10 @@ public class CharacterSelectMenu : MonoBehaviour {
 							
 							
 							players[i-1].GetComponent<PlayerS>().characterNum = newSkin;
+							players[i-1].GetComponent<PlayerS>().colorNum = newColor;
 							players[i-1].GetComponent<PlayerS>().SetSkin();
-							
+
+							print (newColor);
 							
 							// play char intro sound
 							//players[i-1].GetComponent<PlayerSoundS>().PlayCharIntroSound();
@@ -343,18 +364,18 @@ public class CharacterSelectMenu : MonoBehaviour {
 
 						yButtonDown[i-1] = true;
 
-						/*
+
 				if(hasJoined[i-1])
 				{
 
-					int newSkin = players[i-1].GetComponent<PlayerS>().characterNum; 
+							int newColor = players[i-1].GetComponent<PlayerS>().colorNum;
 					bool stopLoop = false;
 
-					for(int j= 1; j <= GlobalVars.totalSkins; j++) //loop once through all skins
+					for(int j= 0; j < GlobalVars.totalSkins; j++) //loop once through all skins
 					{
-						newSkin += 1; //increment to next skin, check if available; 
-						if(newSkin > GlobalVars.totalSkins) //loop if at end of skins
-							newSkin = 1; 
+						newColor += 1; //increment to next skin, check if available; 
+						if(newColor > GlobalVars.totalSkins-1) //loop if at end of skins
+							newColor = 0; 
 
 						bool flag = false; 
 
@@ -362,12 +383,17 @@ public class CharacterSelectMenu : MonoBehaviour {
 						{
 							if(p != null)
 							{
-								if(p.GetComponent<PlayerS>().characterNum != newSkin)
+								if(p.GetComponent<PlayerS>().characterNum != players[i-1].GetComponent<PlayerS>().characterNum)
 									continue;
 								else
 								{
-									flag = true;
-									break;
+											if (p.GetComponent<PlayerS>().colorNum != newColor){
+												continue;
+											}
+											else{
+												flag = true;
+												break;
+											}
 								}
 							}
 						}
@@ -376,20 +402,11 @@ public class CharacterSelectMenu : MonoBehaviour {
 							break;
 
 					}
-
-					
-					characterNumText[i-1].GetComponent<TextMesh>().text = "characterNum: " + newSkin;
-
-
-					players[i-1].GetComponent<PlayerS>().characterNum = newSkin;
-					players[i-1].GetComponent<PlayerS>().SetSkin();
-
-					
-					// play char intro sound
-							//players[i-1].GetComponent<PlayerSoundS>().PlayCharIntroSound();
-							players[i-1].GetComponent<PlayerSoundS>().PlayCharIntroSoundQuickFix();
+							
+							players[i-1].GetComponent<PlayerS>().colorNum = newColor;
+							players[i-1].GetComponent<PlayerS>().SetSkin();
 				}
-						 */
+						 
 
 
 			}

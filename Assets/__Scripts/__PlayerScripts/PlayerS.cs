@@ -241,6 +241,9 @@ public class PlayerS : MonoBehaviour {
 	//private float chompRad = 10f;
 
 	//[HideInInspector]
+	public int colorNum; // for alternate colors
+
+	//[HideInInspector]
 	public bool nonActive = false; // total disable of character, just show -- for character select screen
 
 
@@ -1452,7 +1455,7 @@ public class PlayerS : MonoBehaviour {
 	{
 		this.GetComponent<LineRenderer> ().material = playerMats [characterNum-1];
 		trailRendererGO.GetComponent<TrailRenderer> ().material = playerMats [characterNum - 1]; 
-		spriteObject.GetComponent<PlayerAnimS> ().SetCurrentSprites (characterNum);
+		spriteObject.GetComponent<PlayerAnimS> ().SetCurrentSprites (characterNum, colorNum);
 		GetComponent<TrailHandlerRedubS> ().SetDotMaterial ();
 
 
