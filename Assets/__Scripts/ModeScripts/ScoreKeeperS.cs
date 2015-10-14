@@ -15,8 +15,10 @@ public class ScoreKeeperS : MonoBehaviour {
 
 	public Sprite [] playerHighResSprites; 
 
-	public int scoreThreshold;
-
+	public int scoreThresholdCollectoplaza;
+	public int numberLives;								//stock mode
+	private int numPlayersLeft = 0; 					//stock mode
+	private bool [] playersPlaying = new bool[4]{false,false,false,false}; //Stock mode
 	public static bool gameEnd = false;
 
 	public GameObject endGameObj;
@@ -48,21 +50,95 @@ public class ScoreKeeperS : MonoBehaviour {
 
 	Vector3 worldPos = Vector3.zero;
 
+	private int currentMode =-1;
+
 	void Start () 
 	{
 		endGameObj.SetActive(false);
 		gameStarted = false;
 		gameEnd = false;
 
+
+		currentMode = CurrentModeS.currentMode;						//get what mode to use.
+
+
+		//SetupMode();
+		
 		startCountdown = countdownRateMax;
 	}
 
+
+	void SetupMode()
+	{
+		currentMode = CurrentModeS.currentMode;
+			
+		//Begin by disabling all (for safety);
+/*		for (int i = 0; i < modeObjectOwners.Count-1; i++)
+		{
+			modeObjectOwners[i].SetActive(false);
+		}
+*/		
+			
+
+		switch (currentMode)										//Find parent object for desired mode and enable
+		{
+			case 0:
+				//enable Ecto Mode
+				//modeObjectOwners[0].SetActive (true);
+				scoreBarObj.GetComponent<ScoreBar>().scoreThreshold = scoreThresholdCollectoplaza; 
+				scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
+				break;
+
+			case 1:
+				print("ScoreKeeper setting up stock mode");
+				
+				
+				for (int i = 0; i < 4; i++) {						//Tell players how many lives they have
+					if (GlobalVars.characterNumber [i] != 0) {
+						PlayerS currentPlayer = GlobalVars.playerList [i].GetComponent<PlayerS> ();
+						currentPlayer.numLives = numberLives;
+						print ("Set lives to " + numberLives);
+						numPlayersLeft ++;								//Add to list of players remaining
+						playersPlaying[i] = true;
+					}
+					
+				}
+				
+				
+				break;
+
+			case 2:
+				break;
+
+			case 3:
+				break;
+
+			case -1:
+				print (" CurrMode = -1");
+				break;
+
+			default:
+				print("Default = " + currentMode);
+
+				break;
+		}
+
+
+
+		spawnedScoreboard = true; 
+			//Have mode owners set up everything?	
+		
+	}
 	
 	// Update is called once per frame
 	void Update () {
+		 
 
 		if (!spawnedScoreboard)
-			SpawnScoreboard (); 
+		{
+			SetupMode (); 
+		}
+
 
 		if(gameEnd)
 		{
@@ -101,37 +177,100 @@ public class ScoreKeeperS : MonoBehaviour {
 
 	}
 
+	void SpawnScoreboard()
+	{
 
+		//Spawn depending on which mode is active
+		if(currentMode == 0) //Collectoplaza mode
+		{
+
+			print ("(ScoreKeeperS)Spawning Scoreboard for Collectoplaza mode");
+		}
+		else if(currentMode == 1) //Stock Mode
+		{
+			print ("(ScoreKeeperS)Spawning Scoreboard for Stock mode");
+		}
+		else if(currentMode == 2) //Ghostball Mode
+		{
+			print ("(ScoreKeeperS)Spawning Scoreboard for Ghostball mode");
+		}
+
+		spawnedScoreboard = true; 
+		//print ("trying to set up scoreboard"); 
+	}
+
+	public void PlayerDied(PlayerS p, bool hasMoreLives)
+	{
+		
+		
+		if(currentMode == 1)
+		{	
+			
+			scoreBarObj.GetComponent<ScoreBar>().UpdateScoreboardStockMode(p);					//Update Scorebar
+			
+			if ( !hasMoreLives )																//If Eliminated...
+			{										
+				numPlayersLeft--;																//Decrement counter
+				playersPlaying[p.playerNum-1] = false;											//Update list of remaining players
+				print ("Player " + p.playerNum + " died!");
+				if (numPlayersLeft  == 1)														//If only one player remains left
+				{
+					for(int i = 0; i < 4 ; i ++)												//Find Winner
+					{
+						if (playersPlaying[i] == true)
+							winningPlayerNum = i + 1;											//Record Winning Player Number
+					}
+					SpawnEndScreen();															//Spawn  End Screen
+				}
+				else{
+					print ("Number of players left: " + numPlayersLeft);
+				}
+				
+				
+				//end the game
+				//SpawnEndScreen();
+			}
+			else
+			{
+				//Update Scorebar ??
+				
+			}
+			
+			
+		}
+	}
+	
 	void UpdateScoreboard()
 	{
-	
+		
 		for (int i = 0; i < 4; i++) {
 			if (GlobalVars.characterNumber [i] != 0) {
 				PlayerS currentPlayer = GlobalVars.playerList [i].GetComponent<PlayerS> ();
-
-				// for ecto mode
-				if (currentPlayer.score >= scoreThreshold 
-				    || currentPlayer.health-currentPlayer.startEctoNum >= scoreThreshold) {
-
-					gameEnd = true;
-					winningPlayerNum = i + 1;
-
-					SpawnEndScreen();
 				
+				// Endgame for Collectoplaza mode
+				if(currentMode == 0)
+				{
+					if (currentPlayer.score >= scoreThresholdCollectoplaza 
+					    || currentPlayer.health-currentPlayer.startEctoNum >= scoreThresholdCollectoplaza) {
+						
+						gameEnd = true;
+						winningPlayerNum = i + 1;
+						
+						SpawnEndScreen();
+						
+					}
+				}
+				// Stock Mode
+				else if(currentMode == 1)
+				{
+					//if player loses life
+				}
+				//Ghostball Mode
+				else if(currentMode == 2)
+				{
 				}
 			} 
 		}
-	}
-
-	void SpawnScoreboard()
-	{
-		spawnedScoreboard = true; 
-		//print ("trying to set up scoreboard"); 
-			
-		scoreBarObj.GetComponent<ScoreBar>().scoreThreshold = scoreThreshold; 
-		scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
-
-
 	}
 
 	void RepositionScoreboard()

@@ -51,7 +51,7 @@ public class ScoreBar : MonoBehaviour {
 	public void SpawnScoreboard()
 	{
 		isInitialized = true; 
-
+		
 		GameObject [] existingPlayers = GameObject.FindGameObjectsWithTag ("Player"); 
 
 		for(int i = 0; i < 4; i++)
@@ -195,7 +195,12 @@ public class ScoreBar : MonoBehaviour {
 	}
 	
 
+	public void UpdateScoreboardStockMode(PlayerS p)
+	{
+		//do things?
 
+		print("Updating Scoreboard for Stock Mode");
+	}
 
 
 }

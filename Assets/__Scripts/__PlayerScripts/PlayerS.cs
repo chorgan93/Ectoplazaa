@@ -97,9 +97,14 @@ public class PlayerS : MonoBehaviour {
 
 
 	public GameObject dangerObj;
+	public bool canRespawn = true;
 	public bool respawning = false;
 	public float respawnTimeMax = 1f;
 	private float respawnTimeCountdown;
+	private bool isDead = false;
+
+	[HideInInspector]//gets value from mode.
+	public int numLives = -1;
 
 	private Vector3 spawnPos;
 	public GameObject spawnPt;
@@ -288,6 +293,9 @@ public class PlayerS : MonoBehaviour {
 
 		startEctoNum = initialHealth; // for ecto mode tail generation
 
+		//Get number of lives (mode stuff)
+
+
 	}
 
 
@@ -306,8 +314,8 @@ public class PlayerS : MonoBehaviour {
 				respawnInvulnTime -= Time.deltaTime * TimeManagerS.timeMult;
 	
 	
-				// if game is active
-				if (!effectPause && !respawning) {
+				// if game is active 
+				if (!effectPause && !isDead) {
 	
 					// movement methods
 					CheckWallCast ();
@@ -325,7 +333,10 @@ public class PlayerS : MonoBehaviour {
 
 				MiscAction (); //TRAIL RENDERER UPDATE, OTHER THINGS
 	
-				Respawn (); // handles respawn during death
+				if(canRespawn)
+				{
+					Respawn (); // handles respawn during death
+				}
 	
 			}
 	
@@ -1313,60 +1324,60 @@ public class PlayerS : MonoBehaviour {
 
 		if (!groundDetect.Grounded()){
 
-		// first, check if player is touching a wall on either side
-		if (leftWallDetect.WallTouching()){
+			// first, check if player is touching a wall on either side
+			if (leftWallDetect.WallTouching()){
 
-			// trigger "cling" if player is tilting stick towards wall
-			if (Input.GetAxis("HorizontalPlayer" + playerNum + platformType) < 0){
+				// trigger "cling" if player is tilting stick towards wall
+				if (Input.GetAxis("HorizontalPlayer" + playerNum + platformType) < 0){
 
-				clingingToWall = true;
+					clingingToWall = true;
 
 
-			}
-
-		}
-
-		if (rightWallDetect.WallTouching()){
-
-			// trigger "cling" if player is tilting stick towards wall
-			if (Input.GetAxis("HorizontalPlayer" + playerNum + platformType) > 0){
-				
-				clingingToWall = true;
-				
-				
-			}
-			
-		}
-
-		if (clingingToWall){
-
-			// start applying cling force against gravity
-			Vector3 clingForce = Vector3.zero;
-			clingForce.y = wallDragForce*Time.deltaTime*TimeManagerS.timeMult;
-			ownRigid.AddForce(clingForce);
-			
-			// check for button press to trigger wall jump
-			if (Input.GetButton("AButtonPlayer"+playerNum+platformType)){
-				Vector3 jumpForce = Vector3.zero;
-
-				// apply x force in opposite direction of wall
-				if (leftWallDetect.WallTouching()){
-					jumpForce.x = wallJumpXForce;
-				}
-				if (rightWallDetect.WallTouching()){
-					jumpForce.x = -wallJumpXForce;
 				}
 
-				// apply normal y jump force
-				jumpForce.y = jumpSpeed;
-
-				jumpForce *= Time.deltaTime;
-
-				ownRigid.AddForce(jumpForce);
-
-				clingingToWall = false;
 			}
-		}
+
+			if (rightWallDetect.WallTouching()){
+
+				// trigger "cling" if player is tilting stick towards wall
+				if (Input.GetAxis("HorizontalPlayer" + playerNum + platformType) > 0){
+					
+					clingingToWall = true;
+					
+					
+				}
+				
+			}
+
+			if (clingingToWall){
+
+				// start applying cling force against gravity
+				Vector3 clingForce = Vector3.zero;
+				clingForce.y = wallDragForce*Time.deltaTime*TimeManagerS.timeMult;
+				ownRigid.AddForce(clingForce);
+				
+				// check for button press to trigger wall jump
+				if (Input.GetButton("AButtonPlayer"+playerNum+platformType)){
+					Vector3 jumpForce = Vector3.zero;
+
+					// apply x force in opposite direction of wall
+					if (leftWallDetect.WallTouching()){
+						jumpForce.x = wallJumpXForce;
+					}
+					if (rightWallDetect.WallTouching()){
+						jumpForce.x = -wallJumpXForce;
+					}
+
+					// apply normal y jump force
+					jumpForce.y = jumpSpeed;
+
+					jumpForce *= Time.deltaTime;
+
+					ownRigid.AddForce(jumpForce);
+
+					clingingToWall = false;
+				}
+			}
 		}
 		else{
 			clingingToWall = false;
@@ -1443,18 +1454,43 @@ public class PlayerS : MonoBehaviour {
 
 	}
 
+
+
 	void Respawn () {
 
+
 		if (respawning){
+
+			//Disable player actions and physics
+			ownRigid.useGravity = false;
+			ownRigid.velocity = Vector3.zero;
+			//dangerObj.SetActive(false);
+			
+			//Halt collisions
+			GetComponent<Collider>().enabled = false;
+			
+			//Take Away Control
+			stretching = false;
+			isDangerous = false;
+			jumpButtonDown = false;
+			stretchButtonDown = false;
+			charging = false;
+			attacking = false;
+			chargeTime = 0;
+			canAirStrafe = true;
+			
 			if(respawnTimeCountdown == respawnTimeMax)
 			{
+
+
+
+				//VISUAL EFFECTS
+				//Eliminate any current 
 				if(chargingParticles!= null)
 				{
 					GameObject.Destroy(chargingParticles.gameObject); 
 				}
-				respawnParticles = Instantiate(respawnParticlePrefab, this.transform.position, Quaternion.identity) as GameObject;
-				respawnParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[characterNum - 1].GetColor("_TintColor");
-				respawnParticles.GetComponent<ParticleSystem>().startLifetime = respawnTimeCountdown;
+
 
 				deathPos = this.transform.position; 
 
@@ -1477,34 +1513,21 @@ public class PlayerS : MonoBehaviour {
 			}
 
 
-			if(respawnParticles!= null)
+			if(respawnParticles != null)
 				respawnParticles.transform.position = Vector3.Lerp(deathPos, this.transform.position, respawnParticles.GetComponent<ParticleSystem>().time/respawnTimeMax); 
-
-
-			respawnTimeCountdown -= Time.deltaTime*TimeManagerS.timeMult;
-			ownRigid.useGravity = false;
-			ownRigid.velocity = Vector3.zero;
-			//dangerObj.SetActive(false);
-
-			GetComponent<Collider>().enabled = false;
-
-			stretching = false;
-			isDangerous = false;
-			jumpButtonDown = false;
-			stretchButtonDown = false;
-			charging = false;
-			attacking = false;
-			chargeTime = 0;
-
-			canAirStrafe = true;
-
-			//if (placedDots
-
+			
+			
+			
 			if (!effectPause){
 				spriteObjRender.enabled = false;
 			}
-			if (respawnTimeCountdown <= 0){
+
+			//Give back control - should probably be converted to alternate thread -- ienumerator?
+			if (respawnTimeCountdown <= 0 && numLives != 0){
 				Instantiate(spawnParticlePrefab,this.transform.position, Quaternion.identity); 
+				respawnParticles = Instantiate(respawnParticlePrefab, this.transform.position, Quaternion.identity) as GameObject;
+				respawnParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[characterNum - 1].GetColor("_TintColor");
+				respawnParticles.GetComponent<ParticleSystem>().startLifetime = respawnTimeCountdown;
 
 				GetComponent<Collider>().enabled = true;
 				spriteObjRender.enabled = true;
@@ -1520,7 +1543,20 @@ public class PlayerS : MonoBehaviour {
 				//DisableAttacks(); 
 
 				soundSource.PlayCharIntroSound();
+
+				//no longer dead
+				isDead = false;
 			}
+
+
+
+			//Countdown
+			respawnTimeCountdown -= Time.deltaTime*TimeManagerS.timeMult;
+			
+
+
+
+			
 		}
 
 	}
@@ -1530,18 +1566,44 @@ public class PlayerS : MonoBehaviour {
 		hurtCounter = hurtTimer; 
 
 		if (health <= 0){
-			GetComponent<TrailHandlerRedubS>().DestroyPlayerDots(); 
 
-			respawning = true;
-			respawnTimeCountdown = respawnTimeMax;
+
+			numLives --; 			//Decrement Counter
+
+			GetComponent<TrailHandlerRedubS>().DestroyPlayerDots(); 
+		
+			UpdateScorekeeper(); 	//Have scorekeeper update (and update UI)
+			//if(numLives != 0)
+			//{
+				respawning = true;
+				respawnTimeCountdown = respawnTimeMax;
+				//canRespawn = false;
+				
+				
+
+			//}
+			if(numLives == 0)
+				this.gameObject.SetActive(false);
+
+		
 
 			Instantiate(deathParticles, this.transform.position, Quaternion.identity); 
 			soundSource.PlayDeathSounds();
 
 
+
 		}
 	}
+	void UpdateScorekeeper()
+	{
+		
 
+		bool hasMoreLives = (numLives != 0);
+		ScoreKeeperS scoreKeeper = FindObjectOfType<Camera>().GetComponent<ScoreKeeperS>() as ScoreKeeperS;
+		scoreKeeper.PlayerDied(this, hasMoreLives);
+
+	
+	}
 	public void InstantiateDeathParticles(){
 		
 		Instantiate(deathParticles, this.transform.position, Quaternion.identity); 
