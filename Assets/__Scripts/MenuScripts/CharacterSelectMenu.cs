@@ -425,7 +425,8 @@ public class CharacterSelectMenu : MonoBehaviour {
 				{
 					if(players[j] != null)
 					{
-						GlobalVars.characterNumber[j] = players[j].GetComponent<PlayerS>().characterNum; 
+								GlobalVars.characterNumber[j] = players[j].GetComponent<PlayerS>().characterNum;
+								GlobalVars.colorNumber[j] = players[j].GetComponent<PlayerS>().colorNum;  
 					}
 					else
 					{
