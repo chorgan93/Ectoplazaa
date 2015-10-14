@@ -240,6 +240,9 @@ public class PlayerS : MonoBehaviour {
 	private float dodgeDrag = 12;
 	//private float chompRad = 10f;
 
+	//[HideInInspector]
+	public bool nonActive = false; // total disable of character, just show -- for character select screen
+
 
 
 	// Use this for initialization
@@ -293,6 +296,8 @@ public class PlayerS : MonoBehaviour {
 
 	void FixedUpdate () {
 
+		if (!nonActive){
+
 		ManageCharge();
 		//BackToMenu();
 
@@ -343,6 +348,8 @@ public class PlayerS : MonoBehaviour {
 		{
 				//TakeDamage(100000f);
 		}*/
+
+		}
 	
 	}
 

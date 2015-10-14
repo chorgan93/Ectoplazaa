@@ -8,7 +8,8 @@ public class CharacterSelectMenu : MonoBehaviour {
 	string platformType; 
 	int playerNum = 1; 
 
-	public bool[] hasJoined = new bool[4];
+	public bool[] hasJoined = new bool[4]; // for inital # of player select
+	public bool[] hasSelected = new bool[4]; // adding extra step of character select
 	public GameObject [] joinTexts; 
 	public GameObject [] spawnPoints;
 	public GameObject [] characterNumText; 
@@ -27,7 +28,20 @@ public class CharacterSelectMenu : MonoBehaviour {
 	private bool startedLoading = false;
 	AsyncOperation async;
 
+
+	// description texts for each character (name and ability)
+	private string character1Text;
+	private string character2Text;
+	private string character3Text;
+	private string character4Text;
+
 	public GameObject selectSFXObj;
+	
+	// to make sure we're only reading button taps
+	private bool [] buttonDown = new bool[4];
+	private bool [] yButtonDown = new bool[4];
+	private bool [] selectUp = new bool[4];
+	private float selectThreshold = 0.2f;
 
 	int totalPlayers = 0; 
 
@@ -80,18 +94,39 @@ public class CharacterSelectMenu : MonoBehaviour {
 
 		for(int i = 1; i <= 4; i++)
 		{
-			if (Input.GetButton ("AButtonPlayer" + i + platformType))  //ADD PLAYER---------------------------------------
+
+					// A BUTTON CODE, FOR SELECTION
+
+			if (Input.GetButton ("AButtonPlayer" + i + platformType) && !buttonDown[i-1])  //ADD PLAYER---------------------------------------
 			{
 
-				//print ("AButtonPlayer" + i + platformType);
+						// press button
+						buttonDown[i-1] = true;
 
-				if(!hasJoined[i-1])
+				//print ("AButtonPlayer" + i + platformType);
+						
+						//  for actual character selection (after player buys in)
+						if (!hasSelected[i-1] && hasJoined[i-1]){
+							
+							// a to confirm and add
+							players[i-1].GetComponent<PlayerS>().nonActive = false;
+							players[i-1].GetComponent<Rigidbody>().useGravity = true;
+							
+							hasSelected[i-1] = true;
+							
+							// play char intro sound
+							totalPlayers ++;
+							players[i-1].GetComponent<PlayerSoundS>().PlayPlayerJoinSound(totalPlayers-1);
+
+							
+						}
+				else if(!hasJoined[i-1])
 				{
 					int defaultSkin = 0; 
 
 					if(totalPlayers == 0)
 					{
-						print("First Player Skinned"); 
+						//print("First Player Skinned"); 
 						defaultSkin = 1; 
 					}
 					else
@@ -129,17 +164,24 @@ public class CharacterSelectMenu : MonoBehaviour {
 					characterNumText[i-1].GetComponent<TextMesh>().text = "characterNum: " + defaultSkin;
 
 					hasJoined[i-1] = true; 
-					totalPlayers += 1; 
+					//totalPlayers += 1; 
 
-					GameObject newPlayer = Instantiate(playerPrefab,spawnPoints[i-1].transform.position,Quaternion.identity) as GameObject;
-					newPlayer.GetComponent<PlayerS>().playerNum = i;
-					newPlayer.GetComponent<PlayerS>().characterNum = defaultSkin;
-					newPlayer.GetComponent<PlayerS>().SetSkin(); 
+					GameObject newPlayer = Instantiate(playerPrefab,spawnPoints[i-1].transform.position,Quaternion.identity) 
+								as GameObject;
+							PlayerS newPlayerS = newPlayer.GetComponent<PlayerS>();
+					newPlayerS.playerNum = i;
+							newPlayerS.characterNum = defaultSkin;
+							newPlayerS.respawnInvulnTime = 0;
+					newPlayerS.SetSkin(); 
 
-					newPlayer.GetComponent<PlayerS>().spawnPt = spawnPoints[i-1];
+					newPlayerS.spawnPt = spawnPoints[i-1];
 					players[i-1] = newPlayer; 
 					//joinTexts[i-1].GetComponent<Renderer>().enabled = false; 
 					//print("Total Players: " + totalPlayers); 
+
+							// disable player before second selection
+							newPlayerS.nonActive = true;
+							newPlayerS.GetComponent<Rigidbody>().useGravity = false;
 
 					Renderer [] renderers = joinTexts[i-1].GetComponentsInChildren<Renderer>();
 
@@ -151,17 +193,24 @@ public class CharacterSelectMenu : MonoBehaviour {
 					
 					// play char intro sound
 					//players[i-1].GetComponent<PlayerSoundS>().PlayCharIntroSound();
-					players[i-1].GetComponent<PlayerSoundS>().PlayPlayerJoinSound(totalPlayers-1);
+					//players[i-1].GetComponent<PlayerSoundS>().PlayPlayerJoinSound(totalPlayers-1);
 					//print (players[i-1].GetComponent<PlayerS>().characterNum);
 				
 				
 				}
 			}
-			else if (Input.GetButton ("BButtonPlayer" + i + platformType)) //REMOVE PLAYER---------------------------------------
+					if(!Input.GetButton ("AButtonPlayer" + i + platformType)){
+						buttonDown[i-1] = false;
+					}
+
+					// B BUTTON CODE, FOR DESELECTION
+
+			 if (Input.GetButton ("BButtonPlayer" + i + platformType)) //REMOVE PLAYER---------------------------------------
 			{
 				if(hasJoined[i-1])
 				{
 					hasJoined[i-1] = false; 
+							hasSelected[i-1] = false;
 					totalPlayers -= 1; 
 
 					GameObject.Destroy( players[i-1].gameObject);
@@ -179,8 +228,122 @@ public class CharacterSelectMenu : MonoBehaviour {
 					}
 				}
 			}
-			else if (Input.GetButtonDown ("YButtonPlayer" + i + platformType))
+
+					// LEFT SELECT CODE, FOR CHANGING CHARACTER
+					if (Input.GetAxis("HorizontalPlayer" + i + platformType) < -selectThreshold && !selectUp[i-1]){
+						selectUp [i-1] = true;
+
+						// reappropriating Old Y Code for Character Select
+						if(hasJoined[i-1] && !hasSelected[i-1])
+						{
+							
+							int newSkin = players[i-1].GetComponent<PlayerS>().characterNum; 
+							bool stopLoop = false;
+							
+							for(int j= 1; j <= GlobalVars.totalSkins; j++) //loop once through all skins
+							{
+								newSkin -= 1; //increment to next skin, check if available; 
+								if(newSkin < 1) //loop if at end of skins
+									newSkin = GlobalVars.totalSkins; 
+								
+								bool flag = false; 
+								
+								foreach(GameObject p in players)
+								{
+									if(p != null)
+									{
+										if(p.GetComponent<PlayerS>().characterNum != newSkin)
+											continue;
+										else
+										{
+											flag = true;
+											break;
+										}
+									}
+								}
+								
+								if(!flag)
+									break;
+								
+							}
+							
+							
+							characterNumText[i-1].GetComponent<TextMesh>().text = "characterNum: " + newSkin;
+							
+							
+							players[i-1].GetComponent<PlayerS>().characterNum = newSkin;
+							players[i-1].GetComponent<PlayerS>().SetSkin();
+							
+							
+							// play char intro sound
+							//players[i-1].GetComponent<PlayerSoundS>().PlayCharIntroSound();
+							players[i-1].GetComponent<PlayerSoundS>().PlayCharIntroSoundQuickFix();
+						}
+					}
+					// RIGHT SELECT CODE, FOR CHANGING CHARACTER
+					if (Input.GetAxis("HorizontalPlayer" + i + platformType) > selectThreshold && !selectUp[i-1]){
+						selectUp [i-1] = true;
+
+						// reappropriating Old Y Code for Character Select
+						if(hasJoined[i-1] && !hasSelected[i-1])
+						{
+							
+							int newSkin = players[i-1].GetComponent<PlayerS>().characterNum; 
+							bool stopLoop = false;
+							
+							for(int j= 1; j <= GlobalVars.totalSkins; j++) //loop once through all skins
+							{
+								newSkin += 1; //increment to next skin, check if available; 
+								if(newSkin > GlobalVars.totalSkins) //loop if at end of skins
+									newSkin = 1; 
+								
+								bool flag = false; 
+								
+								foreach(GameObject p in players)
+								{
+									if(p != null)
+									{
+										if(p.GetComponent<PlayerS>().characterNum != newSkin)
+											continue;
+										else
+										{
+											flag = true;
+											break;
+										}
+									}
+								}
+								
+								if(!flag)
+									break;
+								
+							}
+							
+							
+							characterNumText[i-1].GetComponent<TextMesh>().text = "characterNum: " + newSkin;
+							
+							
+							players[i-1].GetComponent<PlayerS>().characterNum = newSkin;
+							players[i-1].GetComponent<PlayerS>().SetSkin();
+							
+							
+							// play char intro sound
+							//players[i-1].GetComponent<PlayerSoundS>().PlayCharIntroSound();
+							players[i-1].GetComponent<PlayerSoundS>().PlayCharIntroSoundQuickFix();
+						}
+					}
+					// FOR ANALOG AT ZERO
+					if (Mathf.Abs(Input.GetAxis("HorizontalPlayer" + i + platformType)) < selectThreshold) {
+						selectUp[i-1] = false;
+					}
+
+					// Y BUTTON CODE, FOR CHANGING COLOR (not active yet)
+
+			if (Input.GetButton ("YButtonPlayer" + i + platformType) && !yButtonDown[i-1])
 			{
+
+						yButtonDown[i-1] = true;
+
+						/*
 				if(hasJoined[i-1])
 				{
 
@@ -226,11 +389,17 @@ public class CharacterSelectMenu : MonoBehaviour {
 							//players[i-1].GetComponent<PlayerSoundS>().PlayCharIntroSound();
 							players[i-1].GetComponent<PlayerSoundS>().PlayCharIntroSoundQuickFix();
 				}
+						 */
 
 
 			}
+					if(!Input.GetButton ("YButtonPlayer" + i + platformType)){
+						yButtonDown[i-1] = false;
+					}
 
-			else if (Input.GetButton ("StartButtonAllPlayers"+ platformType) && totalPlayers >= 2) //START GAME---------------------------------------
+					// START BUTTON CODE FOR GAME START
+
+			if (Input.GetButton ("StartButtonAllPlayers"+ platformType) && totalPlayers >= 2) //START GAME---------------------------------------
 			{
 				//SET GLOBAL VARS
 				GlobalVars.totalPlayers = totalPlayers; 

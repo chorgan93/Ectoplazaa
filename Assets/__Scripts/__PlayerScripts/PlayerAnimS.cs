@@ -339,6 +339,10 @@ public class PlayerAnimS : MonoBehaviour {
 			if (headRigid.velocity.x < 0){
 				//rotateZHead += 180;
 			}
+			// when not active in character select, be at rotation 0
+			if (playerRef.nonActive){
+				rotateZHead = 0;
+			}
 			
 			headRender.transform.rotation = Quaternion.Euler(new Vector3(0,0,rotateZHead));
 
@@ -357,6 +361,8 @@ public class PlayerAnimS : MonoBehaviour {
 			if (tailRigid.velocity.x < 0){
 				//rotateZTail += 180;
 			}
+
+
 			
 			//tailRender.transform.rotation = Quaternion.Euler(new Vector3(0,0,rotateZTail));
 			
