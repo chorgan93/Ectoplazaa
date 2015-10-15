@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class ChompColliderS : MonoBehaviour {
 
@@ -10,10 +11,13 @@ public class ChompColliderS : MonoBehaviour {
 
 	//private Rigidbody ownRigid;
 	private Collider ownCollider;
-	// for testing purposes only
-	private Renderer ownRender;
-	public Color inactiveColor;
-	public Color activeColor;
+
+	private SpriteRenderer ownRender;
+	public List<Sprite> animFrames;
+	private int currentSprite;
+	private float animRateMax;
+	private float animCountdown;
+
 
 	private float pauseTime = 0.03f;
 
@@ -31,11 +35,24 @@ public class ChompColliderS : MonoBehaviour {
 
 	private PlayerS playerRef; // the player that created me
 
+	public GameObject sfxChargeUpObj;
+	
+	public GameObject sfxAttackObj;
+
 	void Start () {
 
-		ownRender = GetComponent<Renderer>();
+		ownRender = GetComponent<SpriteRenderer>();
 		ownCollider = GetComponent<Collider>();
-		ownRender.material.color = inactiveColor;
+		ownCollider.enabled = false;
+
+
+		animCountdown = animRateMax = lifeTime/animFrames.Count;
+		ownRender.sprite = animFrames[currentSprite];
+
+		
+		Instantiate(sfxChargeUpObj,transform.position,Quaternion.identity);
+
+
 	}
 
 
@@ -43,10 +60,25 @@ public class ChompColliderS : MonoBehaviour {
 	void FixedUpdate () {
 	
 		if (!TimeManagerS.paused){
+
+			animCountdown -= Time.deltaTime*TimeManagerS.timeMult;
+			if (animCountdown <= 0){
+				currentSprite++;
+				if (currentSprite > animFrames.Count-1){
+					currentSprite = animFrames.Count-1;
+				}
+				animCountdown = animRateMax;
+
+				ownRender.sprite = animFrames[currentSprite];
+			}
+
 			inactiveTime -= Time.deltaTime*TimeManagerS.timeMult;
 			if (inactiveTime <= 0){
-				ownRender.material.color = activeColor;
-				ownCollider.enabled = true;
+				if (!ownCollider.enabled){
+					ownCollider.enabled = true;
+					Instantiate(sfxAttackObj,transform.position,Quaternion.identity);
+					CameraShakeS.C.MicroShake();
+				}
 			}
 
 			lifeTime -= Time.deltaTime*TimeManagerS.timeMult;
@@ -81,10 +113,17 @@ public class ChompColliderS : MonoBehaviour {
 		
 		
 		if (attackDir.x < 0){
-			//rotateZ += 180;
+			rotateZ += 180;
+			if (transform.rotation.z > 270 || transform.rotation.z < 90){
+				Vector3 flipSize = transform.localScale;
+				flipSize.y *= -1;
+				transform.localScale = flipSize;
+			}
 		}
 		
 		transform.rotation = Quaternion.Euler(new Vector3(0,0,rotateZ));
+
+
 
 		//ownRigid.AddForce(newDir*attackSpeed*Time.deltaTime, ForceMode.Impulse);
 
