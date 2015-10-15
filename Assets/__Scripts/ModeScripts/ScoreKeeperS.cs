@@ -220,6 +220,7 @@ public class ScoreKeeperS : MonoBehaviour {
 						if (playersPlaying[i] == true)
 							winningPlayerNum = i + 1;											//Record Winning Player Number
 					}
+					gameEnd = true; // trigger end bool
 					SpawnEndScreen();															//Spawn  End Screen
 				}
 				else{
@@ -401,8 +402,7 @@ public class ScoreKeeperS : MonoBehaviour {
 	{
 
 
-		// once gameEnd is on, start countdown
-		// restart map on countdown (replace this once menu infrastructure is in place
+		// once gameEnd is on, 
 
 
 
