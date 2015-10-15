@@ -17,7 +17,7 @@ public class DamageS : MonoBehaviour {
 	public GameObject hitEffectObj;
 	public GameObject hitEffectFastObj;
 
-	private float collSizeMult = 2.25f;
+	private float collSizeMult = 1.75f;
 	private Vector3 startSize;
 
 	private int startPhysicsLayer;
@@ -88,7 +88,7 @@ public class DamageS : MonoBehaviour {
 				PlayerS otherPlayer = other.gameObject.GetComponent<PlayerS> ();
 
 				if (otherPlayer != playerRef){
-					print("HIT PLAYER " +  otherPlayer.playerNum); 
+					//print("HIT PLAYER " +  otherPlayer.playerNum); 
 					
 					if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0) {
 						// only deal damage if higher priority or other player isnt attacking
@@ -160,7 +160,7 @@ public class DamageS : MonoBehaviour {
 					}
 					
 					//playerRef.DisableAttacks ();
-					otherPlayer.DisableAttacks();
+					//otherPlayer.DisableAttacks();
 				}
 			}
 			

@@ -36,6 +36,8 @@ public class AimObjS : MonoBehaviour {
 
 		lv2Min = playerRef.GetChargeLv2Min();
 		lv3Min = playerRef.GetChargeLv3Min();
+		
+		chargeBarSprite.GetComponent<SpriteRenderer>().enabled = false; 
 	
 	}
 	

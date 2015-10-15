@@ -45,6 +45,27 @@ public class PlayerAnimS : MonoBehaviour {
 	public Sprite [] acidHeadSprites, acidTailSprites; 
 	public Sprite [] pinkHeadSprites, pinkTailSprites; 
 
+	// add alt color sprites
+
+	[HideInInspector]
+	public int myColor = 0;
+
+	public Sprite [] ninjaHeadSpritesB, ninjaTailSpritesB;
+	public Sprite [] mummyHeadSpritesB, mummyTailSpritesB; 
+	public Sprite [] acidHeadSpritesB, acidTailSpritesB; 
+	public Sprite [] pinkHeadSpritesB, pinkTailSpritesB; 
+	
+	public Sprite [] ninjaHeadSpritesC, ninjaTailSpritesC;
+	public Sprite [] mummyHeadSpritesC, mummyTailSpritesC; 
+	public Sprite [] acidHeadSpritesC, acidTailSpritesC; 
+	public Sprite [] pinkHeadSpritesC, pinkTailSpritesC;
+
+	public Sprite [] ninjaHeadSpritesD, ninjaTailSpritesD;
+	public Sprite [] mummyHeadSpritesD, mummyTailSpritesD; 
+	public Sprite [] acidHeadSpritesD, acidTailSpritesD; 
+	public Sprite [] pinkHeadSpritesD, pinkTailSpritesD;
+
+
 	public int myCharNum;
 
 	public Sprite [] currentHeadSprites, currentTailSprites;
@@ -103,7 +124,7 @@ public class PlayerAnimS : MonoBehaviour {
 			currentHeadSprites = ninjaHeadSprites;
 			currentTailSprites = ninjaTailSprites; 
 		} else
-			SetCurrentSprites (playerRef.characterNum);
+			SetCurrentSprites (playerRef.characterNum, playerRef.colorNum);
 
 
 	
@@ -241,6 +262,7 @@ public class PlayerAnimS : MonoBehaviour {
 					isJumping = false;
 				}
 			}
+
 			
 			headRender.sprite =currentHeadSprites[currentJumpFrame];
 			// set tail frame if tail is not turning
@@ -339,6 +361,10 @@ public class PlayerAnimS : MonoBehaviour {
 			if (headRigid.velocity.x < 0){
 				//rotateZHead += 180;
 			}
+			// when not active in character select, be at rotation 0
+			if (playerRef.nonActive){
+				rotateZHead = 0;
+			}
 			
 			headRender.transform.rotation = Quaternion.Euler(new Vector3(0,0,rotateZHead));
 
@@ -357,6 +383,8 @@ public class PlayerAnimS : MonoBehaviour {
 			if (tailRigid.velocity.x < 0){
 				//rotateZTail += 180;
 			}
+
+
 			
 			//tailRender.transform.rotation = Quaternion.Euler(new Vector3(0,0,rotateZTail));
 			
@@ -375,30 +403,91 @@ public class PlayerAnimS : MonoBehaviour {
 
 	}
 
-	public void SetCurrentSprites (int characterNumber)
+	public void SetCurrentSprites (int characterNumber, int colorNum)
 	{
 
 
 		myCharNum = characterNumber;
+		myColor = colorNum;
 
+		// Ninja sprite sets
 		if (characterNumber == 1) {
-			currentHeadSprites = ninjaHeadSprites;
-			currentTailSprites= ninjaTailSprites; 
+			if (myColor == 3){
+				currentHeadSprites = ninjaHeadSpritesD;
+				currentTailSprites= ninjaTailSprites; 
+			}
+			else if (myColor == 2){
+				currentHeadSprites = ninjaHeadSpritesC;
+				currentTailSprites= ninjaTailSprites; 
+			}
+			else if (myColor == 1){
+				currentHeadSprites = ninjaHeadSpritesB;
+				currentTailSprites= ninjaTailSprites; 
+			}
+			else{
+				currentHeadSprites = ninjaHeadSprites;
+				currentTailSprites= ninjaTailSprites; 
+			}
 
 		}
+		// Acidmouth sprite sets
 		else if (characterNumber == 2) {
-			currentHeadSprites = acidHeadSprites;
-			currentTailSprites= acidTailSprites; 
+			if (myColor == 3){
+				currentHeadSprites = acidHeadSpritesD;
+				currentTailSprites= acidTailSprites;
+			}
+			else if (myColor == 2){
+				currentHeadSprites = acidHeadSpritesC;
+				currentTailSprites= acidTailSprites;
+			}
+			else if (myColor == 1){
+				currentHeadSprites = acidHeadSpritesB;
+				currentTailSprites= acidTailSprites;
+			}
+			else{
+				currentHeadSprites = acidHeadSprites;
+				currentTailSprites= acidTailSprites;
+			}
 			
 		}
+		// Mr Wraps sprite sets
 		else if (characterNumber == 3) {
-			currentHeadSprites = mummyHeadSprites;
-			currentTailSprites= mummyTailSprites; 
+			if (myColor == 3){
+				currentHeadSprites = mummyHeadSpritesD;
+				currentTailSprites= mummyTailSprites;
+			}
+			else if (myColor == 2){
+				currentHeadSprites = mummyHeadSpritesC;
+				currentTailSprites= mummyTailSprites;
+			}
+			else if (myColor == 1){
+				currentHeadSprites = mummyHeadSpritesB;
+				currentTailSprites= mummyTailSprites;
+			}
+			else{
+				currentHeadSprites = mummyHeadSprites;
+				currentTailSprites= mummyTailSprites;
+			}
 			
 		}
+		// 
 		else if (characterNumber == 4) {
-			currentHeadSprites = pinkHeadSprites;
-			currentTailSprites= pinkTailSprites; 
+			if (myColor == 3){
+				currentHeadSprites = pinkHeadSpritesD;
+				currentTailSprites= pinkTailSprites; 
+			}
+			else if (myColor == 2){
+				currentHeadSprites = pinkHeadSpritesC;
+				currentTailSprites= pinkTailSprites; 
+			}
+			else if (myColor == 1){
+				currentHeadSprites = pinkHeadSpritesB;
+				currentTailSprites= pinkTailSprites; 
+			}
+			else{
+				currentHeadSprites = pinkHeadSprites;
+				currentTailSprites= pinkTailSprites; 
+			}
 			
 		}
 	}
