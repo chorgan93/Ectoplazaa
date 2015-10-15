@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class AdaptiveCameraPtS : MonoBehaviour {
 
 	public List<Transform> playerPositions;
+	public List<PlayerS> playerRefs;
 	public List<Transform> hitPositions;
 	private Vector3 hitCenter;
 	public Transform centerPt;
@@ -45,6 +46,7 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 		GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
 		for (int i = 0; i < players.Length; i++){
 			playerPositions.Add(players[i].transform);
+			playerRefs.Add(players[i].GetComponent<PlayerS>());
 		}
 	}
 
@@ -101,6 +103,20 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 
 
 	
+	}
+
+	void LateUpdate () {
+
+		// remove players who are out of lives or out of the game
+		if (CurrentModeS.currentMode == 1){
+			for (int i = 0; i < playerRefs.Count; i++){
+				if (playerRefs[i].numLives <= 0){
+					playerRefs.RemoveAt(i);
+					playerPositions.RemoveAt(i);
+				}
+			}
+		}
+
 	}
 
 	void SetCamMult () {

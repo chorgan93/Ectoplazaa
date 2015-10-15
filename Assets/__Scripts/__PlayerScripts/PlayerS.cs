@@ -1544,9 +1544,6 @@ public class PlayerS : MonoBehaviour {
 			//Give back control - should probably be converted to alternate thread -- ienumerator?
 			if (respawnTimeCountdown <= 0 && numLives != 0){
 				Instantiate(spawnParticlePrefab,this.transform.position, Quaternion.identity); 
-				respawnParticles = Instantiate(respawnParticlePrefab, this.transform.position, Quaternion.identity) as GameObject;
-				respawnParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[characterNum - 1].GetColor("_TintColor");
-				respawnParticles.GetComponent<ParticleSystem>().startLifetime = respawnTimeCountdown;
 				
 				GetComponent<Collider>().enabled = true;
 				spriteObjRender.enabled = true;
@@ -1603,7 +1600,11 @@ public class PlayerS : MonoBehaviour {
 			//}
 			if(numLives == 0)
 				this.gameObject.SetActive(false);
-			
+			else{
+				respawnParticles = Instantiate(respawnParticlePrefab, this.transform.position, Quaternion.identity) as GameObject;
+				respawnParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[characterNum - 1].GetColor("_TintColor");
+				respawnParticles.GetComponent<ParticleSystem>().startLifetime = respawnTimeCountdown;
+			}
 			
 			
 			Instantiate(deathParticles, this.transform.position, Quaternion.identity); 
