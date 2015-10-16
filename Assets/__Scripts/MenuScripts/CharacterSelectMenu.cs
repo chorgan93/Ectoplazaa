@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class CharacterSelectMenu : MonoBehaviour {
 
@@ -7,12 +8,15 @@ public class CharacterSelectMenu : MonoBehaviour {
 
 	string platformType; 
 	int playerNum = 1; 
+	int playersChoosing = 0;
 
 	public bool[] hasJoined = new bool[4]; // for inital # of player select
 	public bool[] hasSelected = new bool[4]; // adding extra step of character select
 	public GameObject [] joinTexts; 
 	public GameObject [] spawnPoints;
 	public GameObject [] characterNumText; 
+
+	public List<GameObject> blackScreens;
 
 	GameObject [] players = new GameObject[4]; 
 
@@ -86,16 +90,30 @@ public class CharacterSelectMenu : MonoBehaviour {
 				CameraShakeS.C.DisableShaking();
 		}
 		else{
+				// back function, only leave if no one has joined
+				playersChoosing = 0;
+				for (int j = 0; j < 4; j++){
+					
+					if (hasJoined[j]){
+						playersChoosing++;
+					}
+				}
 
-		// back function
-		if (Input.GetButtonDown("BButtonAllPlayers" + platformType) && totalPlayers == 0){
-			Application.LoadLevel(backSceneString);
-		}
+				if (Input.GetButtonDown("BButtonAllPlayers" + platformType)){
+					if (totalPlayers == 0 && playersChoosing ==0){
+						Application.LoadLevel(backSceneString);
+					}
+				}
+				
+
+
 
 		for(int i = 1; i <= 4; i++)
 		{
 
+
 					// A BUTTON CODE, FOR SELECTION
+
 
 			if (Input.GetButton ("AButtonPlayer" + i + platformType) && !buttonDown[i-1])  //ADD PLAYER---------------------------------------
 			{
@@ -107,16 +125,20 @@ public class CharacterSelectMenu : MonoBehaviour {
 						
 						//  for actual character selection (after player buys in)
 						if (!hasSelected[i-1] && hasJoined[i-1]){
+
 							
 							// a to confirm and add
 							players[i-1].GetComponent<PlayerS>().nonActive = false;
 							players[i-1].GetComponent<Rigidbody>().useGravity = true;
 							
 							hasSelected[i-1] = true;
+
+							// take out the black overlay
+							blackScreens[i-1].SetActive(false);
 							
 							// play char intro sound
 							totalPlayers ++;
-							players[i-1].GetComponent<PlayerSoundS>().PlayPlayerJoinSound(totalPlayers-1);
+							//players[i-1].GetComponent<PlayerSoundS>().PlayPlayerJoinSound(totalPlayers);
 
 							
 						}
@@ -192,6 +214,9 @@ public class CharacterSelectMenu : MonoBehaviour {
 							newPlayerS.nonActive = true;
 							newPlayerS.GetComponent<Rigidbody>().useGravity = false;
 
+							// add in the black overlay
+							blackScreens[i-1].SetActive(true);
+
 					Renderer [] renderers = joinTexts[i-1].GetComponentsInChildren<Renderer>();
 
 					foreach(Renderer r in renderers)
@@ -224,6 +249,9 @@ public class CharacterSelectMenu : MonoBehaviour {
 
 					GameObject.Destroy( players[i-1].gameObject);
 					players[i-1]= null; 
+
+							// take out the black overlay
+							blackScreens[i-1].SetActive(false);
 
 					//print("Total Players: " + totalPlayers); 
 
@@ -366,7 +394,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 						yButtonDown[i-1] = true;
 
 
-				if(hasJoined[i-1])
+				if(hasJoined[i-1] && !hasSelected[i-1])
 				{
 
 							int newColor = players[i-1].GetComponent<PlayerS>().colorNum;
@@ -444,7 +472,12 @@ public class CharacterSelectMenu : MonoBehaviour {
 			}
 
 		}
+
+				
+				
+
 		}
+
 		}
 
 	}
