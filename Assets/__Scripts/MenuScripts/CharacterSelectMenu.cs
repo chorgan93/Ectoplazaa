@@ -177,6 +177,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 					GameObject newPlayer = Instantiate(playerPrefab,spawnPoints[i-1].transform.position,Quaternion.identity) 
 								as GameObject;
 							PlayerS newPlayerS = newPlayer.GetComponent<PlayerS>();
+							newPlayerS.TurnOnCharSelect();
 					newPlayerS.playerNum = i;
 							newPlayerS.characterNum = defaultSkin;
 							newPlayerS.respawnInvulnTime = 0;

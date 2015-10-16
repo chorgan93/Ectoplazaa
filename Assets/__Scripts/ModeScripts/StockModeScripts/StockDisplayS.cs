@@ -31,9 +31,9 @@ public class StockDisplayS : MonoBehaviour {
 				myCharSprite = myPlayer.spriteObject.GetComponent<SpriteRenderer>();
 
 				// get color to match player color
-				textCol = myPlayer.playerMats[myPlayer.characterNum].color;
-				leftText.color = textCol;
-				rightText.color = textCol;
+				//textCol = myPlayer.playerMats[myPlayer.characterNum].color;
+				//leftText.color = textCol;
+				//rightText.color = textCol;
 				leftText.text = "P"+myPlayer.playerNum+":"; // show player num, set once
 			}
 

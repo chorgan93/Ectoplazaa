@@ -62,7 +62,7 @@ public class BGMS : MonoBehaviour {
 		if (delayChange > 0){
 			//print ("Delaying!");
 			delayChange -= Time.deltaTime;
-			print (ownSource.volume);
+			//print (ownSource.volume);
 		}
 		else{
 		if (nextMusic){

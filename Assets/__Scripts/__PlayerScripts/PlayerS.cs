@@ -244,6 +244,8 @@ public class PlayerS : MonoBehaviour {
 	private float chompDrag = 15; // drag for chomp attack
 	private float dodgeDrag = 12;
 	//private float chompRad = 10f;
+
+	private bool inCharSelect = false; // when in char select, never take damage
 	
 	//[HideInInspector]
 	public int colorNum; // for alternate colors
@@ -1578,6 +1580,8 @@ public class PlayerS : MonoBehaviour {
 	}
 	
 	public void TakeDamage(float dmg){
+
+		if (!inCharSelect){
 		health -= dmg;
 		hurtCounter = hurtTimer; 
 		
@@ -1609,10 +1613,14 @@ public class PlayerS : MonoBehaviour {
 			
 			Instantiate(deathParticles, this.transform.position, Quaternion.identity); 
 			soundSource.PlayDeathSounds();
-			
+			}
 			
 			
 		}
+	}
+
+	public void TurnOnCharSelect(){
+		inCharSelect = true;
 	}
 	void UpdateScorekeeper()
 	{
