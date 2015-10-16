@@ -31,6 +31,25 @@ public class ScoreBar : MonoBehaviour {
 	public GameObject headPrefab;
 	public GameObject ghostHeadPrefab; // for health count in ecto mode
 
+	// this stuff is for stock mode, will need some revision to be better
+
+	// four player positions
+	public GameObject P4firstPlayerPos;
+	public GameObject P4secondPlayerPos;
+	public GameObject P4PthirdPlayerPos;
+	public GameObject P4fourthPlayerPos;
+
+	// three player positions
+	public GameObject P3firstPlayerPos;
+	public GameObject P3secondPlayerPos;
+	public GameObject P3PthirdPlayerPos;
+
+	// two player positions
+	public GameObject P2firstPlayerPos;
+	public GameObject P2secondPlayerPos;
+
+	public GameObject stockModeDisplayPrefab;
+
 
 	void Start()
 	{
@@ -44,7 +63,9 @@ public class ScoreBar : MonoBehaviour {
 
 		if (isInitialized) 
 		{
-			UpdateScoreboard (); 
+			if (CurrentModeS.currentMode == 0){
+				UpdateScoreboard (); 
+			}
 		}
 	}
 
@@ -60,20 +81,22 @@ public class ScoreBar : MonoBehaviour {
 			{
 				totalPlayers+=1; 
 				playerRefs[i] = existingPlayers[i].GetComponent<PlayerS>(); 
-				
-				Vector3 spawnPos = barObjs[i].transform.position;
-				spawnPos.z = -8f; 
-				GameObject newHead = Instantiate(headPrefab, spawnPos, Quaternion.identity) as GameObject; 
-				playerRefs[i].GetComponent<PlayerS>().SetSkin(); 
-				newHead.GetComponentInChildren<SpriteRenderer>().sprite = playerRefs[i].spriteObject.GetComponent<SpriteRenderer>().sprite; 
-				newHead.transform.parent = this.transform; 
-				heads[i] = newHead; 
-				if (barObjs[i].GetComponentInChildren<Renderer>() != null){
-					barObjs[i].GetComponentInChildren<Renderer> ().material = playerRefs[i].playerMats [playerRefs[i].characterNum - 1];
-				}
 
-				// if ecto mode, add ghost heads
+				// ECTO MODE
+
 				if (CurrentModeS.currentMode == 0){
+				
+					Vector3 spawnPos = barObjs[i].transform.position;
+					spawnPos.z = -8f; 
+					GameObject newHead = Instantiate(headPrefab, spawnPos, Quaternion.identity) as GameObject; 
+					playerRefs[i].GetComponent<PlayerS>().SetSkin(); 
+					newHead.GetComponentInChildren<SpriteRenderer>().sprite = playerRefs[i].spriteObject.GetComponent<SpriteRenderer>().sprite; 
+					newHead.transform.parent = this.transform; 
+					heads[i] = newHead; 
+					if (barObjs[i].GetComponentInChildren<Renderer>() != null){
+						barObjs[i].GetComponentInChildren<Renderer> ().material = playerRefs[i].playerMats [playerRefs[i].characterNum - 1];
+					}
+
 					Vector3 spawnPosGhostHead = barObjs[i].transform.position;
 					spawnPosGhostHead.z = -8f; 
 					GameObject newGhostHead = Instantiate(ghostHeadPrefab, spawnPosGhostHead, Quaternion.identity) as GameObject; 
@@ -84,6 +107,54 @@ public class ScoreBar : MonoBehaviour {
 					newGhostHead.GetComponentInChildren<SpriteRenderer>().color = ghostCol;
 					newGhostHead.transform.parent = this.transform; 
 					ghostHeads[i] = newGhostHead; 
+				}
+
+				// STOCK MODE
+
+				if (CurrentModeS.currentMode == 1){
+
+					print ("INSTANTIATE STOCK MODE OBJECTS");
+
+					GameObject playerScore = Instantiate (stockModeDisplayPrefab, transform.position,Quaternion.identity)
+						as GameObject;
+					playerScore.GetComponent<PlayerScoreDisplayS>().playerRef = playerRefs[i];
+					playerScore.transform.parent = transform;
+
+					// spawn display objects
+					if (totalPlayers == 4){
+						if (i==0){
+							playerScore.transform.position = P4firstPlayerPos.transform.position;
+						}
+						if (i==1){
+							playerScore.transform.position = P4secondPlayerPos.transform.position;
+						}
+						if (i==2){
+							playerScore.transform.position = P4PthirdPlayerPos.transform.position;
+						}
+						if (i==3){
+							playerScore.transform.position = P4fourthPlayerPos.transform.position;
+						}
+					}
+					if (totalPlayers == 3){
+						if (i==0){
+							playerScore.transform.position = P3firstPlayerPos.transform.position;
+						}
+						if (i==1){
+							playerScore.transform.position = P3secondPlayerPos.transform.position;
+						}
+						if (i==2){
+							playerScore.transform.position = P3PthirdPlayerPos.transform.position;
+						}
+					}
+					if (totalPlayers == 2){
+						if (i==0){
+							playerScore.transform.position = P2firstPlayerPos.transform.position;
+						}
+						if (i==1){
+							playerScore.transform.position = P2secondPlayerPos.transform.position;
+						}
+					}
+
 				}
 
 			}
