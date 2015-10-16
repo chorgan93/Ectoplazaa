@@ -12,10 +12,12 @@ public class ScoreBar : MonoBehaviour {
 
 	bool isInitialized; 
 
-	PlayerS [] playerRefs = new PlayerS[4];
+	public PlayerS [] playerRefs = new PlayerS[4];
 	public GameObject [] barObjs= new GameObject[4]; 
 	GameObject[] heads = new GameObject[4];
 	GameObject[] ghostHeads = new GameObject[4]; // for use in ecto mode
+
+	GameObject[] playerScores = new GameObject[4];
 
 	int totalPlayers; 
 
@@ -74,14 +76,22 @@ public class ScoreBar : MonoBehaviour {
 		isInitialized = true; 
 		
 		GameObject [] existingPlayers = GameObject.FindGameObjectsWithTag ("Player"); 
-		print (existingPlayers.Length);
+
+		// set player script references from existing players
+		for (int j = 0; j < existingPlayers.Length; j++){
+
+			if (existingPlayers[j].GetComponent<PlayerS>()){
+
+				playerRefs[j] = existingPlayers[j].GetComponent<PlayerS>();
+			}
+		}
 
 		for(int i = 0; i < 4; i++)
 		{
 			if(i < existingPlayers.Length)
 			{
 				totalPlayers+=1; 
-				playerRefs[i] = existingPlayers[i].GetComponent<PlayerS>(); 
+				//print (existingPlayers[i]); 
 
 				// ECTO MODE
 
@@ -115,46 +125,16 @@ public class ScoreBar : MonoBehaviour {
 				if (CurrentModeS.currentMode == 1){
 
 					print ("INSTANTIATE STOCK MODE OBJECTS");
-
+					
+					// spawn display objects
+					
+					barObjs[i].SetActive(false); 
 					GameObject playerScore = Instantiate (stockModeDisplayPrefab, transform.position,Quaternion.identity)
 						as GameObject;
-					playerScore.GetComponent<PlayerScoreDisplayS>().playerRef = playerRefs[i];
-					playerScore.transform.parent = transform;
+					playerScores[i] = playerScore;
+					playerScore.GetComponent<StockDisplayS>().myPlayer = playerRefs[i];
 
-					// spawn display objects
-					if (totalPlayers == 4){
-						if (i==0){
-							playerScore.transform.position = P4firstPlayerPos.transform.position;
-						}
-						if (i==1){
-							playerScore.transform.position = P4secondPlayerPos.transform.position;
-						}
-						if (i==2){
-							playerScore.transform.position = P4PthirdPlayerPos.transform.position;
-						}
-						if (i==3){
-							playerScore.transform.position = P4fourthPlayerPos.transform.position;
-						}
-					}
-					if (totalPlayers == 3){
-						if (i==0){
-							playerScore.transform.position = P3firstPlayerPos.transform.position;
-						}
-						if (i==1){
-							playerScore.transform.position = P3secondPlayerPos.transform.position;
-						}
-						if (i==2){
-							playerScore.transform.position = P3PthirdPlayerPos.transform.position;
-						}
-					}
-					if (totalPlayers == 2){
-						if (i==0){
-							playerScore.transform.position = P2firstPlayerPos.transform.position;
-						}
-						if (i==1){
-							playerScore.transform.position = P2secondPlayerPos.transform.position;
-						}
-					}
+
 
 				}
 
@@ -163,6 +143,59 @@ public class ScoreBar : MonoBehaviour {
 			{
 				barObjs[i].SetActive(false); 
 			}
+		}
+
+		// now, if in stock mode, place player score positions
+		if (CurrentModeS.currentMode == 1){
+		for (int i = 0; i < totalPlayers; i++){
+			if (totalPlayers == 4){
+				if (i==0){
+					playerScores[i].transform.position = P4firstPlayerPos.transform.position;
+					playerScores[i].transform.parent = P4firstPlayerPos.transform.parent;
+				}
+				if (i==1){
+					playerScores[i].transform.position = P4secondPlayerPos.transform.position;
+					playerScores[i].transform.parent = P4secondPlayerPos.transform.parent;
+				}
+				if (i==2){
+					playerScores[i].transform.position = P4PthirdPlayerPos.transform.position;
+					
+					playerScores[i].transform.parent = P4PthirdPlayerPos.transform.parent;
+				}
+				if (i==3){
+					playerScores[i].transform.position = P4fourthPlayerPos.transform.position;
+					
+					playerScores[i].transform.parent = P4fourthPlayerPos.transform.parent;
+				}
+			}
+			if (totalPlayers == 3){
+				if (i==0){
+					playerScores[i].transform.position = P3firstPlayerPos.transform.position;
+					
+					playerScores[i].transform.parent = P3firstPlayerPos.transform.parent;
+				}
+				if (i==1){
+					playerScores[i].transform.position = P3secondPlayerPos.transform.position;
+					
+					playerScores[i].transform.parent = P3secondPlayerPos.transform.parent;
+				}
+				if (i==2){
+					playerScores[i].transform.position = P3PthirdPlayerPos.transform.position;
+					playerScores[i].transform.parent = P3PthirdPlayerPos.transform.parent;
+				}
+			}
+			if (totalPlayers == 2){
+				if (i==0){
+					//print ("SET PARENT!");
+					playerScores[i].transform.position = P2firstPlayerPos.transform.position;
+					playerScores[i].transform.parent = P2secondPlayerPos.transform.parent;
+				}
+				if (i==1){
+					playerScores[i].transform.position = P2secondPlayerPos.transform.position;
+					playerScores[i].transform.parent = P2secondPlayerPos.transform.parent;
+				}
+			}
+		}
 		}
 
 	}
