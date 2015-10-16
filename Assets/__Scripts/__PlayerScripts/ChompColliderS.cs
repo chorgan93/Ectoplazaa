@@ -12,7 +12,7 @@ public class ChompColliderS : MonoBehaviour {
 	//private Rigidbody ownRigid;
 	private Collider ownCollider;
 
-	private SpriteRenderer ownRender;
+	public SpriteRenderer ownRender;
 	public List<Sprite> animFrames;
 	private int currentSprite;
 	private float animRateMax;
@@ -41,7 +41,7 @@ public class ChompColliderS : MonoBehaviour {
 
 	void Start () {
 
-		ownRender = GetComponent<SpriteRenderer>();
+		//ownRender = GetComponent<SpriteRenderer>();
 		ownCollider = GetComponent<Collider>();
 		ownCollider.enabled = false;
 

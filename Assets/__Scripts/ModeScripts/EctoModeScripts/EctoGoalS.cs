@@ -18,7 +18,7 @@ public class EctoGoalS : MonoBehaviour {
 	void Start () {
 
 		// turn off if not in ecto mode
-		if (CurrentModeS.currentMode != 1){
+		if (CurrentModeS.currentMode != 0){
 			gameObject.SetActive(false);
 		}
 
