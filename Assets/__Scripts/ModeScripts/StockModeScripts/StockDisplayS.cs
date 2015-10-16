@@ -15,18 +15,24 @@ public class StockDisplayS : MonoBehaviour {
 
 		// get sprite renderer
 		mySprite = GetComponent<SpriteRenderer>();
-		myCharSprite = myPlayer.spriteObject.GetComponent<SpriteRenderer>();
 	
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-		if (myPlayer.numLives != 0){
-			mySprite.sprite = myCharSprite.sprite;
-		}
-		else{
-			mySprite.color = outCol;
+		if (myPlayer){
+
+			if (!myCharSprite){
+				myCharSprite = myPlayer.spriteObject.GetComponent<SpriteRenderer>();
+			}
+
+			if (myPlayer.numLives != 0){
+				mySprite.sprite = myCharSprite.sprite;
+			}
+			else{
+				mySprite.color = outCol;
+			}
 		}
 	
 	}

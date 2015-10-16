@@ -74,6 +74,7 @@ public class ScoreBar : MonoBehaviour {
 		isInitialized = true; 
 		
 		GameObject [] existingPlayers = GameObject.FindGameObjectsWithTag ("Player"); 
+		print (existingPlayers.Length);
 
 		for(int i = 0; i < 4; i++)
 		{

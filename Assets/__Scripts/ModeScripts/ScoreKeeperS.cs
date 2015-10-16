@@ -92,7 +92,6 @@ public class ScoreKeeperS : MonoBehaviour {
 			case 1:
 				print("ScoreKeeper setting up stock mode");
 				scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
-				break;
 				
 				
 				for (int i = 0; i < 4; i++) {						//Tell players how many lives they have
