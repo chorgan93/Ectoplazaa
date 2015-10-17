@@ -121,7 +121,7 @@ public class PlayerS : MonoBehaviour {
 	public bool charging = false;
 	private float chargeTime = 0;
 	private float medChargeTime = 0.65f;
-	private float maxChargeTime = 1.3f;
+	private float maxChargeTime = 1.5f;
 	
 	[HideInInspector]
 	public int attackToPerform = 0;
@@ -970,6 +970,8 @@ public class PlayerS : MonoBehaviour {
 				
 				// turn on platform ghosting
 				TurnOnIgnoreWalls();
+
+				groundLeeway = 0;
 				
 				
 				if(!groundDetect.Grounded())
@@ -1757,13 +1759,20 @@ public class PlayerS : MonoBehaviour {
 		
 	}
 	
-	/*void OnCollisionStay(Collision other){
+	void OnCollisionStay(Collision other){
+
+		// use on collision stay to end lv3 attacks that go into the floor
+
 		if (other.gameObject.tag == "Ground" || other.gameObject.tag == "Wall"){
 			if (groundLeeway <= 0){
-				//ownRigid.useGravity = true;;
+				FlingFastAttack(true);
+				attacking = false;
+				TurnOffIgnoreWalls();
+				isDangerous = false;
+
 			}
 		}
-	}*/
+	}
 	
 	/*void OnTriggerEnter(Collider other) 
 	{

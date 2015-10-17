@@ -18,6 +18,7 @@ public class PlayerEffectS : MonoBehaviour {
 	private int currentFrame = 0;
 
 	public PlayerS playerRef;
+	private SpriteRenderer playerRender;
 
 	private SpriteRenderer ownRender;
 
@@ -27,9 +28,11 @@ public class PlayerEffectS : MonoBehaviour {
 		currentFrame = Mathf.FloorToInt(Random.Range(0,effectFrames.Count));
 
 		ownRender = GetComponent<SpriteRenderer>();
+		playerRender = playerRef.spriteObject.GetComponent<SpriteRenderer>();
 
 		// turn on if player is at appropriate charge
 		if (playerRef != null){
+			if (playerRender.enabled){
 		if ((playerRef.charging && playerRef.GetChargeTime() > playerRef.GetChargeLv2Min()
 		     && attackNum == 1) ||
 		    (playerRef.charging && playerRef.GetChargeTime() > playerRef.GetChargeLv3Min()
@@ -40,6 +43,10 @@ public class PlayerEffectS : MonoBehaviour {
 		else{
 			ownRender.enabled = false;
 		}
+			}
+			else{
+				ownRender.enabled = false;
+			}
 		}
 		
 		ownRender.sprite = effectFrames[currentFrame];

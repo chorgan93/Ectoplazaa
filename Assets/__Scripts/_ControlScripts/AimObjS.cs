@@ -43,6 +43,12 @@ public class AimObjS : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
+
+		if (playerRef){
+
+			if (playerRef.spriteObject.GetComponent<SpriteRenderer>().enabled){
+
+				chargeBarSprite.SetActive(true);
 	
 		if (playerRef.charging){
 			//ownRender.enabled = true;
@@ -128,8 +134,16 @@ public class AimObjS : MonoBehaviour {
 */
 			//print(newAngle); 
 			chargeBarSprite.transform.rotation = Quaternion.Euler(0,0,-newAngle); 
+				}	
+				else{
+					chargeBarSprite.SetActive(false);
+				}
 
 
+		}
+		}
+		else{
+			chargeBarSprite.SetActive(false);
 		}
 
 	}

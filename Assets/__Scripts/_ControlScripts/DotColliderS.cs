@@ -12,4 +12,10 @@ public class DotColliderS : MonoBehaviour {
 		fireTrail.playerRef = whoCreatedMe;
 	}
 
+	void FixedUpdate () {
+		if (!whoCreatedMe){
+			Destroy(gameObject);
+		}
+	}
+
 }

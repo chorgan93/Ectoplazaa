@@ -66,7 +66,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void FixedUpdate () 
+	void Update () 
 	{
 
 		inputDelay -= Time.deltaTime;
@@ -374,7 +374,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 							players[i-1].GetComponent<PlayerS>().colorNum = newColor;
 							players[i-1].GetComponent<PlayerS>().SetSkin();
 
-							print (newColor);
+							//print (newColor);
 							
 							// play char intro sound
 							//players[i-1].GetComponent<PlayerSoundS>().PlayCharIntroSound();
