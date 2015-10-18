@@ -391,7 +391,8 @@ public class PlayerS : MonoBehaviour {
 			    rightHit.collider.gameObject.tag != "PlayerTrail" &&
 			    rightHit.collider.gameObject.tag != "Butt" &&
 			    rightHit.collider.gameObject.tag != "Glob" &&
-			    rightHit.collider.gameObject.tag != "Spawn"){
+			    rightHit.collider.gameObject.tag != "Spawn"&&
+			    rightHit.collider.gameObject.tag != "Goal"){
 				rightCheck = true;
 				//print ("HIT!!");
 			}
@@ -412,7 +413,8 @@ public class PlayerS : MonoBehaviour {
 			    leftHit.collider.gameObject.tag != "PlayerTrail"&&
 			    leftHit.collider.gameObject.tag != "Butt" &&
 			    leftHit.collider.gameObject.tag != "Glob" &&
-			    leftHit.collider.gameObject.tag != "Spawn"){
+			    leftHit.collider.gameObject.tag != "Spawn" &&
+			    leftHit.collider.gameObject.tag != "Goal"){
 				leftCheck = true;
 				//print (leftHit.collider.name);
 			}

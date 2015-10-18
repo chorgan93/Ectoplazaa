@@ -169,10 +169,10 @@ public class ScoreKeeperS : MonoBehaviour {
 			scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
 
 			//Instantiate Goal  objects
-			GameObject ghostBallParent = Instantiate(ghostballGoalParentPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+			Instantiate(ghostballGoalParentPrefab, Vector3.zero, Quaternion.identity);
 
 			//Instantiate Ghostball
-			GameObject ghostBall = Instantiate(ghostballPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+			Instantiate(ghostballPrefab, Vector3.zero, Quaternion.identity);
 
 			break;
 			
