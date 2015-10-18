@@ -8,49 +8,54 @@ public class ScoreKeeperS : MonoBehaviour {
 	// currently only works with ecto mode, will need to be repurposed for multiple modes
 
 
-	public GameObject scoreBarObj; 
-	public GameObject uiObj; 
-	private int winningPlayerNum;
-	public GameObject winningPlayerTail, winningPlayerSprite; 
+	public GameObject 	scoreBarObj; 
+	public GameObject	uiObj; 
+	public GameObject 	ghostballGoalParentPrefab,
+						ghostballPrefab;
+				
+	private int 		winningPlayerNum;
+	public GameObject 	winningPlayerTail, winningPlayerSprite; 
 
-	public Sprite [] playerHighResSprites; 
+	public Sprite [] 	playerHighResSprites; 
 
-	public int scoreThresholdCollectoplaza;
-	public int numberLives;								//stock mode
-	private int numPlayersLeft = 0; 					//stock mode
-	private bool [] playersPlaying = new bool[4]{false,false,false,false}; //Stock mode
-	public static bool gameEnd = false;
+	public int 			scoreThresholdCollectoplaza;
+	public int 			numberLives;								//stock mode
+	private int 		numPlayersLeft = 0; 					//stock mode
+	public int 			scorePerGoalGhostball = 1,
+						scoreThresholdGhostball = 10;
+	private bool []		playersPlaying = new bool[4]{false,false,false,false}; //Stock mode
+	public static bool 	gameEnd = false;
 
-	public GameObject endGameObj;
-	public TextMesh  winText;
+	public GameObject 	endGameObj;
+	public TextMesh 	winText;
 
-	bool spawnedScoreboard = false;
+	bool 				spawnedScoreboard = false;
 
-	public static bool gameStarted = false;
+	public static bool 	gameStarted = false;
 
-	public GameObject timer3;
-	public GameObject timer2;
-	public GameObject timer1;
-	public GameObject goText;
-	private int currentText = 4;
+	public GameObject 	timer3;
+	public GameObject 	timer2;
+	public GameObject 	timer1;
+	public GameObject 	goText;
+	private int 		currentText = 4;
 
-	public GameObject statText1, statText2, statText3, statText4; 
+	public GameObject 	statText1, statText2, statText3, statText4; 
 
-	private float countdownRateMax = .5f;
-	private float startCountdown;
+	private float 		countdownRateMax = .5f;
+	private float 		startCountdown;
 
-	public GameObject endFlash;
+	public GameObject 	endFlash;
 
 	//public GameObject endGameSound;
 
 	// don't allow exit of game until this time is up
-	public float gameEndMinTime = 2f;
+	public float 		gameEndMinTime = 2f;
 
-	float cameraSizeSmall = 20f;
+	float 				cameraSizeSmall = 20f;
 
-	Vector3 worldPos = Vector3.zero;
+	Vector3 			worldPos = Vector3.zero;
 
-	private int currentMode =-1;
+	private int 		currentMode =-1;
 
 	void Start () 
 	{
@@ -68,68 +73,7 @@ public class ScoreKeeperS : MonoBehaviour {
 	}
 
 
-	void SetupMode()
-	{
-		currentMode = CurrentModeS.currentMode;
-			
-		//Begin by disabling all (for safety);
-/*		for (int i = 0; i < modeObjectOwners.Count-1; i++)
-		{
-			modeObjectOwners[i].SetActive(false);
-		}
-*/		
-			
 
-		switch (currentMode)										//Find parent object for desired mode and enable
-		{
-			case 0:
-				//enable Ecto Mode
-				//modeObjectOwners[0].SetActive (true);
-				scoreBarObj.GetComponent<ScoreBar>().scoreThreshold = scoreThresholdCollectoplaza; 
-				scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
-				break;
-
-			case 1:
-				print("ScoreKeeper setting up stock mode");
-				scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
-				
-				
-				for (int i = 0; i < 4; i++) {						//Tell players how many lives they have
-					if (GlobalVars.characterNumber [i] != 0) {
-						PlayerS currentPlayer = GlobalVars.playerList [i].GetComponent<PlayerS> ();
-						currentPlayer.numLives = numberLives;
-						print ("Set lives to " + numberLives);
-						numPlayersLeft ++;								//Add to list of players remaining
-						playersPlaying[i] = true;
-					}
-					
-				}
-				
-				
-				break;
-
-			case 2:
-				break;
-
-			case 3:
-				break;
-
-			case -1:
-				print (" CurrMode = -1");
-				break;
-
-			default:
-				print("Default = " + currentMode);
-
-				break;
-		}
-
-
-
-		spawnedScoreboard = true; 
-			//Have mode owners set up everything?	
-		
-	}
 	
 	// Update is called once per frame
 	void Update () {
@@ -176,6 +120,80 @@ public class ScoreKeeperS : MonoBehaviour {
 			}
 		}
 
+	}
+
+	void SetupMode()
+	{
+		currentMode = CurrentModeS.currentMode;
+		
+		//Begin by disabling all (for safety);
+		/*		for (int i = 0; i < modeObjectOwners.Count-1; i++)
+		{
+			modeObjectOwners[i].SetActive(false);
+		}
+*/		
+		
+		
+		switch (currentMode)										//Find parent object for desired mode and enable
+		{
+		case 0:
+			//enable Ecto Mode
+			//modeObjectOwners[0].SetActive (true);
+			scoreBarObj.GetComponent<ScoreBar>().scoreThreshold = scoreThresholdCollectoplaza; 
+			scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
+			break;
+			
+		case 1:
+			print("ScoreKeeper setting up stock mode");
+			scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
+			
+			
+			for (int i = 0; i < 4; i++) {						//Tell players how many lives they have
+				if (GlobalVars.characterNumber [i] != 0) {
+					PlayerS currentPlayer = GlobalVars.playerList [i].GetComponent<PlayerS> ();
+					currentPlayer.numLives = numberLives;
+					print ("Set lives to " + numberLives);
+					numPlayersLeft ++;								//Add to list of players remaining
+					playersPlaying[i] = true;
+				}
+				
+			}
+			
+			
+			break;
+			
+		case 2:
+
+			//Make Scorebar
+			scoreBarObj.GetComponent<ScoreBar>().scoreThreshold = scoreThresholdGhostball; 
+			scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
+
+			//Instantiate Goal  objects
+			GameObject ghostBallParent = Instantiate(ghostballGoalParentPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+
+			//Instantiate Ghostball
+			GameObject ghostBall = Instantiate(ghostballPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+
+			break;
+			
+		case 3:
+			break;
+			
+		case -1:
+			print (" CurrMode = -1");
+			break;
+			
+		default:
+			print("Default = " + currentMode);
+			
+			break;
+		}
+		
+		
+		
+		spawnedScoreboard = true; 
+		//Have mode owners set up everything?	
+		
 	}
 
 	void SpawnScoreboard()
@@ -270,6 +288,12 @@ public class ScoreKeeperS : MonoBehaviour {
 				//Ghostball Mode
 				else if(currentMode == 2)
 				{
+					if (currentPlayer.score >= scoreThresholdGhostball ) {
+						gameEnd = true;
+						winningPlayerNum = i + 1;
+						SpawnEndScreen();
+						
+					}
 				}
 			} 
 		}
@@ -401,12 +425,7 @@ public class ScoreKeeperS : MonoBehaviour {
 	
 	void UpdateEndScreen()
 	{
-
-
 		// once gameEnd is on, 
-
-
-
 		gameEndMinTime -= Time.deltaTime;
 
 		Vector3 newPos = endGameObj.transform.position; 
@@ -428,5 +447,14 @@ public class ScoreKeeperS : MonoBehaviour {
 			Application.LoadLevel(Application.loadedLevel);
 		}
 
+	}
+
+	public void AddPoints(int playerNumber)						//Used by Ghostball Goal
+	{	//Should probably be generalized - depending on the mode...?
+		if (GlobalVars.characterIsPlaying[playerNumber])	//check if active
+		{
+			PlayerS p = GlobalVars.playerList[playerNumber].GetComponent<PlayerS>();	//Get Player
+			p.score += scorePerGoalGhostball;				//Add score
+		}
 	}
 }

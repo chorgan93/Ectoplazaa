@@ -65,7 +65,7 @@ public class ScoreBar : MonoBehaviour {
 
 		if (isInitialized) 
 		{
-			if (CurrentModeS.currentMode == 0){
+			if (CurrentModeS.currentMode == 0 || CurrentModeS.currentMode == 2){
 				UpdateScoreboard (); 
 			}
 		}
@@ -94,8 +94,8 @@ public class ScoreBar : MonoBehaviour {
 				//print (existingPlayers[i]); 
 
 				// ECTO MODE
-
-				if (CurrentModeS.currentMode == 0){
+				// && Ghostball mode?
+				if (CurrentModeS.currentMode == 0 || CurrentModeS.currentMode == 2){
 				
 					Vector3 spawnPos = barObjs[i].transform.position;
 					spawnPos.z = -8f; 
