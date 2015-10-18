@@ -61,6 +61,10 @@ public class ChompColliderS : MonoBehaviour {
 	
 		if (!TimeManagerS.paused){
 
+			if (!playerRef || playerRef.respawning || playerRef.numLives == 0){
+				Destroy(gameObject);
+			}
+
 			animCountdown -= Time.deltaTime*TimeManagerS.timeMult;
 			if (animCountdown <= 0){
 				currentSprite++;
