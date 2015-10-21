@@ -59,7 +59,7 @@ public class PlayerEffectS : MonoBehaviour {
 		if (playerRef != null){
 
 			if (attackNum == 0){
-				if (playerRef.attacking){ownRender.enabled = true;}
+				if (playerRef.attacking || playerRef.groundPounded){ownRender.enabled = true;}
 				else{ownRender.enabled = false;}
 			}
 

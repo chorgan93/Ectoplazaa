@@ -61,7 +61,8 @@ public class ChompColliderS : MonoBehaviour {
 	
 		if (!TimeManagerS.paused){
 
-			if (!playerRef || playerRef.respawning || playerRef.numLives == 0){
+			// destroy if player not active or dodging
+			if (!playerRef || playerRef.respawning || playerRef.numLives == 0 || playerRef.dodgeTimeCountdown > 0){
 				Destroy(gameObject);
 			}
 

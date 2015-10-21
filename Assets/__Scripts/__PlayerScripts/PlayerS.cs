@@ -230,7 +230,9 @@ public class PlayerS : MonoBehaviour {
 	private bool canDodge = true; // allow infinite dodges on ground, one in air
 	public float dodgeTimeMax; // length of time dodge is active
 	public float dodgeInvulnTimeMax; // time to be invuln while dodging
-	private float dodgeTimeCountdown;
+
+	[HideInInspector]
+	public float dodgeTimeCountdown;
 	public float dodgeForce; // force to apply to character at start of dodge
 	
 	// NEW Lv0 "Chomp" attack vars
@@ -300,6 +302,7 @@ public class PlayerS : MonoBehaviour {
 		startDrag = ownRigid.drag;
 		
 		startEctoNum = initialHealth; // for ecto mode tail generation
+
 		
 		//Get number of lives (mode stuff)
 		
@@ -1305,6 +1308,11 @@ public class PlayerS : MonoBehaviour {
 				// add force
 				ownRigid.velocity = Vector3.zero;
 				ownRigid.AddForce(dodgeDir*dodgeForce*Time.deltaTime, ForceMode.Impulse);
+
+				// stop current attack
+
+				attacking = false;
+				isDangerous = false;
 				
 				
 				
@@ -1324,7 +1332,10 @@ public class PlayerS : MonoBehaviour {
 				canAirStrafe = false;
 				
 				ownRigid.drag = dodgeDrag;
-				
+
+				// play sound
+				soundSource.PlayJumpSound();
+
 				dodgeButtonDown = true;
 				
 			}
@@ -1558,6 +1569,8 @@ public class PlayerS : MonoBehaviour {
 				ownRigid.useGravity = true;;
 				trailRendererGO.GetComponent<TrailRenderer>().enabled = true ;
 				trailRendererGO2.GetComponent<TrailRenderer>().enabled = true ;
+
+
 				health = initialHealth;
 				
 				//DisableAttacks(); 
