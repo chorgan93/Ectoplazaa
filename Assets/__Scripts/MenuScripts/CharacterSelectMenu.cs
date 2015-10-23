@@ -99,8 +99,10 @@ public class CharacterSelectMenu : MonoBehaviour {
 					}
 				}
 
+				print (playersChoosing + " : " + totalPlayers);
+
 				if (Input.GetButtonDown("BButtonAllPlayers" + platformType)){
-					if (totalPlayers == 0 && playersChoosing ==0){
+					if (totalPlayers <= 0 && playersChoosing ==0){
 						Application.LoadLevel(backSceneString);
 					}
 				}
@@ -246,6 +248,9 @@ public class CharacterSelectMenu : MonoBehaviour {
 					hasJoined[i-1] = false; 
 							hasSelected[i-1] = false;
 					totalPlayers -= 1; 
+							if (totalPlayers <= 0){
+								totalPlayers = 0;
+							}
 
 					GameObject.Destroy( players[i-1].gameObject);
 					players[i-1]= null; 
@@ -316,7 +321,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 							players[i-1].GetComponent<PlayerS>().colorNum = newColor;
 							players[i-1].GetComponent<PlayerS>().SetSkin();
 
-							print(newColor);
+							//print(newColor);
 							
 							
 							// play char intro sound
@@ -374,7 +379,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 							players[i-1].GetComponent<PlayerS>().colorNum = newColor;
 							players[i-1].GetComponent<PlayerS>().SetSkin();
 
-							print (newColor);
+							// print (newColor);
 							
 							// play char intro sound
 							//players[i-1].GetComponent<PlayerSoundS>().PlayCharIntroSound();

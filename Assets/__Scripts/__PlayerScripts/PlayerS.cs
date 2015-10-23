@@ -315,7 +315,7 @@ public class PlayerS : MonoBehaviour {
 		if (!nonActive){
 			
 			ManageCharge();
-			//BackToMenu();
+			BackToMenu();
 			
 			if (!ScoreKeeperS.gameEnd && ScoreKeeperS.gameStarted) {
 				
