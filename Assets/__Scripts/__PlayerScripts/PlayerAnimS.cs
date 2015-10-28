@@ -231,6 +231,8 @@ public class PlayerAnimS : MonoBehaviour {
 	}
 
 	void Animate () {
+		
+
 
 		// determine if jumping
 		if (playerRef.groundDetect.Grounded()){
@@ -272,8 +274,24 @@ public class PlayerAnimS : MonoBehaviour {
 		}
 
 		else if (isRunning){
+
+			// apply character run mult
+			float animRateMult = 1;
+			if (playerRef.characterNum == 0){
+				animRateMult /= PlayerCharStatsS.ninja_SpeedMult;
+			}
+			if (playerRef.characterNum == 1){
+				animRateMult /= PlayerCharStatsS.acidMouth_SpeedMult;
+			}
+			if (playerRef.characterNum == 2){
+				animRateMult /= PlayerCharStatsS.mummy_SpeedMult;
+			}
+			if (playerRef.characterNum == 3){
+				animRateMult /= PlayerCharStatsS.pinkWhip_SpeedMult;
+			}
+
 			//print ("I'm running");
-			runFrameAnimCountdown -= Time.deltaTime*TimeManagerS.timeMult;
+			runFrameAnimCountdown -= Time.deltaTime*TimeManagerS.timeMult*animRateMult;
 			
 			if (runFrameAnimCountdown <= 0){
 				runFrameAnimCountdown = runFrameAnimRate;

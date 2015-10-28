@@ -512,8 +512,23 @@ public class PlayerS : MonoBehaviour {
 				
 				ownRigid.useGravity = false;
 				ownRigid.velocity = Vector3.zero;
+
+				// apply character charge mult
+				float chargeMult = 1;
+				if (characterNum == 1){
+					chargeMult = PlayerCharStatsS.ninja_ChargeMult;
+				}
+				if (characterNum == 2){
+					chargeMult = PlayerCharStatsS.acidMouth_ChargeMult;
+				}
+				if (characterNum == 3){
+					chargeMult = PlayerCharStatsS.mummy_ChargeMult;
+				}
+				if (characterNum == 4){
+					chargeMult = PlayerCharStatsS.pinkWhip_ChargeMult;
+				}
 				
-				chargeTime+=Time.deltaTime*TimeManagerS.timeMult;
+				chargeTime+=chargeMult*Time.deltaTime*TimeManagerS.timeMult;
 				
 				// play sounds when you hit each threshold
 				if (chargeTime > lv0MaxChargeTime && !playedLV1ChargeSound){
@@ -1078,22 +1093,40 @@ public class PlayerS : MonoBehaviour {
 					}*/
 				
 				bool applyForce = true; 
+
+				// apply character run mult
+				float runMult = 1;
+
+				if (characterNum == 1){
+					runMult *= PlayerCharStatsS.ninja_SpeedMult;
+				}
+				if (characterNum == 2){
+					runMult *= PlayerCharStatsS.acidMouth_SpeedMult;
+				}
+				if (characterNum == 3){
+					runMult *= PlayerCharStatsS.mummy_SpeedMult;
+				}
+				if (characterNum == 4){
+					runMult *= PlayerCharStatsS.pinkWhip_SpeedMult;
+				}
 				
-				if((ownRigid.velocity.x > maxSpeed) && (xForce > 0))
+				if((ownRigid.velocity.x > maxSpeed*runMult) && (xForce > 0))
 				{
 					applyForce = false; 
 					//print ("Dont apply force right!");
 				}
-				else if((ownRigid.velocity.x < -maxSpeed) && (xForce < 0))
+				else if((ownRigid.velocity.x < -maxSpeed*runMult) && (xForce < 0))
 				{
 					applyForce = false; 
 					//print ("Dont apply force left!");
 				}
 				
 				//print (applyForce);
+
+
 				
 				if(applyForce)
-					ownRigid.AddForce(new Vector3(xForce,0,0));
+					ownRigid.AddForce(new Vector3(xForce*runMult,0,0));
 				
 				
 				Vector3 fixVel = ownRigid.velocity;
@@ -1211,6 +1244,21 @@ public class PlayerS : MonoBehaviour {
 					Vector3 jumpForce = Vector3.zero;
 					
 					jumpForce.y = jumpSpeed*Time.deltaTime*TimeManagerS.timeMult;
+
+
+					// apply character jump mult
+					if (characterNum == 1){
+						jumpForce *= PlayerCharStatsS.ninja_JumpMult;
+					}
+					if (characterNum == 2){
+						jumpForce *= PlayerCharStatsS.acidMouth_JumpMult;
+					}
+					if (characterNum == 3){
+						jumpForce *= PlayerCharStatsS.mummy_JumpMult;
+					}
+					if (characterNum == 4){
+						jumpForce *= PlayerCharStatsS.pinkWhip_JumpMult;
+					}
 					
 					ownRigid.AddForce(jumpForce);
 					

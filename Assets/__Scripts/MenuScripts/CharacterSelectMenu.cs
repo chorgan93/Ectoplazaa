@@ -99,7 +99,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 					}
 				}
 
-				print (playersChoosing + " : " + totalPlayers);
+				//print (playersChoosing + " : " + totalPlayers);
 
 				if (Input.GetButtonDown("BButtonAllPlayers" + platformType)){
 					if (totalPlayers <= 0 && playersChoosing ==0){
