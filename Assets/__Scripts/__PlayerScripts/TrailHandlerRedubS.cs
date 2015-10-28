@@ -57,6 +57,8 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 	public bool updateDots = false; // turn to TRUE when we want tail size to readjust
 
+	private float trailLengthMult;
+
 
 
 	// Use this for initialization
@@ -97,6 +99,21 @@ public class TrailHandlerRedubS : MonoBehaviour {
 			{
 				// make sure to do initial dot spawn on respawn
 				InitialDotSpawn(); 
+			}
+
+			// keep track of tail mult
+			trailLengthMult = 1;
+			if (playerRef.characterNum == 1){
+				trailLengthMult = PlayerCharStatsS.ninja_TailMult;
+			}
+			if (playerRef.characterNum == 2){
+				trailLengthMult = PlayerCharStatsS.acidMouth_TailMult;
+			}
+			if (playerRef.characterNum == 3){
+				trailLengthMult = PlayerCharStatsS.mummy_TailMult;
+			}
+			if (playerRef.characterNum == 4){
+				trailLengthMult = PlayerCharStatsS.pinkWhip_TailMult;
 			}
 
 			//PlaceDots (); 
@@ -177,9 +194,11 @@ public class TrailHandlerRedubS : MonoBehaviour {
 		//if(playerRef.playerNum == 1)
 			//print ("InitialDotSpawn for P1");
 
+		int dotNum = (int)Mathf.Ceil(playerRef.health*trailLengthMult);
+
 		for (int i = 0; i < playerRef.initialHealth; i++) {
 
-			if(spawnedDots.Count < playerRef.health)
+			if(spawnedDots.Count < dotNum)
 			{
 				GameObject newNewDot = Instantiate(dotPrefab,playerRef.transform.position,headSprite.transform.rotation) as GameObject; 
 				newNewDot.GetComponent<Renderer>().material = playerRef.playerMats[playerRef.characterNum -1] ; 
@@ -211,6 +230,8 @@ public class TrailHandlerRedubS : MonoBehaviour {
 		//print ("Distance: " + posDistance); 
 		//print ("newDots: " + newDotNumber); 
 
+		
+		int dotNum = (int)Mathf.Ceil((playerRef.score+playerRef.startEctoNum)*trailLengthMult);
 
 
 		//PLACE DOTS LERPED ALONG THE LAST 2 PLAYER POSITIONS
@@ -222,7 +243,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 			newDot.GetComponent<DotColliderS>().whoCreatedMe = playerRef; 
 			spawnedDots.Add(newDot); 
 
-			if(spawnedDots.Count > playerRef.score+playerRef.startEctoNum) //keep placing new dots, start deleting old ones
+			if(spawnedDots.Count > dotNum) //keep placing new dots, start deleting old ones
 			{
 				DestroyDot();
 			}
@@ -230,7 +251,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 		}
 
-		if(newDotNumber == 0 && spawnedDots.Count < playerRef.score+playerRef.startEctoNum)
+		if(newDotNumber == 0 && spawnedDots.Count < dotNum)
 		{
 			//spawn one dot anyway
 			GameObject newNewDot = Instantiate(dotPrefab,playerRef.transform.position,headSprite.transform.rotation) as GameObject; 
@@ -330,7 +351,9 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 		}
 
-		if (spawnedDots.Count > 0 && spawnedDots.Count > playerRef.health) {
+		int dotNum = (int)Mathf.Ceil( playerRef.health*trailLengthMult);
+
+		if (spawnedDots.Count > 0 && spawnedDots.Count > dotNum) {
 
 			int dotsDestroyNum = (int) spawnedDots.Count - (int) playerRef.health;
 
