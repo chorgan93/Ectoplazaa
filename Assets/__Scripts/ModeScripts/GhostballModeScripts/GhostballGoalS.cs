@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GhostballGoalS : MonoBehaviour {
 
@@ -13,7 +14,9 @@ public class GhostballGoalS : MonoBehaviour {
 							
 	float 					delayBirthday = 0,
 							pointBirthday = 0;
-	int 				owningPlayerIndex;
+	int 				owningPlayerIndex  = -1;
+
+	 public List<Material> tempColors;
 
 	// Use this for initialization
 	void Start () 
@@ -43,30 +46,36 @@ public class GhostballGoalS : MonoBehaviour {
 
 	public void ChangeSkin(int playerIndex)
 	{
+		print ("Changing goal from " + owningPlayerIndex +  " to " + playerIndex);
 		owningPlayerIndex = playerIndex;
 		GameObject myPlayer = GlobalVars.playerList[owningPlayerIndex];	//get character
-		print ("Ghostball Goal found player " + owningPlayerIndex);
+	
 		if (myPlayer == null)
 		{ 
 			this.gameObject.SetActive(false);							//If my character isn't active, disable myself
 			print ("Deactivating goal " + owningPlayerIndex);
 		}
 		else
-		{
-			switch (myPlayer.GetComponent<PlayerS>().colorNum)									//switch skin for goal depending on player color
+		{																//switch skin for goal depending on player color
+			switch (playerIndex)									
 			{
+
 			case 0:
+				gameObject.GetComponent<MeshRenderer>().material = tempColors[0];
 				break;
 			case 1:
+				this.gameObject.GetComponent<MeshRenderer>().material = tempColors[1];
 				break;
 			case 2:
+				this.gameObject.GetComponent<MeshRenderer>().material = tempColors[2];
 				break;
 			case 3:
+				this.gameObject.GetComponent<MeshRenderer>().material = tempColors[3];
 				break;
 			default:
 				break;
 			}
-			print ("Switching Goal Skin to number '" + myPlayer.GetComponent<PlayerS>().colorNum + "' for player " + owningPlayerIndex);
+			//print ("Switching Goal Skin to number '" + myPlayer.GetComponent<PlayerS>().colorNum + "' for player " + owningPlayerIndex);
 		}
 	}
 
@@ -76,7 +85,7 @@ public class GhostballGoalS : MonoBehaviour {
 		{
 			bBallDetected = true;			//Flip flag
 			delayBirthday = Time.time;		//Start countdown
-			print("ball entered goal"); 			//visual effect hook?
+			//print("ball entered goal"); 			//visual effect hook?
 		}
 	}
 	
@@ -86,7 +95,7 @@ public class GhostballGoalS : MonoBehaviour {
 		{
 			bBallDetected = false;			//End countdown
 			bIsActivated = false;			//No longer activated
-			print("ball exited goal"); 			//visual effect hook?
+			//print("ball exited goal"); 			//visual effect hook?
 		}
 	}
 
@@ -102,7 +111,7 @@ public class GhostballGoalS : MonoBehaviour {
 	{
 		bIsActivated = true; 				//Flip flag
 		pointBirthday = Time.time;			//Update point timer
-		print("Activate Ghostball Goal"); //Visual effect hook?
+		//print("Activate Ghostball Goal"); //Visual effect hook?
 	}
 	
 	void CheckPointTimer()
@@ -110,9 +119,20 @@ public class GhostballGoalS : MonoBehaviour {
 		if(Time.time - pointBirthday > timePerPointTick)
 		{
 			pointBirthday = Time.time;					//Update timer
-			print("add Ghostball points!");
+			//print("add Ghostball points!");
 			scoreKeeper.AddPoints(owningPlayerIndex);	//Talk to ScoreKeeperS;
 
 		}
+	}
+
+	public int GetOwningPlayerIndex()
+	{
+		return owningPlayerIndex;
+	}
+
+	public void Disable()
+	{
+		owningPlayerIndex = -1;
+		this.gameObject.SetActive(false);
 	}
 }
