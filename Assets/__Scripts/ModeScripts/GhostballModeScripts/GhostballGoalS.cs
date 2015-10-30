@@ -13,14 +13,13 @@ public class GhostballGoalS : MonoBehaviour {
 							
 	float 					delayBirthday = 0,
 							pointBirthday = 0;
-	public int 				owningPlayerIndex;
+	int 				owningPlayerIndex;
 
 	// Use this for initialization
 	void Start () 
 	{
 		scoreKeeper = GameObject.FindObjectOfType<ScoreKeeperS>() as ScoreKeeperS;
 		ghostBall = GameObject.FindGameObjectWithTag("Ghostball") as GameObject;
-		ChangeSkinOrDeactivate();
 	}
 	
 	// Update is called once per frame
@@ -42,8 +41,9 @@ public class GhostballGoalS : MonoBehaviour {
 
 	}
 
-	public void ChangeSkinOrDeactivate()
+	public void ChangeSkin(int playerIndex)
 	{
+		owningPlayerIndex = playerIndex;
 		GameObject myPlayer = GlobalVars.playerList[owningPlayerIndex];	//get character
 		print ("Ghostball Goal found player " + owningPlayerIndex);
 		if (myPlayer == null)
