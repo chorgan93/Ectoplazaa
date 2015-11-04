@@ -146,7 +146,7 @@ public class PlayerS : MonoBehaviour {
 	//private float lv1AttackTargetRange = 12f;
 	private float lv1OutRate = 3350f; // deprecated
 	
-	private float lv1Force = 6000f; // locked fling speed (NEW)
+	private float lv1Force = 5000f; // locked fling speed (NEW)
 	
 	private float lv2OutRate = 15000f; //original 8000
 	private float lv1OutTimeMax = 0.125f;
@@ -226,7 +226,8 @@ public class PlayerS : MonoBehaviour {
 	
 	// dodge variables
 	private bool dodgeButtonDown = false;
-	private bool dodging = false; // true when dodging
+	[HideInInspector]
+	public bool dodging = false; // true when dodging
 	private bool canDodge = true; // allow infinite dodges on ground, one in air
 	public float dodgeTimeMax; // length of time dodge is active
 	public float dodgeInvulnTimeMax; // time to be invuln while dodging
@@ -243,8 +244,8 @@ public class PlayerS : MonoBehaviour {
 	public GameObject chompHitObj; // obj to spawn on chomp
 	public float chompForce; // force to add to vel on chomp attack
 	private float startDrag; // reg drag
-	private float chompDrag = 15; // drag for chomp attack
-	private float dodgeDrag = 12;
+	private float chompDrag = 12; // drag for chomp attack
+	private float dodgeDrag = 16;
 	//private float chompRad = 10f;
 
 	private bool inCharSelect = false; // when in char select, never take damage
@@ -573,10 +574,12 @@ public class PlayerS : MonoBehaviour {
 						//print ("do attack 1");
 					}
 					// do fling
+					// TRYING OUT TAKING OUT FLING LV1
+					/*
 					else if (chargeTime > lv0MaxChargeTime){
 						attackToPerform = 0;
 						attackPriority = 0;
-					}
+					}*/
 					// do chomp
 					else{
 						// activate chomp vars

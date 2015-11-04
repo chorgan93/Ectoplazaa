@@ -43,7 +43,7 @@ public class ChompColliderS : MonoBehaviour {
 
 		//ownRender = GetComponent<SpriteRenderer>();
 		ownCollider = GetComponent<Collider>();
-		ownCollider.enabled = false;
+		//ownCollider.enabled = false;
 
 
 		animCountdown = animRateMax = lifeTime/animFrames.Count;

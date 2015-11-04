@@ -169,7 +169,12 @@ public class TrailHandlerRedubS : MonoBehaviour {
 			Color mainCol = trailRendererMain.materials[0].color;
 			Color greenCol = trailRendererGlow.materials[0].color;
 
-			mainCol.a = greenCol.a = invulnAlpha;
+			if (playerRef.dodging){
+				mainCol.a = greenCol.a = 0.1f;
+			}
+			else{
+				mainCol.a = greenCol.a = invulnAlpha;
+			}
 
 			trailRendererMain.materials[0].color = mainCol;
 			trailRendererGlow.materials[0].color = greenCol;

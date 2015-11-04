@@ -151,7 +151,12 @@ public class PlayerAnimS : MonoBehaviour {
 			Color animColHead = headRender.color;
 			Color animColGlow = headRenderGreenGlow.color;
 
-			animColGlow.a = animColHead.a = invulnAlpha;
+			if (playerRef.dodging){
+				animColGlow.a = animColHead.a = 0.1f;
+			}
+			else{
+				animColGlow.a = animColHead.a = invulnAlpha;
+			}
 
 			headRender.color = animColHead;
 			headRenderGreenGlow.color = animColGlow;
