@@ -30,6 +30,7 @@ public class PlayerS : MonoBehaviour {
 	
 	public float jumpSpeed;
 	private bool jumped = false;
+	private bool hasDoubleJumped = false;
 	private bool jumpButtonDown = false;
 	public float addJumpForce;
 	public float addJumpForceMaxTime;
@@ -83,6 +84,9 @@ public class PlayerS : MonoBehaviour {
 	[HideInInspector]
 	public bool groundPounded = false;
 	public float groundPoundForce;
+	private float groundPoundPauseCountdown;
+	private float groundPoundPauseMax = 0.24f;
+	private bool chargingGroundPound = false;
 	
 	//private float pauseDelay;
 	private bool resetFromPause = false;
@@ -146,9 +150,9 @@ public class PlayerS : MonoBehaviour {
 	//private float lv1AttackTargetRange = 12f;
 	private float lv1OutRate = 3350f; // deprecated
 	
-	private float lv1Force = 5000f; // locked fling speed (NEW)
+	private float lv1Force = 4500f; // locked fling speed (NEW)
 	
-	private float lv2OutRate = 15000f; //original 8000
+	private float lv2OutRate = 16000f; //original 8000
 	private float lv1OutTimeMax = 0.125f;
 	public float lv1OutCountdown;
 	private float lv1ReturnRate = 1f; // deprecated
@@ -157,11 +161,11 @@ public class PlayerS : MonoBehaviour {
 	[HideInInspector]
 	private float lv1ButtDelay = 1f;
 	public float lv2FlingForce = 100;
-	private float lv3BulletSpeed = 21000; //was 12500
+	private float lv3BulletSpeed = 15500; //was 12500
 	private bool lockInPlace = false;
 	private Vector3 bulletVel;
 	
-	private float lv2AttackPauseTimeMax = 0.14f;
+	private float lv2AttackPauseTimeMax = 0.2f;
 	private float lv2AttackPauseCountdown;
 	private bool startedLv2Pause = false;
 	private float lv2AttackTimeMax = 0.1f;
@@ -513,6 +517,7 @@ public class PlayerS : MonoBehaviour {
 				
 				ownRigid.useGravity = false;
 				ownRigid.velocity = Vector3.zero;
+				hasDoubleJumped = true;
 
 				// apply character charge mult
 				float chargeMult = 1;
@@ -556,7 +561,12 @@ public class PlayerS : MonoBehaviour {
 					performedAttack = false;
 					
 					// allow for ground pound
-					jumped = true;
+					if (!jumped){
+						jumped = true;
+					}
+					else{
+						hasDoubleJumped = true;
+					}
 					
 					// butt should not follow
 					//buttObj.isFollowing = false;
@@ -1194,6 +1204,7 @@ public class PlayerS : MonoBehaviour {
 					attacking = false;
 					didLv2Fling = false;
 					ownRigid.useGravity = true;
+
 					
 					groundPounded = false;
 					
@@ -1203,12 +1214,58 @@ public class PlayerS : MonoBehaviour {
 				canCharge = true;
 			}
 		}
+
+		// turn off gravity and pause in place for a bit before ground pound
+		if (chargingGroundPound){
+
+			if(chargingParticles == null)
+			{
+				chargingParticles = 
+					Instantiate( chargingParticlePrefab, this.transform.position, Quaternion.identity) as GameObject; 
+				chargingParticles.transform.parent = this.transform; 
+
+			}
+
+			groundPoundPauseCountdown += Time.deltaTime*TimeManagerS.timeMult;
+			if (groundPoundPauseCountdown >= groundPoundPauseMax){
+				Vector3 groundPoundVel = Vector3.zero;
+				groundPoundVel.y = -groundPoundForce*Time.deltaTime*TimeManagerS.timeMult;
+				ownRigid.velocity = groundPoundVel;
+				isDangerous = true;
+				ownRigid.useGravity = true;
+
+				hasDoubleJumped = true;
+				
+				canAirStrafe = true;
+
+				chargingGroundPound = false;
+				groundPounded = true;
+				
+				// lowest attack priority
+				attackPriority = 0;
+				
+				//print ("Groundpound!");
+				// play an attack sound
+				//soundSource.PlayChargeLv2();
+				soundSource.PlayGroundPoundReleaseSound();
+				Instantiate(spawnParticlePrefab,this.transform.position, Quaternion.identity);
+
+				Destroy(chargingParticles);
+				
+				// allow for air control
+				//dontCorrectSpeed = false;
+				
+				//SleepTime(groundPoundPauseTime);
+			}
+
+		}
 		
 		// turn jump ability on/off depending on grounded status
 		
 		if (jumped){
 			if (groundDetect.Grounded()){
 				jumped = false;
+				hasDoubleJumped = false;
 				if (groundPounded){
 					groundPounded = false;
 					//isDangerous = false;
@@ -1225,7 +1282,59 @@ public class PlayerS : MonoBehaviour {
 		// detect button up
 		if (!Input.GetButton("AButtonPlayer" + playerNum + platformType))
 		{
+
+			// if charging ground pound and let up before ground pound executes, do another jump
+
 			jumpButtonDown = false;
+
+			if (chargingGroundPound && !hasDoubleJumped){
+				Vector3 jumpForce = Vector3.zero;
+			
+				// add to jump speed for double jump bc of lack of air boost
+				jumpForce.y = jumpSpeed*2.25f*Time.deltaTime*TimeManagerS.timeMult;
+			
+			
+				// apply character jump mult
+				if (characterNum == 1){
+					jumpForce *= PlayerCharStatsS.ninja_JumpMult;
+				}
+				if (characterNum == 2){
+					jumpForce *= PlayerCharStatsS.acidMouth_JumpMult;
+				}
+				if (characterNum == 3){
+					jumpForce *= PlayerCharStatsS.mummy_JumpMult;
+				}
+				if (characterNum == 4){
+					jumpForce *= PlayerCharStatsS.pinkWhip_JumpMult;
+				}
+				
+				Vector3 fixVel = ownRigid.velocity;
+				fixVel.y = 0;
+				ownRigid.velocity = fixVel;
+				
+				ownRigid.AddForce(jumpForce);
+				
+				Instantiate(jumpParticles, this.transform.position, Quaternion.identity); 
+				
+				// play jump sound
+				soundSource.PlayJumpSound();
+				
+				addingJumpTime = 0;
+				stopAddingJump = false;
+			
+				ownRigid.useGravity = true;
+				hasDoubleJumped = true;
+
+				
+				addingJumpTime = 0;
+				stopAddingJump = false;
+				canAirStrafe = true;
+
+				chargingGroundPound = false;
+				groundPoundPauseCountdown = 0;
+				
+				Destroy(chargingParticles);
+			}
 		}
 		
 		
@@ -1262,7 +1371,11 @@ public class PlayerS : MonoBehaviour {
 					if (characterNum == 4){
 						jumpForce *= PlayerCharStatsS.pinkWhip_JumpMult;
 					}
-					
+
+					Vector3 fixVel = ownRigid.velocity;
+					fixVel.y = 0;
+					ownRigid.velocity = fixVel;
+
 					ownRigid.AddForce(jumpForce);
 					
 					Instantiate(jumpParticles, this.transform.position, Quaternion.identity); 
@@ -1272,30 +1385,26 @@ public class PlayerS : MonoBehaviour {
 					
 					addingJumpTime = 0;
 					stopAddingJump = false;
+
 					jumped = true;
+
 				}
 			}
 			
-			// do ground pound if not charging or dodging
+			// do ground pound charge if not charging or dodging
 			else if (!groundPounded && !charging && !clingingToWall && !dodging){
-				Vector3 groundPoundVel = Vector3.zero;
-				groundPoundVel.y = -groundPoundForce*Time.deltaTime*TimeManagerS.timeMult;
-				ownRigid.velocity = groundPoundVel;
-				isDangerous = true;
-				groundPounded = true;
+				//groundPounded = true;
+				chargingGroundPound = true;
+				groundPoundPauseCountdown = 0;
+
+				if (!attacking){	
+					ownRigid.velocity = Vector3.zero;
+					ownRigid.useGravity = false;
+				}
+
+
 				
-				// lowest attack priority
-				attackPriority = 0;
-				
-				//print ("Groundpound!");
-				// play an attack sound
-				//soundSource.PlayChargeLv2();
-				soundSource.PlayGroundPoundReleaseSound();
-				
-				// allow for air control
-				//dontCorrectSpeed = false;
-				
-				//SleepTime(groundPoundPauseTime);
+				canAirStrafe = false;
 			}
 			else{
 				// don't do anything
@@ -1303,9 +1412,8 @@ public class PlayerS : MonoBehaviour {
 		}
 		
 		
-		
 		// add addtl jump force
-		if (jumped){
+		if ((jumped || hasDoubleJumped) && !chargingGroundPound){
 			if (!jumpButtonDown){
 				stopAddingJump = true;
 			}
