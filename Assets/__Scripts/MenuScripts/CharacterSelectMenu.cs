@@ -131,6 +131,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 							
 							// a to confirm and add
 							players[i-1].GetComponent<PlayerS>().nonActive = false;
+							players[i-1].GetComponent<PlayerS>().hasDoubleJumped = true;
 							players[i-1].GetComponent<Rigidbody>().useGravity = true;
 							
 							hasSelected[i-1] = true;

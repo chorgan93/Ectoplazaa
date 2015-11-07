@@ -30,7 +30,8 @@ public class PlayerS : MonoBehaviour {
 	
 	public float jumpSpeed;
 	private bool jumped = false;
-	private bool hasDoubleJumped = false;
+	[HideInInspector]
+	public bool hasDoubleJumped = false;
 	private bool jumpButtonDown = false;
 	public float addJumpForce;
 	public float addJumpForceMaxTime;
@@ -1283,58 +1284,16 @@ public class PlayerS : MonoBehaviour {
 		if (!Input.GetButton("AButtonPlayer" + playerNum + platformType))
 		{
 
-			// if charging ground pound and let up before ground pound executes, do another jump
 
 			jumpButtonDown = false;
+			chargingGroundPound = false;
+			groundPoundPauseCountdown = 0;
 
-			if (chargingGroundPound && !hasDoubleJumped){
-				Vector3 jumpForce = Vector3.zero;
-			
-				// add to jump speed for double jump bc of lack of air boost
-				jumpForce.y = jumpSpeed*2.25f*Time.deltaTime*TimeManagerS.timeMult;
-			
-			
-				// apply character jump mult
-				if (characterNum == 1){
-					jumpForce *= PlayerCharStatsS.ninja_JumpMult;
-				}
-				if (characterNum == 2){
-					jumpForce *= PlayerCharStatsS.acidMouth_JumpMult;
-				}
-				if (characterNum == 3){
-					jumpForce *= PlayerCharStatsS.mummy_JumpMult;
-				}
-				if (characterNum == 4){
-					jumpForce *= PlayerCharStatsS.pinkWhip_JumpMult;
-				}
-				
-				Vector3 fixVel = ownRigid.velocity;
-				fixVel.y = 0;
-				ownRigid.velocity = fixVel;
-				
-				ownRigid.AddForce(jumpForce);
-				
-				Instantiate(jumpParticles, this.transform.position, Quaternion.identity); 
-				
-				// play jump sound
-				soundSource.PlayJumpSound();
-				
-				addingJumpTime = 0;
-				stopAddingJump = false;
-			
-				ownRigid.useGravity = true;
-				hasDoubleJumped = true;
-
-				
-				addingJumpTime = 0;
-				stopAddingJump = false;
-				canAirStrafe = true;
-
-				chargingGroundPound = false;
-				groundPoundPauseCountdown = 0;
-				
+			if (chargingParticles){
 				Destroy(chargingParticles);
 			}
+
+
 		}
 		
 		
@@ -1397,14 +1356,60 @@ public class PlayerS : MonoBehaviour {
 				chargingGroundPound = true;
 				groundPoundPauseCountdown = 0;
 
-				if (!attacking){	
+				/*if (!attacking){	
 					ownRigid.velocity = Vector3.zero;
 					ownRigid.useGravity = false;
+				}*/
+
+				if (!hasDoubleJumped){
+					Vector3 jumpForce = Vector3.zero;
+					
+					// add to jump speed for double jump bc of lack of air boost
+					jumpForce.y = jumpSpeed*2f*Time.deltaTime*TimeManagerS.timeMult;
+					
+					
+					// apply character jump mult
+					if (characterNum == 1){
+						jumpForce *= PlayerCharStatsS.ninja_JumpMult;
+					}
+					if (characterNum == 2){
+						jumpForce *= PlayerCharStatsS.acidMouth_JumpMult;
+					}
+					if (characterNum == 3){
+						jumpForce *= PlayerCharStatsS.mummy_JumpMult;
+					}
+					if (characterNum == 4){
+						jumpForce *= PlayerCharStatsS.pinkWhip_JumpMult;
+					}
+					
+					Vector3 fixVel = ownRigid.velocity;
+					fixVel.y = 0;
+					ownRigid.velocity = fixVel;
+					
+					ownRigid.AddForce(jumpForce);
+					
+					Instantiate(jumpParticles, this.transform.position, Quaternion.identity); 
+					
+					// play jump sound
+					soundSource.PlayJumpSound();
+					
+					addingJumpTime = 0;
+					stopAddingJump = false;
+					
+					ownRigid.useGravity = true;
+					hasDoubleJumped = true;
+					
+					
+					addingJumpTime = 0;
+					stopAddingJump = true;
+					canAirStrafe = true;
+
+					
+					Destroy(chargingParticles);
 				}
 
 
-				
-				canAirStrafe = false;
+
 			}
 			else{
 				// don't do anything
