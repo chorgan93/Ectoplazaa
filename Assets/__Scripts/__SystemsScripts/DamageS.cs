@@ -17,7 +17,7 @@ public class DamageS : MonoBehaviour {
 	public GameObject hitEffectObj;
 	public GameObject hitEffectFastObj;
 
-	private float collSizeMult = 1.75f;
+	private float collSizeMult = 1.5f;
 	private Vector3 startSize;
 
 	private int startPhysicsLayer;
@@ -36,7 +36,7 @@ public class DamageS : MonoBehaviour {
 
 		ownColl = GetComponent<Collider>();
 
-		groundPoundSize = new Vector3(0.5f, 0.8f, 0.5f);
+		groundPoundSize = new Vector3(0.6f, 1.2f, 0.6f);
 
 
 	}

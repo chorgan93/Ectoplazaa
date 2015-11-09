@@ -86,7 +86,7 @@ public class PlayerS : MonoBehaviour {
 	public bool groundPounded = false;
 	public float groundPoundForce;
 	private float groundPoundPauseCountdown;
-	private float groundPoundPauseMax = 0.24f;
+	private float groundPoundPauseMax = 0.33f;
 	private bool chargingGroundPound = false;
 	
 	//private float pauseDelay;
@@ -94,8 +94,13 @@ public class PlayerS : MonoBehaviour {
 	private bool prevGravState;
 	private Vector3 prevVel;
 	private Vector3 prevButtVel;
+
+	// following is for pausing during special attacks/pause menu
 	[HideInInspector]
 	public bool effectPause = false;
+	private bool capturedDanger;
+	private bool capturedGrav;
+	private Vector3 capturedVel;
 	
 	//private float groundPoundPauseTime = 0.3f;
 	private float flingPauseTime = 0.45f;
@@ -249,7 +254,7 @@ public class PlayerS : MonoBehaviour {
 	public GameObject chompHitObj; // obj to spawn on chomp
 	public float chompForce; // force to add to vel on chomp attack
 	private float startDrag; // reg drag
-	private float chompDrag = 12; // drag for chomp attack
+	private float chompDrag = 14; // drag for chomp attack
 	private float dodgeDrag = 16;
 	//private float chompRad = 10f;
 
@@ -313,6 +318,19 @@ public class PlayerS : MonoBehaviour {
 		//Get number of lives (mode stuff)
 		
 		
+	}
+
+	void Update () {
+
+		/*if (Input.GetKeyDown(KeyCode.P)){
+			if (effectPause){
+				UnpauseCharacter();
+			}
+			else{
+				PauseCharacter();
+			}
+		}*/
+
 	}
 	
 	
@@ -1352,20 +1370,15 @@ public class PlayerS : MonoBehaviour {
 			
 			// do ground pound charge if not charging or dodging
 			else if (!groundPounded && !charging && !clingingToWall && !dodging){
-				//groundPounded = true;
+		
 				chargingGroundPound = true;
 				groundPoundPauseCountdown = 0;
-
-				/*if (!attacking){	
-					ownRigid.velocity = Vector3.zero;
-					ownRigid.useGravity = false;
-				}*/
 
 				if (!hasDoubleJumped){
 					Vector3 jumpForce = Vector3.zero;
 					
 					// add to jump speed for double jump bc of lack of air boost
-					jumpForce.y = jumpSpeed*2f*Time.deltaTime*TimeManagerS.timeMult;
+					jumpForce.y = jumpSpeed*1.5f*Time.deltaTime*TimeManagerS.timeMult;
 					
 					
 					// apply character jump mult
@@ -1657,7 +1670,7 @@ public class PlayerS : MonoBehaviour {
 	void Respawn () {
 		
 		
-		if (respawning){
+		if (respawning && !effectPause){
 			
 			//Disable player actions and physics
 			ownRigid.useGravity = false;
@@ -1712,13 +1725,19 @@ public class PlayerS : MonoBehaviour {
 			
 			
 			if(respawnParticles != null){
+				ParticleSystem spawnParticles = respawnParticles.GetComponent<ParticleSystem>();
 				respawnParticles.transform.position = 
-					Vector3.Lerp(deathPos, this.transform.position, respawnParticles.GetComponent<ParticleSystem>().time/respawnTimeMax); 
+					Vector3.Lerp(deathPos, this.transform.position, spawnParticles.time/respawnTimeMax); 
+
+				if (spawnParticles.isPaused){
+					spawnParticles.Play();
+				}
+
+
 			}
 
-			if (!effectPause){
-				spriteObjRender.enabled = false;
-			}
+			spriteObjRender.enabled = false;
+
 			
 			//Give back control - should probably be converted to alternate thread -- ienumerator?
 			if (respawnTimeCountdown <= 0 && numLives != 0){
@@ -1754,6 +1773,15 @@ public class PlayerS : MonoBehaviour {
 			
 			
 			
+		}
+
+		if (effectPause){
+			if(respawnParticles != null){
+				
+				respawnParticles.GetComponent<ParticleSystem>().Pause();
+				
+				
+			}
 		}
 		
 	}
@@ -1824,6 +1852,27 @@ public class PlayerS : MonoBehaviour {
 		//effectPause = true;
 		
 		//print ("PAUSE");
+	}
+
+	public void PauseCharacter(){
+
+		effectPause = true;
+		capturedGrav = ownRigid.useGravity;
+		capturedVel = ownRigid.velocity;
+		capturedDanger = isDangerous;
+
+		ownRigid.useGravity = false;
+		ownRigid.velocity = Vector3.zero;
+		isDangerous = capturedDanger;
+
+	}
+	public void UnpauseCharacter(){
+
+		effectPause = false;
+		ownRigid.useGravity = capturedGrav;
+		ownRigid.velocity = capturedVel;
+		isDangerous = capturedDanger;
+
 	}
 	
 	void OnCollisionEnter(Collision other){
