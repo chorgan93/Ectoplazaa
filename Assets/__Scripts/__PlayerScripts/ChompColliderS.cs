@@ -150,7 +150,9 @@ public class ChompColliderS : MonoBehaviour {
 				// only deal damage if higher priority or other player isnt attacking
 				//if ((!otherPlayer.attacking) || (otherPlayer.attacking && otherPlayer.attackPriority < playerRef.attackPriority)) {
 				if (!otherPlayer.attacking){
+
 					
+					playerRef.AddKO();
 					//print ("DAMAGING PLAYER " + otherPlayer.playerNum); 
 					
 					otherPlayer.SleepTime (pauseTime);
@@ -235,6 +237,8 @@ public class ChompColliderS : MonoBehaviour {
 				
 				otherPlayer.SleepTime (pauseTime);
 				playerRef.SleepTime (pauseTime);
+				
+				playerRef.AddKO();
 				
 				
 				CameraShakeS.C.TimeSleep(0.2f);

@@ -86,7 +86,7 @@ public class PlayerS : MonoBehaviour {
 	public bool groundPounded = false;
 	public float groundPoundForce;
 	private float groundPoundPauseCountdown;
-	private float groundPoundPauseMax = 0.33f;
+	private float groundPoundPauseMax = 0.3f;
 	private bool chargingGroundPound = false;
 	
 	//private float pauseDelay;
@@ -223,7 +223,9 @@ public class PlayerS : MonoBehaviour {
 	Vector3 deathPos; 
 	
 	public GameObject chargingParticlePrefab;
+	public GameObject chargingSpecialPrefab;
 	GameObject chargingParticles;
+	GameObject specialParticles;
 	
 	public GameObject initialSpawnParticlesPrefab; 
 	GameObject initialSpawnParticles; 
@@ -265,6 +267,13 @@ public class PlayerS : MonoBehaviour {
 	
 	//[HideInInspector]
 	public bool nonActive = false; // total disable of character, just show -- for character select screen
+
+	//special attack stuff
+	public int numKOsInRow = 0;
+	private bool doingSpecial = false;
+	private float specialCooldown;
+	private float specialCooldownMax = 1f;
+	public GameObject ghostMaskSpecialPrefab;
 	
 	
 	
@@ -362,6 +371,8 @@ public class PlayerS : MonoBehaviour {
 						Dodge ();
 						
 						// attack methods
+
+						DoSpecial();
 						
 						ChargeAttack ();
 						AttackRelease ();
@@ -492,13 +503,47 @@ public class PlayerS : MonoBehaviour {
 	_____________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
 	*/
+
+	void DoSpecial(){
+
+		if (doingSpecial){
+
+			specialCooldown -= Time.deltaTime;
+			if (specialCooldown <= 0){
+				doingSpecial = false;
+				UnpauseCharacter();
+			}
+
+		}
+		else{
+			if (numKOsInRow >= 3 && Input.GetButton("BButtonPlayer" + playerNum + platformType) && !attacking && !charging){
+				dangerObj.GetComponent<DamageS>().MakeSlashEffect(transform.position);
+				doingSpecial = true;
+				CameraShakeS.C.TimeSleep(0.2f);
+				specialCooldown = specialCooldownMax;
+				numKOsInRow = 0;
+				if (specialParticles != null){
+					Destroy(specialParticles.gameObject);
+				}
+
+				GameObject specialAttack = Instantiate(ghostMaskSpecialPrefab, transform.position, Quaternion.identity)
+					as GameObject;
+				specialAttack.GetComponent<GhostMaskSpecialAttackS>().playerRef = this;
+
+				PauseCharacter();
+			}
+		}
+
+	}
 	
 	void ChargeAttack () {
 		
 		// method for handling attack charge
 		
 		// turn stretch button bool on/off
-		if ((Input.GetAxis("RightTriggerPlayer" + playerNum + platformType) > triggerSensitivity) || Input.GetButton("RightBumperPlayer" + playerNum + platformType) || Input.GetButton("BButtonPlayer" + playerNum + platformType)){
+		if ((Input.GetAxis("RightTriggerPlayer" + playerNum + platformType) > triggerSensitivity) 
+		    || Input.GetButton("RightBumperPlayer" + playerNum + platformType) 
+		    || (Input.GetButton("BButtonPlayer" + playerNum + platformType) && numKOsInRow < 3)){
 			stretchButtonDown = true;
 		}
 		else{
@@ -511,7 +556,7 @@ public class PlayerS : MonoBehaviour {
 		// don't allow charge if already attacking, charging, or dodging
 		
 		if (!doingChomp){
-			if (stretchButtonDown && !charging && canCharge && !isDangerous && dodgeTimeCountdown <= 0){
+			if (stretchButtonDown && !charging && canCharge && !isDangerous && !doingSpecial && dodgeTimeCountdown <= 0){
 				charging = true;
 				canCharge = false;
 				
@@ -1378,7 +1423,7 @@ public class PlayerS : MonoBehaviour {
 					Vector3 jumpForce = Vector3.zero;
 					
 					// add to jump speed for double jump bc of lack of air boost
-					jumpForce.y = jumpSpeed*1.5f*Time.deltaTime*TimeManagerS.timeMult;
+					jumpForce.y = jumpSpeed*1.7f*Time.deltaTime*TimeManagerS.timeMult;
 					
 					
 					// apply character jump mult
@@ -1676,7 +1721,7 @@ public class PlayerS : MonoBehaviour {
 			ownRigid.useGravity = false;
 			ownRigid.velocity = Vector3.zero;
 			//dangerObj.SetActive(false);
-			
+
 			//Halt collisions
 			GetComponent<Collider>().enabled = false;
 			
@@ -1701,9 +1746,16 @@ public class PlayerS : MonoBehaviour {
 				{
 					GameObject.Destroy(chargingParticles.gameObject); 
 				}
+				if(specialParticles!= null)
+				{
+					GameObject.Destroy(specialParticles.gameObject); 
+				}
 				
 				
-				deathPos = this.transform.position; 
+				deathPos = this.transform.position;
+
+				// reset death streak
+				numKOsInRow = 0;
 				
 				//move player to new respawn position right away so trail renderer has time to update.
 				
@@ -1724,7 +1776,7 @@ public class PlayerS : MonoBehaviour {
 			}
 			
 			
-			if(respawnParticles != null){
+			if(respawnParticles != null && numLives != 0){
 				ParticleSystem spawnParticles = respawnParticles.GetComponent<ParticleSystem>();
 				respawnParticles.transform.position = 
 					Vector3.Lerp(deathPos, this.transform.position, spawnParticles.time/respawnTimeMax); 
@@ -2069,7 +2121,22 @@ public class PlayerS : MonoBehaviour {
 	public float GetChargeLv3Min(){
 		return (maxChargeTime);
 	}
-	
+
+	public void AddKO(){
+
+		numKOsInRow ++;
+		print (numKOsInRow);
+		if (numKOsInRow >= 3){
+			if (!specialParticles){
+				GameObject newParticles = Instantiate(chargingSpecialPrefab, transform.position,Quaternion.identity)
+					as GameObject;
+				specialParticles = newParticles;
+				newParticles.transform.parent = transform;
+			}
+		}
+
+	}
+
 	void BackToMenu(){
 		// reset for festival demo purposes
 		if (Input.GetButton("StartButtonPlayer"+playerNum+platformType) &&

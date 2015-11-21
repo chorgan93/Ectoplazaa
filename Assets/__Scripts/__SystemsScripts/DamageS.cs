@@ -25,10 +25,17 @@ public class DamageS : MonoBehaviour {
 	private float knockbackMult = 1.5f;
 	private Vector3 groundPoundSize;
 
+	public bool specialAttackDmg = false;
+
 	private Collider ownColl;
 
 	void Start () {
-		playerRef = transform.parent.GetComponent<PlayerS>();
+		if (transform.parent){
+			playerRef = transform.parent.GetComponent<PlayerS>();
+		}
+		else{
+			specialAttackDmg = true;
+		}
 
 		startPhysicsLayer = gameObject.layer;
 
@@ -44,6 +51,7 @@ public class DamageS : MonoBehaviour {
 	void FixedUpdate () {
 
 		// this is to fix a bug with damage obj not finding its own reference
+		if (!specialAttackDmg){
 		if (playerRef == null){
 			playerRef = transform.parent.GetComponent<PlayerS>();
 		}
@@ -70,6 +78,7 @@ public class DamageS : MonoBehaviour {
 		if (gameObject.layer != startPhysicsLayer){
 			gameObject.layer = startPhysicsLayer;
 		}
+		}
 
 
 
@@ -94,13 +103,11 @@ public class DamageS : MonoBehaviour {
 						// only deal damage if higher priority or other player isnt attacking
 
 						if (!otherPlayer.attacking || 
-						    (otherPlayer.attacking && otherPlayer.attackPriority < playerRef.attackPriority)){
+						    (otherPlayer.attacking && otherPlayer.attackPriority < playerRef.attackPriority)
+						 || specialAttackDmg){
 							
 							//print ("DAMAGING PLAYER " + otherPlayer.playerNum); 
-							
-							otherPlayer.SleepTime (pauseTime);
-							playerRef.SleepTime (pauseTime);
-							
+
 							
 							CameraShakeS.C.TimeSleep(0.2f);
 							
@@ -122,6 +129,8 @@ public class DamageS : MonoBehaviour {
 								otherPlayer.TakeDamage(otherPlayer.health);
 								GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 								GlobalVars.totalKills[playerRef.playerNum-1] ++; 
+
+
 							}
 							else
 							{
@@ -138,7 +147,15 @@ public class DamageS : MonoBehaviour {
 							MakeExplosion(otherPlayer.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
 							
 							CameraShakeS.C.LargeShake ();
-							
+
+							// add special ko count
+							if (specialAttackDmg){
+								otherPlayer.numLives = 0;
+							}
+							else{
+								
+								playerRef.AddKO();
+							}
 							
 							// spawn slash effect
 							MakeSlashEffect(other.transform.position);
@@ -185,8 +202,14 @@ public class DamageS : MonoBehaviour {
 				otherPlayer.SleepTime (pauseTime);
 				playerRef.SleepTime (pauseTime);
 				
+				playerRef.numKOsInRow ++;
 				
 				CameraShakeS.C.TimeSleep(0.2f);
+
+				// add special ko count
+				if (!specialAttackDmg){
+					playerRef.AddKO();
+				}
 				
 				//chop all of tail off
 				// make sure there are dots to destroy first
@@ -206,6 +229,10 @@ public class DamageS : MonoBehaviour {
 					otherPlayer.TakeDamage(otherPlayer.health);
 					GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 					GlobalVars.totalKills[playerRef.playerNum-1] ++; 
+
+					if (specialAttackDmg){
+						otherPlayer.numLives = 0;
+					}
 				}
 				else
 				{
@@ -248,7 +275,8 @@ public class DamageS : MonoBehaviour {
 			as GameObject;
 
 		slashEffect.GetComponent<SlashEffectS>().moveDir = effectDir;
-		slashEffect.GetComponent<SlashEffectS>().attachedLightning.GetComponent<Renderer>().material.color = playerRef.playerParticleMats
+		slashEffect.GetComponent<SlashEffectS>().attachedLightning.GetComponent<Renderer>().material.color 
+			= playerRef.playerParticleMats
 			[playerRef.characterNum-1].GetColor("_TintColor");
 
 		spawnPos = (transform.position+otherPos)/2;
@@ -402,5 +430,11 @@ public class DamageS : MonoBehaviour {
 
 
 
+	}
+
+	public void MakeSpecial(PlayerS newRef){
+		specialAttackDmg = true;
+		playerRef = newRef;
+		ownColl.enabled = true;
 	}
 }
