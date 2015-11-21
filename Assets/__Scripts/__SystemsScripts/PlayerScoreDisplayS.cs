@@ -8,6 +8,8 @@ public class PlayerScoreDisplayS : MonoBehaviour {
 
 	public PlayerS playerRef;
 
+	// fkasjdlksjald
+
 	private TextMesh ownText;
 
 	void Start () {
