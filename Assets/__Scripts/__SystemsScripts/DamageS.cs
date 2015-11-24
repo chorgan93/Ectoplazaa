@@ -29,6 +29,8 @@ public class DamageS : MonoBehaviour {
 
 	private Collider ownColl;
 
+	private bool isPinkSpecialCollider = false;
+
 	void Start () {
 		if (transform.parent){
 			playerRef = transform.parent.GetComponent<PlayerS>();
@@ -143,6 +145,11 @@ public class DamageS : MonoBehaviour {
 							}
 							
 							//print ("KILL!"); 
+
+							if (isPinkSpecialCollider){
+								playerRef.TakeDamage(999);
+								Destroy(gameObject);	
+							}
 							
 							MakeExplosion(otherPlayer.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
 							
@@ -242,6 +249,11 @@ public class DamageS : MonoBehaviour {
 					otherPlayer.TakeDamage (damageTaken);
 					GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 					GlobalVars.totalKills[playerRef.playerNum-1] ++; 
+				}
+
+				if (isPinkSpecialCollider){
+					playerRef.TakeDamage(999);
+					Destroy(gameObject);	
 				}
 				
 				//print ("KILL!"); 
@@ -436,5 +448,9 @@ public class DamageS : MonoBehaviour {
 		specialAttackDmg = true;
 		playerRef = newRef;
 		ownColl.enabled = true;
+	}
+
+	public void EnablePinkSpecial(){
+		isPinkSpecialCollider = true;
 	}
 }

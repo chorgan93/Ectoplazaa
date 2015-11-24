@@ -270,11 +270,30 @@ public class PlayerS : MonoBehaviour {
 	public bool nonActive = false; // total disable of character, just show -- for character select screen
 
 	//special attack stuff
+	[Header ("Special Attacks")]
 	public int numKOsInRow = 0;
 	private bool doingSpecial = false;
 	private float specialCooldown;
 	private float specialCooldownMax = 1f;
+
+	// ghostMask Special
 	public GameObject ghostMaskSpecialPrefab;
+
+	// pinkwhip special
+	public GameObject pinkWhipSpecialPrefab;
+	private Vector3 pinkWhipSpecialVel;
+	private float pinkWhipSpecialSpeed = 10000f;
+
+	// mr wraps special
+	public GameObject mrWrapsSpecialProjectile;
+	private float wrapsSpecialProjSpeed = 5000f;
+	private float timeBetweenProjsMax = 0.6f;
+	private float timeBettwenProjCountdown = 0;
+	private int numProjsMax = 3;
+	private int currentProj;
+	private float currentLerpTarget;
+	private float rotateAmt = 30f;
+	private float rotateLerpRate = 30f;
 	
 	
 	
@@ -373,12 +392,14 @@ public class PlayerS : MonoBehaviour {
 						
 						// attack methods
 
-						DoSpecial();
+
 						
 						ChargeAttack ();
 						AttackRelease ();
 						
 					}
+
+					DoSpecial();
 					
 					MiscAction (); //TRAIL RENDERER UPDATE, OTHER THINGS
 					
@@ -509,7 +530,64 @@ public class PlayerS : MonoBehaviour {
 
 		if (doingSpecial){
 
-			specialCooldown -= Time.deltaTime;
+			// execute attack according to character num
+
+			// pinkwhip does a modified lv3 with no grav
+			if (characterNum == 4){
+			
+				ownRigid.useGravity = false;
+				ownRigid.velocity = pinkWhipSpecialVel*Time.deltaTime;
+
+			}
+
+			if (characterNum == 3){
+				specialCooldown -= Time.deltaTime;
+				ownRigid.velocity = Vector3.zero;
+			}
+
+			if (characterNum == 1){
+				timeBettwenProjCountdown -= Time.deltaTime;
+				ownRigid.velocity = Vector3.zero;
+
+				// rotate head after each shot
+				Vector3 currentHeadRot = spriteObject.transform.rotation.eulerAngles;
+				Vector3 targetHeadRot = new Vector3(0,0,currentLerpTarget);
+				spriteObject.transform.rotation = Quaternion.Euler
+					(Vector3.Lerp(currentHeadRot, targetHeadRot, rotateLerpRate*Time.deltaTime));
+
+
+				if (timeBettwenProjCountdown <= 0){
+					currentProj++;
+					if (currentProj > numProjsMax){
+						specialCooldown = 0;
+					}
+					else{
+						// shoot projectile using head transform
+						GameObject newProj = Instantiate(mrWrapsSpecialProjectile, transform.position,
+						                                 Quaternion.identity) as GameObject;
+
+						Vector3 projVel = spriteObject.transform.right;
+						if (spriteObject.transform.rotation.z > 90 && spriteObject.transform.rotation.z < 180){
+							projVel *= -1f;
+						}
+						projVel *= wrapsSpecialProjSpeed*Time.deltaTime/Time.timeScale;
+						newProj.GetComponent<Rigidbody>().velocity = projVel;
+						newProj.GetComponent<MrWrapsSpecialAttackS>().playerRef = this;
+
+						// rotate head
+						if ( currentProj != numProjsMax ){
+							currentLerpTarget += rotateAmt;
+						}
+
+						timeBettwenProjCountdown = timeBetweenProjsMax;
+
+					}
+				}
+			}
+
+
+			// end when period is over
+
 			if (specialCooldown <= 0){
 				doingSpecial = false;
 				UnpauseCharacter();
@@ -527,9 +605,42 @@ public class PlayerS : MonoBehaviour {
 					Destroy(specialParticles.gameObject);
 				}
 
-				GameObject specialAttack = Instantiate(ghostMaskSpecialPrefab, transform.position, Quaternion.identity)
-					as GameObject;
-				specialAttack.GetComponent<GhostMaskSpecialAttackS>().playerRef = this;
+				// if ghostMask, execute attack immediately
+				if (characterNum == 3){
+
+					GameObject specialAttack = Instantiate(ghostMaskSpecialPrefab, transform.position, Quaternion.identity)
+						as GameObject;
+					specialAttack.GetComponent<GhostMaskSpecialAttackS>().playerRef = this;
+
+				}
+
+				if (characterNum == 4){
+					specialCooldown = 1;
+					GameObject specialAttack = Instantiate(pinkWhipSpecialPrefab, transform.position, transform.rotation)
+						as GameObject;
+					specialAttack.transform.parent = transform;
+					specialAttack.GetComponent<PinkWhipSpecialAttackS>().playerRef = this;
+
+ 					// shoot off in dir
+					Vector3 inputDir = Vector3.zero;
+					inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
+					inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+					inputDir = inputDir.normalized*pinkWhipSpecialSpeed;
+				}
+
+				// if mummy, prep for shots
+				if (characterNum == 1){
+					timeBettwenProjCountdown = 0;
+					currentProj = 0;
+					specialCooldown = 1;
+
+					// face input dir
+					Vector3 inputDir = Vector3.zero;
+					inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
+					inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+					spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
+					currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z;
+				}
 
 				PauseCharacter();
 			}
@@ -826,81 +937,6 @@ public class PlayerS : MonoBehaviour {
 			attacking = false;
 			//snapReturning = true;
 		}
-		
-	}
-	
-	void JabAttack(bool endAttack)
-	{
-		
-		// attack code that is currently unused
-		
-		if(endAttack)
-		{
-			
-		}
-		else
-		{
-			if(!performedAttack)
-			{
-				ownRigid.useGravity = false;
-				
-				
-				
-				// set start snap vel
-				bulletVel = attackDir.normalized*Time.deltaTime*lv1OutRate;
-				
-				print (bulletVel); 
-				
-				lv1OutCountdown = lv1OutTimeMax;
-				
-			}
-			else
-			{
-				print ("JAB ATTACK!");
-				// lerp out to attack target and then back to butt poss
-				if (lv1OutCountdown > 0){
-					
-					lv1OutCountdown -= Time.deltaTime*TimeManagerS.timeMult;
-					//print (lv1OutCountdown);
-					
-					if (!snapReturning){
-						
-						// vel decrease over time (linear, can be made exponential)
-						
-						// vel decrease over time (linear, can be made exponential)
-						ownRigid.velocity = bulletVel*TimeManagerS.timeMult*(lv1OutCountdown/lv1OutTimeMax);
-					}
-					else{
-						ownRigid.velocity = -bulletVel*TimeManagerS.timeMult*(lv1OutCountdown/
-						                                                      (lv1OutTimeMax/lv1ReturnRate))
-							*lv1ReturnRate;
-					}
-				}
-				else{
-					
-					// reverse direction & accel
-					if (!snapReturning){
-						snapReturning = true;
-						lv1OutCountdown = lv1OutTimeMax/lv1ReturnRate;
-					}
-					// else end attack 1
-					else{
-						//print ("USE GRAV");
-						ownRigid.useGravity = true;
-						//isDangerous = false;
-						attacking = false;
-						//TurnOffIgnoreWalls();
-						//buttObj.isFollowing = true;
-						
-						// stop vel
-						ownRigid.velocity = Vector3.zero;
-					}
-				}
-			}
-		}
-		
-		
-		
 		
 	}
 	
@@ -1566,77 +1602,6 @@ public class PlayerS : MonoBehaviour {
 		
 	}
 	
-	void WallJump () {
-		
-		// early mechanic we wanted to test but couldn't work with bouncy system without major redesign
-		// currently out of commision and probably won't be put into game
-		
-		// allows player to slow descent and jump when "clinging" to a wall
-		
-		if (!groundDetect.Grounded()){
-			
-			// first, check if player is touching a wall on either side
-			if (leftWallDetect.WallTouching()){
-				
-				// trigger "cling" if player is tilting stick towards wall
-				if (Input.GetAxis("HorizontalPlayer" + playerNum + platformType) < 0){
-					
-					clingingToWall = true;
-					
-					
-				}
-				
-			}
-			
-			if (rightWallDetect.WallTouching()){
-				
-				// trigger "cling" if player is tilting stick towards wall
-				if (Input.GetAxis("HorizontalPlayer" + playerNum + platformType) > 0){
-					
-					clingingToWall = true;
-					
-					
-				}
-				
-			}
-			
-			if (clingingToWall){
-				
-				// start applying cling force against gravity
-				Vector3 clingForce = Vector3.zero;
-				clingForce.y = wallDragForce*Time.deltaTime*TimeManagerS.timeMult;
-				ownRigid.AddForce(clingForce);
-				
-				// check for button press to trigger wall jump
-				if (Input.GetButton("AButtonPlayer"+playerNum+platformType)){
-					Vector3 jumpForce = Vector3.zero;
-					
-					// apply x force in opposite direction of wall
-					if (leftWallDetect.WallTouching()){
-						jumpForce.x = wallJumpXForce;
-					}
-					if (rightWallDetect.WallTouching()){
-						jumpForce.x = -wallJumpXForce;
-					}
-					
-					// apply normal y jump force
-					jumpForce.y = jumpSpeed;
-					
-					jumpForce *= Time.deltaTime;
-					
-					ownRigid.AddForce(jumpForce);
-					
-					clingingToWall = false;
-				}
-			}
-		}
-		else{
-			clingingToWall = false;
-		}
-		
-		
-	}
-	
 	void MiscAction()
 	{
 		
@@ -1858,6 +1823,9 @@ public class PlayerS : MonoBehaviour {
 			respawning = true;
 			respawnTimeCountdown = respawnTimeMax;
 			//canRespawn = false;
+
+				doingSpecial = false;
+				specialCooldown = 0;
 			
 			
 			
@@ -1943,6 +1911,14 @@ public class PlayerS : MonoBehaviour {
 		newParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[characterNum - 1].GetColor("_TintColor");
 		
 		if (other.gameObject.tag == "Ground"){
+
+			if (doingSpecial){
+				if (characterNum == 4){
+					doingSpecial = false;
+					specialCooldown = 0;
+					ownRigid.useGravity = true;
+				}
+			}
 			
 			if (attacking){
 				//attacking = false;
@@ -1983,6 +1959,14 @@ public class PlayerS : MonoBehaviour {
 		
 		// for hit sounds
 		if ((other.gameObject.tag == "Wall" || other.gameObject.tag == "Ground")){
+
+			if (doingSpecial){
+				if (characterNum == 4){
+					doingSpecial = false;
+					specialCooldown = 0;
+					ownRigid.useGravity = true;
+				}
+			}
 			
 			// turn off lv3 ability
 			TurnOffIgnoreWalls();
@@ -2123,10 +2107,13 @@ public class PlayerS : MonoBehaviour {
 		return (maxChargeTime);
 	}
 
+	public bool GetSpecialState(){
+		return doingSpecial;
+	}
+
 	public void AddKO(){
 
 		numKOsInRow ++;
-		print (numKOsInRow);
 		if (numKOsInRow >= 3){
 			if (!specialParticles){
 				GameObject newParticles = Instantiate(chargingSpecialPrefab, transform.position,Quaternion.identity)

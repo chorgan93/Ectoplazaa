@@ -136,8 +136,10 @@ public class PlayerAnimS : MonoBehaviour {
 		Turn(); // currently not in use for actual animation
 		Animate(); // actual animation
 
-		FaceTarget(); // rotates head when character is in air to face direction of movement
-		//print(isFacingDirection);
+		if (!playerRef.effectPause){
+			FaceTarget(); // rotates head when character is in air to face direction of movement
+			//print(isFacingDirection);
+		}
 
 		ManageAlpha();
 
@@ -175,6 +177,8 @@ public class PlayerAnimS : MonoBehaviour {
 
 	void Turn(){
 
+
+		if (!playerRef.GetSpecialState()){
 		// turn head according to velocity
 
 		// if head is not already turned, turn in isTurning
@@ -199,35 +203,9 @@ public class PlayerAnimS : MonoBehaviour {
 			}
 			headRender.transform.localScale = flipSize;
 		}
-
-
-		// turn tail according to velocity
-		if (headRigid.velocity.x > 0){
-			Vector3 flipSize = tailRender.transform.localScale;
-			if (flipSize.x != -tailRenderSize.x && !didTurnTail){
-				//isTurningTail = true; //HAD TO COMMENT OUT FOR NOW, SORRY COLIN, THIS IS ALWAYS TURNED ON FOR SOME REASON, it stops the tail from animating
-				//didTurnTail = true;
-				flipSize.x = -tailRenderSize.x;
-			}
-			tailRender.transform.localScale = flipSize;
-
-			Vector3 tailOffSetPos = tailRender.transform.localPosition;
-			tailOffSetPos.x = -tailXPosOffset;
-			//tailRender.transform.localPosition = tailOffSetPos;
 		}
-		
-		if (headRigid.velocity.x < 0){
-			Vector3 flipSize = tailRender.transform.localScale;
-			if (flipSize.x != tailRenderSize.x && !didTurnTail){
-				//isTurningTail = true; //HAD TO COMMENT OUT FOR NOW, SORRY COLIN, THIS IS ALWAYS TURNED ON FOR SOME REASON
-				//didTurnTail = true;
-				flipSize.x = tailRenderSize.x;
-			}
-			tailRender.transform.localScale = flipSize;
+		else{
 
-			Vector3 tailOffSetPos = tailRender.transform.localPosition;
-			tailOffSetPos.x = tailXPosOffset;
-			//tailRender.transform.localPosition = tailOffSetPos;
 		}
 
 
@@ -272,10 +250,6 @@ public class PlayerAnimS : MonoBehaviour {
 
 			
 			headRender.sprite =currentHeadSprites[currentJumpFrame];
-			// set tail frame if tail is not turning
-			//if (!isTurningTail){
-				//tailRender.sprite = currentTailSprites[currentJumpFrame];
-			//}
 		}
 
 		else if (isRunning){
@@ -352,12 +326,14 @@ public class PlayerAnimS : MonoBehaviour {
 		// rotate head and tail according to velocity
 
 		
-		if (!playerRef.groundDetect.Grounded() && !playerRef.charging){
+		if (!playerRef.groundDetect.Grounded() && !playerRef.charging && !playerRef.GetSpecialState()){
 			isFacingDirection= true;
 		}
 		else{
 			isFacingDirection = false;
-			headRender.transform.rotation = tailRender.transform.rotation = Quaternion.identity;
+			if (!playerRef.GetSpecialState()){
+				headRender.transform.rotation = tailRender.transform.rotation = Quaternion.identity;
+			}
 		}
 
 		if (isFacingDirection){
@@ -381,9 +357,7 @@ public class PlayerAnimS : MonoBehaviour {
 			}	
 		
 			
-			if (headRigid.velocity.x < 0){
-				//rotateZHead += 180;
-			}
+
 			// when not active in character select, be at rotation 0
 			if (playerRef.nonActive){
 				rotateZHead = 0;
@@ -391,25 +365,7 @@ public class PlayerAnimS : MonoBehaviour {
 			
 			headRender.transform.rotation = Quaternion.Euler(new Vector3(0,0,rotateZHead));
 
-			// for tail
 
-			float rotateZTail = 0;
-			
-			if(tailRigid.velocity.x == 0){
-				rotateZTail = 0;
-			}
-			else{
-				rotateZTail = Mathf.Rad2Deg*Mathf.Atan((tailRigid.velocity.y/tailRigid.velocity.x));
-			}	
-			
-			
-			if (tailRigid.velocity.x < 0){
-				//rotateZTail += 180;
-			}
-
-
-			
-			//tailRender.transform.rotation = Quaternion.Euler(new Vector3(0,0,rotateZTail));
 			
 		}
 
@@ -424,6 +380,40 @@ public class PlayerAnimS : MonoBehaviour {
 			headRenderGreenGlow.enabled = false;
 		}
 
+	}
+
+	public void FaceTargetInstant(Vector3 targetDir){
+		
+		
+		targetDir = targetDir.normalized;
+		
+		// for head
+		
+		float rotateZHead = 0;
+		
+		if(targetDir.x == 0){
+			if (targetDir.y > 0){
+				rotateZHead = 90;
+			}
+			else{
+				rotateZHead = -90;
+			}
+		}
+		else{
+			rotateZHead = Mathf.Rad2Deg*Mathf.Atan((targetDir.y/targetDir.x));
+		}	
+		
+		
+		if (targetDir.x < 0){
+			//rotateZHead += 180;
+		}
+		
+		headRender.transform.rotation = Quaternion.Euler(new Vector3(0,0,rotateZHead));
+
+		print (targetDir + " : " + rotateZHead);
+		
+		
+		
 	}
 
 	public void SetCurrentSprites (int characterNumber, int colorNum)
