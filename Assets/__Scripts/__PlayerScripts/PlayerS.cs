@@ -3,6 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class PlayerS : MonoBehaviour {
+
+	//___________________________________CLASS PROPERTIES
+
+	//___________________________________INSTANCE PROPERTIES
+
+	//___________________________________GETTERS AND SETTERS
 	
 	private string platformType;
 	private Rigidbody ownRigid;
@@ -399,7 +405,7 @@ public class PlayerS : MonoBehaviour {
 						
 					}
 
-					DoSpecial();
+					// DoSpecial();
 					
 					MiscAction (); //TRAIL RENDERER UPDATE, OTHER THINGS
 					
