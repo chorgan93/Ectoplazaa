@@ -25,7 +25,6 @@ public class ScoreBar : MonoBehaviour {
 
 	public GameObject startTransform, endTransform; 
 
-	Vector3 fullScale = new Vector3 (60f, 1f, .5f); 
 
 	float animSpeed = 0.1f; 
 	float scaleSpeed = 0.1f; 

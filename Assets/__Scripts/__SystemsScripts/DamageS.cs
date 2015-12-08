@@ -22,7 +22,6 @@ public class DamageS : MonoBehaviour {
 
 	private int startPhysicsLayer;
 
-	private float knockbackMult = 1.5f;
 	private Vector3 groundPoundSize;
 
 	public bool specialAttackDmg = false;
@@ -173,8 +172,8 @@ public class DamageS : MonoBehaviour {
 							MakeExplosion(otherPlayer.gameObject, playerRef.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
 
 							Vector3 spawnPos = (otherPlayer.transform.position + transform.position)/2;
-
-							GameObject hitEffect = Instantiate(hitEffectFastObj,spawnPos,Quaternion.identity) as GameObject;
+						
+							Instantiate(hitEffectFastObj,spawnPos,Quaternion.identity);
 							//	MakeExplosion(otherPlayer.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
 							playerRef.InstantiateDeathParticles();
 							CameraShakeS.C.TimeSleep(0.12f);

@@ -11,9 +11,6 @@ public class AimObjS : MonoBehaviour {
 	public float lv2SizeMult = 1.5f;
 	public float lv3SizeMult = 2.25f;
 
-	private float startSize;
-
-	private Renderer ownRender;
 
 	private PlayerS playerRef;
 
@@ -31,8 +28,6 @@ public class AimObjS : MonoBehaviour {
 		playerRef = transform.parent.GetComponent<PlayerS>();
 		transform.parent = null;
 
-		startSize = transform.localScale.x;
-		ownRender = GetComponent<Renderer>();
 
 		lv2Min = playerRef.GetChargeLv2Min();
 		lv3Min = playerRef.GetChargeLv3Min();
