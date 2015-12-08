@@ -9,12 +9,8 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	// now handles tail length and color based on game need
 
 	public PlayerS playerRef;
-	public GameObject buttObj;
-	public GameObject buttSprite; 
-	public Transform buttAnchor; 
 	public GameObject headSprite; 
 	private Rigidbody playerRigid;
-	private Rigidbody buttRigid;
 	public GameObject playerGlob; 
 
 	public GameObject trailRendererGO; // for main color
@@ -25,7 +21,6 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 	float trailRenderTime, trailRenderTimeMin = 0.2f, trailRenderTimeMax= 2f; // handle tail length
 
-	private LineRenderer playerLine; 
 
 	public GameObject deathParticles; 
 
@@ -39,19 +34,12 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	public GameObject dotPrefab;
 	public List<GameObject> spawnedDots;
 
-	int fastLength=150,medLength=75, slowLength=25, minLength=5; 
 
 	Vector3 lastLocation, currentLocation; 
 
 	bool lastRespawnVal = false; 
 
-	int dotsToBlowUpInto = 2; // num ecto each tail length will spawn on death
 
-	//float newDotCounter, newDotSpawnRate = 5f; //original spawn rate for tail
-
-	//public LineRenderer bodyConnector;
-
-	private Vector3 currentButtVel;
 
 	private float invulnAlpha = 0.5f;
 
@@ -66,18 +54,13 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 		originalScale = dotPrefab.transform.localScale; 
 
-		buttRigid = buttObj.GetComponent<Rigidbody>();
 		playerRigid = playerRef.GetComponent<Rigidbody>();
 
-		buttRigid.transform.position = playerRef.transform.position;
-
-		//buttSprite.transform.parent = null;
 
 		//bodyConnector.material = playerRef.GetComponent<Renderer>().material;
 		if (playerRef.characterNum != 0)
 			SetDotMaterial ();
 
-		playerLine = playerRef.GetComponent<LineRenderer> (); 
 		lastLocation = playerRef.transform.position; 
 		currentLocation = playerRef.transform.position; 
 
@@ -308,7 +291,6 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	{
 		//if (updateDots){
 
-		Vector3 newPos;
 		Quaternion newRot; 
 
 		//SCALE DOTS DOWN AS THEY GO DOWN THE LINE
@@ -320,23 +302,16 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 		}
 
-		//ROTATE THE FINAL BUTT TO WHAT THE HEAD WAS ROTATED TO, 
 		if (spawnedDots.Count > 0) {
-			newPos = spawnedDots [0].transform.position;
 			newRot = spawnedDots [0].transform.rotation;
 			newRot = Quaternion.Euler (newRot.eulerAngles.x, newRot.eulerAngles.y, newRot.eulerAngles.z);
 		} else {
-			newPos = buttAnchor.position;
 			newRot = headSprite.transform.rotation;
 			newRot = Quaternion.Euler (newRot.eulerAngles.x, newRot.eulerAngles.y, newRot.eulerAngles.z);
 		}
 
-		// anything relating to butt sprite is out of use at the moment
-		buttSprite.transform.position = newPos; 
-		buttSprite.transform.rotation = newRot; 
 
-		
-		//print (buttSprite.transform.position + " compare " + spawnedDots[0].transform.position);
+
 
 		//TRAIL RENDERER UPDATE
 		trailRendererMain.time = trailRenderTimeMin + (trailRenderTimeMax * ((float) (float)playerRef.score / (float)playerRef.maxHealth));

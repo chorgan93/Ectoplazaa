@@ -30,8 +30,7 @@ public class ChompColliderS : MonoBehaviour {
 	public GameObject hitEffectFastObj;
 
 	private float chompRad = 3f;
-	
-	private float knockbackMult = 1.5f;
+
 
 	private PlayerS playerRef; // the player that created me
 
@@ -208,8 +207,7 @@ public class ChompColliderS : MonoBehaviour {
 						
 						Vector3 spawnPos = (otherPlayer.transform.position + transform.position)/2;
 						
-						GameObject hitEffect = Instantiate(hitEffectFastObj,spawnPos,Quaternion.identity) as GameObject;
-						//	MakeExplosion(otherPlayer.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
+						Instantiate(hitEffectFastObj,spawnPos,Quaternion.identity);
 						playerRef.InstantiateDeathParticles();
 						CameraShakeS.C.TimeSleep(0.12f);
 						//print ("Tie!");

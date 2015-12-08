@@ -7,7 +7,6 @@ public class CharacterSelectMenu : MonoBehaviour {
 	public GameObject playerPrefab; 
 
 	string platformType; 
-	int playerNum = 1; 
 	int playersChoosing = 0;
 
 	public bool[] hasJoined = new bool[4]; // for inital # of player select
@@ -282,7 +281,6 @@ public class CharacterSelectMenu : MonoBehaviour {
 							
 							int newSkin = players[i-1].GetComponent<PlayerS>().characterNum; 
 							int newColor = 0;
-							bool stopLoop = false;
 							
 							for(int j= 1; j <= GlobalVars.totalSkins; j++) //loop once through all skins
 							{
@@ -340,7 +338,6 @@ public class CharacterSelectMenu : MonoBehaviour {
 							
 							int newSkin = players[i-1].GetComponent<PlayerS>().characterNum; 
 							int newColor = 0;
-							bool stopLoop = false;
 							
 							for(int j= 1; j <= GlobalVars.totalSkins; j++) //loop once through all skins
 							{
@@ -404,7 +401,6 @@ public class CharacterSelectMenu : MonoBehaviour {
 				{
 
 							int newColor = players[i-1].GetComponent<PlayerS>().colorNum;
-					bool stopLoop = false;
 
 					for(int j= 0; j < GlobalVars.totalSkins; j++) //loop once through all skins
 					{

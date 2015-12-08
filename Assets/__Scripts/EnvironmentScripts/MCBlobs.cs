@@ -418,7 +418,6 @@ public class MCBlobs: MonoBehaviour {
 	Vector2[] fuv;
 	
 	//Last Status Post
-	private float lt=0f;
 	
 	
 	/*Unity and Sample Specific*/
@@ -503,7 +502,6 @@ public class MCBlobs: MonoBehaviour {
 	
 	//Unity and Sample Specific
 	void Start () {
-		lt=0f;
 		blobs=new float[5][];
 		blobs[0]=new float[]{.16f,.26f,.16f,.13f};
 		blobs[1]=new float[]{.13f,-.134f,.35f,.12f};

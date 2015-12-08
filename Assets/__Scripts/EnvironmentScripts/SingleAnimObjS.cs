@@ -25,7 +25,6 @@ public class SingleAnimObjS : MonoBehaviour {
 
 		if (addToCamFollow){
 			AdaptiveCameraPtS.A.hitPositions.Add(transform);
-			CameraFollowS.F.PunchIn();
 		}
 	
 	}

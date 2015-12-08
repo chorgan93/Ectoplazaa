@@ -8,14 +8,11 @@ public class BGMS : MonoBehaviour {
 
 	public static float bgmVolumeMult = 1f;
 
-	private bool alreadyCreated = false;
-
 	private AudioSource ownSource;
 
 	public float fadeInRate = 1f;
 	public float maxVolume = 1f;
 
-	private float duckRecover = 0.5f;
 
 	private float targetVolume;
 	private float currentVolume;
@@ -23,7 +20,6 @@ public class BGMS : MonoBehaviour {
 	private float duckVolumeMult = 0.8f;
 
 	private AudioClip nextMusic;
-	private float changeMusicRate = 10f;
 
 	public float delayChange = 0;
 

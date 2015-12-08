@@ -25,7 +25,8 @@ public class PlayerS : MonoBehaviour {
 	public int characterNum; //skin, character chosen;
 	
 	public int score;
-	
+
+	public bool attackTriggerDown;
 	
 	public float walkSpeed;
 	public float maxSpeed;
@@ -46,39 +47,9 @@ public class PlayerS : MonoBehaviour {
 	private bool stopAddingJump;
 	
 	public GroundDetectS groundDetect;
-	
-	private bool canStretch = true;
-	private bool stretching = false;
-	private bool stretchButtonDown = false;
+
 	private float triggerSensitivity = 0.5f;
-	
-	private bool doFling = false;
-	
-	public GameObject placeDotPrefab;
-	
-	public List<Vector3> movePositions;
-	public List<GameObject> placedDots;
-	
-	private float moveToNextPosCountdown = 0;
-	private int currentTarget = 0;
-	
-	private float placeDotCountdownMax = 0.1f;
-	private float placeDotCountdown;
-	
-	public float stretchSpeed;
-	public float snapSpeedMult;
-	private Vector3 snapVel;
-	
-	//private float minFlingForce = 500f;
-	int flingsLeft = 2; 
-	public float flingForceMult = 3f;
-	public float flingForceMultLv2;
-	public float flingForceMultLv3;
-	public int flingLv1Cap;
-	public int flingLv2Cap;
-	//[HideInInspector]
-	//public bool dontCorrectSpeed = false;
-	
+
 	public bool isDangerous = false;
 	public float maxHealth = 50;
 	public float initialHealth = 10;
@@ -108,9 +79,7 @@ public class PlayerS : MonoBehaviour {
 	private bool capturedDanger;
 	private bool capturedGrav;
 	private Vector3 capturedVel;
-	
-	//private float groundPoundPauseTime = 0.3f;
-	private float flingPauseTime = 0.45f;
+
 	
 	
 	public GameObject dangerObj;
@@ -158,30 +127,21 @@ public class PlayerS : MonoBehaviour {
 	
 	[HideInInspector]
 	public bool performedAttack = false;
-	
-	//private float lv1AttackForce = 60000f;
-	//private float lv1AttackTargetRange = 12f;
-	private float lv1OutRate = 3350f; // deprecated
+
 	
 	private float lv1Force = 4500f; // locked fling speed (NEW)
 	
 	private float lv2OutRate = 16000f; //original 8000
 	private float lv1OutTimeMax = 0.125f;
 	public float lv1OutCountdown;
-	private float lv1ReturnRate = 1f; // deprecated
-	private bool snapReturning = false; // deprecated
-	
-	[HideInInspector]
-	private float lv1ButtDelay = 1f;
+
 	public float lv2FlingForce = 100;
 	private float lv3BulletSpeed = 15500; //was 12500
-	private bool lockInPlace = false;
 	private Vector3 bulletVel;
 	
 	private float lv2AttackPauseTimeMax = 0.2f;
 	private float lv2AttackPauseCountdown;
 	private bool startedLv2Pause = false;
-	private float lv2AttackTimeMax = 0.1f;
 	private float lv2AttackTimeCountdown;
 	
 	// physics layer experimentation for bullet fling
@@ -662,10 +622,10 @@ public class PlayerS : MonoBehaviour {
 		if ((Input.GetAxis("RightTriggerPlayer" + playerNum + platformType) > triggerSensitivity) 
 		    || Input.GetButton("RightBumperPlayer" + playerNum + platformType) 
 		    || (Input.GetButton("BButtonPlayer" + playerNum + platformType) && numKOsInRow < 3)){
-			stretchButtonDown = true;
+			attackTriggerDown = true;
 		}
 		else{
-			stretchButtonDown = false;
+			attackTriggerDown = false;
 			playedLV1ChargeSound = false;
 			playedLV2ChargeSound = false;
 			playedLV3ChargeSound = false;
@@ -674,7 +634,7 @@ public class PlayerS : MonoBehaviour {
 		// don't allow charge if already attacking, charging, or dodging
 		
 		if (!doingChomp){
-			if (stretchButtonDown && !charging && canCharge && !isDangerous && !doingSpecial && dodgeTimeCountdown <= 0){
+			if (attackTriggerDown && !charging && canCharge && !isDangerous && !doingSpecial && dodgeTimeCountdown <= 0){
 				charging = true;
 				canCharge = false;
 				
@@ -734,7 +694,7 @@ public class PlayerS : MonoBehaviour {
 				
 				
 				
-				if (!stretchButtonDown || !chargeSource.isPlaying){
+				if (!attackTriggerDown || !chargeSource.isPlaying){
 					GameObject.Destroy( chargingParticles.gameObject); 
 					
 					groundLeeway = attackGroundLeewayMaxTime;
@@ -795,8 +755,8 @@ public class PlayerS : MonoBehaviour {
 						}
 						
 						ownRigid.AddForce(attackDir.normalized*chompForce*Time.deltaTime, ForceMode.Impulse);
-						Vector3 chompSpawn = transform.position;
-						//chompSpawn += attackDir.normalized*chompRad;
+
+
 						GameObject chompObj = Instantiate(chompHitObj, transform.position, Quaternion.identity)
 							as GameObject;
 						chompObj.GetComponent<ChompColliderS>().SetDirection(attackDir.normalized, this);
@@ -843,10 +803,7 @@ public class PlayerS : MonoBehaviour {
 				if (!performedAttack) 
 				{
 					isDangerous = true;
-					
-					snapReturning = false;
-					
-					//buttDelayCountdown = lv1ButtDelay;
+
 					
 					GlobalVars.totalFlings[playerNum-1]++; 
 					
@@ -958,7 +915,6 @@ public class PlayerS : MonoBehaviour {
 			
 			//attackToPerform = 0;
 			lv1OutCountdown = 0;
-			snapReturning = true;
 			didLv2Fling = true;
 			groundLeeway = 0;
 			//attacking = false;
@@ -1698,10 +1654,9 @@ public class PlayerS : MonoBehaviour {
 			GetComponent<Collider>().enabled = false;
 			
 			//Take Away Control
-			stretching = false;
 			isDangerous = false;
 			jumpButtonDown = false;
-			stretchButtonDown = false;
+			attackTriggerDown = false;
 			charging = false;
 			attacking = false;
 			chargeTime = 0;
@@ -2084,11 +2039,7 @@ public class PlayerS : MonoBehaviour {
 		}
 	}
 	
-	
-	public void UnlockVel () {
-		lockInPlace = false;
-	}
-	
+
 	public void TurnOnIgnoreWalls(){
 		ownRigid.useGravity = false;
 		gameObject.layer = LayerMask.NameToLayer(physicsLayerNoWalls);
