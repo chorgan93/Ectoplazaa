@@ -30,6 +30,8 @@ public class DamageS : MonoBehaviour {
 
 	private bool isPinkSpecialCollider = false;
 
+	private LineRenderer myLaserRender;
+
 	void Start () {
 		if (transform.parent){
 			playerRef = transform.parent.GetComponent<PlayerS>();
@@ -79,6 +81,11 @@ public class DamageS : MonoBehaviour {
 		if (gameObject.layer != startPhysicsLayer){
 			gameObject.layer = startPhysicsLayer;
 		}
+		}
+		else{
+			if (myLaserRender){
+				LaserHandler();
+			}
 		}
 
 
@@ -355,69 +362,14 @@ public class DamageS : MonoBehaviour {
 		
 	}
 
-	/*
-	void OnTriggerEnter(Collider other){
+	private void LaserHandler(){
 
-
-		if (other.gameObject.tag == "Player") {
-			print (other.name); 
-
-			PlayerS otherPlayer = other.gameObject.GetComponent<PlayerS> ();
-			
-			if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0) {
-				// only deal damage if higher priority or other player isnt attacking
-				if ((!otherPlayer.attacking) || (otherPlayer.attacking && otherPlayer.attackPriority < playerRef.attackPriority)) {
-					otherPlayer.TakeDamage (100f);
-					otherPlayer.SleepTime (pauseTime);
-					playerRef.SleepTime (pauseTime);
-
-					MakeExplosion(otherPlayer.gameObject, playerRef.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
-
-					CameraShakeS.C.LargeShake ();
-					
-					// add to score
-					//playerRef.score++;
-				} else {
-					// apply knockback to both players and end attacks if priority is same
-					if (otherPlayer.attacking && otherPlayer.attackPriority == playerRef.attackPriority) {
-						// apply vel to both players equal to current vel x something
-						otherPlayer.GetComponent<Rigidbody> ().AddForce (otherPlayer.GetComponent<Rigidbody> ().velocity * -knockbackMult);
-						playerRef.GetComponent<Rigidbody> ().AddForce (playerRef.GetComponent<Rigidbody> ().velocity * -knockbackMult);
-						
-						print ("Tie!");
-					}
-				}
-			}
-		}
-		/*
-		 if (other.gameObject.tag == "PlayerTrail"){
-
-
-			//print ("yeah");
-
-			PlayerS otherPlayer = other.GetComponent<DotColliderS>().whoCreatedMe;
-
-			if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0){
-
-				print (other.GetComponent<DotColliderS>().whoCreatedMe); 
-
-				//print (playerRef);
-			
-				otherPlayer.TakeDamage(10f);
-				otherPlayer.SleepTime(pauseTime);
-				playerRef.SleepTime(pauseTime/4);
-
-				CameraShakeS.C.LargeShake();
-
-				
-				// add to score
-				//playerRef.score++;
-
-			}
+		if (myLaserRender){
+			myLaserRender.SetPosition(0, playerRef.transform.position);
+			myLaserRender.SetPosition(1, transform.position);
 		}
 
 	}
-	*/
 
 	void MakeExplosion(GameObject object1, Vector3 exploPos)
 	{
@@ -447,6 +399,18 @@ public class DamageS : MonoBehaviour {
 	public void MakeSpecial(PlayerS newRef){
 		specialAttackDmg = true;
 		playerRef = newRef;
+
+		if (playerRef.characterNum == 2){
+
+			// activate laser visual
+			myLaserRender = GetComponent<LineRenderer>();
+			myLaserRender.enabled = true;
+
+		}
+
+		if (!ownColl){
+			ownColl = GetComponent<Collider>();
+		}
 		ownColl.enabled = true;
 	}
 

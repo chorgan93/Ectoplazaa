@@ -259,8 +259,15 @@ public class PlayerS : MonoBehaviour {
 	private int currentProj;
 	private float currentLerpTarget;
 	private float rotateAmt = 30f;
-	private float rotateLerpRate = 30f;
-	
+
+	// acid special
+	public GameObject acidSpecialCollider;
+	private GameObject acidSpecialReference;
+	private float acidSpecialTimeMax = 1.25f;
+	private float acidSpecialStartRotateRate = 1f;
+	private float acidSpecialRotateAccel = 200f;
+	private float acidSpecialCurrentRotateRate;
+
 	
 	
 	// Use this for initialization
@@ -512,13 +519,7 @@ public class PlayerS : MonoBehaviour {
 
 			// execute attack according to character num
 
-			// pinkwhip does a modified lv3 with no grav
-			if (characterNum == 4){
-			
-				ownRigid.useGravity = false;
-				ownRigid.velocity = pinkWhipSpecialVel*Time.deltaTime;
 
-			}
 
 
 			// ninja pauses while the slash does its thing
@@ -527,16 +528,45 @@ public class PlayerS : MonoBehaviour {
 				ownRigid.velocity = Vector3.zero;
 			}
 
+			// acidMouth does a DEATH LASER
+			if (characterNum == 2){
+				specialCooldown -= Time.deltaTime;
+				ownRigid.velocity = Vector3.zero;
+
+				acidSpecialCurrentRotateRate += acidSpecialRotateAccel*Time.deltaTime;
+				spriteObject.transform.Rotate(new Vector3(0,0,acidSpecialCurrentRotateRate*Time.deltaTime));
+
+				Debug.Log(acidSpecialCurrentRotateRate);
+				Debug.Log(spriteObject.transform.rotation.z);
+
+				Vector3 laserDir = spriteObject.transform.right;
+				if (spriteObject.transform.localScale.x > 0){
+					laserDir *= -1;
+				}
+
+				RaycastHit laserHit;
+
+
+				Ray laserRay = new Ray(transform.position+laserDir*transform.localScale.x, laserDir);
+
+				if(Physics.Raycast(laserRay, out laserHit, 10000, LayerMask.NameToLayer("LaserRaycase"),
+				                   QueryTriggerInteraction.Ignore)){
+
+				acidSpecialReference.transform.position = laserHit.point;
+				}
+				else{
+					Debug.Log("FAKE LASER");
+					acidSpecialReference.transform.position = transform.position+laserDir*10000f;
+				}
+			}
+
 			if (characterNum == 3){
 				timeBettwenProjCountdown -= Time.deltaTime;
 				ownRigid.velocity = Vector3.zero;
 
 				// rotate head after each shot
-				Vector3 currentHeadRot = spriteObject.transform.rotation.eulerAngles;
-				Vector3 targetHeadRot = new Vector3(0,0,currentLerpTarget);
-				//spriteObject.transform.rotation = Quaternion.Euler
-				//	(Vector3.Lerp(currentHeadRot, targetHeadRot, rotateLerpRate*Time.deltaTime));
-				spriteObject.transform.rotation = Quaternion.Euler(new Vector3(0,0,targetHeadRot.z));
+				Vector3 targetHeadRot = new Vector3(currentLerpTarget, 0, 0);
+				spriteObject.transform.rotation = Quaternion.Euler(targetHeadRot);
 
 
 				if (timeBettwenProjCountdown <= 0){
@@ -568,11 +598,22 @@ public class PlayerS : MonoBehaviour {
 				}
 			}
 
+			// pinkwhip does a modified lv3 with no grav
+			if (characterNum == 4){
+				
+				ownRigid.useGravity = false;
+				ownRigid.velocity = pinkWhipSpecialVel*Time.deltaTime;
+				
+			}
+
 
 			// end when period is over
 
 			if (specialCooldown <= 0){
 				doingSpecial = false;
+				if (acidSpecialReference){
+					Destroy(acidSpecialReference);
+				}
 				UnpauseCharacter();
 			}
 
@@ -597,6 +638,38 @@ public class PlayerS : MonoBehaviour {
 
 				}
 
+				// if acid, prep for DEATH LASER
+				if (characterNum == 2){
+					specialCooldown = acidSpecialTimeMax;
+
+					acidSpecialReference = Instantiate(acidSpecialCollider, transform.position, Quaternion.identity)
+						as GameObject;
+					acidSpecialReference.GetComponent<DamageS>().MakeSpecial(this);
+
+					acidSpecialCurrentRotateRate = acidSpecialStartRotateRate;
+					
+					// face input dir
+					Vector3 inputDir = Vector3.zero;
+					inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
+					inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+					spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
+					currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z;
+				}
+
+				// if mummy, prep for shots
+				if (characterNum == 3){
+					timeBettwenProjCountdown = 0;
+					currentProj = 0;
+					specialCooldown = 1;
+					
+					// face input dir
+					Vector3 inputDir = Vector3.zero;
+					inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
+					inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+					spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
+					currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z;
+				}
+
 				if (characterNum == 4){
 					specialCooldown = 1;
 					GameObject specialAttack = Instantiate(pinkWhipSpecialPrefab, transform.position, transform.rotation)
@@ -614,19 +687,7 @@ public class PlayerS : MonoBehaviour {
 
 				}
 
-				// if mummy, prep for shots
-				if (characterNum == 3){
-					timeBettwenProjCountdown = 0;
-					currentProj = 0;
-					specialCooldown = 1;
 
-					// face input dir
-					Vector3 inputDir = Vector3.zero;
-					inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
-					inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
-					spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
-					currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z;
-				}
 
 				PauseCharacter();
 			}
@@ -1777,8 +1838,7 @@ public class PlayerS : MonoBehaviour {
 		if (health <= 0){
 
 				ownRigid.velocity = Vector3.zero;
-				
-				Debug.Log(health);
+
 				doingSpecial = false;
 				specialCooldown = 0;
 			
@@ -1802,7 +1862,6 @@ public class PlayerS : MonoBehaviour {
 				respawnParticles.GetComponent<ParticleSystem>().startLifetime = respawnTimeCountdown;
 			}
 			
-				Debug.Log("I Should Blow Up");
 			Instantiate(deathParticles, this.transform.position, Quaternion.identity); 
 			soundSource.PlayDeathSounds();
 			}
