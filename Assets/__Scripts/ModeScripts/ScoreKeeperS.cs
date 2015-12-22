@@ -19,7 +19,8 @@ public class ScoreKeeperS : MonoBehaviour {
 	public Sprite [] 	playerHighResSprites; 
 
 	public int 			scoreThresholdCollectoplaza;
-	public int 			numberLives;								//stock mode
+
+	private int 			numberLives = 7;								//stock mode
 	private int 		numPlayersLeft = 0; 					//stock mode
 	public int 			scorePerGoalGhostball = 1,
 						scoreThresholdGhostball = 10;
@@ -62,6 +63,8 @@ public class ScoreKeeperS : MonoBehaviour {
 		endGameObj.SetActive(false);
 		gameStarted = false;
 		gameEnd = false;
+
+
 
 
 		currentMode = CurrentModeS.currentMode;						//get what mode to use.
@@ -121,6 +124,7 @@ public class ScoreKeeperS : MonoBehaviour {
 		}
 
 	}
+
 
 	void SetupMode()
 	{

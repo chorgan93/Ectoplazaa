@@ -146,7 +146,7 @@ public class DamageS : MonoBehaviour {
 							//print ("KILL!"); 
 
 							if (isPinkSpecialCollider){
-								playerRef.TakeDamage(999);
+								playerRef.PinkWhipSelfDestruct();
 								Destroy(gameObject);	
 							}
 							
@@ -236,9 +236,7 @@ public class DamageS : MonoBehaviour {
 					GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 					GlobalVars.totalKills[playerRef.playerNum-1] ++; 
 
-					if (specialAttackDmg){
-						otherPlayer.numLives = 0;
-					}
+
 				}
 				else
 				{
@@ -251,10 +249,13 @@ public class DamageS : MonoBehaviour {
 				}
 
 				if (isPinkSpecialCollider){
-					playerRef.TakeDamage(999);
+					playerRef.PinkWhipSelfDestruct();
 					Destroy(gameObject);	
 				}
-				
+
+				if (specialAttackDmg){
+					otherPlayer.numLives = 0;
+				}
 				//print ("KILL!"); 
 				
 				MakeExplosion(otherPlayer.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 

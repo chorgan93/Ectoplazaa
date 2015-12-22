@@ -19,6 +19,9 @@ public class PinkWhipSpecialAttackS : MonoBehaviour {
 			GetComponent<DamageS>().MakeSpecial(playerRef);
 			GetComponent<DamageS>().EnablePinkSpecial();
 
+			transform.position = playerRef.transform.position;
+			transform.rotation = playerRef.transform.rotation;
+
 			if (!playerRef.GetSpecialState()){
 				Destroy(gameObject);
 			}
