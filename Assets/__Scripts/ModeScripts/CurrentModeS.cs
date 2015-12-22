@@ -5,6 +5,7 @@ public class CurrentModeS : MonoBehaviour {
 
 	public static int currentMode = 0; // 0 = Ectoplasm, 1 = Stock, 2=Rocket League, 3=???
 
+<<<<<<< HEAD
 	public static int numRoundsCollectoplaza =3;
 	public static int numRoundsStock =3;
 	public static int numRoundsDefault =1;
@@ -73,4 +74,8 @@ public class CurrentModeS : MonoBehaviour {
 		numberRoundsWon = new int[4] {0,0,0,0};
 
 	}
+=======
+
+
+>>>>>>> player-overhaul-specials
 }

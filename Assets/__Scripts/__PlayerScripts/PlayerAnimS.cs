@@ -337,7 +337,6 @@ public class PlayerAnimS : MonoBehaviour {
 		
 		headRender.transform.rotation = Quaternion.Euler(new Vector3(0,0,rotateZHead));
 
-		print (targetDir + " : " + rotateZHead);
 		
 		
 		
