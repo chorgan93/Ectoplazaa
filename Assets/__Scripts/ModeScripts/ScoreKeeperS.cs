@@ -57,7 +57,9 @@ public class ScoreKeeperS : MonoBehaviour {
 	Vector3 			worldPos = Vector3.zero;
 
 	private int 		currentMode =-1;
-
+	private int 		numberRounds;
+	private bool		bNumRoundIntroComplete = false;
+	private bool 		bRoundIntroRunnning = false;
 	void Start () 
 	{
 		endGameObj.SetActive(false);
@@ -80,8 +82,18 @@ public class ScoreKeeperS : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		 
+		 if(!bNumRoundIntroComplete)
+		{
+			if(!bRoundIntroRunnning)
+			{
+				//Setup intro sequence
+				SetupRoundIntroSequence();
+				//Call Intro sequence
+				RoundIntroSequence();
+				bRoundIntroRunnning = true;
+			}
 
+		}
 		if (!spawnedScoreboard)
 		{
 			SetupMode (); 
@@ -124,6 +136,20 @@ public class ScoreKeeperS : MonoBehaviour {
 		}
 
 	}
+	void SetupRoundIntroSequence()
+	{
+		numberRounds = CurrentModeS.GetNumberRounds();
+		print ("Number of rounds: " + numberRounds);
+	}
+
+	void RoundIntroSequence()
+	{
+		// do the thing.
+		//When you're done, set this flag to true
+		bNumRoundIntroComplete = true;
+		bRoundIntroRunnning = false;
+	}
+
 
 
 	void SetupMode()
@@ -140,14 +166,14 @@ public class ScoreKeeperS : MonoBehaviour {
 		
 		switch (currentMode)										//Find parent object for desired mode and enable
 		{
-		case 0:
+		case 0: // Ecto
 			//enable Ecto Mode
 			//modeObjectOwners[0].SetActive (true);
 			scoreBarObj.GetComponent<ScoreBar>().scoreThreshold = scoreThresholdCollectoplaza; 
 			scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
 			break;
 			
-		case 1:
+		case 1: //Stock
 			print("ScoreKeeper setting up stock mode");
 			scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
 			
@@ -166,7 +192,7 @@ public class ScoreKeeperS : MonoBehaviour {
 			
 			break;
 			
-		case 2:
+		case 2: //Ghostball
 
 			//Make Scorebar
 			scoreBarObj.GetComponent<ScoreBar>().scoreThreshold = scoreThresholdGhostball; 
@@ -243,8 +269,8 @@ public class ScoreKeeperS : MonoBehaviour {
 						if (playersPlaying[i] == true)
 							winningPlayerNum = i + 1;											//Record Winning Player Number
 					}
-					gameEnd = true; // trigger end bool
-					SpawnEndScreen();															//Spawn  End Screen
+
+					SpawnRoundEndScreen();															//Spawn  End Screen
 				}
 				else{
 					print ("Number of players left: " + numPlayersLeft);
@@ -280,7 +306,7 @@ public class ScoreKeeperS : MonoBehaviour {
 						gameEnd = true;
 						winningPlayerNum = i + 1;
 						
-						SpawnEndScreen();
+						SpawnRoundEndScreen();
 						
 					}
 				}
@@ -295,7 +321,7 @@ public class ScoreKeeperS : MonoBehaviour {
 					if (currentPlayer.score >= scoreThresholdGhostball ) {
 						gameEnd = true;
 						winningPlayerNum = i + 1;
-						SpawnEndScreen();
+						SpawnRoundEndScreen();
 						
 					}
 				}
@@ -317,10 +343,58 @@ public class ScoreKeeperS : MonoBehaviour {
 
 		uiObj.transform.localScale = newScale; 
 	}
-	
+
+	void SpawnRoundEndScreen()
+	{
+		//Do some coroutine to spawn the UI stuffs?
+		//Check number of rounds
+		CurrentModeS.AddToRoundsCompleted( winningPlayerNum - 1);
+		if(CurrentModeS.DoAnotherRound() == true)
+		{
+			//Replay
+			print("Restarting level");
+			//HOTFIX FOR TIME ISSUE WITH CAMERASHAKE.C.HALFTIMESLEEP
+			Time.timeScale = 1;
+			StartCoroutine("RoundEndScreen");
+		
+		}
+		else
+		{
+
+			SpawnEndScreen();
+		}
+	}
+	IEnumerator RoundEndScreen()
+	{
+		yield return new WaitForSeconds(3);
+		yield return StartCoroutine("CheckEndButtonPress");
+		Application.LoadLevel(Application.loadedLevel);
+		
+	}
+
+	IEnumerator CheckEndButtonPress()
+	{
+		bool foo = true;
+		float fooTimer =0;
+		while(foo)
+		{
+			//NOT WORKING YET
+			if (Input.GetButton ("AButtonAllPlayers" + PlatformS.GetPlatform ())) 
+			{
+				break;
+			}
+			else 
+				fooTimer += Time.deltaTime;
+
+			if(fooTimer > 10)
+				break;
+		}
+		yield return new WaitForEndOfFrame();
+	}
+
 	void SpawnEndScreen()
 	{
-
+		gameEnd = true;
 		
 		int characterNum = GlobalVars.playerList [winningPlayerNum - 1].GetComponent<PlayerS> ().characterNum-1;
 
@@ -429,6 +503,8 @@ public class ScoreKeeperS : MonoBehaviour {
 	
 	void UpdateEndScreen()
 	{
+	
+
 		// once gameEnd is on, 
 		gameEndMinTime -= Time.deltaTime;
 
@@ -437,7 +513,7 @@ public class ScoreKeeperS : MonoBehaviour {
 
 		endGameObj.transform.position = Vector3.Lerp (endGameObj.transform.position, newPos, 0.2f
 		                                              *Time.deltaTime*TimeManagerS.timeMult*50f); 
-		
+
 		if (Input.GetButton ("BButtonAllPlayers"+	PlatformS.GetPlatform ()) && gameEndMinTime < 0) 
 		{
 			gameEnd = false;
@@ -448,6 +524,7 @@ public class ScoreKeeperS : MonoBehaviour {
 
 			print("RESETTINGLEVEL"); 
 			//GlobalVars.ResetVariables(); 
+			CurrentModeS.ResetWinRecord();
 			Application.LoadLevel(Application.loadedLevel);
 		}
 

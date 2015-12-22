@@ -24,6 +24,10 @@ public class GlobalVars : MonoBehaviour
 
 	public static int [] totalFlings = new int[4], totalDeaths = new int[4], totalKills = new int[4], totalJumps = new int[4], totalGroundPounds= new int[4] , totalGlobsEaten = new int[4];  
 
+	public static int numberRounds =1;
+	public static int currRound = 0;
+
+
 	public static void ResetVariables()
 	{
 		characterIsPlaying = new bool[4]{false,false,false,false};
@@ -39,6 +43,8 @@ public class GlobalVars : MonoBehaviour
 		totalGroundPounds = new int[4];
 		totalGlobsEaten = new int[4];
 	}
+
+
 
 }
 
