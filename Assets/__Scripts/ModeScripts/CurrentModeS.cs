@@ -50,6 +50,12 @@ public class CurrentModeS : MonoBehaviour {
 		print ( "Current Mode S: Adding to rounds completed");
 	}
 
+	public static int GetRoundsCurrent(){
+
+		return numberRoundsCurrent;
+
+	}
+
 	public static bool DoAnotherRound()
 	{
 		bool bDoAnother = true;

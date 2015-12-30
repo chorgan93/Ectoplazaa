@@ -324,8 +324,7 @@ public class PlayerS : MonoBehaviour {
 
 	void Update () {
 
-		Debug.Log("REMOVE BEFORE BUILDING");
-
+		/*
 		if (Input.GetKeyDown(KeyCode.Alpha1)){
 			characterNum = 1;
 		}
@@ -339,7 +338,7 @@ public class PlayerS : MonoBehaviour {
 
 		if (Input.GetKeyDown(KeyCode.Alpha4)){
 			characterNum = 4;
-		}
+		}*/
 
 
 
