@@ -11,7 +11,7 @@ public class SFXObjS : MonoBehaviour {
 	public static float sfxVolumeMult = 1;
 
 	// Use this for initialization
-	void Start () {
+	void Start () { 
 
 		ownSource = GetComponent<AudioSource>();
 		// multiply volume by sfx volume mult

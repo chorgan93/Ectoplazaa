@@ -58,7 +58,6 @@ public class ButtObjS : MonoBehaviour {
 				if (parentObj.attacking){
 					if (parentObj.attackToPerform == 2){
 						//print ("END BULLET ATTACK");
-						parentObj.UnlockVel();
 						parentObj.isDangerous = false;
 						parentObj.attackToPerform = 0;
 						parentObj.attacking = false;

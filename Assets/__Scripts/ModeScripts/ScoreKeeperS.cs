@@ -19,7 +19,8 @@ public class ScoreKeeperS : MonoBehaviour {
 	public Sprite [] 	playerHighResSprites; 
 
 	public int 			scoreThresholdCollectoplaza;
-	public int 			numberLives;								//stock mode
+
+	private int 			numberLives = 7;								//stock mode
 	private int 		numPlayersLeft = 0; 					//stock mode
 	public int 			scorePerGoalGhostball = 1,
 						scoreThresholdGhostball = 10;
@@ -56,12 +57,21 @@ public class ScoreKeeperS : MonoBehaviour {
 	Vector3 			worldPos = Vector3.zero;
 
 	private int 		currentMode =-1;
+	private int 		numberRounds;
+	private bool		bNumRoundIntroComplete = false;
+	private bool 		bRoundIntroRunnning = false;
+
+	// for "out special" check
+	private int playersOut;
+	private int lastRemaining;
 
 	void Start () 
 	{
 		endGameObj.SetActive(false);
 		gameStarted = false;
 		gameEnd = false;
+
+
 
 
 		currentMode = CurrentModeS.currentMode;						//get what mode to use.
@@ -77,8 +87,18 @@ public class ScoreKeeperS : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		 
+		 if(!bNumRoundIntroComplete)
+		{
+			if(!bRoundIntroRunnning)
+			{
+				//Setup intro sequence
+				SetupRoundIntroSequence();
+				//Call Intro sequence
+				RoundIntroSequence();
+				bRoundIntroRunnning = true;
+			}
 
+		}
 		if (!spawnedScoreboard)
 		{
 			SetupMode (); 
@@ -121,6 +141,21 @@ public class ScoreKeeperS : MonoBehaviour {
 		}
 
 	}
+	void SetupRoundIntroSequence()
+	{
+		numberRounds = CurrentModeS.GetNumberRounds();
+		print ("Number of rounds: " + numberRounds);
+	}
+
+	void RoundIntroSequence()
+	{
+		// do the thing.
+		//When you're done, set this flag to true
+		bNumRoundIntroComplete = true;
+		bRoundIntroRunnning = false;
+	}
+
+
 
 	void SetupMode()
 	{
@@ -136,14 +171,14 @@ public class ScoreKeeperS : MonoBehaviour {
 		
 		switch (currentMode)										//Find parent object for desired mode and enable
 		{
-		case 0:
+		case 0: // Ecto
 			//enable Ecto Mode
 			//modeObjectOwners[0].SetActive (true);
 			scoreBarObj.GetComponent<ScoreBar>().scoreThreshold = scoreThresholdCollectoplaza; 
 			scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
 			break;
 			
-		case 1:
+		case 1: //Stock
 			print("ScoreKeeper setting up stock mode");
 			scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
 			
@@ -162,7 +197,7 @@ public class ScoreKeeperS : MonoBehaviour {
 			
 			break;
 			
-		case 2:
+		case 2: //Ghostball
 
 			//Make Scorebar
 			scoreBarObj.GetComponent<ScoreBar>().scoreThreshold = scoreThresholdGhostball; 
@@ -239,8 +274,8 @@ public class ScoreKeeperS : MonoBehaviour {
 						if (playersPlaying[i] == true)
 							winningPlayerNum = i + 1;											//Record Winning Player Number
 					}
-					gameEnd = true; // trigger end bool
-					SpawnEndScreen();															//Spawn  End Screen
+
+					SpawnRoundEndScreen();															//Spawn  End Screen
 				}
 				else{
 					print ("Number of players left: " + numPlayersLeft);
@@ -262,21 +297,30 @@ public class ScoreKeeperS : MonoBehaviour {
 	
 	void UpdateScoreboard()
 	{
-		
+
+		playersOut = 0;
+
 		for (int i = 0; i < 4; i++) {
 			if (GlobalVars.characterNumber [i] != 0) {
 				PlayerS currentPlayer = GlobalVars.playerList [i].GetComponent<PlayerS> ();
+
+				// check for out player condition
+				if (currentPlayer.numLives == 0){
+					playersOut++;
+				}
+				else{
+					lastRemaining = i+1;
+				}
 				
 				// Endgame for Collectoplaza mode
 				if(currentMode == 0)
 				{
-					if (currentPlayer.score >= scoreThresholdCollectoplaza 
-					    || currentPlayer.health-currentPlayer.startEctoNum >= scoreThresholdCollectoplaza) {
+					if (currentPlayer.score >= scoreThresholdCollectoplaza){
 						
 						gameEnd = true;
 						winningPlayerNum = i + 1;
 						
-						SpawnEndScreen();
+						SpawnRoundEndScreen();
 						
 					}
 				}
@@ -291,11 +335,21 @@ public class ScoreKeeperS : MonoBehaviour {
 					if (currentPlayer.score >= scoreThresholdGhostball ) {
 						gameEnd = true;
 						winningPlayerNum = i + 1;
-						SpawnEndScreen();
+						SpawnRoundEndScreen();
 						
 					}
 				}
 			} 
+			else{
+				playersOut++;
+			}
+
+			// if only one player remains, they win
+			if (playersOut == 3){
+				gameEnd = true;
+				winningPlayerNum = lastRemaining;
+				SpawnRoundEndScreen();
+			}
 		}
 	}
 
@@ -313,10 +367,62 @@ public class ScoreKeeperS : MonoBehaviour {
 
 		uiObj.transform.localScale = newScale; 
 	}
-	
-	void SpawnEndScreen()
+
+	void SpawnRoundEndScreen()
+	{
+		//Do some coroutine to spawn the UI stuffs?
+		//Check number of rounds
+		CurrentModeS.AddToRoundsCompleted( winningPlayerNum - 1);
+		/*if(CurrentModeS.DoAnotherRound() == true)
+		{
+			//Replay
+			print("Restarting level");
+			//HOTFIX FOR TIME ISSUE WITH CAMERASHAKE.C.HALFTIMESLEEP
+			//Time.timeScale = 1;
+			StartCoroutine("RoundEndScreen");
+		
+		}
+		else
+		{
+
+			SpawnEndScreen();
+		}*/
+
+		SpawnEndScreen();
+	}
+	IEnumerator RoundEndScreen()
 	{
 
+	
+		yield return new WaitForSeconds(3);
+		yield return StartCoroutine("CheckEndButtonPress");
+		Application.LoadLevel(Application.loadedLevel);
+		
+	}
+
+	IEnumerator CheckEndButtonPress()
+	{
+		bool foo = true;
+		float fooTimer =0;
+		while(foo)
+		{
+			//NOT WORKING YET
+			if (Input.GetButton ("AButtonAllPlayers" + PlatformS.GetPlatform ())) 
+			{
+				break;
+			}
+			else 
+				fooTimer += Time.deltaTime;
+
+			if(fooTimer > 10)
+				break;
+		}
+		yield return new WaitForEndOfFrame();
+	}
+
+	void SpawnEndScreen()
+	{
+		gameEnd = true;
 		
 		int characterNum = GlobalVars.playerList [winningPlayerNum - 1].GetComponent<PlayerS> ().characterNum-1;
 
@@ -340,7 +446,12 @@ public class ScoreKeeperS : MonoBehaviour {
 			[winningPlayerNum - 1].GetComponent<PlayerS> ().playerParticleMats [characterNum].GetColor("_TintColor"); 
 
 
-		winText.text = "P" + winningPlayerNum + "\nwins!";
+		if (CurrentModeS.DoAnotherRound()){
+			winText.text = "P" + winningPlayerNum + "\nwins Round " + CurrentModeS.GetRoundsCurrent() + "!";
+		}
+		else{
+			winText.text = "P" + winningPlayerNum + "\nwins!";
+		}
 
 		winningPlayerSprite.GetComponent<SpriteRenderer> ().sprite = playerHighResSprites [characterNum];
 		winningPlayerTail.GetComponent<Renderer> ().material = GlobalVars.playerList [winningPlayerNum - 1].GetComponent<PlayerS> ().playerMats [characterNum]; 
@@ -425,6 +536,8 @@ public class ScoreKeeperS : MonoBehaviour {
 	
 	void UpdateEndScreen()
 	{
+	
+
 		// once gameEnd is on, 
 		gameEndMinTime -= Time.deltaTime;
 
@@ -433,18 +546,30 @@ public class ScoreKeeperS : MonoBehaviour {
 
 		endGameObj.transform.position = Vector3.Lerp (endGameObj.transform.position, newPos, 0.2f
 		                                              *Time.deltaTime*TimeManagerS.timeMult*50f); 
-		
+
 		if (Input.GetButton ("BButtonAllPlayers"+	PlatformS.GetPlatform ()) && gameEndMinTime < 0) 
 		{
 			gameEnd = false;
+			// if rounds left, reset
+			if (CurrentModeS.DoAnotherRound()){
+				Application.LoadLevel(Application.loadedLevelName);
+			}
+			else{
 			// hard coding in return to map select
-			Application.LoadLevel("2MapSelect");
+				Application.LoadLevel("2MapSelect");
+			}
 		}
 		if (Input.GetButton ("AButtonAllPlayers" + PlatformS.GetPlatform ()) && gameEndMinTime < 0) {
 
+			if (CurrentModeS.DoAnotherRound()){
+				Application.LoadLevel(Application.loadedLevelName);
+			}
+			else{
 			print("RESETTINGLEVEL"); 
 			//GlobalVars.ResetVariables(); 
+			CurrentModeS.ResetWinRecord();
 			Application.LoadLevel(Application.loadedLevel);
+			}
 		}
 
 	}

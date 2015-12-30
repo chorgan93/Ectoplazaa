@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class StartMenu : MonoBehaviour {
 
 	string platformType; 
-	int playerNum = 1; 
 
 	static bool started = false; 
 

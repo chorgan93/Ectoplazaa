@@ -25,7 +25,8 @@ public class PlayerS : MonoBehaviour {
 	public int characterNum; //skin, character chosen;
 	
 	public int score;
-	
+
+	public bool attackTriggerDown;
 	
 	public float walkSpeed;
 	public float maxSpeed;
@@ -46,39 +47,9 @@ public class PlayerS : MonoBehaviour {
 	private bool stopAddingJump;
 	
 	public GroundDetectS groundDetect;
-	
-	private bool canStretch = true;
-	private bool stretching = false;
-	private bool stretchButtonDown = false;
+
 	private float triggerSensitivity = 0.5f;
-	
-	private bool doFling = false;
-	
-	public GameObject placeDotPrefab;
-	
-	public List<Vector3> movePositions;
-	public List<GameObject> placedDots;
-	
-	private float moveToNextPosCountdown = 0;
-	private int currentTarget = 0;
-	
-	private float placeDotCountdownMax = 0.1f;
-	private float placeDotCountdown;
-	
-	public float stretchSpeed;
-	public float snapSpeedMult;
-	private Vector3 snapVel;
-	
-	//private float minFlingForce = 500f;
-	int flingsLeft = 2; 
-	public float flingForceMult = 3f;
-	public float flingForceMultLv2;
-	public float flingForceMultLv3;
-	public int flingLv1Cap;
-	public int flingLv2Cap;
-	//[HideInInspector]
-	//public bool dontCorrectSpeed = false;
-	
+
 	public bool isDangerous = false;
 	public float maxHealth = 50;
 	public float initialHealth = 10;
@@ -108,9 +79,7 @@ public class PlayerS : MonoBehaviour {
 	private bool capturedDanger;
 	private bool capturedGrav;
 	private Vector3 capturedVel;
-	
-	//private float groundPoundPauseTime = 0.3f;
-	private float flingPauseTime = 0.45f;
+
 	
 	
 	public GameObject dangerObj;
@@ -158,30 +127,21 @@ public class PlayerS : MonoBehaviour {
 	
 	[HideInInspector]
 	public bool performedAttack = false;
-	
-	//private float lv1AttackForce = 60000f;
-	//private float lv1AttackTargetRange = 12f;
-	private float lv1OutRate = 3350f; // deprecated
+
 	
 	private float lv1Force = 4500f; // locked fling speed (NEW)
 	
 	private float lv2OutRate = 16000f; //original 8000
 	private float lv1OutTimeMax = 0.125f;
 	public float lv1OutCountdown;
-	private float lv1ReturnRate = 1f; // deprecated
-	private bool snapReturning = false; // deprecated
-	
-	[HideInInspector]
-	private float lv1ButtDelay = 1f;
+
 	public float lv2FlingForce = 100;
 	private float lv3BulletSpeed = 15500; //was 12500
-	private bool lockInPlace = false;
 	private Vector3 bulletVel;
 	
 	private float lv2AttackPauseTimeMax = 0.2f;
 	private float lv2AttackPauseCountdown;
 	private bool startedLv2Pause = false;
-	private float lv2AttackTimeMax = 0.1f;
 	private float lv2AttackTimeCountdown;
 	
 	// physics layer experimentation for bullet fling
@@ -288,7 +248,7 @@ public class PlayerS : MonoBehaviour {
 	// pinkwhip special
 	public GameObject pinkWhipSpecialPrefab;
 	private Vector3 pinkWhipSpecialVel;
-	private float pinkWhipSpecialSpeed = 10000f;
+	private float pinkWhipSpecialSpeed = 12500f;
 
 	// mr wraps special
 	public GameObject mrWrapsSpecialProjectile;
@@ -299,8 +259,15 @@ public class PlayerS : MonoBehaviour {
 	private int currentProj;
 	private float currentLerpTarget;
 	private float rotateAmt = 30f;
-	private float rotateLerpRate = 30f;
-	
+
+	// acid special
+	public GameObject acidSpecialCollider;
+	private GameObject acidSpecialReference;
+	private float acidSpecialTimeMax = 1.25f;
+	private float acidSpecialStartRotateRate = 1f;
+	private float acidSpecialRotateAccel = 200f;
+	private float acidSpecialCurrentRotateRate;
+
 	
 	
 	// Use this for initialization
@@ -356,6 +323,24 @@ public class PlayerS : MonoBehaviour {
 	}
 
 	void Update () {
+
+		/*
+		if (Input.GetKeyDown(KeyCode.Alpha1)){
+			characterNum = 1;
+		}
+		if (Input.GetKeyDown(KeyCode.Alpha2)){
+			characterNum = 2;
+		}
+
+		if (Input.GetKeyDown(KeyCode.Alpha3)){
+			characterNum = 3;
+		}
+
+		if (Input.GetKeyDown(KeyCode.Alpha4)){
+			characterNum = 4;
+		}*/
+
+
 
 		/*if (Input.GetKeyDown(KeyCode.P)){
 			if (effectPause){
@@ -424,12 +409,7 @@ public class PlayerS : MonoBehaviour {
 					ownRigid.velocity = Vector3.zero;
 				}
 			}
-			
-			// kill code for testing purposes
-			/*if(Input.GetKeyDown(KeyCode.K))
-		{
-				//TakeDamage(100000f);
-		}*/
+
 			
 		}
 		
@@ -538,28 +518,54 @@ public class PlayerS : MonoBehaviour {
 
 			// execute attack according to character num
 
-			// pinkwhip does a modified lv3 with no grav
-			if (characterNum == 4){
-			
-				ownRigid.useGravity = false;
-				ownRigid.velocity = pinkWhipSpecialVel*Time.deltaTime;
 
-			}
 
-			if (characterNum == 3){
+
+			// ninja pauses while the slash does its thing
+			if (characterNum == 1){
 				specialCooldown -= Time.deltaTime;
 				ownRigid.velocity = Vector3.zero;
 			}
 
-			if (characterNum == 1){
+			// acidMouth does a DEATH LASER
+			if (characterNum == 2){
+				specialCooldown -= Time.deltaTime;
+				ownRigid.velocity = Vector3.zero;
+
+				acidSpecialCurrentRotateRate += acidSpecialRotateAccel*Time.deltaTime;
+				spriteObject.transform.Rotate(new Vector3(0,0,acidSpecialCurrentRotateRate*Time.deltaTime));
+
+				Debug.Log(acidSpecialCurrentRotateRate);
+				Debug.Log(spriteObject.transform.rotation.z);
+
+				Vector3 laserDir = spriteObject.transform.right;
+				if (spriteObject.transform.localScale.x > 0){
+					laserDir *= -1;
+				}
+
+				RaycastHit laserHit;
+
+
+				Ray laserRay = new Ray(transform.position+laserDir*transform.localScale.x, laserDir);
+
+				if(Physics.Raycast(laserRay, out laserHit, 10000, LayerMask.NameToLayer("LaserRaycase"),
+				                   QueryTriggerInteraction.Ignore)){
+
+				acidSpecialReference.transform.position = laserHit.point;
+				}
+				else{
+					Debug.Log("FAKE LASER");
+					acidSpecialReference.transform.position = transform.position+laserDir*10000f;
+				}
+			}
+
+			if (characterNum == 3){
 				timeBettwenProjCountdown -= Time.deltaTime;
 				ownRigid.velocity = Vector3.zero;
 
 				// rotate head after each shot
-				Vector3 currentHeadRot = spriteObject.transform.rotation.eulerAngles;
-				Vector3 targetHeadRot = new Vector3(0,0,currentLerpTarget);
-				spriteObject.transform.rotation = Quaternion.Euler
-					(Vector3.Lerp(currentHeadRot, targetHeadRot, rotateLerpRate*Time.deltaTime));
+				Vector3 targetHeadRot = new Vector3(currentLerpTarget, 0, 0);
+				spriteObject.transform.rotation = Quaternion.Euler(targetHeadRot);
 
 
 				if (timeBettwenProjCountdown <= 0){
@@ -573,10 +579,10 @@ public class PlayerS : MonoBehaviour {
 						                                 Quaternion.identity) as GameObject;
 
 						Vector3 projVel = spriteObject.transform.right;
-						if (spriteObject.transform.rotation.z > 90 && spriteObject.transform.rotation.z < 180){
+						if (spriteObject.transform.localScale.x > 0){
 							projVel *= -1f;
 						}
-						projVel *= wrapsSpecialProjSpeed*Time.deltaTime/Time.timeScale;
+						projVel *= wrapsSpecialProjSpeed*Time.deltaTime;
 						newProj.GetComponent<Rigidbody>().velocity = projVel;
 						newProj.GetComponent<MrWrapsSpecialAttackS>().playerRef = this;
 
@@ -591,11 +597,22 @@ public class PlayerS : MonoBehaviour {
 				}
 			}
 
+			// pinkwhip does a modified lv3 with no grav
+			if (characterNum == 4){
+				
+				ownRigid.useGravity = false;
+				ownRigid.velocity = pinkWhipSpecialVel*Time.deltaTime;
+				
+			}
+
 
 			// end when period is over
 
 			if (specialCooldown <= 0){
 				doingSpecial = false;
+				if (acidSpecialReference){
+					Destroy(acidSpecialReference);
+				}
 				UnpauseCharacter();
 			}
 
@@ -612,12 +629,44 @@ public class PlayerS : MonoBehaviour {
 				}
 
 				// if ghostMask, execute attack immediately
-				if (characterNum == 3){
+				if (characterNum == 1){
 
 					GameObject specialAttack = Instantiate(ghostMaskSpecialPrefab, transform.position, Quaternion.identity)
 						as GameObject;
 					specialAttack.GetComponent<GhostMaskSpecialAttackS>().playerRef = this;
 
+				}
+
+				// if acid, prep for DEATH LASER
+				if (characterNum == 2){
+					specialCooldown = acidSpecialTimeMax;
+
+					acidSpecialReference = Instantiate(acidSpecialCollider, transform.position, Quaternion.identity)
+						as GameObject;
+					acidSpecialReference.GetComponent<DamageS>().MakeSpecial(this);
+
+					acidSpecialCurrentRotateRate = acidSpecialStartRotateRate;
+					
+					// face input dir
+					Vector3 inputDir = Vector3.zero;
+					inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
+					inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+					spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
+					currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z;
+				}
+
+				// if mummy, prep for shots
+				if (characterNum == 3){
+					timeBettwenProjCountdown = 0;
+					currentProj = 0;
+					specialCooldown = 1;
+					
+					// face input dir
+					Vector3 inputDir = Vector3.zero;
+					inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
+					inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+					spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
+					currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z;
 				}
 
 				if (characterNum == 4){
@@ -631,22 +680,13 @@ public class PlayerS : MonoBehaviour {
 					Vector3 inputDir = Vector3.zero;
 					inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
 					inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
-					inputDir = inputDir.normalized*pinkWhipSpecialSpeed;
+					pinkWhipSpecialVel = inputDir.normalized*pinkWhipSpecialSpeed;
+
+					TurnOnIgnoreWalls();
+
 				}
 
-				// if mummy, prep for shots
-				if (characterNum == 1){
-					timeBettwenProjCountdown = 0;
-					currentProj = 0;
-					specialCooldown = 1;
 
-					// face input dir
-					Vector3 inputDir = Vector3.zero;
-					inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
-					inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
-					spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
-					currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z;
-				}
 
 				PauseCharacter();
 			}
@@ -662,10 +702,10 @@ public class PlayerS : MonoBehaviour {
 		if ((Input.GetAxis("RightTriggerPlayer" + playerNum + platformType) > triggerSensitivity) 
 		    || Input.GetButton("RightBumperPlayer" + playerNum + platformType) 
 		    || (Input.GetButton("BButtonPlayer" + playerNum + platformType) && numKOsInRow < 3)){
-			stretchButtonDown = true;
+			attackTriggerDown = true;
 		}
 		else{
-			stretchButtonDown = false;
+			attackTriggerDown = false;
 			playedLV1ChargeSound = false;
 			playedLV2ChargeSound = false;
 			playedLV3ChargeSound = false;
@@ -674,7 +714,7 @@ public class PlayerS : MonoBehaviour {
 		// don't allow charge if already attacking, charging, or dodging
 		
 		if (!doingChomp){
-			if (stretchButtonDown && !charging && canCharge && !isDangerous && !doingSpecial && dodgeTimeCountdown <= 0){
+			if (attackTriggerDown && !charging && canCharge && !isDangerous && !doingSpecial && dodgeTimeCountdown <= 0){
 				charging = true;
 				canCharge = false;
 				
@@ -734,7 +774,7 @@ public class PlayerS : MonoBehaviour {
 				
 				
 				
-				if (!stretchButtonDown || !chargeSource.isPlaying){
+				if (!attackTriggerDown || !chargeSource.isPlaying){
 					GameObject.Destroy( chargingParticles.gameObject); 
 					
 					groundLeeway = attackGroundLeewayMaxTime;
@@ -795,8 +835,8 @@ public class PlayerS : MonoBehaviour {
 						}
 						
 						ownRigid.AddForce(attackDir.normalized*chompForce*Time.deltaTime, ForceMode.Impulse);
-						Vector3 chompSpawn = transform.position;
-						//chompSpawn += attackDir.normalized*chompRad;
+
+
 						GameObject chompObj = Instantiate(chompHitObj, transform.position, Quaternion.identity)
 							as GameObject;
 						chompObj.GetComponent<ChompColliderS>().SetDirection(attackDir.normalized, this);
@@ -843,10 +883,7 @@ public class PlayerS : MonoBehaviour {
 				if (!performedAttack) 
 				{
 					isDangerous = true;
-					
-					snapReturning = false;
-					
-					//buttDelayCountdown = lv1ButtDelay;
+
 					
 					GlobalVars.totalFlings[playerNum-1]++; 
 					
@@ -923,11 +960,8 @@ public class PlayerS : MonoBehaviour {
 			ownRigid.AddForce(bulletVel,ForceMode.VelocityChange);
 			
 			//print(chargeTime); 
-			
-			//dontCorrectSpeed = true;
+
 			ownRigid.useGravity = true;
-			//buttObj.isFollowing = true;
-			//print ("Fling Mini Attack");
 			
 			//print (bulletVel); 
 		}
@@ -955,15 +989,11 @@ public class PlayerS : MonoBehaviour {
 			
 			//print ("I ended attack");
 			
-			
-			//attackToPerform = 0;
+
 			lv1OutCountdown = 0;
-			snapReturning = true;
 			didLv2Fling = true;
 			groundLeeway = 0;
-			//attacking = false;
 			ownRigid.useGravity = true;
-			//buttObj.isFollowing = true;
 			canAirStrafe = true; 
 			
 			// trigger second half (mini fling)
@@ -1050,8 +1080,7 @@ public class PlayerS : MonoBehaviour {
 					//buttObj.isFollowing = true;
 					
 					if (!startedLv2Pause){
-						
-						//print ("YEAYAEYEYYA");
+
 						
 						//canAirStrafe = true; 
 						startedLv2Pause = true;
@@ -1059,7 +1088,6 @@ public class PlayerS : MonoBehaviour {
 						
 						// allows time for tail to catch up
 						lv2AttackPauseCountdown = lv2AttackPauseTimeMax;
-						//ownRigid.velocity = Vector3.zero;
 					}
 					else{
 						// count down pause time
@@ -1093,8 +1121,7 @@ public class PlayerS : MonoBehaviour {
 			// lock in place so no sliding
 			
 			attacking = false;
-			ownRigid.useGravity = true;;
-			//buttObj.isFollowing = true;
+			ownRigid.useGravity = true;
 			canAirStrafe = true; 
 			
 			this.GetComponent<SphereCollider>().material = normalPhysics; 
@@ -1148,20 +1175,12 @@ public class PlayerS : MonoBehaviour {
 					dangerObj.GetComponent<DamageS>().MakeSlashEffect(transform.position+bulletVel.normalized);
 				}
 				else{
-					
-					//print ("DONT ATTACK THRU WALL");
-					
+
 					
 					// set attack to 2 so butt behaves properly
 					attackToPerform = 2;
 					
 				}
-				
-				// add kinesthetic effects
-				//CameraShakeS.C.MicroShake();
-				//	SleepTime(0.3f);
-				
-				// SEEMS TO BE WORKING CORRECTLY
 			}
 		}
 		
@@ -1698,10 +1717,9 @@ public class PlayerS : MonoBehaviour {
 			GetComponent<Collider>().enabled = false;
 			
 			//Take Away Control
-			stretching = false;
 			isDangerous = false;
 			jumpButtonDown = false;
-			stretchButtonDown = false;
+			attackTriggerDown = false;
 			charging = false;
 			attacking = false;
 			chargeTime = 0;
@@ -1817,6 +1835,11 @@ public class PlayerS : MonoBehaviour {
 		hurtCounter = hurtTimer; 
 		
 		if (health <= 0){
+
+				ownRigid.velocity = Vector3.zero;
+
+				doingSpecial = false;
+				specialCooldown = 0;
 			
 			
 			numLives --; 			//Decrement Counter
@@ -1824,18 +1847,12 @@ public class PlayerS : MonoBehaviour {
 			GetComponent<TrailHandlerRedubS>().DestroyPlayerDots(); 
 			
 			UpdateScorekeeper(); 	//Have scorekeeper update (and update UI)
-			//if(numLives != 0)
-			//{
+			
 			respawning = true;
 			respawnTimeCountdown = respawnTimeMax;
-			//canRespawn = false;
 
-				doingSpecial = false;
-				specialCooldown = 0;
 			
 			
-			
-			//}
 			if(numLives == 0)
 				this.gameObject.SetActive(false);
 			else{
@@ -1843,7 +1860,6 @@ public class PlayerS : MonoBehaviour {
 				respawnParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[characterNum - 1].GetColor("_TintColor");
 				respawnParticles.GetComponent<ParticleSystem>().startLifetime = respawnTimeCountdown;
 			}
-			
 			
 			Instantiate(deathParticles, this.transform.position, Quaternion.identity); 
 			soundSource.PlayDeathSounds();
@@ -1903,14 +1919,9 @@ public class PlayerS : MonoBehaviour {
 	}
 	
 	void OnCollisionEnter(Collision other){
-		// end bullet attack
-		
-		//if(isDangerous)
-		//dangerObj.GetComponent<DamageS> ().ManageCollision (other.gameObject); 
 		
 		
 		Vector3 hitParticleSpawn = this.transform.position; 
-		//hitParticleSpawn.z +=.5f;
 		
 		
 		GameObject newParticles =  Instantiate(hitParticles,hitParticleSpawn,Quaternion.identity) as GameObject;
@@ -1920,21 +1931,18 @@ public class PlayerS : MonoBehaviour {
 
 			if (doingSpecial){
 				if (characterNum == 4){
-					doingSpecial = false;
-					specialCooldown = 0;
-					ownRigid.useGravity = true;
+					
+					// destroy character
+					PinkWhipSelfDestruct();
+					TurnOffIgnoreWalls();
+					
+					
 				}
 			}
 			
 			if (attacking){
-				//attacking = false;
-				//print ("STOP!!");
 				
-				//DISABLED FOR BOUNCINESS ------------------------------------------------------------------------------------------
-				//ownRigid.velocity = Vector3.zero;
-				
-				
-				//buttDelayCountdown = 0;
+
 				//TURN OFF THE ATTACKS
 				if (attackToPerform == 0)
 				{
@@ -1959,7 +1967,7 @@ public class PlayerS : MonoBehaviour {
 			this.GetComponent<SphereCollider>().material = normalPhysics; 
 			
 			
-			//CameraShakeS.C.SmallShake();
+			CameraShakeS.C.SmallShake();
 			
 		}
 		
@@ -1968,9 +1976,11 @@ public class PlayerS : MonoBehaviour {
 
 			if (doingSpecial){
 				if (characterNum == 4){
-					doingSpecial = false;
-					specialCooldown = 0;
-					ownRigid.useGravity = true;
+
+					// destroy character
+					PinkWhipSelfDestruct();
+
+					
 				}
 			}
 			
@@ -1982,7 +1992,6 @@ public class PlayerS : MonoBehaviour {
 				if (soundSource != null){
 					if (other.gameObject.GetComponent<PlatformSoundS>() != null){
 						other.gameObject.GetComponent<PlatformSoundS>().PlayPlatformSounds();
-						//print ("Played platform sound");
 					}
 					else{
 						soundSource.PlayWallHit();
@@ -1997,15 +2006,14 @@ public class PlayerS : MonoBehaviour {
 				else{
 					CameraShakeS.C.MicroShake();
 				}
-				
-				//print ("played wall sound");
+
 			}
 			else{
 				soundSource.PlayGroundPoundHit();
 				if (other.gameObject.GetComponent<PlatformSoundS>() != null){
 					other.gameObject.GetComponent<PlatformSoundS>().PlayPlatformSounds();
 				}
-				//print ("played ground sound");
+
 				// bigger shake
 				CameraShakeS.C.SmallShake();
 			}
@@ -2018,46 +2026,26 @@ public class PlayerS : MonoBehaviour {
 			if (groundDetect.Grounded()){
 				attacking = false; 
 				isDangerous = false; 
-				//print ("Turn off dangerous!!");
-				//TurnOffIgnoreWalls();
 			}
 		}
-		
-		//DisableAttacks (); 
+
 		
 		
 	}
 	
-	/*void OnCollisionStay(Collision other){
-		if (other.gameObject.tag == "Ground" || other.gameObject.tag == "Wall"){
-			if (groundLeeway <= 0){
-				//ownRigid.useGravity = true;;
-			}
-		}
-	}*/
-	
-	/*void OnTriggerEnter(Collider other) 
-	{
-		if (other.gameObject.tag != "Debris") {
-			if (isDangerous) {
-				//dangerObj.GetComponent<DamageS> ().ManageCollision (other.gameObject); 
-				//DisableAttacks(); 
+	public void PinkWhipSelfDestruct(){
 
-			}
-		}
+		UnpauseCharacter();
+		doingSpecial = false;
+		specialCooldown = 0;
+		ownRigid.useGravity = true;
+		TakeDamage(10000);
 
-		//attacking = false; 
-		//isDangerous = false; 
-		//this.GetComponent<SphereCollider>().material = normalPhysics; 
-
-	}*/
+	}
 	
 	public void DisableAttacks()
 	{
 		attacking = false; 
-		//isDangerous = false; 
-		
-		//ownRigid.useGravity = true;;
 		canAirStrafe = true; 
 		
 		this.GetComponent<SphereCollider>().material = normalPhysics; 
@@ -2084,11 +2072,7 @@ public class PlayerS : MonoBehaviour {
 		}
 	}
 	
-	
-	public void UnlockVel () {
-		lockInPlace = false;
-	}
-	
+
 	public void TurnOnIgnoreWalls(){
 		ownRigid.useGravity = false;
 		gameObject.layer = LayerMask.NameToLayer(physicsLayerNoWalls);
