@@ -268,6 +268,8 @@ public class PlayerS : MonoBehaviour {
 	private float acidSpecialRotateAccel = 200f;
 	private float acidSpecialCurrentRotateRate;
 
+	public GameObject char6SpecialCollider;
+
 	
 	
 	// Use this for initialization
@@ -606,6 +608,11 @@ public class PlayerS : MonoBehaviour {
 				
 			}
 
+			// character 5 pauses while chomp does its thing
+			if (characterNum == 5){
+				ownRigid.velocity = Vector3.zero;
+			}
+
 
 			// end when period is over
 
@@ -685,6 +692,17 @@ public class PlayerS : MonoBehaviour {
 
 					TurnOnIgnoreWalls();
 
+				}
+
+				// character 5 does vertical chomp
+
+				// character 6 (unnamed for now) destroys self with explosion
+				if (characterNum == 6){
+					GameObject SpecialAttackChar6 = 
+						Instantiate(char6SpecialCollider, transform.position, Quaternion.identity)
+							as GameObject;
+					SpecialAttackChar6.GetComponent<MrWrapsSpecialAttackS>().playerRef = this;
+					TakeDamage(9999);
 				}
 
 
