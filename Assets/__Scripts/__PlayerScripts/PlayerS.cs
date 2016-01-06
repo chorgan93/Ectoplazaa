@@ -343,6 +343,14 @@ public class PlayerS : MonoBehaviour {
 			characterNum = 4;
 		}
 
+		if (Input.GetKeyDown(KeyCode.Alpha5)){
+			characterNum = 5;
+		}
+
+		if (Input.GetKeyDown(KeyCode.Alpha6)){
+			characterNum = 6;
+		}
+
 
 
 		/*if (Input.GetKeyDown(KeyCode.P)){
@@ -627,11 +635,19 @@ public class PlayerS : MonoBehaviour {
 		}
 		else{
 			if (numKOsInRow >= 3 && Input.GetButton("BButtonPlayer" + playerNum + platformType) && !attacking && !charging){
+
 				dangerObj.GetComponent<DamageS>().MakeSlashEffect(transform.position);
-				doingSpecial = true;
+
+				if (characterNum != 6){
+					doingSpecial = true;
+					specialCooldown = specialCooldownMax;
+					PauseCharacter();
+				}
+
+
 				CameraShakeS.C.TimeSleep(0.2f);
-				specialCooldown = specialCooldownMax;
 				numKOsInRow = 0;
+
 				if (specialParticles != null){
 					Destroy(specialParticles.gameObject);
 				}
@@ -702,12 +718,11 @@ public class PlayerS : MonoBehaviour {
 						Instantiate(char6SpecialCollider, transform.position, Quaternion.identity)
 							as GameObject;
 					SpecialAttackChar6.GetComponent<MrWrapsSpecialAttackS>().playerRef = this;
-					TakeDamage(9999);
+					SelfDestruct();
 				}
 
 
 
-				PauseCharacter();
 			}
 		}
 
@@ -1952,7 +1967,7 @@ public class PlayerS : MonoBehaviour {
 				if (characterNum == 4){
 					
 					// destroy character
-					PinkWhipSelfDestruct();
+					SelfDestruct();
 					TurnOffIgnoreWalls();
 					
 					
@@ -1997,7 +2012,7 @@ public class PlayerS : MonoBehaviour {
 				if (characterNum == 4){
 
 					// destroy character
-					PinkWhipSelfDestruct();
+					SelfDestruct();
 
 					
 				}
@@ -2052,7 +2067,7 @@ public class PlayerS : MonoBehaviour {
 		
 	}
 	
-	public void PinkWhipSelfDestruct(){
+	public void SelfDestruct(){
 
 		UnpauseCharacter();
 		doingSpecial = false;
