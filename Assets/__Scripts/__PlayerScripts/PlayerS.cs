@@ -268,6 +268,8 @@ public class PlayerS : MonoBehaviour {
 	private float acidSpecialRotateAccel = 200f;
 	private float acidSpecialCurrentRotateRate;
 
+	public GameObject char6SpecialCollider;
+
 	
 	
 	// Use this for initialization
@@ -339,6 +341,14 @@ public class PlayerS : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.Alpha4)){
 			characterNum = 4;
 		}*/
+
+		if (Input.GetKeyDown(KeyCode.Alpha5)){
+			characterNum = 5;
+		}
+
+		if (Input.GetKeyDown(KeyCode.Alpha6)){
+			characterNum = 6;
+		}
 
 
 
@@ -605,6 +615,11 @@ public class PlayerS : MonoBehaviour {
 				
 			}
 
+			// character 5 pauses while chomp does its thing
+			if (characterNum == 5){
+				ownRigid.velocity = Vector3.zero;
+			}
+
 
 			// end when period is over
 
@@ -619,11 +634,19 @@ public class PlayerS : MonoBehaviour {
 		}
 		else{
 			if (numKOsInRow >= 3 && Input.GetButton("BButtonPlayer" + playerNum + platformType) && !attacking && !charging){
+
 				dangerObj.GetComponent<DamageS>().MakeSlashEffect(transform.position);
-				doingSpecial = true;
+
+				if (characterNum != 6){
+					doingSpecial = true;
+					specialCooldown = specialCooldownMax;
+					PauseCharacter();
+				}
+
+
 				CameraShakeS.C.TimeSleep(0.2f);
-				specialCooldown = specialCooldownMax;
 				numKOsInRow = 0;
+
 				if (specialParticles != null){
 					Destroy(specialParticles.gameObject);
 				}
@@ -686,9 +709,19 @@ public class PlayerS : MonoBehaviour {
 
 				}
 
+				// character 5 does vertical chomp
+
+				// character 6 (unnamed for now) destroys self with explosion
+				if (characterNum == 6){
+					GameObject SpecialAttackChar6 = 
+						Instantiate(char6SpecialCollider, transform.position, Quaternion.identity)
+							as GameObject;
+					SpecialAttackChar6.GetComponent<MrWrapsSpecialAttackS>().playerRef = this;
+					SelfDestruct();
+				}
 
 
-				PauseCharacter();
+
 			}
 		}
 
@@ -1933,7 +1966,7 @@ public class PlayerS : MonoBehaviour {
 				if (characterNum == 4){
 					
 					// destroy character
-					PinkWhipSelfDestruct();
+					SelfDestruct();
 					TurnOffIgnoreWalls();
 					
 					
@@ -1978,7 +2011,7 @@ public class PlayerS : MonoBehaviour {
 				if (characterNum == 4){
 
 					// destroy character
-					PinkWhipSelfDestruct();
+					SelfDestruct();
 
 					
 				}
@@ -2033,7 +2066,7 @@ public class PlayerS : MonoBehaviour {
 		
 	}
 	
-	public void PinkWhipSelfDestruct(){
+	public void SelfDestruct(){
 
 		UnpauseCharacter();
 		doingSpecial = false;

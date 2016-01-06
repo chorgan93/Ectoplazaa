@@ -153,7 +153,7 @@ public class DamageS : MonoBehaviour {
 							//print ("KILL!"); 
 
 							if (isPinkSpecialCollider){
-								playerRef.PinkWhipSelfDestruct();
+								playerRef.SelfDestruct();
 								Destroy(gameObject);	
 							}
 							
@@ -256,7 +256,7 @@ public class DamageS : MonoBehaviour {
 				}
 
 				if (isPinkSpecialCollider){
-					playerRef.PinkWhipSelfDestruct();
+					playerRef.SelfDestruct();
 					Destroy(gameObject);	
 				}
 
