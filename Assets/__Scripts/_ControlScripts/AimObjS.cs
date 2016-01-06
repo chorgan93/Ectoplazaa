@@ -8,6 +8,7 @@ public class AimObjS : MonoBehaviour {
 	private float lv2Min;
 	private float lv3Min;
 
+	private float startSize;
 	public float lv2SizeMult = 1.5f;
 	public float lv3SizeMult = 2.25f;
 
@@ -16,9 +17,14 @@ public class AimObjS : MonoBehaviour {
 
 	private string platformType;
 
+	private SpriteRenderer chargeBarSpriteRender;
 
 	public Sprite [] chargeBarSprites; 
 	public GameObject chargeBarSprite; 
+
+	private float maxShakeOffset = 0.3f;
+	private float maxChargeHoldTime = 2f;
+	private Vector3 chargeShakeOffset;
 
 	// Use this for initialization
 	void Start () {
@@ -28,11 +34,13 @@ public class AimObjS : MonoBehaviour {
 		playerRef = transform.parent.GetComponent<PlayerS>();
 		transform.parent = null;
 
+		startSize = transform.localScale.x;
 
 		lv2Min = playerRef.GetChargeLv2Min();
 		lv3Min = playerRef.GetChargeLv3Min();
-		
-		chargeBarSprite.GetComponent<SpriteRenderer>().enabled = false; 
+
+		chargeBarSpriteRender = chargeBarSprite.GetComponent<SpriteRenderer>();
+		chargeBarSpriteRender.enabled = false; 
 	
 	}
 	
@@ -41,44 +49,36 @@ public class AimObjS : MonoBehaviour {
 
 		if (playerRef){
 
-			if (playerRef.spriteObject.GetComponent<SpriteRenderer>().enabled){
+			if (playerRef.spriteObject.GetComponent<SpriteRenderer>().enabled && playerRef.health > 0){
 
 				chargeBarSprite.SetActive(true);
 	
 		if (playerRef.charging){
-			//ownRender.enabled = true;
-			chargeBarSprite.GetComponent<SpriteRenderer>().enabled = true; 
+					chargeBarSpriteRender.enabled = true; 
 		}
 		else{
-			//ownRender.enabled = false;
-			chargeBarSprite.GetComponent<SpriteRenderer>().enabled = false; 
+					chargeBarSpriteRender.enabled = false; 
 		}
 
-		if (chargeBarSprite.GetComponent<SpriteRenderer>().enabled){
+				if (chargeBarSpriteRender.enabled){
 
 			// set size
 
-			if(!(playerRef.GetChargeTime() >  playerRef.GetChargeLv3Min()*1.5f))
-			{
-				float newScaleValue = playerRef.GetChargeTime()/ playerRef.GetChargeLv3Min();
-				Vector3 newScale = new Vector3 (newScaleValue,newScaleValue,1f); 
-				this.transform.localScale = newScale;
-			}
 
 			if (playerRef.GetChargeTime() > lv3Min){
 
-				chargeBarSprite.GetComponent<SpriteRenderer>().sprite = chargeBarSprites[2]; 
-				//transform.localScale = new Vector3(lv3Size,lv3Size,1);
+						chargeBarSpriteRender.sprite = chargeBarSprites[2]; 
+						transform.localScale = new Vector3(startSize*lv3SizeMult,startSize*lv3SizeMult,1);
 			}
 			else if (playerRef.GetChargeTime() > lv2Min){
 				
-				chargeBarSprite.GetComponent<SpriteRenderer>().sprite = chargeBarSprites[1]; 
-				//transform.localScale = new Vector3(lv2Size,lv2Size,1);
+						chargeBarSpriteRender.sprite = chargeBarSprites[1]; 
+				transform.localScale = new Vector3(startSize*lv2SizeMult,startSize*lv2SizeMult,1);
 			}
 			else{
-				chargeBarSprite.GetComponent<SpriteRenderer>().sprite = chargeBarSprites[0]; 
+						chargeBarSpriteRender.sprite = chargeBarSprites[0]; 
 
-				//transform.localScale = new Vector3(startSize,startSize,1);
+				transform.localScale = new Vector3(startSize,startSize,1);
 			}
 
 			// set pos
@@ -89,6 +89,12 @@ public class AimObjS : MonoBehaviour {
 
 
 			transform.position = playerRef.transform.position + aimDir.normalized*aimRadius;
+
+					// shake sprite pos
+					chargeShakeOffset = Random.insideUnitSphere* 
+						(maxShakeOffset*Mathf.Pow((playerRef.GetChargeTime()/maxChargeHoldTime), 2));
+					chargeShakeOffset.z = transform.position.z;
+					chargeBarSprite.transform.localPosition = chargeShakeOffset;
 
 			
 			float newAngle = 0; 
