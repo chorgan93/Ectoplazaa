@@ -28,9 +28,14 @@ public class DamageS : MonoBehaviour {
 
 	private Collider ownColl;
 
+	// for pink
 	private bool isPinkSpecialCollider = false;
 
+	// for acid
 	private LineRenderer myLaserRender;
+
+	// for megachomp
+	private MegaChompHandlerS megaRef;
 
 	void Start () {
 		if (transform.parent){
@@ -277,6 +282,21 @@ public class DamageS : MonoBehaviour {
 
 		}
 
+		if (megaRef){
+			if (other.gameObject.tag == "Wall" || other.gameObject.tag == "Ground"){
+				megaRef.PauseMega();
+				CameraShakeS.C.TimeSleep(0.1f);
+				CameraShakeS.C.SmallShake();
+			}
+
+			if (other.gameObject.GetComponent<DamageS>() == megaRef.bottomChomp ||
+			    other.gameObject.GetComponent<DamageS>() == megaRef.topChomp){
+
+				megaRef.EndMega();
+
+			}
+		}
+
 
 
 	}
@@ -412,6 +432,29 @@ public class DamageS : MonoBehaviour {
 			ownColl = GetComponent<Collider>();
 		}
 		ownColl.enabled = true;
+	}
+
+	public void MakeSpecial(PlayerS newRef, MegaChompHandlerS mega){
+
+		specialAttackDmg = true;
+		playerRef = newRef;
+		
+		if (playerRef.characterNum == 2){
+			
+			// activate laser visual
+			myLaserRender = GetComponent<LineRenderer>();
+			myLaserRender.enabled = true;
+			
+		}
+		
+		if (!ownColl){
+			ownColl = GetComponent<Collider>();
+		}
+		ownColl.enabled = true;
+
+		megaRef = mega;
+
+
 	}
 
 	public void EnablePinkSpecial(){

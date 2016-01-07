@@ -267,6 +267,8 @@ public class PlayerS : MonoBehaviour {
 	private float acidSpecialStartRotateRate = 1f;
 	private float acidSpecialRotateAccel = 200f;
 	private float acidSpecialCurrentRotateRate;
+	
+	public GameObject char5SpecialHandler;
 
 	public GameObject char6SpecialCollider;
 
@@ -710,6 +712,16 @@ public class PlayerS : MonoBehaviour {
 				}
 
 				// character 5 does vertical chomp
+				if (characterNum == 5){
+
+					GameObject SpecialAttackChar5 = 
+						Instantiate(char5SpecialHandler, transform.position, Quaternion.identity)
+							as GameObject;
+
+					SpecialAttackChar5.GetComponent<MegaChompHandlerS>().playerRef = this;
+					specialCooldown = 1f;
+
+				}
 
 				// character 6 (unnamed for now) destroys self with explosion
 				if (characterNum == 6){
@@ -2073,6 +2085,12 @@ public class PlayerS : MonoBehaviour {
 		specialCooldown = 0;
 		ownRigid.useGravity = true;
 		TakeDamage(10000);
+
+	}
+
+	public void EndSpecialCooldown(){
+
+		specialCooldown = 0;
 
 	}
 	
