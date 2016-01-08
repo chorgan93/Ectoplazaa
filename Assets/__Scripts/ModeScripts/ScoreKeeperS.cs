@@ -65,6 +65,8 @@ public class ScoreKeeperS : MonoBehaviour {
 	private int playersOut;
 	private int lastRemaining;
 
+	public List <GameObject> mapLayoutsForMode;
+
 	void Start () 
 	{
 		endGameObj.SetActive(false);
@@ -80,6 +82,10 @@ public class ScoreKeeperS : MonoBehaviour {
 		//SetupMode();
 		
 		startCountdown = countdownRateMax;
+
+		foreach (GameObject layout in mapLayoutsForMode){
+			layout.SetActive(false);
+		}
 	}
 
 
@@ -167,6 +173,8 @@ public class ScoreKeeperS : MonoBehaviour {
 			modeObjectOwners[i].SetActive(false);
 		}
 */		
+		// turn on mode stage layout
+		mapLayoutsForMode[currentMode].SetActive(true);
 		
 		
 		switch (currentMode)										//Find parent object for desired mode and enable

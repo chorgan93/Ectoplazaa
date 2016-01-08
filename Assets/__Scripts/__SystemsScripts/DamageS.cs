@@ -100,7 +100,8 @@ public class DamageS : MonoBehaviour {
 	//public void ManageCollision(GameObject other){
 	void OnTriggerEnter (Collider other){	
 
-		//print (other.name + " touches " + playerRef.name);
+		if (playerRef){
+		if (!playerRef.GetSlowedState() || (playerRef.GetSlowedState() && playerRef.GetSpecialState())){
 		
 		if (other.gameObject.tag == "Player") {
 			//print (other.name); 
@@ -297,7 +298,9 @@ public class DamageS : MonoBehaviour {
 			}
 		}
 
+		}
 
+		}
 
 	}
 

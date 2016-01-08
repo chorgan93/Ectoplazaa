@@ -8,7 +8,7 @@ public class MegaChompHandlerS : MonoBehaviour {
 	private float startY;
 
 	private float moveSpeed = 5f;
-	private float chompAccel = 100f; 
+	private float chompAccel = 75f; 
 
 	private float stopMovingTimeMax = 0.1f;
 	private float stopMovingTimeCountdown;
@@ -19,6 +19,8 @@ public class MegaChompHandlerS : MonoBehaviour {
 	public DamageS bottomChomp;
 
 	public PlayerS playerRef;
+
+	private float range = 10f;
 
 
 	// Update is called once per frame
@@ -31,10 +33,20 @@ public class MegaChompHandlerS : MonoBehaviour {
 				bottomChomp.MakeSpecial(playerRef, this);
 
 				transform.position = playerRef.transform.position;
+				if (playerRef.spriteObject.transform.localScale.x < 0){
+					transform.Translate(new Vector3(range,0,0));
+				}
+				else{
+					transform.Translate(new Vector3(-range,0,0));
+				}
+
 				startY = transform.position.y;
 
 				topChomp.transform.position = new Vector3(transform.position.x, startY+topStartY, 0);
 				bottomChomp.transform.position = new Vector3(transform.position.x, startY+bottomStartY, 0);
+
+				topChomp.GetComponent<TrailRenderer>().enabled = true;
+				bottomChomp.GetComponent<TrailRenderer>().enabled = true;
 
 				playerSet = true;
 

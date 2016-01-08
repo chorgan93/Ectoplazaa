@@ -30,6 +30,9 @@ public class ChompColliderS : MonoBehaviour {
 	public GameObject hitEffectFastObj;
 
 	private float chompRad = 3f;
+	
+	private float slowMult = 0.5f;
+	private bool slowed = false;
 
 
 	private PlayerS playerRef; // the player that created me
@@ -40,13 +43,17 @@ public class ChompColliderS : MonoBehaviour {
 
 	void Start () {
 
-		//ownRender = GetComponent<SpriteRenderer>();
 		ownCollider = GetComponent<Collider>();
-		//ownCollider.enabled = false;
 
 
 		animCountdown = animRateMax = lifeTime/animFrames.Count;
 		ownRender.sprite = animFrames[currentSprite];
+
+		if (playerRef.GetSlowedState()){
+			ownCollider.enabled = false;
+			transform.localScale *= slowMult;
+			slowed = true;
+		}
 
 		
 		Instantiate(sfxChargeUpObj,transform.position,Quaternion.identity);
@@ -88,6 +95,21 @@ public class ChompColliderS : MonoBehaviour {
 			lifeTime -= Time.deltaTime*TimeManagerS.timeMult;
 			if (lifeTime <= 0){
 				Destroy(gameObject);
+			}
+
+			if (slowed){
+				if (!playerRef.GetSlowedState()){
+					ownCollider.enabled = true;
+					transform.localScale /= slowMult;
+					slowed = false;
+				}
+			}
+			else{
+				if (playerRef.GetSlowedState()){
+					ownCollider.enabled = false;
+					transform.localScale *= slowMult;
+					slowed = true;
+				}
 			}
 		}
 
@@ -133,7 +155,12 @@ public class ChompColliderS : MonoBehaviour {
 
 		// parent to player
 		transform.parent = playerRef.transform;
-		transform.localPosition = attackDir.normalized*chompRad;
+		if (playerRef.GetSlowedState()){
+			transform.localPosition = slowMult*attackDir.normalized*chompRad;
+		}
+		else{
+			transform.localPosition = attackDir.normalized*chompRad;
+		}
 	}
 
 	void OnTriggerEnter(Collider other){

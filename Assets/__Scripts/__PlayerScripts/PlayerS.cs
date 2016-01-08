@@ -85,7 +85,7 @@ public class PlayerS : MonoBehaviour {
 	public GameObject dangerObj;
 	public bool canRespawn = true;
 	public bool respawning = false;
-	public float respawnTimeMax = 1f;
+	private float respawnTimeMax = 2f;
 	private float respawnTimeCountdown;
 	private bool isDead = false;
 	
@@ -271,6 +271,10 @@ public class PlayerS : MonoBehaviour {
 	public GameObject char5SpecialHandler;
 
 	public GameObject char6SpecialCollider;
+
+	//slowed vars
+	private bool isSlowed;
+	private float slowMult = 0.5f;
 
 	
 	
@@ -800,6 +804,15 @@ public class PlayerS : MonoBehaviour {
 				if (characterNum == 4){
 					chargeMult = PlayerCharStatsS.pinkWhip_ChargeMult;
 				}
+				if (characterNum == 5){
+					chargeMult = PlayerCharStatsS.char5_ChargeMult;
+				}
+				if (characterNum == 6){
+					chargeMult = PlayerCharStatsS.char6_ChargeMult;
+				}
+				if (characterNum == 7){
+					chargeMult = PlayerCharStatsS.char7_ChargeMult;
+				}
 				
 				chargeTime+=chargeMult*Time.deltaTime*TimeManagerS.timeMult;
 				
@@ -878,8 +891,13 @@ public class PlayerS : MonoBehaviour {
 						if (attackDir.x == 0 && attackDir.y == 0) {
 							attackDir.x = 1; 
 						}
-						
-						ownRigid.AddForce(attackDir.normalized*chompForce*Time.deltaTime, ForceMode.Impulse);
+
+						if (!isSlowed){
+							ownRigid.AddForce(attackDir.normalized*chompForce*Time.deltaTime, ForceMode.Impulse);
+						}
+						else{
+							ownRigid.AddForce(attackDir.normalized*chompForce*slowMult*Time.deltaTime, ForceMode.Impulse);
+						}
 
 
 						GameObject chompObj = Instantiate(chompHitObj, transform.position, Quaternion.identity)
@@ -1002,6 +1020,9 @@ public class PlayerS : MonoBehaviour {
 			attackPriority = 2;
 			
 			bulletVel = attackDir.normalized*Time.deltaTime*lv1Force ;
+			if (isSlowed){
+				bulletVel*=slowMult;
+			}
 			ownRigid.AddForce(bulletVel,ForceMode.VelocityChange);
 			
 			//print(chargeTime); 
@@ -1211,6 +1232,9 @@ public class PlayerS : MonoBehaviour {
 					
 					// add bullet force
 					ownRigid.velocity = Vector3.zero;
+					if (isSlowed){
+						bulletVel*=slowMult;
+					}
 					ownRigid.AddForce(bulletVel,ForceMode.VelocityChange);
 					
 					ownRigid.useGravity = true;
@@ -1269,13 +1293,6 @@ public class PlayerS : MonoBehaviour {
 			// make sure not to do force stuff when up against wall
 			if ((xForce > 0 && !rightCheck) || xForce < 0 && !leftCheck){
 				
-				// only add force if not flinging/hit
-				
-				//THIS WAS DISABLING AIR STRAFE WHILE FLINGING
-				/*if (!dontCorrectSpeed){
-						ownRigid.AddForce(new Vector3(xForce,0,0));
-					}*/
-				
 				bool applyForce = true; 
 
 				// apply character run mult
@@ -1293,6 +1310,15 @@ public class PlayerS : MonoBehaviour {
 				if (characterNum == 4){
 					runMult *= PlayerCharStatsS.pinkWhip_SpeedMult;
 				}
+				if (characterNum == 5){
+					runMult *= PlayerCharStatsS.char5_SpeedMult;
+				}
+				if (characterNum == 6){
+					runMult *= PlayerCharStatsS.char6_SpeedMult;
+				}
+				if (characterNum == 7){
+					runMult *= PlayerCharStatsS.char7_SpeedMult;
+				}
 				
 				if((ownRigid.velocity.x > maxSpeed*runMult) && (xForce > 0))
 				{
@@ -1309,8 +1335,13 @@ public class PlayerS : MonoBehaviour {
 
 
 				
-				if(applyForce)
+				if(applyForce){
 					ownRigid.AddForce(new Vector3(xForce*runMult,0,0));
+				}
+
+				if (isSlowed){
+					ownRigid.AddForce(new Vector3(-xForce*0.5f*runMult,0,0));
+				}
 				
 				
 				Vector3 fixVel = ownRigid.velocity;
@@ -1401,6 +1432,9 @@ public class PlayerS : MonoBehaviour {
 			if (groundPoundPauseCountdown >= groundPoundPauseMax){
 				Vector3 groundPoundVel = Vector3.zero;
 				groundPoundVel.y = -groundPoundForce*Time.deltaTime*TimeManagerS.timeMult;
+				if (isSlowed){
+					groundPoundVel *= slowMult;
+				}
 				ownRigid.velocity = groundPoundVel;
 				isDangerous = true;
 				ownRigid.useGravity = true;
@@ -1485,6 +1519,9 @@ public class PlayerS : MonoBehaviour {
 					Vector3 jumpForce = Vector3.zero;
 					
 					jumpForce.y = jumpSpeed*Time.deltaTime*TimeManagerS.timeMult;
+					if (isSlowed){
+						jumpForce.y *= slowMult;
+					}
 
 
 					// apply character jump mult
@@ -1499,6 +1536,15 @@ public class PlayerS : MonoBehaviour {
 					}
 					if (characterNum == 4){
 						jumpForce *= PlayerCharStatsS.pinkWhip_JumpMult;
+					}
+					if (characterNum == 5){
+						jumpForce *= PlayerCharStatsS.char5_JumpMult;
+					}
+					if (characterNum == 6){
+						jumpForce *= PlayerCharStatsS.char6_JumpMult;
+					}
+					if (characterNum == 7){
+						jumpForce *= PlayerCharStatsS.char7_JumpMult;
 					}
 
 					Vector3 fixVel = ownRigid.velocity;
@@ -1636,7 +1682,12 @@ public class PlayerS : MonoBehaviour {
 				
 				// add force
 				ownRigid.velocity = Vector3.zero;
-				ownRigid.AddForce(dodgeDir*dodgeForce*Time.deltaTime, ForceMode.Impulse);
+				if (!isSlowed){
+					ownRigid.AddForce(dodgeDir*dodgeForce*Time.deltaTime, ForceMode.Impulse);
+				}
+				else{
+					ownRigid.AddForce(dodgeDir*dodgeForce*slowMult*Time.deltaTime, ForceMode.Impulse);
+				}
 
 				// stop current attack
 
@@ -1680,13 +1731,12 @@ public class PlayerS : MonoBehaviour {
 		//this.GetComponent<LineRenderer>().SetPosition(0,this.transform.position);
 		//this.GetComponent<LineRenderer>().SetPosition(1,buttObj.transform.position);
 		
-		if(isDangerous){
+		if(isDangerous && !isSlowed){
 			dangerousSprite.GetComponent<SpriteRenderer>().enabled = true; 
 			
 		}
 		else{
 			dangerousSprite.GetComponent<SpriteRenderer>().enabled = false; 
-			//TurnOffIgnoreWalls();
 		}
 		
 		hurtCounter -= 1;
@@ -1813,8 +1863,9 @@ public class PlayerS : MonoBehaviour {
 			
 			if(respawnParticles != null && numLives != 0){
 				ParticleSystem spawnParticles = respawnParticles.GetComponent<ParticleSystem>();
+				//spawnParticles.startLifetime = 2;
 				respawnParticles.transform.position = 
-					Vector3.Lerp(deathPos, this.transform.position, spawnParticles.time/respawnTimeMax); 
+					Vector3.Lerp(deathPos, this.transform.position, spawnParticles.time/(respawnTimeMax*0.5f)); 
 
 				if (spawnParticles.isPaused){
 					spawnParticles.Play();
@@ -2152,10 +2203,15 @@ public class PlayerS : MonoBehaviour {
 		return doingSpecial;
 	}
 
+	public bool GetChompState(){
+		return doingChomp;
+	}
+
+
 	public void AddKO(){
 
 		numKOsInRow ++;
-		if (numKOsInRow >= 3){
+		if (numKOsInRow >= 3 && characterNum < 7){
 			if (!specialParticles){
 				GameObject newParticles = Instantiate(chargingSpecialPrefab, transform.position,Quaternion.identity)
 					as GameObject;
@@ -2163,6 +2219,36 @@ public class PlayerS : MonoBehaviour {
 				newParticles.transform.parent = transform;
 			}
 		}
+
+	}
+
+	public void TriggerSlow(){
+
+
+
+		isSlowed = true;
+		if (!doingSpecial){
+			ownRigid.velocity *= slowMult;
+			ownRigid.drag /= slowMult;
+		}
+
+
+
+	}
+
+	public void DisableSlow(){
+
+		isSlowed = false;
+		if (!doingSpecial){
+			ownRigid.velocity /= slowMult;
+			ownRigid.drag *= slowMult;
+		}
+
+	}
+
+	public bool GetSlowedState(){
+
+		return isSlowed;
 
 	}
 
