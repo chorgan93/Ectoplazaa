@@ -252,10 +252,10 @@ public class PlayerS : MonoBehaviour {
 
 	// mr wraps special
 	public GameObject mrWrapsSpecialProjectile;
-	private float wrapsSpecialProjSpeed = 5000f;
-	private float timeBetweenProjsMax = 0.6f;
+	private float wrapsSpecialProjSpeed = 7500f;
+	private float timeBetweenProjsMax = 0.3f;
 	private float timeBettwenProjCountdown = 0;
-	private int numProjsMax = 3;
+	private int numProjsMax = 5;
 	private int currentProj;
 	private float currentLerpTarget;
 	private float rotateAmt = 30f;
@@ -332,7 +332,7 @@ public class PlayerS : MonoBehaviour {
 
 	void Update () {
 
-		/*
+
 		if (Input.GetKeyDown(KeyCode.Alpha1)){
 			characterNum = 1;
 		}
@@ -346,7 +346,7 @@ public class PlayerS : MonoBehaviour {
 
 		if (Input.GetKeyDown(KeyCode.Alpha4)){
 			characterNum = 4;
-		}*/
+		}
 
 		if (Input.GetKeyDown(KeyCode.Alpha5)){
 			characterNum = 5;
@@ -535,21 +535,27 @@ public class PlayerS : MonoBehaviour {
 			// execute attack according to character num
 
 
-
-
 			// ninja pauses while the slash does its thing
 			if (characterNum == 1){
+				
+				GetComponent<Collider>().enabled = false;
 				specialCooldown -= Time.deltaTime;
 				ownRigid.velocity = Vector3.zero;
 			}
 
 			// acidMouth does a DEATH LASER
 			if (characterNum == 2){
+				GetComponent<Collider>().enabled = false;
 				specialCooldown -= Time.deltaTime;
 				ownRigid.velocity = Vector3.zero;
 
 				acidSpecialCurrentRotateRate += acidSpecialRotateAccel*Time.deltaTime;
-				spriteObject.transform.Rotate(new Vector3(0,0,acidSpecialCurrentRotateRate*Time.deltaTime));
+				if (spriteObject.transform.localScale.x < 0){
+					spriteObject.transform.Rotate(new Vector3(0,0,-acidSpecialCurrentRotateRate*Time.deltaTime));
+				}
+				else{
+					spriteObject.transform.Rotate(new Vector3(0,0,acidSpecialCurrentRotateRate*Time.deltaTime));
+				}
 
 				Debug.Log(acidSpecialCurrentRotateRate);
 				Debug.Log(spriteObject.transform.rotation.z);
@@ -576,11 +582,14 @@ public class PlayerS : MonoBehaviour {
 			}
 
 			if (characterNum == 3){
+
+				
+				GetComponent<Collider>().enabled = false;
 				timeBettwenProjCountdown -= Time.deltaTime;
 				ownRigid.velocity = Vector3.zero;
 
 				// rotate head after each shot
-				Vector3 targetHeadRot = new Vector3(currentLerpTarget, 0, 0);
+				Vector3 targetHeadRot = new Vector3(0, 0, currentLerpTarget);
 				spriteObject.transform.rotation = Quaternion.Euler(targetHeadRot);
 
 
@@ -623,6 +632,8 @@ public class PlayerS : MonoBehaviour {
 
 			// character 5 pauses while chomp does its thing
 			if (characterNum == 5){
+
+				GetComponent<Collider>().enabled = false;
 				ownRigid.velocity = Vector3.zero;
 			}
 
@@ -634,6 +645,8 @@ public class PlayerS : MonoBehaviour {
 				if (acidSpecialReference){
 					Destroy(acidSpecialReference);
 				}
+				
+				GetComponent<Collider>().enabled = true;
 				UnpauseCharacter();
 			}
 
@@ -681,6 +694,16 @@ public class PlayerS : MonoBehaviour {
 					inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
 					inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
 					spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
+					Debug.Log(spriteObject.transform.rotation);
+					// rotate a tiny bit to allow for error
+					if (spriteObject.transform.localScale.x < 0){
+						spriteObject.transform.Rotate(new Vector3(0,0, 60f));
+						Debug.Log(spriteObject.transform.rotation);
+					}
+					else{
+						spriteObject.transform.Rotate(new Vector3(0,0, -60f));
+						Debug.Log(spriteObject.transform.rotation);
+					}
 					currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z;
 				}
 
@@ -2131,6 +2154,7 @@ public class PlayerS : MonoBehaviour {
 	
 	public void SelfDestruct(){
 
+		TurnOffIgnoreWalls();
 		UnpauseCharacter();
 		doingSpecial = false;
 		specialCooldown = 0;

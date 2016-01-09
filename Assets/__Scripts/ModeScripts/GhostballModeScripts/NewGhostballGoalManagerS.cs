@@ -6,7 +6,7 @@ public class NewGhostballGoalManagerS : MonoBehaviour {
 
 	// Use this for initialization
 
-	public List<BallRespawnPosS> ballPositions; // position 0 will be start position
+	private List<BallRespawnPosS> ballPositions = new List<BallRespawnPosS>(); // position 0 will be start position
 	private NewGhostballGoalS goal;
 	private GhostballS ghostBall;
 	
@@ -14,7 +14,12 @@ public class NewGhostballGoalManagerS : MonoBehaviour {
 	void Start () {
 		goal = GetComponentInChildren<NewGhostballGoalS>();
 		ghostBall = GetComponentInChildren<GhostballS>();
-		ghostBall.transform.position = ballPositions[0].transform.position;
+		//ghostBall.transform.position = ballPositions[0].transform.position;
+
+		GameObject[] allBallPositions = GameObject.FindGameObjectsWithTag("Spawn");
+		foreach(GameObject spawn in allBallPositions){
+			ballPositions.Add(spawn.GetComponent<BallRespawnPosS>());
+		}
 
 	}
 

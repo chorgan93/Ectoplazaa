@@ -42,9 +42,11 @@ public class GhostballS : MonoBehaviour {
 
 	public void ResetBall(Vector3 respawnPos){
 
-		respawnParticles = Instantiate(currentRespawnParticles, transform.position, Quaternion.identity)
+		currentRespawnParticles = Instantiate(respawnParticles, transform.position, Quaternion.identity)
 			as ParticleSystem;
 		myRenderer.color = startColor;
+		transform.position = respawnPos;
+		GetComponent<Rigidbody>().velocity = Vector3.zero;
 
 	}
 

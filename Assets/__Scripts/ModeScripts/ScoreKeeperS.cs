@@ -10,8 +10,8 @@ public class ScoreKeeperS : MonoBehaviour {
 
 	public GameObject 	scoreBarObj; 
 	public GameObject	uiObj; 
-	public GameObject 	ghostballGoalParentPrefab,
-						ghostballPrefab;
+	//private GameObject 	ghostballGoalParentPrefab;
+						//ghostballPrefab;
 				
 	private int 		winningPlayerNum;
 	public GameObject 	winningPlayerTail, winningPlayerSprite; 
@@ -212,10 +212,10 @@ public class ScoreKeeperS : MonoBehaviour {
 			scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
 
 			//Instantiate Goal  objects
-			Instantiate(ghostballGoalParentPrefab, Vector3.zero, Quaternion.identity);
+			//Instantiate(ghostballGoalParentPrefab, Vector3.zero, Quaternion.identity);
 
 			//Instantiate Ghostball
-			Instantiate(ghostballPrefab, Vector3.zero, Quaternion.identity);
+			//Instantiate(ghostballPrefab, Vector3.zero, Quaternion.identity);
 
 			break;
 			
@@ -588,6 +588,7 @@ public class ScoreKeeperS : MonoBehaviour {
 		{
 			PlayerS p = GlobalVars.playerList[playerNumber].GetComponent<PlayerS>();	//Get Player
 			p.score += scorePerGoalGhostball;				//Add score
+			Debug.Log(p.score);
 		}
 	}
 }

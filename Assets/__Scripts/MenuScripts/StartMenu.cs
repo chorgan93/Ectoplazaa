@@ -200,7 +200,7 @@ public class StartMenu : MonoBehaviour {
 							Instantiate(advSoundObj);
 						}
 
-						// "party" option
+						/*// "party" option
 						if (currentCursorPos == 1){
 							//Application.LoadLevel(nextSceneString);
 							
@@ -211,10 +211,10 @@ public class StartMenu : MonoBehaviour {
 							cameraFollow.poi = loadingCenterPt;
 							nextScene = partyNextScene;
 							Instantiate(advSoundObj);
-						}
+						}*/
 	
 						// "options" option
-						if (currentCursorPos == 2){
+						if (currentCursorPos == 1){
 							onOptions = true;
 							cameraFollow.poi = optionsCenterPt;
 							inputDelay = inputDelayTransition;
@@ -224,7 +224,7 @@ public class StartMenu : MonoBehaviour {
 						}
 		
 						// "credits" option
-						if (currentCursorPos == 3){
+						if (currentCursorPos == 2){
 							onCredits = true;
 							cameraFollow.poi = creditsCenterPt;
 							inputDelay = inputDelayTransition;
