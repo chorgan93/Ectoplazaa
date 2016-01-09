@@ -10,8 +10,8 @@ public class ScoreKeeperS : MonoBehaviour {
 
 	public GameObject 	scoreBarObj; 
 	public GameObject	uiObj; 
-	public GameObject 	ghostballGoalParentPrefab,
-						ghostballPrefab;
+	//private GameObject 	ghostballGoalParentPrefab;
+						//ghostballPrefab;
 				
 	private int 		winningPlayerNum;
 	public GameObject 	winningPlayerTail, winningPlayerSprite; 
@@ -65,6 +65,8 @@ public class ScoreKeeperS : MonoBehaviour {
 	private int playersOut;
 	private int lastRemaining;
 
+	public List <GameObject> mapLayoutsForMode;
+
 	void Start () 
 	{
 		endGameObj.SetActive(false);
@@ -80,6 +82,10 @@ public class ScoreKeeperS : MonoBehaviour {
 		//SetupMode();
 		
 		startCountdown = countdownRateMax;
+
+		foreach (GameObject layout in mapLayoutsForMode){
+			layout.SetActive(false);
+		}
 	}
 
 
@@ -167,6 +173,8 @@ public class ScoreKeeperS : MonoBehaviour {
 			modeObjectOwners[i].SetActive(false);
 		}
 */		
+		// turn on mode stage layout
+		mapLayoutsForMode[currentMode].SetActive(true);
 		
 		
 		switch (currentMode)										//Find parent object for desired mode and enable
@@ -204,10 +212,10 @@ public class ScoreKeeperS : MonoBehaviour {
 			scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
 
 			//Instantiate Goal  objects
-			Instantiate(ghostballGoalParentPrefab, Vector3.zero, Quaternion.identity);
+			//Instantiate(ghostballGoalParentPrefab, Vector3.zero, Quaternion.identity);
 
 			//Instantiate Ghostball
-			Instantiate(ghostballPrefab, Vector3.zero, Quaternion.identity);
+			//Instantiate(ghostballPrefab, Vector3.zero, Quaternion.identity);
 
 			break;
 			
@@ -580,6 +588,7 @@ public class ScoreKeeperS : MonoBehaviour {
 		{
 			PlayerS p = GlobalVars.playerList[playerNumber].GetComponent<PlayerS>();	//Get Player
 			p.score += scorePerGoalGhostball;				//Add score
+			Debug.Log(p.score);
 		}
 	}
 }

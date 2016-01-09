@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class GhostMaskSpecialAttackS : MonoBehaviour {
@@ -6,14 +6,14 @@ public class GhostMaskSpecialAttackS : MonoBehaviour {
 	// put this on a collider that is spawned by ghostmask when special attack triggers
 	public float spawnDist = 50;
 	public PlayerS playerRef;
+	private bool setPos = false;
 
 	public float lifeTime = 1f;
 
 	public Vector3 slashVel;
 
 	void Start(){
-		
-		transform.Translate(new Vector3(spawnDist, 0, -2f));
+
 		CameraShakeS.C.SmallShake();
 	}
 
@@ -22,6 +22,17 @@ public class GhostMaskSpecialAttackS : MonoBehaviour {
 
 		if (playerRef){
 			GetComponent<DamageS>().MakeSpecial(playerRef);
+			if (!setPos){
+				if (playerRef.spriteObject.transform.localScale.x < 0){
+					transform.Translate(new Vector3(-spawnDist, 0, 0));
+					slashVel *= -1;
+				}
+				else{
+					transform.Translate(new Vector3(spawnDist, 0, 0));
+
+				}
+				setPos = true;
+			}
 			GetComponent<Rigidbody>().velocity = slashVel*Time.deltaTime;
 
 		}

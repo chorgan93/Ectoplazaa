@@ -98,6 +98,15 @@ public class TrailHandlerRedubS : MonoBehaviour {
 			if (playerRef.characterNum == 4){
 				trailLengthMult = PlayerCharStatsS.pinkWhip_TailMult;
 			}
+			if (playerRef.characterNum == 5){
+				trailLengthMult = PlayerCharStatsS.char5_TailMult;
+			}
+			if (playerRef.characterNum == 6){
+				trailLengthMult = PlayerCharStatsS.char6_TailMult;
+			}
+			if (playerRef.characterNum == 7){
+				trailLengthMult = PlayerCharStatsS.char7_TailMult;
+			}
 
 			//PlaceDots (); 
 			PlaceDots ();  // spawns new dots and replaces old ones

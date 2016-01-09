@@ -110,7 +110,7 @@ public class PlayerAnimS : MonoBehaviour {
 
 		Animate(); // actual animation
 
-		if (!playerRef.effectPause){
+		if (!playerRef.effectPause && !playerRef.GetSpecialState()){
 			FaceTarget(); // rotates head when character is in air to face direction of movement
 			//print(isFacingDirection);
 		}
@@ -307,6 +307,38 @@ public class PlayerAnimS : MonoBehaviour {
 			headRenderGreenGlow.enabled = false;
 		}
 
+	}
+	public float GetFaceTarget(Vector3 targetDir){
+		
+		
+		targetDir = targetDir.normalized;
+		
+		// for head
+		
+		float rotateZHead = 0;
+		
+		if(targetDir.x == 0){
+			if (targetDir.y > 0){
+				rotateZHead = 90;
+			}
+			else{
+				rotateZHead = -90;
+			}
+		}
+		else{
+			rotateZHead = Mathf.Rad2Deg*Mathf.Atan((targetDir.y/targetDir.x));
+		}	
+		
+		
+		if (targetDir.x < 0){
+			//rotateZHead += 180;
+		}
+		
+		return rotateZHead;
+		
+		
+		
+		
 	}
 
 	public void FaceTargetInstant(Vector3 targetDir){
