@@ -8,6 +8,8 @@ public class MrWrapsSpecialAttackS : MonoBehaviour {
 
 	public float lifeTime = 2f;
 
+	public MrWrapsSpecialAttackS subExplosion;
+
 
 	void Start(){
 
@@ -61,6 +63,12 @@ public class MrWrapsSpecialAttackS : MonoBehaviour {
 		if (other.gameObject.tag == "Wall" || other.gameObject.tag == "Ground"){
 
 			//Destroy and leave behind explosion
+			if (subExplosion){
+				MrWrapsSpecialAttackS newExplo = Instantiate(subExplosion, transform.position, Quaternion.identity)
+					as MrWrapsSpecialAttackS;
+				newExplo.GetComponent<Rigidbody>().velocity = Vector3.zero;
+				newExplo.playerRef = playerRef;
+			}
 			lifeTime = 0;
 
 		}

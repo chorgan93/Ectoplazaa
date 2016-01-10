@@ -258,7 +258,7 @@ public class PlayerS : MonoBehaviour {
 	private int numProjsMax = 5;
 	private int currentProj;
 	private float currentLerpTarget;
-	private float rotateAmt = 30f;
+	private float rotateAmt = 12f;
 
 	// acid special
 	public GameObject acidSpecialCollider;
@@ -613,7 +613,12 @@ public class PlayerS : MonoBehaviour {
 
 						// rotate head
 						if ( currentProj != numProjsMax ){
-							currentLerpTarget += rotateAmt;
+							if (spriteObject.transform.localScale.x < 0){
+								currentLerpTarget -= rotateAmt;
+							}
+							else{
+								currentLerpTarget += rotateAmt;
+							}
 						}
 
 						timeBettwenProjCountdown = timeBetweenProjsMax;
@@ -718,7 +723,12 @@ public class PlayerS : MonoBehaviour {
 					inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
 					inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
 					spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
-					currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z;
+					if (spriteObject.transform.localScale.x < 0){
+						currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z+30f;
+					}
+					else{
+						currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z-30f;
+					}
 				}
 
 				if (characterNum == 4){
