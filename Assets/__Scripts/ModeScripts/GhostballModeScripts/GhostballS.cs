@@ -35,7 +35,9 @@ public class GhostballS : MonoBehaviour {
 		if (other.gameObject.GetComponent<PlayerS>()){
 			PlayerS playerRef = other.gameObject.GetComponent<PlayerS>();
 			playerOwner = playerRef.playerNum;
-			myRenderer.color = playerRef.GetComponentInChildren<TrailRenderer>().materials[0].color;
+			Color newCol = playerRef.GetComponentInChildren<TrailRenderer>().materials[0].color;
+			newCol.a = 1;
+			myRenderer.color = newCol;
 		}
 
 	}

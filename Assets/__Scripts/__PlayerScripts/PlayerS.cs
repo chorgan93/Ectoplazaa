@@ -17,9 +17,7 @@ public class PlayerS : MonoBehaviour {
 	
 	public GameObject spriteObject;
 	private SpriteRenderer spriteObjRender;
-	
-	//public ButtObjS buttObj;
-	//private Rigidbody buttObjRigid;
+
 	
 	public int playerNum; //controller, playernumber for UI 
 	public int characterNum; //skin, character chosen;
@@ -271,6 +269,9 @@ public class PlayerS : MonoBehaviour {
 	public GameObject char5SpecialHandler;
 
 	public GameObject char6SpecialCollider;
+
+	[Header("Effect Stuff")]
+	public FlingEffectS flingEffectObject;
 
 	//slowed vars
 	private bool isSlowed;
@@ -939,6 +940,10 @@ public class PlayerS : MonoBehaviour {
 						
 						chompTimeCountdown = chompMaxTime;
 					}
+
+					FlingEffectS newEffect = Instantiate(flingEffectObject, transform.position, Quaternion.identity)
+						as FlingEffectS;
+					newEffect.SetAttack(attackToPerform);
 				}
 				
 				
@@ -1234,8 +1239,7 @@ public class PlayerS : MonoBehaviour {
 				// attack priority of 4 to beat everything 
 				attackPriority = 4;
 				
-				// turn on platform ghosting
-				TurnOnIgnoreWalls();
+
 				
 				
 				if(!groundDetect.Grounded())
@@ -1250,10 +1254,9 @@ public class PlayerS : MonoBehaviour {
 				bool wallHit = false;
 				
 				Physics.Raycast(transform.position,bulletVel.normalized, out newHit, 2f);
-				
 				if (newHit.collider != null)
 				{
-					if (newHit.collider.tag == "Ground" || newHit.collider.tag == "Wall")
+					if (newHit.collider.gameObject.tag == "Ground" || newHit.collider.gameObject.tag == "Wall")
 					{
 						wallHit = true;
 					}
@@ -1262,6 +1265,9 @@ public class PlayerS : MonoBehaviour {
 				if (!wallHit){
 					//set attack time
 					lv1OutCountdown = lv1OutTimeMax;
+
+					// turn on platform ghosting
+					TurnOnIgnoreWalls();
 					
 					// add bullet force
 					ownRigid.velocity = Vector3.zero;
@@ -1277,11 +1283,12 @@ public class PlayerS : MonoBehaviour {
 					dangerObj.GetComponent<DamageS>().MakeSlashEffect(transform.position+bulletVel.normalized);
 				}
 				else{
-
-					
-					// set attack to 2 so butt behaves properly
-					attackToPerform = 2;
-					
+					// end attack
+					attacking = false;
+					isDangerous = false;
+					charging = false;
+					canCharge = true;
+					ownRigid.useGravity = true;
 				}
 			}
 		}
@@ -1432,8 +1439,6 @@ public class PlayerS : MonoBehaviour {
 		else{
 			
 			if (groundDetect.Grounded()){
-				// end a fling attack on ground hit
-				//if (attackToPerform == 1 && attacking){
 				if (groundLeeway <= 0){
 					isDangerous = false;
 					attacking = false;
@@ -1445,7 +1450,7 @@ public class PlayerS : MonoBehaviour {
 					
 					charging = false;
 				}
-				//}
+				
 				canCharge = true;
 			}
 		}
