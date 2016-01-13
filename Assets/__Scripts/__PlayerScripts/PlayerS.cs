@@ -13,7 +13,7 @@ public class PlayerS : MonoBehaviour {
 	private string platformType;
 	private Rigidbody ownRigid;
 
-
+	//
 	
 	public GameObject spriteObject;
 	private SpriteRenderer spriteObjRender;
