@@ -32,6 +32,9 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 	public float minY;
 	public float maxY;
 
+	public GameObject ghostBall;
+	private float ghostBallWeight = 0.25f;
+
 	
 	public float xConstraintSizeAdjustMult = 0.1f;
 	public float yConstraintSizeAdjustMult = 0.05f;
@@ -71,8 +74,20 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 
 			// add two values together and divide by total weight
 
-			adaptPt = (centerPt.transform.position*centerWeight + playerCenterPos*playerWeight
-			           + hitCenter*currentHitWeight)/(centerWeight+playerWeight+currentHitWeight);
+			// factor in ballmode
+			if (CurrentModeS.currentMode == 2){
+
+				adaptPt = (centerPt.transform.position*centerWeight + playerCenterPos*playerWeight
+				           + hitCenter*currentHitWeight + ghostBall.transform.position*ghostBallWeight)
+					/(centerWeight+playerWeight+currentHitWeight+ghostBallWeight);
+
+			}
+			else{
+
+				adaptPt = (centerPt.transform.position*centerWeight + playerCenterPos*playerWeight
+				           + hitCenter*currentHitWeight)/(centerWeight+playerWeight+currentHitWeight);
+
+			}
 		}
 
 		// set pos to adaptPt
@@ -108,14 +123,13 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 	void LateUpdate () {
 
 		// remove players who are out of lives or out of the game
-		if (CurrentModeS.currentMode == 1){
 			for (int i = 0; i < playerRefs.Count; i++){
-				if (playerRefs[i].numLives <= 0){
+				if (playerRefs[i].numLives == 0){
 					playerRefs.RemoveAt(i);
 					playerPositions.RemoveAt(i);
 				}
 			}
-		}
+
 
 	}
 

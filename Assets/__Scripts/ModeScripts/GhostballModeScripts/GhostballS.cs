@@ -11,6 +11,12 @@ public class GhostballS : MonoBehaviour {
 	private int playerOwner;
 	private Color startColor;
 
+	
+	public GameObject damageEffectObj;
+	public GameObject damageEffectObjNoScreen;
+	private float damageEffectStartRange = 100f;
+	public GameObject hitEffectFastObj;
+
 	// Use this for initialization
 	void Start () {
 
@@ -34,10 +40,18 @@ public class GhostballS : MonoBehaviour {
 
 		if (other.gameObject.GetComponent<PlayerS>()){
 			PlayerS playerRef = other.gameObject.GetComponent<PlayerS>();
-			playerOwner = playerRef.playerNum;
-			Color newCol = playerRef.GetComponentInChildren<TrailRenderer>().materials[0].color;
-			newCol.a = 1;
-			myRenderer.color = newCol;
+
+			if (playerOwner != playerRef.playerNum){
+				playerOwner = playerRef.playerNum;
+				Color newCol = playerRef.GetComponentInChildren<TrailRenderer>().materials[0].color;
+				newCol.a = 1;
+				myRenderer.color = newCol;
+	
+				MakeSlashEffectNoScreen(other.gameObject.transform.position);
+			}
+			else{
+				CameraShakeS.C.MicroShake();
+			}
 		}
 
 	}
@@ -50,11 +64,111 @@ public class GhostballS : MonoBehaviour {
 		transform.position = respawnPos;
 		GetComponent<Rigidbody>().velocity = Vector3.zero;
 
+		playerOwner = -1;
+
 	}
 
 	public int GetCurrentPlayer(){
 
 		return playerOwner;
 
+	}
+
+	public void MakeSlashEffect(Vector3 otherPos){
+		
+		// makes the cool slash thing when a player is hit
+		
+	
+		
+		Vector3 effectDir = (otherPos-transform.position).normalized;
+
+		Vector3 spawnPos = transform.position-effectDir*damageEffectStartRange;
+		spawnPos.z-=1;
+		
+		GameObject slashEffect = Instantiate(damageEffectObj,spawnPos,Quaternion.identity)
+			as GameObject;
+		
+		slashEffect.GetComponent<SlashEffectS>().moveDir = effectDir;
+		slashEffect.GetComponent<SlashEffectS>().attachedLightning.GetComponent<Renderer>().material.color 
+			= myRenderer.color;
+
+		slashEffect.GetComponent<TrailRenderer>().materials[0].color = 
+			myRenderer.color;
+		
+		spawnPos = (transform.position+otherPos)/2;
+		spawnPos.z = transform.position.z +1;
+		
+		GameObject hitEffect = Instantiate(hitEffectFastObj,spawnPos,Quaternion.identity) as GameObject;
+		hitEffect.GetComponent<SpriteRenderer>().color = myRenderer.color;
+		
+		// rotate hit effect to match slash
+		float rotateZ = 0;
+		
+		if(effectDir.x == 0){
+			rotateZ = 90;
+		}
+		else{
+			rotateZ = Mathf.Rad2Deg*Mathf.Atan((effectDir.y/effectDir.x));
+		}	
+		
+		//print (rotateZ);
+		
+		if (effectDir.x < 0){
+			rotateZ += 180;
+		}
+		
+		hitEffect.transform.Rotate(new Vector3(0,0,rotateZ+90));
+
+		CameraShakeS.C.LargeShake();
+		CameraShakeS.C.TimeSleep(0.2f);
+		
+	}
+
+	public void MakeSlashEffectNoScreen(Vector3 otherPos){
+		
+		// makes the cool slash thing when a player is hit
+		
+		
+		
+		Vector3 effectDir = (transform.position-otherPos).normalized;
+		
+		Vector3 spawnPos = transform.position+effectDir*damageEffectStartRange;
+		spawnPos.z-=1;
+		
+		GameObject slashEffect = Instantiate(damageEffectObjNoScreen,spawnPos,Quaternion.identity)
+			as GameObject;
+		
+		slashEffect.GetComponent<SlashEffectS>().moveDir = effectDir;
+		
+		slashEffect.GetComponent<TrailRenderer>().materials[0].color = 
+			myRenderer.color;
+		
+		spawnPos = (transform.position+otherPos)/2;
+		spawnPos.z = transform.position.z +1;
+		
+		GameObject hitEffect = Instantiate(hitEffectFastObj,spawnPos,Quaternion.identity) as GameObject;
+		hitEffect.GetComponent<SpriteRenderer>().color = myRenderer.color;
+		
+		// rotate hit effect to match slash
+		float rotateZ = 0;
+		
+		if(effectDir.x == 0){
+			rotateZ = 90;
+		}
+		else{
+			rotateZ = Mathf.Rad2Deg*Mathf.Atan((effectDir.y/effectDir.x));
+		}	
+		
+		//print (rotateZ);
+		
+		if (effectDir.x < 0){
+			rotateZ += 180;
+		}
+		
+		hitEffect.transform.Rotate(new Vector3(0,0,rotateZ+90));
+
+		CameraShakeS.C.SmallShake();
+		CameraShakeS.C.TimeSleep(0.2f);
+		
 	}
 }

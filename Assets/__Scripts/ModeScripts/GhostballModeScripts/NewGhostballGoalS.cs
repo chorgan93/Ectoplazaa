@@ -21,6 +21,7 @@ public class NewGhostballGoalS : MonoBehaviour {
 		if (c == ghostBall.GetComponent<Collider>())
 		{
 			AddScore(ghostBall.GetCurrentPlayer());
+			ghostBall.MakeSlashEffect(transform.position);
 			goalScored = true;
 		}
 	}

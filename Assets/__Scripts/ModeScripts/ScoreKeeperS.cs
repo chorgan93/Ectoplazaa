@@ -584,9 +584,9 @@ public class ScoreKeeperS : MonoBehaviour {
 
 	public void AddPoints(int playerNumber)						//Used by Ghostball Goal
 	{	//Should probably be generalized - depending on the mode...?
-		if (GlobalVars.characterIsPlaying[playerNumber])	//check if active
+		if (GlobalVars.playerList.Length>=playerNumber)	//check if active
 		{
-			PlayerS p = GlobalVars.playerList[playerNumber].GetComponent<PlayerS>();	//Get Player
+			PlayerS p = GlobalVars.playerList[playerNumber-1].GetComponent<PlayerS>();	//Get Player
 			p.score += scorePerGoalGhostball;				//Add score
 			Debug.Log(p.score);
 		}

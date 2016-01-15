@@ -321,6 +321,9 @@ public class DamageS : MonoBehaviour {
 			= playerRef.playerParticleMats
 			[playerRef.characterNum-1].GetColor("_TintColor");
 
+		slashEffect.GetComponent<TrailRenderer>().materials[0].color = 
+			playerRef.trailRendererGO.GetComponent<TrailRenderer>().materials[0].color;
+
 		spawnPos = (transform.position+otherPos)/2;
 		spawnPos.z = transform.position.z +1;
 
@@ -359,6 +362,9 @@ public class DamageS : MonoBehaviour {
 			as GameObject;
 		
 		slashEffect.GetComponent<SlashEffectS>().moveDir = effectDir;
+
+		slashEffect.GetComponent<TrailRenderer>().materials[0].color = 
+			playerRef.trailRendererGO.GetComponent<TrailRenderer>().materials[0].color;
 		
 		spawnPos = (transform.position+otherPos)/2;
 		spawnPos.z = transform.position.z +1;
