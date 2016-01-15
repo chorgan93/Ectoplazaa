@@ -18,12 +18,12 @@ public class ScoreKeeperS : MonoBehaviour {
 
 	public Sprite [] 	playerHighResSprites; 
 
-	public int 			scoreThresholdCollectoplaza;
+	public static int 			scoreThresholdCollectoplaza = 35;
 
-	private int 			numberLives = 7;								//stock mode
+	public static int 			numberLives = 7;								//stock mode
 	private int 		numPlayersLeft = 0; 					//stock mode
-	public int 			scorePerGoalGhostball = 1,
-						scoreThresholdGhostball = 10;
+	public static int 			scorePerGoalGhostball = 1,
+						scoreThresholdGhostball = 5;
 	private bool []		playersPlaying = new bool[4]{false,false,false,false}; //Stock mode
 	public static bool 	gameEnd = false;
 
@@ -183,12 +183,12 @@ public class ScoreKeeperS : MonoBehaviour {
 			//enable Ecto Mode
 			//modeObjectOwners[0].SetActive (true);
 			scoreBarObj.GetComponent<ScoreBar>().scoreThreshold = scoreThresholdCollectoplaza; 
-			scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
+			//scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
 			break;
 			
 		case 1: //Stock
 			print("ScoreKeeper setting up stock mode");
-			scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
+			//scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
 			
 			
 			for (int i = 0; i < 4; i++) {						//Tell players how many lives they have
@@ -209,7 +209,7 @@ public class ScoreKeeperS : MonoBehaviour {
 
 			//Make Scorebar
 			scoreBarObj.GetComponent<ScoreBar>().scoreThreshold = scoreThresholdGhostball; 
-			scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
+			//scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
 
 			//Instantiate Goal  objects
 			//Instantiate(ghostballGoalParentPrefab, Vector3.zero, Quaternion.identity);
