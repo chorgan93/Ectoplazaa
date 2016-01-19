@@ -56,7 +56,7 @@ public class NewScoreUI : MonoBehaviour {
 						collectPercent = 100;
 					}
 						
-					textDisplay.text += ": " + collectPercent;
+					textDisplay.text += ": " + collectPercent + "%";
 				}
 	
 				// stock

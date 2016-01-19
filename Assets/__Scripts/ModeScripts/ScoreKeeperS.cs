@@ -184,6 +184,14 @@ public class ScoreKeeperS : MonoBehaviour {
 			//modeObjectOwners[0].SetActive (true);
 			scoreBarObj.GetComponent<ScoreBar>().scoreThreshold = scoreThresholdCollectoplaza; 
 			//scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
+
+			for (int i = 0; i < 4; i++) {						//Tell players how many lives they have
+				if (GlobalVars.characterNumber [i] != 0) {
+					PlayerS currentPlayer = GlobalVars.playerList [i].GetComponent<PlayerS> ();
+					currentPlayer.numLives = numberLives;
+				}
+				
+			}
 			break;
 			
 		case 1: //Stock
@@ -211,11 +219,13 @@ public class ScoreKeeperS : MonoBehaviour {
 			scoreBarObj.GetComponent<ScoreBar>().scoreThreshold = scoreThresholdGhostball; 
 			//scoreBarObj.GetComponent<ScoreBar>().SpawnScoreboard(); 
 
-			//Instantiate Goal  objects
-			//Instantiate(ghostballGoalParentPrefab, Vector3.zero, Quaternion.identity);
-
-			//Instantiate Ghostball
-			//Instantiate(ghostballPrefab, Vector3.zero, Quaternion.identity);
+			for (int i = 0; i < 4; i++) {						//Tell players how many lives they have
+				if (GlobalVars.characterNumber [i] != 0) {
+					PlayerS currentPlayer = GlobalVars.playerList [i].GetComponent<PlayerS> ();
+					currentPlayer.numLives = numberLives;
+				}
+				
+			}
 
 			break;
 			

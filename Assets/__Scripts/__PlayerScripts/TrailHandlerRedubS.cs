@@ -290,7 +290,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 			}
 		}
 
-		playerRef.TakeDamage (startingIndex); 
+		playerRef.TakeDamage (startingIndex, false); 
 
 		DestroyPlayerDotsRange (startingIndex);
 

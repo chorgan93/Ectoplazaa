@@ -88,7 +88,7 @@ public class PlayerS : MonoBehaviour {
 	private bool isDead = false;
 	
 	[HideInInspector]//gets value from mode.
-	public int numLives = -1;
+	public int numLives = 3;
 	
 	private Vector3 spawnPos;
 	public GameObject spawnPt;
@@ -558,9 +558,6 @@ public class PlayerS : MonoBehaviour {
 					spriteObject.transform.Rotate(new Vector3(0,0,acidSpecialCurrentRotateRate*Time.deltaTime));
 				}
 
-				Debug.Log(acidSpecialCurrentRotateRate);
-				Debug.Log(spriteObject.transform.rotation.z);
-
 				Vector3 laserDir = spriteObject.transform.right;
 				if (spriteObject.transform.localScale.x > 0){
 					laserDir *= -1;
@@ -700,7 +697,6 @@ public class PlayerS : MonoBehaviour {
 					inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
 					inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
 					spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
-					Debug.Log(spriteObject.transform.rotation);
 					// rotate a tiny bit to allow for error
 					if (spriteObject.transform.localScale.x < 0){
 						spriteObject.transform.Rotate(new Vector3(0,0, 60f));
@@ -1752,7 +1748,7 @@ public class PlayerS : MonoBehaviour {
 				ownRigid.drag = dodgeDrag;
 
 				// play sound
-				soundSource.PlayJumpSound();
+				soundSource.PlayDodgeSound();
 
 				dodgeButtonDown = true;
 				
@@ -1809,7 +1805,7 @@ public class PlayerS : MonoBehaviour {
 				trailRendererGO2.GetComponent<TrailRenderer> ().enabled = false; 
 				
 			} else {
-				if(!isSpawning)
+				if(!isSpawning && numLives > 0)
 				{
 					Instantiate(spawnParticlePrefab,this.transform.position, Quaternion.identity); 
 					isSpawning = true; 
@@ -1899,7 +1895,7 @@ public class PlayerS : MonoBehaviour {
 			}
 			
 			
-			if(respawnParticles != null && numLives != 0){
+			if(respawnParticles != null && numLives > 0){
 				ParticleSystem spawnParticles = respawnParticles.GetComponent<ParticleSystem>();
 				//spawnParticles.startLifetime = 2;
 				respawnParticles.transform.position = 
@@ -1962,7 +1958,7 @@ public class PlayerS : MonoBehaviour {
 		
 	}
 	
-	public void TakeDamage(float dmg){
+	public void TakeDamage(float dmg, bool isSpecial){
 
 		if (!inCharSelect){
 		health -= dmg;
@@ -1975,8 +1971,14 @@ public class PlayerS : MonoBehaviour {
 				doingSpecial = false;
 				specialCooldown = 0;
 			
-			
-			numLives --; 			//Decrement Counter
+				if (isSpecial){
+					numLives = 0;
+				}
+				else{
+				if (CurrentModeS.currentMode == 1){
+					numLives --; 			//Decrement Counter
+					}
+				}
 			
 			GetComponent<TrailHandlerRedubS>().DestroyPlayerDots(); 
 			
@@ -1987,9 +1989,11 @@ public class PlayerS : MonoBehaviour {
 
 			
 			
-			if(numLives == 0)
+			if(numLives <= 0){
 				this.gameObject.SetActive(false);
+				}
 			else{
+					Debug.Log(numLives);
 				respawnParticles = Instantiate(respawnParticlePrefab, this.transform.position, Quaternion.identity) as GameObject;
 				respawnParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[characterNum - 1].GetColor("_TintColor");
 				respawnParticles.GetComponent<ParticleSystem>().startLifetime = respawnTimeCountdown;
@@ -2174,7 +2178,7 @@ public class PlayerS : MonoBehaviour {
 		doingSpecial = false;
 		specialCooldown = 0;
 		ownRigid.useGravity = true;
-		TakeDamage(10000);
+		TakeDamage(10000, false);
 
 	}
 

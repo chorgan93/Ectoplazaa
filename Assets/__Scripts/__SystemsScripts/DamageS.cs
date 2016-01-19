@@ -140,7 +140,7 @@ public class DamageS : MonoBehaviour {
 							if(otherPlayer.health < 5)
 							{
 								otherPlayer.GetComponent<TrailHandlerRedubS>().SpawnGlobs(otherPlayer.transform.position,2); 
-								otherPlayer.TakeDamage(otherPlayer.health);
+								otherPlayer.TakeDamage(otherPlayer.health, specialAttackDmg);
 								GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 								GlobalVars.totalKills[playerRef.playerNum-1] ++; 
 
@@ -151,7 +151,7 @@ public class DamageS : MonoBehaviour {
 								int damageTaken = (int)otherPlayer.health+1;  //Mathf.RoundToInt((otherPlayer.health/2f));
 								
 								otherPlayer.GetComponent<TrailHandlerRedubS>().DestroyPlayerDotsRange(damageTaken);
-								otherPlayer.TakeDamage (damageTaken);
+								otherPlayer.TakeDamage (damageTaken, specialAttackDmg);
 								GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 								GlobalVars.totalKills[playerRef.playerNum-1] ++; 
 							}
@@ -245,7 +245,7 @@ public class DamageS : MonoBehaviour {
 				if(otherPlayer.health < 5)
 				{
 					otherPlayer.GetComponent<TrailHandlerRedubS>().SpawnGlobs(otherPlayer.transform.position,2); 
-					otherPlayer.TakeDamage(otherPlayer.health);
+					otherPlayer.TakeDamage(otherPlayer.health, specialAttackDmg);
 					GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 					GlobalVars.totalKills[playerRef.playerNum-1] ++; 
 
@@ -256,7 +256,7 @@ public class DamageS : MonoBehaviour {
 					int damageTaken = (int)otherPlayer.health+1;  //Mathf.RoundToInt((otherPlayer.health/2f));
 					
 					otherPlayer.GetComponent<TrailHandlerRedubS>().DestroyPlayerDotsRange(damageTaken);
-					otherPlayer.TakeDamage (damageTaken);
+					otherPlayer.TakeDamage (damageTaken, specialAttackDmg);
 					GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 					GlobalVars.totalKills[playerRef.playerNum-1] ++; 
 				}

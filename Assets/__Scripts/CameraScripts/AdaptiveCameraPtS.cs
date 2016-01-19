@@ -66,11 +66,19 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 		// create player centerpt
 
 		if (playerPositions.Count > 0){
+
+			int numSpecialAdd = 0;
+
 			playerCenterPos = Vector3.zero;
 			for (int i = 0; i < playerPositions.Count; i++){
 				playerCenterPos += playerPositions[i].position;
+
+				if (playerRefs[i].GetSpecialState()){
+					playerCenterPos += playerPositions[i].position*2;
+					numSpecialAdd += 2;
+				}
 			}
-			playerCenterPos/=playerPositions.Count;
+			playerCenterPos/=(playerPositions.Count + numSpecialAdd);
 
 			// add two values together and divide by total weight
 

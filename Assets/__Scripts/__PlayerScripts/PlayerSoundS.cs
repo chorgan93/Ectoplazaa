@@ -24,6 +24,7 @@ public class PlayerSoundS : MonoBehaviour {
 	public List<GameObject> lv3CharChargeSoundObj;
 
 	public List<GameObject> attackReleaseSoundObjs;
+	public List<GameObject> dodgeSoundObjs;
 	public List<GameObject> groundPoundReleaseSoundObjs;
 	public List<GameObject> charIntroSoundObjs;
 	public List<GameObject> joinSoundObjs;
@@ -69,6 +70,14 @@ public class PlayerSoundS : MonoBehaviour {
 		int jumpToPlay = Mathf.FloorToInt(Random.Range(0,jumpSoundObjs.Count));
 		
 		Instantiate(jumpSoundObjs[jumpToPlay]);
+		
+	}
+
+	public void PlayDodgeSound(){
+		
+		int dodgeToPlay = Mathf.FloorToInt(Random.Range(0,dodgeSoundObjs.Count));
+		
+		Instantiate(dodgeSoundObjs[dodgeToPlay]);
 		
 	}
 
