@@ -13,6 +13,8 @@ public class NewScoreUI : MonoBehaviour {
 	private SpriteRenderer playerSprite;
 
 	private Color charCol;
+
+	private int teamNum = 0;
 	
 	// Update is called once per frame
 	void Update () {
@@ -33,6 +35,10 @@ public class NewScoreUI : MonoBehaviour {
 	
 				charCol = playerSprite.color;
 				charImage.color = charCol;
+
+				if (CurrentModeS.isTeamMode){
+					teamNum = GlobalVars.teamNumber[playerNum-1];
+				}
 			}
 
 		}
@@ -46,6 +52,7 @@ public class NewScoreUI : MonoBehaviour {
 				textDisplay.text += ": " + " OUT";
 			}
 			else{
+				if (!CurrentModeS.isTeamMode){
 				// ecto
 				if (CurrentModeS.currentMode == 0){
 	
@@ -67,6 +74,33 @@ public class NewScoreUI : MonoBehaviour {
 				// stock
 				if (CurrentModeS.currentMode == 2){
 					textDisplay.text += ": " + (100*myPlayer.score/ScoreKeeperS.scoreThresholdGhostball);
+				}
+				}
+				else{
+
+					// team mode stuff
+					if (CurrentModeS.currentMode == 0){
+						
+						int collectPercent = Mathf.RoundToInt
+							(100*(myPlayer.health-myPlayer.startEctoNum)/ScoreKeeperS.scoreThresholdCollectoplaza);
+						
+						if (collectPercent > 100){
+							collectPercent = 100;
+						}
+						
+						textDisplay.text += ": " + collectPercent + "%";
+					}
+					
+					// stock
+					if (CurrentModeS.currentMode == 1){
+						textDisplay.text += ": " + (myPlayer.numLives);
+					}
+					
+					// stock
+					if (CurrentModeS.currentMode == 2){
+						textDisplay.text += ": " + (100*myPlayer.score/ScoreKeeperS.scoreThresholdGhostball);
+					}
+
 				}
 			}
 

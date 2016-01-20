@@ -2295,6 +2295,12 @@ public class PlayerS : MonoBehaviour {
 
 	}
 
+	public PlayerAnimS GetAnimObj(){
+
+		return (spriteObjRender.GetComponent<PlayerAnimS>());
+
+	}
+
 	void BackToMenu(){
 		// reset for festival demo purposes
 		if (Input.GetButton("StartButtonPlayer"+playerNum+platformType) &&

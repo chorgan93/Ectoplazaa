@@ -14,6 +14,7 @@ public class GlobalVars : MonoBehaviour
 	public const int totalSkins = 4; //amount of skins available 
 	public static int [] characterNumber = new int[4]{1,2,3,4}; //each players character number, DEFAULT IS SET FOR TESTING IN UNITY //0 DENOTES THE PERSON IS NOT PLAYING
 	public static int [] colorNumber = new int[4]{0,0,0,0};
+	public static int [] teamNumber = new int[4]{0,0,0,0}; // 1 = red, 2 = blue, 0 = not playing
 	public static bool [] characterIsPlaying = new bool[4]{false,false,false,false};
 	public static int mapNumber; //current map selection
 
@@ -42,6 +43,85 @@ public class GlobalVars : MonoBehaviour
 		totalJumps = new int[4];
 		totalGroundPounds = new int[4];
 		totalGlobsEaten = new int[4];
+	}
+
+	public static bool IsRedTeam(int playerNum){
+
+		if (teamNumber[playerNum-1] == 1){
+			return true;
+		}
+		else{
+			return false;
+		}
+
+	}
+
+	public static bool IsBlueTeam(int playerNum){
+		
+		if (teamNumber[playerNum-1] == 2){
+			return true;
+		}
+		else{
+			return false;
+		}
+		
+	}
+
+	public static bool ValidTeams(){
+
+		int numRedTeam = 0;
+		int numBlueTeam = 0;
+
+		foreach (int i in teamNumber){
+			if (i == 1){
+				numRedTeam++;
+			}
+			if (i == 2){
+				numBlueTeam ++;
+			}
+		}
+
+		if (numBlueTeam >0 && numRedTeam >0){
+
+			return true;
+
+		}
+		else{
+			return false;
+		}
+
+	}
+
+	public static int NumPlayersRedTeam(){
+		int numRedTeam = 0;
+		int numBlueTeam = 0;
+		
+		foreach (int i in teamNumber){
+			if (i == 1){
+				numRedTeam++;
+			}
+			if (i == 2){
+				numBlueTeam ++;
+			}
+		}
+
+		return numRedTeam;
+	}
+
+	public static int NumPlayersBlueTeam(){
+		int numRedTeam = 0;
+		int numBlueTeam = 0;
+		
+		foreach (int i in teamNumber){
+			if (i == 1){
+				numRedTeam++;
+			}
+			if (i == 2){
+				numBlueTeam ++;
+			}
+		}
+		
+		return numBlueTeam;
 	}
 
 

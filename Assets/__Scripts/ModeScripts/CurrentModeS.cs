@@ -5,11 +5,14 @@ public class CurrentModeS : MonoBehaviour {
 
 	public static int currentMode = 0; // 0 = Ectoplasm, 1 = Stock, 2=Rocket League, 3=???
 
+	public static bool isTeamMode = false;
+
 	public static int numRoundsCollectoplaza =3;
 	public static int numRoundsStock =3;
 	public static int numRoundsDefault =1;
 	private static int numRounds = -1;
 	private static int [] numberRoundsWon = new int[4] {0,0,0,0};
+	private static int [] numberRoundsWonTeam = new int[2] {0,0};
 	private static int numberRoundsCurrent =0;
 	// Use this for initialization
 	void Start () {
@@ -50,6 +53,11 @@ public class CurrentModeS : MonoBehaviour {
 		print ( "Current Mode S: Adding to rounds completed");
 	}
 
+	public static void AddToRoundsCompletedTeam(int teamNum){
+		numberRoundsWonTeam[teamNum-1] ++;
+		numberRoundsCurrent ++;
+	}
+
 	public static int GetRoundsCurrent(){
 
 		return numberRoundsCurrent;
@@ -60,6 +68,12 @@ public class CurrentModeS : MonoBehaviour {
 	{
 		bool bDoAnother = true;
 		//See if one player has one.
+		if (isTeamMode){
+			if (numberRoundsWonTeam[0] >= numRounds || numberRoundsWonTeam[1] >= numRounds){
+				bDoAnother = false;
+			}
+		}
+		else{
 		for (int i =0; i < 4; i ++)
 		{
 			if ( numberRoundsWon[i] >= numRounds )
@@ -67,6 +81,7 @@ public class CurrentModeS : MonoBehaviour {
 				bDoAnother = false;
 
 			}
+		}
 		}
 		print ("Current Mode S: Do Another Round?     " + bDoAnother);
 
@@ -77,6 +92,19 @@ public class CurrentModeS : MonoBehaviour {
 	public static void ResetWinRecord()
 	{
 		numberRoundsWon = new int[4] {0,0,0,0};
+		numberRoundsWonTeam = new int[2] {0,0};
+
+	}
+
+	public static int GetRedWins(){
+		
+		return numberRoundsWonTeam[0];
+		
+	}
+
+	public static int GetBlueWins(){
+
+		return numberRoundsWonTeam[1];
 
 	}
 }

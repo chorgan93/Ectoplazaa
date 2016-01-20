@@ -15,15 +15,20 @@ public class ScoreKeeperS : MonoBehaviour {
 				
 	private int 		winningPlayerNum;
 	public GameObject 	winningPlayerTail, winningPlayerSprite; 
+	
+	private int 		winningTeamNum;
 
 	public Sprite [] 	playerHighResSprites; 
 
 	public static int 			scoreThresholdCollectoplaza = 35;
+	public static int 			scoreThresholdCollectoplazaTeam = 70;
 
-	public static int 			numberLives = 7;								//stock mode
+	public static int 			numberLives = 7;
+	public static int 			numberLivesTeam = 7;								//stock mode
 	private int 		numPlayersLeft = 0; 					//stock mode
 	public static int 			scorePerGoalGhostball = 1,
-						scoreThresholdGhostball = 5;
+						scoreThresholdGhostball = 5,
+						scoreThresholdGhostballTeam = 7;
 	private bool []		playersPlaying = new bool[4]{false,false,false,false}; //Stock mode
 	public static bool 	gameEnd = false;
 
@@ -67,6 +72,17 @@ public class ScoreKeeperS : MonoBehaviour {
 
 	public List <GameObject> mapLayoutsForMode;
 
+	private int redTeamScore = 0;
+	private int blueTeamScore = 0;
+
+	private int numPlayersRed = 0;
+	private int numPlayersBlue = 0;
+
+	private int numPlayersRedStart = 0;
+	private int numPlayersBlueStart = 0;
+	private int numRedPlayersOut;
+	private int numBluePlayersOut;
+
 	void Start () 
 	{
 		endGameObj.SetActive(false);
@@ -85,6 +101,11 @@ public class ScoreKeeperS : MonoBehaviour {
 
 		foreach (GameObject layout in mapLayoutsForMode){
 			layout.SetActive(false);
+		}
+
+		if (CurrentModeS.isTeamMode){
+			numPlayersRed = numPlayersRedStart = GlobalVars.NumPlayersRedTeam();
+			numPlayersBlue = numPlayersBlueStart = GlobalVars.NumPlayersBlueTeam();
 		}
 	}
 
@@ -188,7 +209,12 @@ public class ScoreKeeperS : MonoBehaviour {
 			for (int i = 0; i < 4; i++) {						//Tell players how many lives they have
 				if (GlobalVars.characterNumber [i] != 0) {
 					PlayerS currentPlayer = GlobalVars.playerList [i].GetComponent<PlayerS> ();
-					currentPlayer.numLives = numberLives;
+					if (CurrentModeS.isTeamMode){
+						currentPlayer.numLives = numberLivesTeam;
+					}
+					else{
+						currentPlayer.numLives = numberLives;
+					}
 				}
 				
 			}
@@ -202,7 +228,12 @@ public class ScoreKeeperS : MonoBehaviour {
 			for (int i = 0; i < 4; i++) {						//Tell players how many lives they have
 				if (GlobalVars.characterNumber [i] != 0) {
 					PlayerS currentPlayer = GlobalVars.playerList [i].GetComponent<PlayerS> ();
-					currentPlayer.numLives = numberLives;
+					if (CurrentModeS.isTeamMode){
+						currentPlayer.numLives = numberLivesTeam;
+					}
+					else{
+						currentPlayer.numLives = numberLives;
+					}
 					print ("Set lives to " + numberLives);
 					numPlayersLeft ++;								//Add to list of players remaining
 					playersPlaying[i] = true;
@@ -276,7 +307,9 @@ public class ScoreKeeperS : MonoBehaviour {
 		
 		
 		if(currentMode == 1)
-		{	
+		{
+
+			if (!CurrentModeS.isTeamMode){
 			
 			scoreBarObj.GetComponent<ScoreBar>().UpdateScoreboardStockMode(p);					//Update Scorebar
 			
@@ -308,6 +341,41 @@ public class ScoreKeeperS : MonoBehaviour {
 				//Update Scorebar ??
 				
 			}
+			}
+			else{
+				// not in team mode
+				if ( !hasMoreLives )																//If Eliminated...
+				{			
+					if (GlobalVars.teamNumber[p.playerNum-1] == 1){
+						numPlayersRed--;					
+					}
+					else{
+						numPlayersBlue--;
+					}
+
+					//Decrement counter
+					playersPlaying[p.playerNum-1] = false;											//Update list of remaining players
+					print ("Player " + p.playerNum + " died!");
+					if (numPlayersRed  == 0)														//If only one player remains left
+					{
+						// BLUE TEAM WINS
+						winningTeamNum = 2;
+						
+						SpawnRoundEndScreen();															//Spawn  End Screen
+					}
+					else if (numPlayersBlue  == 0)														//If only one player remains left
+					{
+						// RED TEAM WINS
+						winningTeamNum = 1;
+						
+						SpawnRoundEndScreen();															//Spawn  End Screen
+					}
+					else{
+						print ("Number of players left: " + numPlayersLeft);
+					}
+
+				}
+			}
 			
 			
 		}
@@ -315,6 +383,9 @@ public class ScoreKeeperS : MonoBehaviour {
 	
 	void UpdateScoreboard()
 	{
+
+		// non team ver
+		if (!CurrentModeS.isTeamMode){
 
 		playersOut = 0;
 
@@ -369,6 +440,105 @@ public class ScoreKeeperS : MonoBehaviour {
 				SpawnRoundEndScreen();
 			}
 		}
+		}
+		// team mode ver
+		else{
+			numRedPlayersOut = 0;
+			numBluePlayersOut = 0;
+
+			redTeamScore = 0;
+			blueTeamScore = 0;
+			
+			for (int i = 0; i < 4; i++) {
+				if (GlobalVars.characterNumber [i] != 0) {
+					PlayerS currentPlayer = GlobalVars.playerList [i].GetComponent<PlayerS> ();
+					
+					// check for out player condition
+					if (currentPlayer.numLives == 0){
+						if (GlobalVars.teamNumber[i] == 1){
+							numRedPlayersOut++;
+						}
+						else{
+							numBluePlayersOut++;
+						}
+					}
+					
+					// Endgame for Collectoplaza mode
+					if(currentMode == 0)
+					{
+						if (GlobalVars.teamNumber[i] == 1){
+							redTeamScore += currentPlayer.score;
+						}
+						else{
+							blueTeamScore += currentPlayer.score;
+						}
+						if (currentPlayer.score >= scoreThresholdCollectoplaza){
+							
+							gameEnd = true;
+							winningPlayerNum = i + 1;
+							
+							SpawnRoundEndScreen();
+							
+						}
+					}
+					// Stock Mode
+					else if(currentMode == 1)
+					{
+						//if player loses life
+					}
+					//Ghostball Mode
+					else if(currentMode == 2)
+					{
+						if (currentPlayer.score >= scoreThresholdGhostball ) {
+							gameEnd = true;
+							winningPlayerNum = i + 1;
+							SpawnRoundEndScreen();
+							
+						}
+					}
+				} 
+				
+				// if only one team remains, they win
+				if (numRedPlayersOut == numPlayersRedStart){
+					// blue team win
+					gameEnd = true;
+					winningTeamNum = 2;
+					SpawnRoundEndScreen();
+				}
+				if (numBluePlayersOut == numPlayersBlueStart){
+					// red team win
+					gameEnd = true;
+					winningTeamNum = 1;
+					SpawnRoundEndScreen();
+				}
+
+				// then check mode-specific
+				if (currentMode == 0){
+					if (redTeamScore >= scoreThresholdCollectoplazaTeam){
+						gameEnd = true;
+						winningTeamNum = 1;
+						SpawnRoundEndScreen();
+					}
+					if (blueTeamScore >= scoreThresholdCollectoplazaTeam){
+						gameEnd = true;
+						winningTeamNum = 2;
+						SpawnRoundEndScreen();
+					}
+				}
+				if (currentMode == 2){
+					if (redTeamScore >= scoreThresholdGhostballTeam){
+						gameEnd = true;
+						winningTeamNum = 1;
+						SpawnRoundEndScreen();
+					}
+					if (blueTeamScore >= scoreThresholdGhostballTeam){
+						gameEnd = true;
+						winningTeamNum = 2;
+						SpawnRoundEndScreen();
+					}
+				}
+			}
+		}
 	}
 
 	void RepositionScoreboard()
@@ -390,7 +560,12 @@ public class ScoreKeeperS : MonoBehaviour {
 	{
 		//Do some coroutine to spawn the UI stuffs?
 		//Check number of rounds
-		CurrentModeS.AddToRoundsCompleted( winningPlayerNum - 1);
+		if (CurrentModeS.isTeamMode){
+			CurrentModeS.AddToRoundsCompletedTeam( winningTeamNum);
+		}
+		else{
+			CurrentModeS.AddToRoundsCompleted( winningPlayerNum - 1);
+		}
 		/*if(CurrentModeS.DoAnotherRound() == true)
 		{
 			//Replay
@@ -441,8 +616,12 @@ public class ScoreKeeperS : MonoBehaviour {
 	void SpawnEndScreen()
 	{
 		gameEnd = true;
-		
-		int characterNum = GlobalVars.playerList [winningPlayerNum - 1].GetComponent<PlayerS> ().characterNum-1;
+
+		// for non-team win settings
+		int characterNum = 0;
+		if (!CurrentModeS.isTeamMode){
+			characterNum = GlobalVars.playerList [winningPlayerNum - 1].GetComponent<PlayerS> ().characterNum-1;
+		}
 
 		scoreBarObj.SetActive (false); 
 
@@ -456,6 +635,34 @@ public class ScoreKeeperS : MonoBehaviour {
 
 		endGameObj.transform.position = newPos; 
 
+		if (CurrentModeS.isTeamMode){
+
+			winningPlayerSprite.SetActive(false);
+
+			// red team win
+			if (winningTeamNum == 1){
+				endFlash.GetComponent<Renderer>().material.color = Color.red;
+				if (CurrentModeS.DoAnotherRound()){
+					winText.text = "RED TEAM\nwins Round " + CurrentModeS.GetRoundsCurrent() + "!";
+				}
+				else{
+					winText.text = "RED TEAM\nwins!";
+				}
+			}
+			// blue team win
+			else{
+				endFlash.GetComponent<Renderer>().material.color = Color.blue;
+				if (CurrentModeS.DoAnotherRound()){
+					winText.text = "BLUE TEAM\nwins Round " + CurrentModeS.GetRoundsCurrent() + "!";
+				}
+				else{
+					winText.text = "BLUE TEAM\nwins!";
+				}
+			}
+			
+			winningPlayerTail.GetComponent<Renderer>().material = endFlash.GetComponent<Renderer>().material;
+		}
+		else{
 		GlobalVars.playerList[winningPlayerNum-1].GetComponent<PlayerSoundS>().PlayCharIntroSound();
 
 		GlobalVars.lastWinningPlayer = winningPlayerNum;
@@ -473,6 +680,7 @@ public class ScoreKeeperS : MonoBehaviour {
 
 		winningPlayerSprite.GetComponent<SpriteRenderer> ().sprite = playerHighResSprites [characterNum];
 		winningPlayerTail.GetComponent<Renderer> ().material = GlobalVars.playerList [winningPlayerNum - 1].GetComponent<PlayerS> ().playerMats [characterNum]; 
+		}
 	
 		SpawnEndText(); 
 

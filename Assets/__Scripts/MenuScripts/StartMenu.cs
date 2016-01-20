@@ -189,32 +189,29 @@ public class StartMenu : MonoBehaviour {
 					{
 						// "play" option
 						if (currentCursorPos == 0){
-							//Application.LoadLevel(nextSceneString);
+							
+							CurrentModeS.isTeamMode = false;
 
 							// start level select load
-							//StartLoading();
-							//startedLoading = true;
 							startCountdown = true;
 							cameraFollow.poi = loadingCenterPt;
 							nextScene = competitiveNextScene;
 							Instantiate(advSoundObj);
 						}
 
-						/*// "party" option
+						// team option
 						if (currentCursorPos == 1){
-							//Application.LoadLevel(nextSceneString);
-							
-							// start level select load
-							//StartLoading();
-							//startedLoading = true;
+
+							CurrentModeS.isTeamMode = true;
+
 							startCountdown = true;
 							cameraFollow.poi = loadingCenterPt;
-							nextScene = partyNextScene;
+							nextScene = competitiveNextScene;
 							Instantiate(advSoundObj);
-						}*/
+						}
 	
 						// "options" option
-						if (currentCursorPos == 1){
+						if (currentCursorPos == 2){
 							onOptions = true;
 							cameraFollow.poi = optionsCenterPt;
 							inputDelay = inputDelayTransition;
@@ -224,7 +221,7 @@ public class StartMenu : MonoBehaviour {
 						}
 		
 						// "credits" option
-						if (currentCursorPos == 2){
+						if (currentCursorPos == 3){
 							onCredits = true;
 							cameraFollow.poi = creditsCenterPt;
 							inputDelay = inputDelayTransition;

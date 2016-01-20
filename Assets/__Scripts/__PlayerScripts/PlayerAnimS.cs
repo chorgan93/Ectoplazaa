@@ -82,6 +82,10 @@ public class PlayerAnimS : MonoBehaviour {
 
 	private float invulnAlpha = 0.5f;
 
+	private Color startColor;
+	private Color redTeamColor = new Color (0.5f,0,0);
+	private Color blueTeamColor = new Color (0,0,0.5f);
+
 
 
 	// Use this for initialization
@@ -98,8 +102,21 @@ public class PlayerAnimS : MonoBehaviour {
 
 		if (playerRef.characterNum == 0) {
 			currentHeadSprites = ninjaHeadSprites;
-		} else
+		} else{
 			SetCurrentSprites (playerRef.characterNum, playerRef.colorNum);
+		}
+
+		if (CurrentModeS.isTeamMode){
+			if (GlobalVars.teamNumber[playerRef.playerNum-1] == 1){
+				startColor = redTeamColor;
+			}
+			else{
+				startColor = blueTeamColor;
+			}
+		}
+		else{
+			startColor = headRender.color;
+		}
 
 
 	
@@ -124,7 +141,7 @@ public class PlayerAnimS : MonoBehaviour {
 
 		// reduce alpha when invuln
 		if (playerRef.respawnInvulnTime > 0){
-			Color animColHead = headRender.color;
+			Color animColHead = startColor;
 			Color animColGlow = headRenderGreenGlow.color;
 
 			if (playerRef.dodging){
@@ -138,7 +155,7 @@ public class PlayerAnimS : MonoBehaviour {
 			headRenderGreenGlow.color = animColGlow;
 		}
 		else{
-			Color animColHead = headRender.color;
+			Color animColHead = startColor;
 			Color animColGlow = headRenderGreenGlow.color;
 			
 			animColGlow.a = animColHead.a = 1f;
@@ -444,6 +461,15 @@ public class PlayerAnimS : MonoBehaviour {
 				currentHeadSprites = pinkHeadSprites;
 			}
 			
+		}
+	}
+
+	public void RefreshTeamColor(){
+		if (GlobalVars.teamNumber[playerRef.playerNum-1] == 1){
+			startColor = redTeamColor;
+		}
+		else{
+			startColor = blueTeamColor;
 		}
 	}
 

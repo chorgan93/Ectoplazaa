@@ -198,6 +198,15 @@ public class CharacterSelectMenu : MonoBehaviour {
 					hasJoined[i-1] = true; 
 					//totalPlayers += 1; 
 
+							if (CurrentModeS.isTeamMode){
+								if (i < 3){
+									GlobalVars.teamNumber[i-1] = 1;
+								}
+								else{
+									GlobalVars.teamNumber[i-1] = 2;
+								}
+							}
+
 					GameObject newPlayer = Instantiate(playerPrefab,spawnPoints[i-1].transform.position,Quaternion.identity) 
 								as GameObject;
 							PlayerS newPlayerS = newPlayer.GetComponent<PlayerS>();
@@ -209,8 +218,6 @@ public class CharacterSelectMenu : MonoBehaviour {
 
 					newPlayerS.spawnPt = spawnPoints[i-1];
 					players[i-1] = newPlayer; 
-					//joinTexts[i-1].GetComponent<Renderer>().enabled = false; 
-					//print("Total Players: " + totalPlayers); 
 
 							// disable player before second selection
 							newPlayerS.nonActive = true;
@@ -250,6 +257,12 @@ public class CharacterSelectMenu : MonoBehaviour {
 					totalPlayers -= 1; 
 							if (totalPlayers <= 0){
 								totalPlayers = 0;
+							}
+
+							if (CurrentModeS.isTeamMode){
+
+								GlobalVars.teamNumber[i-1] = 0;
+								
 							}
 
 					GameObject.Destroy( players[i-1].gameObject);
@@ -400,6 +413,8 @@ public class CharacterSelectMenu : MonoBehaviour {
 				if(hasJoined[i-1] && !hasSelected[i-1])
 				{
 
+							if (!CurrentModeS.isTeamMode){
+
 							int newColor = players[i-1].GetComponent<PlayerS>().colorNum;
 
 					for(int j= 0; j < GlobalVars.totalSkins; j++) //loop once through all skins
@@ -437,6 +452,19 @@ public class CharacterSelectMenu : MonoBehaviour {
 							players[i-1].GetComponent<PlayerS>().colorNum = newColor;
 							players[i-1].GetComponent<PlayerS>().SetSkin();
 				}
+							else{
+								if (GlobalVars.IsRedTeam(i)){
+									GlobalVars.teamNumber[i-1] = 2;
+								}
+								else{
+									GlobalVars.teamNumber[i-1] = 1;
+								}
+								
+								Debug.Log(players[i-1]);
+								players[i-1].GetComponent<PlayerS>().GetAnimObj().RefreshTeamColor();
+							}
+						}
+
 						 
 
 
@@ -447,7 +475,9 @@ public class CharacterSelectMenu : MonoBehaviour {
 
 					// START BUTTON CODE FOR GAME START
 
-			if (Input.GetButton ("StartButtonAllPlayers"+ platformType) && totalPlayers >= 2) //START GAME---------------------------------------
+			if (Input.GetButton ("StartButtonAllPlayers"+ platformType) && 
+					    ((totalPlayers >= 2 && !CurrentModeS.isTeamMode) || 
+					 (totalPlayers >= 2 && CurrentModeS.isTeamMode && GlobalVars.ValidTeams()))) //START GAME---------------------------------------
 			{
 				//SET GLOBAL VARS
 				GlobalVars.totalPlayers = totalPlayers; 
