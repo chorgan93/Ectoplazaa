@@ -446,8 +446,6 @@ public class ScoreKeeperS : MonoBehaviour {
 			numRedPlayersOut = 0;
 			numBluePlayersOut = 0;
 
-			redTeamScore = 0;
-			blueTeamScore = 0;
 			
 			for (int i = 0; i < 4; i++) {
 				if (GlobalVars.characterNumber [i] != 0) {
@@ -466,6 +464,9 @@ public class ScoreKeeperS : MonoBehaviour {
 					// Endgame for Collectoplaza mode
 					if(currentMode == 0)
 					{
+						// calculate score on frame
+						redTeamScore = 0;
+						blueTeamScore = 0;
 						if (GlobalVars.teamNumber[i] == 1){
 							redTeamScore += currentPlayer.score;
 						}
@@ -808,5 +809,29 @@ public class ScoreKeeperS : MonoBehaviour {
 			p.score += scorePerGoalGhostball;				//Add score
 			Debug.Log(p.score);
 		}
+	}
+
+	public void AddPointsTeam(int teamNumber)						//Used by Ghostball Goal
+	{	//Should probably be generalized - depending on the mode...?
+
+		Debug.Log(teamNumber);
+		if (teamNumber == 1){
+			redTeamScore += scorePerGoalGhostball;
+		}
+		if (teamNumber == 2){
+			blueTeamScore += scorePerGoalGhostball;
+		}
+	}
+
+	public  float GetRedScore(){
+
+		return redTeamScore;
+
+	}
+
+	public  float GetBlueScore(){
+		
+		return blueTeamScore;
+		
 	}
 }

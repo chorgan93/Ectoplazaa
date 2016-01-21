@@ -177,7 +177,8 @@ public class ChompColliderS : MonoBehaviour {
 			
 			//print("HIT PLAYER " +  otherPlayer.playerNum); 
 			
-			if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0) {
+			if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0 &&
+			    (!CurrentModeS.isTeamMode || (CurrentModeS.isTeamMode && !GlobalVars.OnSameTeam(playerRef,otherPlayer)))) {
 				// only deal damage if higher priority or other player isnt attacking
 				//if ((!otherPlayer.attacking) || (otherPlayer.attacking && otherPlayer.attackPriority < playerRef.attackPriority)) {
 				if (!otherPlayer.attacking){
@@ -261,7 +262,8 @@ public class ChompColliderS : MonoBehaviour {
 			
 			PlayerS otherPlayer = other.GetComponent<DotColliderS>().whoCreatedMe;
 			
-			if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0){
+			if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0 &&
+			    (!CurrentModeS.isTeamMode || (CurrentModeS.isTeamMode && !GlobalVars.OnSameTeam(playerRef,otherPlayer)))){
 				
 				//print ("DAMAGING PLAYER " + otherPlayer.playerNum); 
 				

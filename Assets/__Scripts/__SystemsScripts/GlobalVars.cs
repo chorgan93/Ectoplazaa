@@ -33,6 +33,7 @@ public class GlobalVars : MonoBehaviour
 	{
 		characterIsPlaying = new bool[4]{false,false,false,false};
 		characterNumber = new int[4]{1,2,3,4};
+		teamNumber = new int[4]{0,0,0,0};
 	}
 
 	public static void ResetGameStats()
@@ -45,6 +46,7 @@ public class GlobalVars : MonoBehaviour
 		totalGlobsEaten = new int[4];
 	}
 
+	// TEAM VARS
 	public static bool IsRedTeam(int playerNum){
 
 		if (teamNumber[playerNum-1] == 1){
@@ -122,6 +124,15 @@ public class GlobalVars : MonoBehaviour
 		}
 		
 		return numBlueTeam;
+	}
+
+	public static bool OnSameTeam(PlayerS p1, PlayerS p2){
+
+		int p1Team = teamNumber[p1.playerNum-1];
+		int p2Team = teamNumber[p2.playerNum-1];
+
+		return (p1 == p2);
+
 	}
 
 

@@ -15,9 +15,17 @@ public class NewScoreUI : MonoBehaviour {
 	private Color charCol;
 
 	private int teamNum = 0;
+
+	private ScoreKeeperS scoreKeeper;
+
+	void Start () {
+		
+		scoreKeeper = GameObject.FindObjectOfType<ScoreKeeperS>() as ScoreKeeperS;
+
+	}
 	
 	// Update is called once per frame
-	void Update () {
+	void LateUpdate () {
 
 		if (ScoreKeeperS.gameEnd){
 			gameObject.SetActive(false);
@@ -71,7 +79,7 @@ public class NewScoreUI : MonoBehaviour {
 					textDisplay.text += ": " + (myPlayer.numLives);
 				}
 	
-				// stock
+				// ball mode
 				if (CurrentModeS.currentMode == 2){
 					textDisplay.text += ": " + (100*myPlayer.score/ScoreKeeperS.scoreThresholdGhostball);
 				}
@@ -96,9 +104,16 @@ public class NewScoreUI : MonoBehaviour {
 						textDisplay.text += ": " + (myPlayer.numLives);
 					}
 					
-					// stock
+					// ball mode
 					if (CurrentModeS.currentMode == 2){
-						textDisplay.text += ": " + (100*myPlayer.score/ScoreKeeperS.scoreThresholdGhostball);
+						float currentScore = 0;
+						if (teamNum == 1){
+							currentScore = scoreKeeper.GetRedScore();
+						}
+						if (teamNum == 2){
+							currentScore = scoreKeeper.GetBlueScore();
+						}
+						textDisplay.text += ": " + (100*currentScore/ScoreKeeperS.scoreThresholdGhostballTeam);
 					}
 
 				}
