@@ -53,7 +53,7 @@ public class AimObjS : MonoBehaviour {
 
 				chargeBarSprite.SetActive(true);
 	
-		if (playerRef.charging){
+		if (playerRef.charging || (playerRef.attacking && playerRef.attackToPerform == 1)){
 					chargeBarSpriteRender.enabled = true; 
 		}
 		else{
