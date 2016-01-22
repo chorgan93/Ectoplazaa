@@ -44,6 +44,9 @@ public class StartMenu : MonoBehaviour {
 	private bool fullscreenOn = true;
 	public TextMesh fullScreenDisplay;
 
+	
+	public TextMesh roundNumDisplay;
+
 	private bool startedLoading = false;
 	private bool startCountdown = false;
 	private float delayLoadTime = 0.5f;
@@ -55,6 +58,9 @@ public class StartMenu : MonoBehaviour {
 	private string competitiveNextScene = "7CompetitiveModeSelect";
 	private string partyNextScene = "8PartyModeSelect";
 	private string nextScene;
+
+	private float holdBTime = 0;
+	private float holdBMaxTime = 1;
 
 	AsyncOperation async;
 
@@ -229,6 +235,19 @@ public class StartMenu : MonoBehaviour {
 							Instantiate(selectSoundObjs[soundToPlay]);
 						}
 					}
+
+					// exit by holding b button
+				
+					if (Input.GetButton ("BButtonAllPlayers" + platformType)) {
+						holdBTime += Time.deltaTime;
+					}
+					else{
+						holdBTime = 0;
+					}
+
+					if (holdBTime >= holdBMaxTime){
+						Application.Quit();
+					}
 				}
 
 				else{
@@ -356,24 +375,20 @@ public class StartMenu : MonoBehaviour {
 						// display current shake mult
 						screenShakeDisplay.text = CameraShakeS.shakeStrengthMult*100 + "%";
 
-						// fullscreen options
+						// time options
 						if (currentCursorPos == 3){
 							if (Mathf.Abs(Input.GetAxis("Horizontal")) 
 							    > cursorSensitivity){
 								if (!movedCursorLeftRight){
 									if (Input.GetAxis("Horizontal") > 0){
-										// fullscreen off
-										//Screen.SetResolution(Screen.width, Screen.height, false);
+										// time off
 
-										fullscreenOn = false;
-										Screen.fullScreen = fullscreenOn;
+										CameraShakeS.timeSleepOn = false;
 									}
-									// else fullscreen on
+									// else sleep on
 									else{
-										
-										//Screen.SetResolution(Screen.width, Screen.height, true);
-										fullscreenOn = true;
-										Screen.fullScreen = fullscreenOn;
+
+										CameraShakeS.timeSleepOn = true;
 									}
 									
 									movedCursorLeftRight = true;
@@ -385,12 +400,50 @@ public class StartMenu : MonoBehaviour {
 								movedCursorLeftRight = false;
 							}
 						}
-						// display current fullscreen mult
-						if (fullscreenOn){
+						// display current time mult
+						if (CameraShakeS.timeSleepOn){
 							fullScreenDisplay.text = "On";
 						}
 						else{
 							fullScreenDisplay.text = "Off";
+						}
+
+						// rounds options
+						if (currentCursorPos == 4){
+							if (Mathf.Abs(Input.GetAxis("Horizontal")) 
+							    > cursorSensitivity){
+								if (!movedCursorLeftRight){
+									if (Input.GetAxis("Horizontal") > 0){
+										// increase option
+										CurrentModeS.SetNumRounds(CurrentModeS.numRoundsDefault+=1);
+										if (CurrentModeS.numRoundsDefault > CurrentModeS.maxRounds){
+											CurrentModeS.SetNumRounds(CurrentModeS.maxRounds);
+										}
+									}
+									// else decrease option
+									else{
+										CurrentModeS.SetNumRounds(CurrentModeS.numRoundsDefault-=1);
+										if (CurrentModeS.numRoundsDefault < CurrentModeS.minRounds){
+											CurrentModeS.SetNumRounds(CurrentModeS.minRounds);
+										}
+									}
+									
+									movedCursorLeftRight = true;
+									int soundToPlay = Mathf.FloorToInt(Random.Range(0,scrollSoundObjs.Count));
+									Instantiate(scrollSoundObjs[soundToPlay]);
+								}
+							}
+							else{
+								movedCursorLeftRight = false;
+							}
+						}
+
+						// display current round amt
+						if (CurrentModeS.numRoundsDefault == 1){
+							roundNumDisplay.text = "1 WIN";
+						}
+						else{
+							roundNumDisplay.text = CurrentModeS.numRoundsDefault + " WINS";
 						}
 					}
 				}

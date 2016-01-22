@@ -10,11 +10,14 @@ public class CurrentModeS : MonoBehaviour {
 	public static int numRoundsCollectoplaza =3;
 	public static int numRoundsStock =3;
 	public static int numRoundsBall =2;
-	public static int numRoundsDefault =1;
+	public static int numRoundsDefault =2;
 	private static int numRounds = -1;
 	private static int [] numberRoundsWon = new int[4] {0,0,0,0};
 	private static int [] numberRoundsWonTeam = new int[2] {0,0};
 	private static int numberRoundsCurrent =0;
+
+	public static int maxRounds = 3;
+	public static int minRounds = 1;
 
 	public static bool firstGame = true;
 	// Use this for initialization
@@ -115,6 +118,12 @@ public class CurrentModeS : MonoBehaviour {
 	public static int GetBlueWins(){
 
 		return numberRoundsWonTeam[1];
+
+	}
+
+	public static void SetNumRounds(int newRoundNum){
+
+		numRoundsDefault = numRoundsBall = numRoundsCollectoplaza = numRoundsStock = newRoundNum;
 
 	}
 }
