@@ -22,6 +22,9 @@ public class StartMenu : MonoBehaviour {
 	public float cursorSensitivity = 0.8f;
 	private int currentCursorPos = 0;
 
+	
+	public GameObject [] startMenuPoiPos; 
+
 	public GameObject mainMenuCenterPt;
 	public GameObject loadingCenterPt;
 	public GameObject creditsCenterPt;
@@ -40,6 +43,9 @@ public class StartMenu : MonoBehaviour {
 	public float sfxVolumeChangeStep = 0.25f;
 	public TextMesh screenShakeDisplay;
 	public float screenShakeChangeStep = 0.25f;
+
+	
+	public GameObject [] optionMenuPoiPos; 
 
 	private bool fullscreenOn = true;
 	public TextMesh fullScreenDisplay;
@@ -188,6 +194,7 @@ public class StartMenu : MonoBehaviour {
 	
 					// move cursor obj to correct pos
 					cursorObj.transform.position = Vector3.Lerp(cursorObj.transform.position, cursorPositions[currentCursorPos].transform.position, cursorSpeed);
+					cameraFollow.poi = startMenuPoiPos[currentCursorPos];
 
 					// select menu option
 					if (Input.GetButton ("AButtonAllPlayers" + platformType) 
@@ -219,7 +226,7 @@ public class StartMenu : MonoBehaviour {
 						// "options" option
 						if (currentCursorPos == 2){
 							onOptions = true;
-							cameraFollow.poi = optionsCenterPt;
+							//cameraFollow.poi = optionsCenterPt;
 							inputDelay = inputDelayTransition;
 							currentCursorPos = 0;
 							int soundToPlay = Mathf.FloorToInt(Random.Range(0,selectSoundObjs.Count));
@@ -255,7 +262,7 @@ public class StartMenu : MonoBehaviour {
 					if (Input.GetButton ("BButtonAllPlayers" + platformType)) {
 						onCredits = false;
 						onOptions = false;
-						cameraFollow.poi = mainMenuCenterPt;
+						//cameraFollow.poi = mainMenuCenterPt;
 						movedCursor = false;
 						currentCursorPos = 0;
 						inputDelay = inputDelayTransition;
@@ -269,6 +276,7 @@ public class StartMenu : MonoBehaviour {
 
 						// set cursor pos to correct options cursor pos
 						cursorObj.transform.position = Vector3.Lerp(cursorObj.transform.position,  optionsCursorPositions[currentCursorPos].transform.position, cursorSpeed);
+						cameraFollow.poi = optionMenuPoiPos[currentCursorPos];
 
 						// allow for different options to change 
 
