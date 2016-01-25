@@ -21,7 +21,7 @@ public class NewPauseScreenS : MonoBehaviour {
 	public List<GameObject> cursorPositions;
 	private int currentCursorPos = 0;
 
-	public GameObject allTextHolder;
+	public List<GameObject> allTextHolder;
 	public Text playerPauseText;
 
 	private string menuSceneString = "1StartMenu";
@@ -35,7 +35,8 @@ public class NewPauseScreenS : MonoBehaviour {
 
 		// turn off cursor obj
 		cursorObj.SetActive(false);
-		allTextHolder.SetActive(false);
+		TurnOffText();
+
 		
 		currentCursorPos = 0;
 		ownRender.enabled = false;
@@ -72,7 +73,8 @@ public class NewPauseScreenS : MonoBehaviour {
 
 							
 							// allow camera shake
-							CameraShakeS.C.sleeping = false;
+								CameraShakeS.C.sleeping = false;
+								Time.timeScale = 1;
 						}
 					}
 				}
@@ -100,7 +102,8 @@ public class NewPauseScreenS : MonoBehaviour {
 
 							
 							// allow camera shake
-							CameraShakeS.C.sleeping = false;
+								CameraShakeS.C.sleeping = false;
+								Time.timeScale = 1;
 						}
 					}
 				}
@@ -128,7 +131,8 @@ public class NewPauseScreenS : MonoBehaviour {
 
 							
 							// allow camera shake
-							CameraShakeS.C.sleeping = false;
+								CameraShakeS.C.sleeping = false;
+								Time.timeScale = 1;
 						}
 					}
 				}
@@ -155,7 +159,8 @@ public class NewPauseScreenS : MonoBehaviour {
 
 							
 							// allow camera shake
-							CameraShakeS.C.sleeping = false;
+								CameraShakeS.C.sleeping = false;
+								Time.timeScale = 1;
 						}
 					}
 				}
@@ -171,7 +176,8 @@ public class NewPauseScreenS : MonoBehaviour {
 
 			// turn on cursor obj
 			cursorObj.SetActive(true);
-			allTextHolder.SetActive(true);
+				TurnOnText();
+
 
 			// display who paused
 			playerPauseText.text = "P" + playerWhoPaused + " Pause";
@@ -253,8 +259,9 @@ public class NewPauseScreenS : MonoBehaviour {
 		else{
 
 			// turn off cursor obj
-			cursorObj.SetActive(false);
-			allTextHolder.SetActive(false);
+				cursorObj.SetActive(false);
+				TurnOffText();
+
 
 			currentCursorPos = 0;
 			ownRender.enabled = false;
@@ -262,5 +269,21 @@ public class NewPauseScreenS : MonoBehaviour {
 		}
 
 	
+	}
+
+	private void TurnOnText(){
+		
+		foreach (GameObject textObj in allTextHolder){
+			textObj.SetActive(true);
+		}
+		
+	}
+
+	private void TurnOffText(){
+
+		foreach (GameObject textObj in allTextHolder){
+			textObj.SetActive(false);
+		}
+
 	}
 }
