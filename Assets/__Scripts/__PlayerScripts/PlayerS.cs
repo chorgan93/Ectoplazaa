@@ -247,6 +247,9 @@ public class PlayerS : MonoBehaviour {
 	public GameObject pinkWhipSpecialPrefab;
 	private Vector3 pinkWhipSpecialVel;
 	private float pinkWhipSpecialSpeed = 12500f;
+	private float pinkWhipSuplexStartSpeed = 5000f;
+	private float pinkWhipSuplexAccel = 500f;
+	private float pinkWhipSuplexCurrentSpeed;
 
 	// mr wraps special
 	public GameObject mrWrapsSpecialProjectile;
@@ -338,7 +341,7 @@ public class PlayerS : MonoBehaviour {
 
 	void Update () {
 
-		/*
+
 		if (Input.GetKeyDown(KeyCode.Alpha1)){
 			characterNum = 1;
 		}
@@ -361,29 +364,8 @@ public class PlayerS : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.Alpha6)){
 			characterNum = 6;
 		}
-		**/
 
-		// debug special
-		if (characterNum == 1 && Input.GetKeyDown(KeyCode.Space)){
 
-			CameraFollowS.F.StartSpecialCam(gameObject);
-
-			dangerObj.GetComponent<DamageS>().MakeSlashEffect(transform.position);
-			
-			if (characterNum != 6){
-				doingSpecial = true;
-				specialCooldown = specialCooldownMax;
-				PauseCharacter();
-			}
-
-			numKOsInRow = 0;
-			
-			if (specialParticles != null){
-				Destroy(specialParticles.gameObject);
-			}
-				
-			
-		}
 
 
 
@@ -660,12 +642,14 @@ public class PlayerS : MonoBehaviour {
 			// pinkwhip does a modified lv3 with no grav
 			if (characterNum == 4){
 				
+				GetComponent<Collider>().enabled = true;
 				ownRigid.useGravity = false;
 				if (!pinkGrabbed){
 					ownRigid.velocity = pinkWhipSpecialVel*Time.deltaTime;
 				}
 				else{
-					ownRigid.velocity = new Vector3(0, 10000*Time.deltaTime, 0);
+					pinkWhipSuplexCurrentSpeed += pinkWhipSuplexAccel*Time.deltaTime;
+					ownRigid.velocity = new Vector3(0, pinkWhipSuplexCurrentSpeed*Time.deltaTime, 0);
 				}
 				
 			}
@@ -809,7 +793,10 @@ public class PlayerS : MonoBehaviour {
 				}
 				**/
 
-
+					
+					GetComponent<Collider>().enabled = false;
+					ownRigid.velocity = Vector3.zero;
+					spriteObject.transform.rotation = Quaternion.identity;
 
 			}
 			}
@@ -2229,12 +2216,13 @@ public class PlayerS : MonoBehaviour {
 		ownRigid.useGravity = true;
 		TakeDamage(10000, false);
 
-		if (pinkGrabbed){
+		if (pinkGrabbed != null){
 			pinkGrabbed.transform.parent = null;
 			pinkGrabbed.TurnOffPinkPaused();
 			pinkGrabbed.TakeDamage(999999, true);
 			pinkGrabbed = null;
 		}
+
 
 	}
 
@@ -2360,6 +2348,7 @@ public class PlayerS : MonoBehaviour {
 	public void TurnOnPinkPause(){
 
 		pinkPaused = true;
+		ownRigid.isKinematic = true;
 	
 
 	}
@@ -2367,15 +2356,18 @@ public class PlayerS : MonoBehaviour {
 	public void TurnOffPinkPaused(){
 		
 		pinkPaused = false;
+		ownRigid.isKinematic = false;
 		
 		
 	}
 
 
 	public void SetPinkHold(PlayerS pinkTarget){
-		pinkGrabbed = pinkTarget;
-		pinkGrabbed.transform.parent = transform;
-		pinkTarget.TurnOnPinkPause();
+		if (pinkGrabbed == null){
+			pinkGrabbed = pinkTarget;
+			pinkGrabbed.transform.parent = transform;
+			pinkTarget.TurnOnPinkPause();
+		}
 	}
 
 	public void SpecialIsDoneAnimating(){
@@ -2450,7 +2442,15 @@ public class PlayerS : MonoBehaviour {
 			Vector3 inputDir = Vector3.zero;
 			inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
 			inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+			if (inputDir.x == 0 && inputDir.y == 0){
+				inputDir.x = 1f;
+				if (spriteObject.transform.localScale.x > 0){
+					inputDir *= -1f;
+				}
+			}
 			pinkWhipSpecialVel = inputDir.normalized*pinkWhipSpecialSpeed;
+
+			pinkWhipSuplexCurrentSpeed = pinkWhipSuplexStartSpeed;
 			
 			TurnOnIgnoreWalls();
 			

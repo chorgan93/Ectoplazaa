@@ -14,7 +14,7 @@ public class GroundDetectS : MonoBehaviour {
 
 			if(groundObjs.Contains(player))
 			{
-				if(player.GetComponent<PlayerS>().respawning)
+				if(player.GetComponent<PlayerS>().respawning || player.GetComponent<PlayerS>().numLives <= 0)
 				{
 					//print ("I FIXED THE GLITCH aww yiss");
 					groundObjs.Remove(player); 

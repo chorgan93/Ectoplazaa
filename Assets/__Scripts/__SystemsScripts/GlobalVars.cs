@@ -131,7 +131,7 @@ public class GlobalVars : MonoBehaviour
 		int p1Team = teamNumber[p1.playerNum-1];
 		int p2Team = teamNumber[p2.playerNum-1];
 
-		return (p1 == p2);
+		return (p1Team == p2Team);
 
 	}
 
