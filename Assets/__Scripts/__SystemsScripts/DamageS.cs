@@ -141,7 +141,9 @@ public class DamageS : MonoBehaviour {
 							if(otherPlayer.health < 5)
 							{
 								otherPlayer.GetComponent<TrailHandlerRedubS>().SpawnGlobs(otherPlayer.transform.position,2); 
+										if (!isPinkSpecialCollider){
 								otherPlayer.TakeDamage(otherPlayer.health, specialAttackDmg);
+										}
 								GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 								GlobalVars.totalKills[playerRef.playerNum-1] ++; 
 
@@ -152,7 +154,9 @@ public class DamageS : MonoBehaviour {
 								int damageTaken = (int)otherPlayer.health+1;  //Mathf.RoundToInt((otherPlayer.health/2f));
 								
 								otherPlayer.GetComponent<TrailHandlerRedubS>().DestroyPlayerDotsRange(damageTaken);
-								otherPlayer.TakeDamage (damageTaken, specialAttackDmg);
+										if (!isPinkSpecialCollider){
+											otherPlayer.TakeDamage (damageTaken, specialAttackDmg);
+										}
 								GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 								GlobalVars.totalKills[playerRef.playerNum-1] ++; 
 							}
@@ -160,8 +164,9 @@ public class DamageS : MonoBehaviour {
 							//print ("KILL!"); 
 
 							if (isPinkSpecialCollider){
-								playerRef.SelfDestruct();
-								Destroy(gameObject);	
+								//playerRef.SelfDestruct();
+								//Destroy(gameObject);	
+										playerRef.SetPinkHold(otherPlayer);
 							}
 							
 							MakeExplosion(otherPlayer.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
@@ -248,7 +253,9 @@ public class DamageS : MonoBehaviour {
 				if(otherPlayer.health < 5)
 				{
 					otherPlayer.GetComponent<TrailHandlerRedubS>().SpawnGlobs(otherPlayer.transform.position,2); 
-					otherPlayer.TakeDamage(otherPlayer.health, specialAttackDmg);
+							if (!isPinkSpecialCollider){
+								otherPlayer.TakeDamage(otherPlayer.health, specialAttackDmg);
+							}
 					GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 					GlobalVars.totalKills[playerRef.playerNum-1] ++; 
 
@@ -259,14 +266,17 @@ public class DamageS : MonoBehaviour {
 					int damageTaken = (int)otherPlayer.health+1;  //Mathf.RoundToInt((otherPlayer.health/2f));
 					
 					otherPlayer.GetComponent<TrailHandlerRedubS>().DestroyPlayerDotsRange(damageTaken);
-					otherPlayer.TakeDamage (damageTaken, specialAttackDmg);
+							if (!isPinkSpecialCollider){
+								otherPlayer.TakeDamage (damageTaken, specialAttackDmg);
+							}
 					GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 					GlobalVars.totalKills[playerRef.playerNum-1] ++; 
 				}
 
 				if (isPinkSpecialCollider){
-					playerRef.SelfDestruct();
-					Destroy(gameObject);	
+					//playerRef.SelfDestruct();
+					//Destroy(gameObject);	
+							playerRef.SetPinkHold(otherPlayer);
 				}
 
 				if (specialAttackDmg){

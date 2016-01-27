@@ -34,35 +34,112 @@ public class PlayerAnimS : MonoBehaviour {
 
 	public bool isFacingDirection = false;
 
+	// original color
+
 	public Sprite [] ninjaHeadSprites;
-	public Sprite [] mummyHeadSprites; 
-	public Sprite [] acidHeadSprites; 
+	public Sprite [] ninjaHeadSpecialSprites;
+
+	public Sprite [] mummyHeadSprites;
+	public Sprite [] mummyHeadSpecialSprites;  
+
+
+	public Sprite [] acidHeadSprites;
+	public Sprite [] acidHeadSpecialSprites; 
+
 	public Sprite [] pinkHeadSprites; 
+	public Sprite [] pinkHeadSpecialSprites; 
+	
+	public Sprite [] char5HeadSprites; 
+	public Sprite [] char5SpecialSprites; 
+
+	public Sprite [] char6HeadSprites; 
+	public Sprite [] char6SpecialSprites; 
+
+	public Sprite [] char7HeadSprites; 
+	public Sprite [] char7SpecialSprites; 
 
 	// add alt color sprites
 
 	[HideInInspector]
 	public int myColor = 0;
 
+	// alt color 1
+	
 	public Sprite [] ninjaHeadSpritesB;
-	public Sprite [] mummyHeadSpritesB; 
-	public Sprite [] acidHeadSpritesB; 
+	public Sprite [] ninjaHeadSpecialSpritesB;
+	
+	public Sprite [] mummyHeadSpritesB;
+	public Sprite [] mummyHeadSpecialSpritesB;  
+	
+	
+	public Sprite [] acidHeadSpritesB;
+	public Sprite [] acidHeadSpecialSpritesB; 
+	
 	public Sprite [] pinkHeadSpritesB; 
+	public Sprite [] pinkHeadSpecialSpritesB; 
+	
+	public Sprite [] char5HeadSpritesB; 
+	public Sprite [] char5SpecialSpritesB; 
+	
+	public Sprite [] char6HeadSpritesB; 
+	public Sprite [] char6SpecialSpritesB; 
+	
+	public Sprite [] char7HeadSpritesB; 
+	public Sprite [] char7SpecialSpritesB; 
+
+	// alt color 2
 	
 	public Sprite [] ninjaHeadSpritesC;
-	public Sprite [] mummyHeadSpritesC; 
-	public Sprite [] acidHeadSpritesC; 
-	public Sprite [] pinkHeadSpritesC;
+	public Sprite [] ninjaHeadSpecialSpritesC;
+	
+	public Sprite [] mummyHeadSpritesC;
+	public Sprite [] mummyHeadSpecialSpritesC;  
+	
+	
+	public Sprite [] acidHeadSpritesC;
+	public Sprite [] acidHeadSpecialSpritesC; 
+	
+	public Sprite [] pinkHeadSpritesC; 
+	public Sprite [] pinkHeadSpecialSpritesC; 
+	
+	public Sprite [] char5HeadSpritesC; 
+	public Sprite [] char5SpecialSpritesC; 
+	
+	public Sprite [] char6HeadSpritesC; 
+	public Sprite [] char6SpecialSpritesC; 
+	
+	public Sprite [] char7HeadSpritesC; 
+	public Sprite [] char7SpecialSpritesC; 
 
+	// alt color 3
+	
 	public Sprite [] ninjaHeadSpritesD;
-	public Sprite [] mummyHeadSpritesD; 
-	public Sprite [] acidHeadSpritesD; 
-	public Sprite [] pinkHeadSpritesD;
+	public Sprite [] ninjaHeadSpecialSpritesD;
+	
+	public Sprite [] mummyHeadSpritesD;
+	public Sprite [] mummyHeadSpecialSpritesD;  
+	
+	
+	public Sprite [] acidHeadSpritesD;
+	public Sprite [] acidHeadSpecialSpritesD; 
+	
+	public Sprite [] pinkHeadSpritesD; 
+	public Sprite [] pinkHeadSpecialSpritesD; 
+	
+	public Sprite [] char5HeadSpritesD; 
+	public Sprite [] char5SpecialSpritesD; 
+	
+	public Sprite [] char6HeadSpritesD; 
+	public Sprite [] char6SpecialSpritesD; 
+	
+	public Sprite [] char7HeadSpritesD; 
+	public Sprite [] char7SpecialSpritesD; 
 
 
 	public int myCharNum;
 
 	public Sprite [] currentHeadSprites;
+	public Sprite [] currentSpecialSprites;
 
 	private bool isRunning;
 	public List<Sprite> headRunFrames;
@@ -85,6 +162,12 @@ public class PlayerAnimS : MonoBehaviour {
 	private Color startColor;
 	private Color redTeamColor = new Color (0.5f,0,0);
 	private Color blueTeamColor = new Color (0,0,0.5f);
+
+	public bool animatingSpecial = false;
+	public bool finishedAnimatingSpecial = false;
+	private float specialFrameRate = 0.08f;
+	private float specialFrameRateCountdown;
+	private int currentSpecialFrame = 0;
 
 
 
@@ -190,7 +273,28 @@ public class PlayerAnimS : MonoBehaviour {
 			}
 		}
 
-		if (isJumping){
+		// determine if special
+		CheckSpecialAnimation();
+
+		if (animatingSpecial){
+
+			specialFrameRateCountdown -= Time.deltaTime/Time.timeScale;
+			if (specialFrameRateCountdown <= 0){
+				specialFrameRateCountdown = specialFrameRate;
+				currentSpecialFrame++;
+				if (currentSpecialFrame > currentSpecialSprites.Length - 1){
+					if (!finishedAnimatingSpecial){
+						playerRef.SpecialIsDoneAnimating();
+						finishedAnimatingSpecial = true;
+					}
+					currentSpecialFrame = currentSpecialSprites.Length - 2;
+				}
+			}
+
+			headRender.sprite =currentSpecialSprites[currentSpecialFrame];
+
+		}
+		else if (isJumping){
 			jumpFrameAnimCountdown -= Time.deltaTime*TimeManagerS.timeMult;
 			
 			if (jumpFrameAnimCountdown <= 0){
@@ -402,15 +506,19 @@ public class PlayerAnimS : MonoBehaviour {
 		if (characterNumber == 1) {
 			if (myColor == 3){
 				currentHeadSprites = ninjaHeadSpritesD;
+				currentSpecialSprites = ninjaHeadSpecialSpritesD;
 			}
 			else if (myColor == 2){
 				currentHeadSprites = ninjaHeadSpritesC;
+				currentSpecialSprites = ninjaHeadSpecialSpritesC;
 			}
 			else if (myColor == 1){
 				currentHeadSprites = ninjaHeadSpritesB;
+				currentSpecialSprites = ninjaHeadSpecialSpritesB;
 			}
 			else{
 				currentHeadSprites = ninjaHeadSprites;
+				currentSpecialSprites = ninjaHeadSpecialSprites;
 			}
 
 		}
@@ -418,15 +526,19 @@ public class PlayerAnimS : MonoBehaviour {
 		else if (characterNumber == 2) {
 			if (myColor == 3){
 				currentHeadSprites = acidHeadSpritesD;
+				currentSpecialSprites = acidHeadSpecialSpritesD;
 			}
 			else if (myColor == 2){
 				currentHeadSprites = acidHeadSpritesC;
+				currentSpecialSprites = acidHeadSpecialSpritesC;
 			}
 			else if (myColor == 1){
 				currentHeadSprites = acidHeadSpritesB;
+				currentSpecialSprites = acidHeadSpecialSpritesB;
 			}
 			else{
 				currentHeadSprites = acidHeadSprites;
+				currentSpecialSprites = acidHeadSpecialSprites;
 			}
 			
 		}
@@ -434,15 +546,19 @@ public class PlayerAnimS : MonoBehaviour {
 		else if (characterNumber == 3) {
 			if (myColor == 3){
 				currentHeadSprites = mummyHeadSpritesD;
+				currentSpecialSprites = mummyHeadSpecialSpritesD;
 			}
 			else if (myColor == 2){
 				currentHeadSprites = mummyHeadSpritesC;
+				currentSpecialSprites = mummyHeadSpecialSpritesC;
 			}
 			else if (myColor == 1){
 				currentHeadSprites = mummyHeadSpritesB;
+				currentSpecialSprites = mummyHeadSpecialSpritesB;
 			}
 			else{
 				currentHeadSprites = mummyHeadSprites;
+				currentSpecialSprites = mummyHeadSpecialSprites;
 			}
 			
 		}
@@ -450,15 +566,79 @@ public class PlayerAnimS : MonoBehaviour {
 		else if (characterNumber == 4) {
 			if (myColor == 3){
 				currentHeadSprites = pinkHeadSpritesD;
+				currentSpecialSprites = pinkHeadSpecialSpritesD;
 			}
 			else if (myColor == 2){
 				currentHeadSprites = pinkHeadSpritesC;
+				currentSpecialSprites = pinkHeadSpecialSpritesC;
 			}
 			else if (myColor == 1){
 				currentHeadSprites = pinkHeadSpritesB;
+				currentSpecialSprites = pinkHeadSpecialSpritesB;
 			}
 			else{
 				currentHeadSprites = pinkHeadSprites;
+				currentSpecialSprites = pinkHeadSpecialSprites;
+			}
+			
+		}
+
+		else if (characterNumber == 5) {
+			if (myColor == 3){
+				currentHeadSprites = char5HeadSpritesD;
+				currentSpecialSprites = char5SpecialSpritesD;
+			}
+			else if (myColor == 2){
+				currentHeadSprites = char5HeadSpritesC;
+				currentSpecialSprites = char5SpecialSpritesC;
+			}
+			else if (myColor == 1){
+				currentHeadSprites = char5HeadSpritesB;
+				currentSpecialSprites = char5SpecialSpritesB;
+			}
+			else{
+				currentHeadSprites = char5HeadSprites;
+				currentSpecialSprites = char5SpecialSprites;
+			}
+			
+		}
+
+		else if (characterNumber == 6) {
+			if (myColor == 3){
+				currentHeadSprites = char6HeadSpritesD;
+				currentSpecialSprites = char6SpecialSpritesD;
+			}
+			else if (myColor == 2){
+				currentHeadSprites = char6HeadSpritesC;
+				currentSpecialSprites = char6SpecialSpritesC;
+			}
+			else if (myColor == 1){
+				currentHeadSprites = char6HeadSpritesB;
+				currentSpecialSprites = char6SpecialSpritesB;
+			}
+			else{
+				currentHeadSprites = char6HeadSprites;
+				currentSpecialSprites = char6SpecialSprites;
+			}
+			
+		}
+
+		else if (characterNumber == 7) {
+			if (myColor == 3){
+				currentHeadSprites = char7HeadSpritesD;
+				currentSpecialSprites = char7SpecialSpritesD;
+			}
+			else if (myColor == 2){
+				currentHeadSprites = char7HeadSpritesC;
+				currentSpecialSprites = char7SpecialSpritesC;
+			}
+			else if (myColor == 1){
+				currentHeadSprites = char7HeadSpritesB;
+				currentSpecialSprites = char7SpecialSpritesB;
+			}
+			else{
+				currentHeadSprites = char7HeadSprites;
+				currentSpecialSprites = char7SpecialSprites;
 			}
 			
 		}
@@ -471,6 +651,25 @@ public class PlayerAnimS : MonoBehaviour {
 		else{
 			startColor = blueTeamColor;
 		}
+	}
+
+	public void CheckSpecialAnimation(){
+
+		if (playerRef.GetSpecialState() && !animatingSpecial){
+
+			animatingSpecial = true;
+			finishedAnimatingSpecial = false;
+			currentSpecialFrame = 0;
+
+			specialFrameRateCountdown = specialFrameRate;
+
+		}
+
+		if (!playerRef.GetSpecialState() && animatingSpecial){
+			animatingSpecial = false;
+			finishedAnimatingSpecial = false;
+		}
+
 	}
 
 }

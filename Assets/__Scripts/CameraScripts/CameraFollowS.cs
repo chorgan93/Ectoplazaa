@@ -26,6 +26,8 @@ public class CameraFollowS : MonoBehaviour {
 
 	public bool newStartPos = false;
 
+	private AdaptiveCameraPtS inGameFollow;
+
 
 
 	void Awake () {
@@ -33,7 +35,7 @@ public class CameraFollowS : MonoBehaviour {
 	}
 	
 	void Start(){
-		//poi = GameObject.Find("AdaptiveCameraPt");
+
 		if (!newStartPos){
 		Vector3 resetPos = poi.transform.position;
 		resetPos.z = camOffset.z;
@@ -46,6 +48,10 @@ public class CameraFollowS : MonoBehaviour {
 		currentCamSize = minSize;
 
 		Cursor.visible = false;
+
+		if (poi.GetComponent<AdaptiveCameraPtS>()){
+			inGameFollow = poi.GetComponent<AdaptiveCameraPtS>();
+		}
 
 	}
 

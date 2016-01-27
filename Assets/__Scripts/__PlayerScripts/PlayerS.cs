@@ -277,6 +277,11 @@ public class PlayerS : MonoBehaviour {
 	private bool isSlowed;
 	private float slowMult = 0.5f;
 
+	private bool pinkPaused = false; // for being held by pinkwhip
+	private PlayerS pinkGrabbed;
+
+	private bool specialTriggered = false; // when to actually do the special
+
 	
 	
 	// Use this for initialization
@@ -333,7 +338,7 @@ public class PlayerS : MonoBehaviour {
 
 	void Update () {
 
-
+		/*
 		if (Input.GetKeyDown(KeyCode.Alpha1)){
 			characterNum = 1;
 		}
@@ -355,6 +360,29 @@ public class PlayerS : MonoBehaviour {
 
 		if (Input.GetKeyDown(KeyCode.Alpha6)){
 			characterNum = 6;
+		}
+		**/
+
+		// debug special
+		if (characterNum == 1 && Input.GetKeyDown(KeyCode.Space)){
+
+			dangerObj.GetComponent<DamageS>().MakeSlashEffect(transform.position);
+			
+			if (characterNum != 6){
+				doingSpecial = true;
+				specialCooldown = specialCooldownMax;
+				PauseCharacter();
+			}
+			
+			
+			CameraShakeS.C.TimeSleep(0.2f);
+			numKOsInRow = 0;
+			
+			if (specialParticles != null){
+				Destroy(specialParticles.gameObject);
+			}
+				
+			
 		}
 
 
@@ -384,6 +412,8 @@ public class PlayerS : MonoBehaviour {
 				transform.rotation = Quaternion.identity;
 				
 				if (!TimeManagerS.paused) {
+
+					if (!pinkPaused){
 					
 					respawnInvulnTime -= Time.deltaTime * TimeManagerS.timeMult;
 					
@@ -410,6 +440,8 @@ public class PlayerS : MonoBehaviour {
 					DoSpecial();
 					
 					MiscAction (); //TRAIL RENDERER UPDATE, OTHER THINGS
+
+					}
 					
 					if(canRespawn)
 					{
@@ -531,7 +563,7 @@ public class PlayerS : MonoBehaviour {
 
 	void DoSpecial(){
 
-		if (doingSpecial){
+		if (specialTriggered){
 
 			// execute attack according to character num
 
@@ -629,7 +661,12 @@ public class PlayerS : MonoBehaviour {
 			if (characterNum == 4){
 				
 				ownRigid.useGravity = false;
-				ownRigid.velocity = pinkWhipSpecialVel*Time.deltaTime;
+				if (!pinkGrabbed){
+					ownRigid.velocity = pinkWhipSpecialVel*Time.deltaTime;
+				}
+				else{
+					ownRigid.velocity = new Vector3(0, 10000*Time.deltaTime, 0);
+				}
 				
 			}
 
@@ -645,6 +682,7 @@ public class PlayerS : MonoBehaviour {
 
 			if (specialCooldown <= 0){
 				doingSpecial = false;
+				specialTriggered = false;
 				if (acidSpecialReference){
 					Destroy(acidSpecialReference);
 				}
@@ -655,6 +693,7 @@ public class PlayerS : MonoBehaviour {
 
 		}
 		else{
+			if (!doingSpecial){
 			if (numKOsInRow >= 3 && Input.GetButton("BButtonPlayer" + playerNum + platformType) && !attacking && !charging){
 
 				dangerObj.GetComponent<DamageS>().MakeSlashEffect(transform.position);
@@ -673,6 +712,7 @@ public class PlayerS : MonoBehaviour {
 					Destroy(specialParticles.gameObject);
 				}
 
+					/*
 				// if ghostMask, execute attack immediately
 				if (characterNum == 1){
 
@@ -765,9 +805,11 @@ public class PlayerS : MonoBehaviour {
 					SpecialAttackChar6.GetComponent<MrWrapsSpecialAttackS>().playerRef = this;
 					SelfDestruct();
 				}
+				**/
 
 
 
+			}
 			}
 		}
 
@@ -1969,7 +2011,10 @@ public class PlayerS : MonoBehaviour {
 				ownRigid.velocity = Vector3.zero;
 
 				doingSpecial = false;
+				specialTriggered = false;
 				specialCooldown = 0;
+
+				pinkPaused = false;
 			
 				if (isSpecial){
 					numLives = 0;
@@ -2117,6 +2162,7 @@ public class PlayerS : MonoBehaviour {
 
 					// destroy character
 					SelfDestruct();
+					TurnOffIgnoreWalls();
 
 					
 				}
@@ -2176,9 +2222,17 @@ public class PlayerS : MonoBehaviour {
 		TurnOffIgnoreWalls();
 		UnpauseCharacter();
 		doingSpecial = false;
+		specialTriggered = false;
 		specialCooldown = 0;
 		ownRigid.useGravity = true;
 		TakeDamage(10000, false);
+
+		if (pinkGrabbed){
+			pinkGrabbed.transform.parent = null;
+			pinkGrabbed.TurnOffPinkPaused();
+			pinkGrabbed.TakeDamage(999999, true);
+			pinkGrabbed = null;
+		}
 
 	}
 
@@ -2298,6 +2352,128 @@ public class PlayerS : MonoBehaviour {
 	public PlayerAnimS GetAnimObj(){
 
 		return (spriteObjRender.GetComponent<PlayerAnimS>());
+
+	}
+
+	public void TurnOnPinkPause(){
+
+		pinkPaused = true;
+	
+
+	}
+
+	public void TurnOffPinkPaused(){
+		
+		pinkPaused = false;
+		
+		
+	}
+
+
+	public void SetPinkHold(PlayerS pinkTarget){
+		pinkGrabbed = pinkTarget;
+		pinkGrabbed.transform.parent = transform;
+		pinkTarget.TurnOnPinkPause();
+	}
+
+	public void SpecialIsDoneAnimating(){
+
+		specialTriggered = true;
+
+		// do special stuff
+
+		// if ghostMask, execute attack immediately
+		if (characterNum == 1){
+			
+			GameObject specialAttack = Instantiate(ghostMaskSpecialPrefab, transform.position, Quaternion.identity)
+				as GameObject;
+			specialAttack.GetComponent<GhostMaskSpecialAttackS>().playerRef = this;
+			
+		}
+		
+		// if acid, prep for DEATH LASER
+		if (characterNum == 2){
+			specialCooldown = acidSpecialTimeMax;
+			
+			acidSpecialReference = Instantiate(acidSpecialCollider, transform.position, Quaternion.identity)
+				as GameObject;
+			acidSpecialReference.GetComponent<DamageS>().MakeSpecial(this);
+			
+			acidSpecialCurrentRotateRate = acidSpecialStartRotateRate;
+			
+			// face input dir
+			Vector3 inputDir = Vector3.zero;
+			inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
+			inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+			spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
+			// rotate a tiny bit to allow for error
+			if (spriteObject.transform.localScale.x < 0){
+				spriteObject.transform.Rotate(new Vector3(0,0, 60f));
+				Debug.Log(spriteObject.transform.rotation);
+			}
+			else{
+				spriteObject.transform.Rotate(new Vector3(0,0, -60f));
+				Debug.Log(spriteObject.transform.rotation);
+			}
+			currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z;
+		}
+		
+		// if mummy, prep for shots
+		if (characterNum == 3){
+			timeBettwenProjCountdown = 0;
+			currentProj = 0;
+			specialCooldown = 1;
+			
+			// face input dir
+			Vector3 inputDir = Vector3.zero;
+			inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
+			inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+			spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
+			if (spriteObject.transform.localScale.x < 0){
+				currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z+30f;
+			}
+			else{
+				currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z-30f;
+			}
+		}
+		
+		if (characterNum == 4){
+			specialCooldown = 1;
+			GameObject specialAttack = Instantiate(pinkWhipSpecialPrefab, transform.position, transform.rotation)
+				as GameObject;
+			specialAttack.transform.parent = transform;
+			specialAttack.GetComponent<PinkWhipSpecialAttackS>().playerRef = this;
+			
+			// shoot off in dir
+			Vector3 inputDir = Vector3.zero;
+			inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
+			inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+			pinkWhipSpecialVel = inputDir.normalized*pinkWhipSpecialSpeed;
+			
+			TurnOnIgnoreWalls();
+			
+		}
+		
+		// character 5 does vertical chomp
+		if (characterNum == 5){
+			
+			GameObject SpecialAttackChar5 = 
+				Instantiate(char5SpecialHandler, transform.position, Quaternion.identity)
+					as GameObject;
+			
+			SpecialAttackChar5.GetComponent<MegaChompHandlerS>().playerRef = this;
+			specialCooldown = 1f;
+			
+		}
+		
+		// character 6 (unnamed for now) destroys self with explosion
+		if (characterNum == 6){
+			GameObject SpecialAttackChar6 = 
+				Instantiate(char6SpecialCollider, transform.position, Quaternion.identity)
+					as GameObject;
+			SpecialAttackChar6.GetComponent<MrWrapsSpecialAttackS>().playerRef = this;
+			SelfDestruct();
+		}
 
 	}
 

@@ -39,6 +39,8 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 	public float xConstraintSizeAdjustMult = 0.1f;
 	public float yConstraintSizeAdjustMult = 0.05f;
 
+	public bool snapCamera = false;
+
 	void Awake () {
 		A = this;
 	}
@@ -79,6 +81,13 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 				}
 			}
 			playerCenterPos/=(playerPositions.Count + numSpecialAdd);
+
+			if (numSpecialAdd > 0){
+				snapCamera = true;
+			}
+			else{
+				snapCamera = false;
+			}
 
 			// add two values together and divide by total weight
 
