@@ -366,6 +366,8 @@ public class PlayerS : MonoBehaviour {
 		// debug special
 		if (characterNum == 1 && Input.GetKeyDown(KeyCode.Space)){
 
+			CameraFollowS.F.StartSpecialCam(gameObject);
+
 			dangerObj.GetComponent<DamageS>().MakeSlashEffect(transform.position);
 			
 			if (characterNum != 6){
@@ -373,9 +375,7 @@ public class PlayerS : MonoBehaviour {
 				specialCooldown = specialCooldownMax;
 				PauseCharacter();
 			}
-			
-			
-			CameraShakeS.C.TimeSleep(0.2f);
+
 			numKOsInRow = 0;
 			
 			if (specialParticles != null){
@@ -696,6 +696,8 @@ public class PlayerS : MonoBehaviour {
 			if (!doingSpecial){
 			if (numKOsInRow >= 3 && Input.GetButton("BButtonPlayer" + playerNum + platformType) && !attacking && !charging){
 
+					CameraFollowS.F.StartSpecialCam(gameObject);
+
 				dangerObj.GetComponent<DamageS>().MakeSlashEffect(transform.position);
 
 				if (characterNum != 6){
@@ -705,7 +707,7 @@ public class PlayerS : MonoBehaviour {
 				}
 
 
-				CameraShakeS.C.TimeSleep(0.2f);
+				//CameraShakeS.C.TimeSleep(0.2f);
 				numKOsInRow = 0;
 
 				if (specialParticles != null){

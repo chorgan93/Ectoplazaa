@@ -33,22 +33,25 @@ public class MaskSlashObjS : MonoBehaviour {
 			animRateCountdown = animRateMax;
 			currentFrame++;
 
-		if (currentFrame == slashFrames.Length - 1){
-			
-				Instantiate(lightingScreen, Vector3.zero, Quaternion.identity);
-			CameraShakeS.C.LargeShake();
-			CameraShakeS.C.TimeSleep(0.2f);
-
-		}
-		if (currentFrame > slashFrames.Length - 1){
-			targetPlayer.UnpauseCharacter();
-			targetPlayer.TakeDamage(999999, true);
-				Debug.Log("DESTROY " + targetPlayer.name);
+			if (currentFrame >= slashFrames.Length -1 ){
 				Destroy(gameObject);
-		}
+			}
 			else{
 				myRender.sprite = slashFrames[currentFrame];
 			}
+
+
+		if (currentFrame == slashFrames.Length - 3){
+			
+				Instantiate(lightingScreen, Vector3.zero, Quaternion.identity);
+			CameraShakeS.C.LargeShake();
+			CameraShakeS.C.TimeSleep(0.18f);
+
+		}
+		if (currentFrame == slashFrames.Length - 2){
+			targetPlayer.UnpauseCharacter();
+			targetPlayer.TakeDamage(999999, true);
+		}
 
 		}
 	
