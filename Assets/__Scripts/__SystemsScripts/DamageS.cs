@@ -30,6 +30,7 @@ public class DamageS : MonoBehaviour {
 
 	// for pink
 	private bool isPinkSpecialCollider = false;
+	public GameObject pinkExplosionPrefab;
 
 	// for acid
 	private LineRenderer myLaserRender;
@@ -164,10 +165,12 @@ public class DamageS : MonoBehaviour {
 							//print ("KILL!"); 
 
 							if (isPinkSpecialCollider){
-								//playerRef.SelfDestruct();
-								//Destroy(gameObject);	
 										playerRef.SetPinkHold(otherPlayer);
+										if (pinkExplosionPrefab){
+											Instantiate(pinkExplosionPrefab, transform.position, Quaternion.identity);
+										}
 							}
+
 							
 							MakeExplosion(otherPlayer.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
 							
@@ -273,11 +276,12 @@ public class DamageS : MonoBehaviour {
 					GlobalVars.totalKills[playerRef.playerNum-1] ++; 
 				}
 
-				if (isPinkSpecialCollider){
-					//playerRef.SelfDestruct();
-					//Destroy(gameObject);	
+						if (isPinkSpecialCollider){
 							playerRef.SetPinkHold(otherPlayer);
-				}
+							if (pinkExplosionPrefab){
+								Instantiate(pinkExplosionPrefab, transform.position, Quaternion.identity);
+							}
+						}
 
 				if (specialAttackDmg){
 					otherPlayer.numLives = 0;

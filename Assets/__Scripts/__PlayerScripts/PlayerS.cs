@@ -248,7 +248,7 @@ public class PlayerS : MonoBehaviour {
 	private Vector3 pinkWhipSpecialVel;
 	private float pinkWhipSpecialSpeed = 12500f;
 	private float pinkWhipSuplexStartSpeed = 5000f;
-	private float pinkWhipSuplexAccel = 500f;
+	private float pinkWhipSuplexAccel = 1000f;
 	private float pinkWhipSuplexCurrentSpeed;
 
 	// mr wraps special
@@ -341,7 +341,7 @@ public class PlayerS : MonoBehaviour {
 
 	void Update () {
 
-
+		Debug.Log("CHAR SELECT DEBUG IS ON; TURN OFF BEFORE BUILDING");
 		if (Input.GetKeyDown(KeyCode.Alpha1)){
 			characterNum = 1;
 		}
@@ -2414,7 +2414,7 @@ public class PlayerS : MonoBehaviour {
 		
 		// if mummy, prep for shots
 		if (characterNum == 3){
-			timeBettwenProjCountdown = 0;
+			timeBettwenProjCountdown = timeBetweenProjsMax;
 			currentProj = 0;
 			specialCooldown = 1;
 			
