@@ -171,7 +171,6 @@ public class ScoreKeeperS : MonoBehaviour {
 	void SetupRoundIntroSequence()
 	{
 		numberRounds = CurrentModeS.GetNumberRounds();
-		print ("Number of rounds: " + numberRounds);
 	}
 
 	void RoundIntroSequence()

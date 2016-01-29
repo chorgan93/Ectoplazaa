@@ -9,8 +9,10 @@ public class PlatformStartEffectS : MonoBehaviour {
 	private float newMinYPos;
 
 	private float newYConcierge = -22f;
-	private float newYDiningHall = -25f;
-	private float newYBeach = -27f;
+	private float newYRoof = -22f;
+	private float newYDiningHall = -35f;
+	private float newYBeach = -35f;
+	private float newYHell = -45f;
 
 	private float maxLerpTime = 1.3f;
 	private float currentLerpTime = 0; 
@@ -38,6 +40,12 @@ public class PlatformStartEffectS : MonoBehaviour {
 			}
 			else if (Application.loadedLevelName == "6Beach"){
 				setPos.y = newYBeach;
+			}
+			else if (Application.loadedLevelName == "8Hell"){
+				setPos.y = newYHell;
+			}
+			else if (Application.loadedLevelName == "9Roof"){
+				setPos.y = newYRoof;
 			}
 			else{
 				effectOn = false;

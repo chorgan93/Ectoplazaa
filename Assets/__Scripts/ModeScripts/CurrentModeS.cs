@@ -50,7 +50,6 @@ public class CurrentModeS : MonoBehaviour {
 
 
 		}
-		print ( "Current Mode S: Number Rounds..." + numRounds);
 		return 	numRounds;
 		
 	}
@@ -59,7 +58,6 @@ public class CurrentModeS : MonoBehaviour {
 	{
 		numberRoundsWon[winningPlayerIndex] ++;
 		numberRoundsCurrent ++;
-		print ( "Current Mode S: Adding to rounds completed");
 	}
 
 	public static void AddToRoundsCompletedTeam(int teamNum){

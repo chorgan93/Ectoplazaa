@@ -9,6 +9,7 @@ public class LevelSelectMenu : MonoBehaviour {
 	public GameObject cursorObj;
 	float cursorSpeed= .25f;
 	public List<GameObject> cursorPositions;
+	public List<GameObject> cameraPositions;
 	public List<string> nextLevelStrings;
 
 	public static string selectedLevelString = "4Concierge";
@@ -106,6 +107,8 @@ public class LevelSelectMenu : MonoBehaviour {
 
 						Instantiate(scrollSFXObjs[soundToPlay]);
 				movedCursor = true;
+
+						followRef.poi = cameraPositions[currentCursorPos];
 			}
 		}
 		else{
