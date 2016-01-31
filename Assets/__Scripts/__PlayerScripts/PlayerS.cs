@@ -1286,6 +1286,7 @@ public class PlayerS : MonoBehaviour {
 					if (newHit.collider.gameObject.tag == "Ground" || newHit.collider.gameObject.tag == "Wall")
 					{
 						wallHit = true;
+						Debug.Log(newHit.collider.gameObject.name, newHit.collider.gameObject);
 					}
 				}
 				
@@ -1304,6 +1305,8 @@ public class PlayerS : MonoBehaviour {
 					ownRigid.AddForce(bulletVel,ForceMode.VelocityChange);
 					
 					ownRigid.useGravity = true;
+
+					Debug.Log(ownRigid.velocity + " : " + bulletVel);
 					
 					// kinesthetics
 					CameraShakeS.C.TimeSleep(0.2f);
@@ -1346,7 +1349,7 @@ public class PlayerS : MonoBehaviour {
 		}
 		
 		
-		if (!charging && canAirStrafe)
+		if (!charging && canAirStrafe && !respawning)
 		{
 			float xForce = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
 			//float xForce = Input.GetAxis("Horizontal");
