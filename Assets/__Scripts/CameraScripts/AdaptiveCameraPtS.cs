@@ -153,23 +153,25 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 	void SetCamMult () {
 
 		largestDistance = 0;
-		Vector2 centerPos2d = Vector2.zero;
-		centerPos2d.x = centerPt.position.x;
-		centerPos2d.y = centerPt.position.y;
 
-		Vector2 playerCenter2d = Vector2.zero;
-		playerCenter2d.x = playerCenterPos.x;
-		playerCenter2d.y = playerCenterPos.y;
+		float currentDistance = 0;
 
-		if (playerPositions.Count > 0){
+		Vector2 playerPos2d = Vector2.zero;
+		Vector2 checkPos2d = Vector2.zero;
+
+		foreach (Transform player in playerPositions){
+			playerPos2d.x = player.position.x;
+			playerPos2d.y = player.position.y;
+
 			for (int i = 0; i < playerPositions.Count; i++){
-				Vector2 playerPos2D = Vector2.zero;
-				playerPos2D.x = playerPositions[i].position.x;
-				playerPos2D.y = playerPositions[i].position.y;
+				if (playerPositions[i] != player){
+					checkPos2d.x = playerPositions[i].transform.position.x;
+					checkPos2d.y = playerPositions[i].transform.position.y;
 
-				float newDistance = Vector2.Distance(playerPos2D,playerCenter2d);
-				if (newDistance > largestDistance){
-					largestDistance = newDistance;
+					currentDistance = Vector2.Distance(playerPos2d, checkPos2d);
+					if (currentDistance > largestDistance){
+						largestDistance = currentDistance;
+					}
 				}
 			}
 		}

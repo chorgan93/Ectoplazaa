@@ -678,7 +678,7 @@ public class PlayerS : MonoBehaviour {
 		}
 		else{
 			if (!doingSpecial){
-			if (numKOsInRow >= 3 && Input.GetButton("BButtonPlayer" + playerNum + platformType) && !attacking && !charging){
+			if (numKOsInRow >= 3 && Input.GetButton("YButtonPlayer" + playerNum + platformType) && !attacking && !charging){
 
 					CameraFollowS.F.StartSpecialCam(gameObject);
 
@@ -1349,7 +1349,7 @@ public class PlayerS : MonoBehaviour {
 		}
 		
 		
-		if (!charging && canAirStrafe && !respawning)
+		if (!charging && canAirStrafe && !respawning && !doingSpecial)
 		{
 			float xForce = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
 			//float xForce = Input.GetAxis("Horizontal");
