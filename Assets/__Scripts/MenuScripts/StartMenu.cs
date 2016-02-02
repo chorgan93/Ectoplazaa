@@ -52,6 +52,9 @@ public class StartMenu : MonoBehaviour {
 
 	
 	public TextMesh roundNumDisplay;
+	
+	public TextMesh specialAllowDisplay;
+	public TextMesh hazardOnDisplay;
 
 	private bool startedLoading = false;
 	private bool startCountdown = false;
@@ -446,12 +449,77 @@ public class StartMenu : MonoBehaviour {
 							}
 						}
 
+						// specials options
+						if (currentCursorPos == 5){
+							if (Mathf.Abs(Input.GetAxis("Horizontal")) 
+							    > cursorSensitivity){
+								if (!movedCursorLeftRight){
+									if (Input.GetAxis("Horizontal") > 0){
+										// increase option
+										CurrentModeS.allowSpecials = false;
+									}
+									// else decrease option
+									else{
+										
+										CurrentModeS.allowSpecials = true;
+									}
+									
+									movedCursorLeftRight = true;
+									int soundToPlay = Mathf.FloorToInt(Random.Range(0,scrollSoundObjs.Count));
+									Instantiate(scrollSoundObjs[soundToPlay]);
+								}
+							}
+							else{
+								movedCursorLeftRight = false;
+							}
+						}
+						// rounds options
+						if (currentCursorPos == 6){
+							if (Mathf.Abs(Input.GetAxis("Horizontal")) 
+							    > cursorSensitivity){
+								if (!movedCursorLeftRight){
+									if (Input.GetAxis("Horizontal") > 0){
+										// increase option
+										CurrentModeS.allowHazards = false;
+									}
+									// else decrease option
+									else{
+										
+										CurrentModeS.allowHazards = true;
+									}
+									
+									movedCursorLeftRight = true;
+									int soundToPlay = Mathf.FloorToInt(Random.Range(0,scrollSoundObjs.Count));
+									Instantiate(scrollSoundObjs[soundToPlay]);
+								}
+							}
+							else{
+								movedCursorLeftRight = false;
+							}
+						}
+
 						// display current round amt
 						if (CurrentModeS.numRoundsDefault == 1){
 							roundNumDisplay.text = "1 WIN";
 						}
 						else{
 							roundNumDisplay.text = CurrentModeS.numRoundsDefault + " WINS";
+						}
+
+						// display special allow
+						if (CurrentModeS.allowSpecials){
+							specialAllowDisplay.text = "ON";
+						}
+						else{
+							specialAllowDisplay.text = "OFF";
+						}
+
+						// display hazard allow
+						if (CurrentModeS.allowHazards){
+							hazardOnDisplay.text = "ON";
+						}
+						else{
+							hazardOnDisplay.text = "OFF";
 						}
 					}
 				}

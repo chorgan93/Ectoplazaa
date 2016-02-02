@@ -13,12 +13,18 @@ public class FlameS : MonoBehaviour {
 
 		TurnOff();
 
+		if (!CurrentModeS.allowHazards){
+			gameObject.SetActive(false);
+		}
+
 	}
 
 	public void TurnOn(){
-		
-		mySprite.enabled = true;
-		myCollider.enabled = true;
+
+		if (CurrentModeS.allowHazards){
+			mySprite.enabled = true;
+			myCollider.enabled = true;
+		}
 		
 	}
 

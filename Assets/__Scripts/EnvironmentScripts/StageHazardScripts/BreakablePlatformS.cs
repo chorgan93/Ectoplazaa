@@ -11,6 +11,12 @@ public class BreakablePlatformS: MonoBehaviour {
 
 	void Start(){
 
+		if (!CurrentModeS.allowHazards){
+
+			gameObject.SetActive(false);
+
+		}
+
 		mySprite = GetComponent<SpriteRenderer>();
 		myCollider = GetComponent<Collider>();
 

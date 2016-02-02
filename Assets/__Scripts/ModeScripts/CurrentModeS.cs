@@ -20,6 +20,9 @@ public class CurrentModeS : MonoBehaviour {
 	public static int minRounds = 1;
 
 	public static bool firstGame = true;
+
+	public static bool allowSpecials = true;
+	public static bool allowHazards = true;
 	// Use this for initialization
 	void Start () {
 	

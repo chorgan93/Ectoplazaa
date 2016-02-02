@@ -33,6 +33,10 @@ public class FlameShooterS : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
+		if (!CurrentModeS.allowHazards){
+			gameObject.SetActive(false);
+		}
+
 		flameShootCountdown = flameShootRate;
 
 		myFlames = GetComponentInChildren<FlameS>();

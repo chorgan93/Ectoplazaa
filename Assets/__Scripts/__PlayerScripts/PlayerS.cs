@@ -261,6 +261,9 @@ public class PlayerS : MonoBehaviour {
 	private float currentLerpTarget;
 	private float rotateAmt = 12f;
 
+	private GameObject wrapsBandageEffect;
+	public GameObject wrapsBandageEffectPrefab;
+
 	// acid special
 	public GameObject acidSpecialCollider;
 	private GameObject acidSpecialReference;
@@ -673,6 +676,10 @@ public class PlayerS : MonoBehaviour {
 				
 				GetComponent<Collider>().enabled = true;
 				UnpauseCharacter();
+
+				if (wrapsBandageEffect){
+					Destroy(wrapsBandageEffect);
+				}
 			}
 
 		}
@@ -792,6 +799,17 @@ public class PlayerS : MonoBehaviour {
 					SelfDestruct();
 				}
 				**/
+
+					if (characterNum == 3){
+						
+						
+						Vector3 spawnBandagesPos = transform.position;
+						spawnBandagesPos.z -= 1;
+						GameObject newBandages = Instantiate(wrapsBandageEffectPrefab, spawnBandagesPos, Quaternion.identity)
+							as GameObject;
+						wrapsBandageEffect = newBandages;
+						wrapsBandageEffect.transform.parent = transform;
+					}
 
 					
 					GetComponent<Collider>().enabled = false;
@@ -1857,7 +1875,7 @@ public class PlayerS : MonoBehaviour {
 	{
 		this.GetComponent<LineRenderer> ().material = playerMats [characterNum-1];
 		trailRendererGO.GetComponent<TrailRenderer> ().material = playerMats [characterNum - 1]; 
-		spriteObject.GetComponent<PlayerAnimS> ().SetCurrentSprites (characterNum, colorNum);
+		spriteObject.GetComponent<PlayerAnimS> ().SetCurrentSprites (characterNum, 0);
 		GetComponent<TrailHandlerRedubS> ().SetDotMaterial ();
 		
 		
@@ -2301,7 +2319,7 @@ public class PlayerS : MonoBehaviour {
 	public void AddKO(){
 
 		numKOsInRow ++;
-		if (numKOsInRow >= 3 && characterNum < 7){
+		if (numKOsInRow >= 3 && characterNum < 7 && CurrentModeS.allowSpecials){
 			if (!specialParticles){
 				GameObject newParticles = Instantiate(chargingSpecialPrefab, transform.position,Quaternion.identity)
 					as GameObject;

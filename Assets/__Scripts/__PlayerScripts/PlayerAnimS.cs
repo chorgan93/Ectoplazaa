@@ -278,6 +278,8 @@ public class PlayerAnimS : MonoBehaviour {
 
 		if (animatingSpecial){
 
+			playerRef.GetComponent<Rigidbody>().velocity = Vector3.zero;
+
 			specialFrameRateCountdown -= Time.deltaTime/Time.timeScale;
 			if (specialFrameRateCountdown <= 0){
 				specialFrameRateCountdown = specialFrameRate;

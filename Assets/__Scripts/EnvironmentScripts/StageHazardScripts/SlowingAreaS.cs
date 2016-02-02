@@ -3,6 +3,14 @@ using System.Collections;
 
 public class SlowingAreaS : MonoBehaviour {
 
+	void Start(){
+
+		if (!CurrentModeS.allowHazards){
+			gameObject.SetActive(false);
+		}
+
+	}
+
 	// Update is called once per frame
 	void OnTriggerEnter (Collider other) {
 

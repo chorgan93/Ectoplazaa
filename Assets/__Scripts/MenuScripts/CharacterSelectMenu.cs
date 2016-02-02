@@ -216,6 +216,8 @@ public class CharacterSelectMenu : MonoBehaviour {
 							newPlayerS.respawnInvulnTime = 0;
 					newPlayerS.SetSkin(); 
 
+							GlobalVars.characterNumber[i-1] = newPlayerS.characterNum;
+
 					newPlayerS.spawnPt = spawnPoints[i-1];
 					players[i-1] = newPlayer; 
 
@@ -330,6 +332,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 							
 							
 							players[i-1].GetComponent<PlayerS>().characterNum = newSkin;
+							GlobalVars.characterNumber[i-1] = newSkin;
 							players[i-1].GetComponent<PlayerS>().colorNum = newColor;
 							players[i-1].GetComponent<PlayerS>().SetSkin();
 
@@ -387,6 +390,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 							
 							
 							players[i-1].GetComponent<PlayerS>().characterNum = newSkin;
+							GlobalVars.characterNumber[i-1] = newSkin;
 							players[i-1].GetComponent<PlayerS>().colorNum = newColor;
 							players[i-1].GetComponent<PlayerS>().SetSkin();
 
@@ -415,11 +419,11 @@ public class CharacterSelectMenu : MonoBehaviour {
 
 							if (!CurrentModeS.isTeamMode){
 
-							int newColor = players[i-1].GetComponent<PlayerS>().colorNum;
-
+							//int newColor = players[i-1].GetComponent<PlayerS>().colorNum;
+								int newColor = 0;
 					for(int j= 0; j < GlobalVars.totalSkins; j++) //loop once through all skins
 					{
-						newColor += 1; //increment to next skin, check if available; 
+						newColor += 0; //increment to next skin, check if available; 
 						if(newColor > GlobalVars.totalSkins-1) //loop if at end of skins
 							newColor = 0; 
 
