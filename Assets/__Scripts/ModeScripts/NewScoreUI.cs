@@ -7,20 +7,37 @@ public class NewScoreUI : MonoBehaviour {
 	public int playerNum;
 
 	public Image charImage;
+
+	public Sprite[] charImages;
+	public Sprite[] charImagesLeft;
+
 	public Text textDisplay;
 
 	private PlayerS myPlayer;
-	private SpriteRenderer playerSprite;
 
 	private Color charCol;
 
 	private int teamNum = 0;
+
+	public Image crown1;
+	public Image crown2;
+	public Image crown3;
+
+	public Sprite crownWon;
+	public Sprite crownLost;
 
 	private ScoreKeeperS scoreKeeper;
 
 	void Start () {
 		
 		scoreKeeper = GameObject.FindObjectOfType<ScoreKeeperS>() as ScoreKeeperS;
+
+		if (CurrentModeS.numRoundsDefault < 3){
+			crown3.gameObject.SetActive(false);
+		}
+		if (CurrentModeS.numRoundsDefault < 2){
+			crown2.gameObject.SetActive(false);
+		}
 
 	}
 	
@@ -38,15 +55,51 @@ public class NewScoreUI : MonoBehaviour {
 			}
 			else{
 				myPlayer = GlobalVars.playerList[playerNum-1].GetComponent<PlayerS>();
-	
-				playerSprite = myPlayer.spriteObject.GetComponent<SpriteRenderer>();
-	
-				charCol = playerSprite.color;
-				charImage.color = charCol;
+
+				if (playerNum == 1 || playerNum == 3){
+					charImage.sprite = charImagesLeft[GlobalVars.characterNumber[playerNum-1]-1];
+				}
+				else{
+					charImage.sprite = charImages[GlobalVars.characterNumber[playerNum-1]-1];
+				}
+
+				int numWins = 0;
 
 				if (CurrentModeS.isTeamMode){
 					teamNum = GlobalVars.teamNumber[playerNum-1];
+
+					int teamWins = 0;
+
+					if (teamNum == 1){
+						charCol = Color.red;
+						teamWins = CurrentModeS.GetRedWins();
+					}
+					else{
+						charCol = Color.blue;
+						teamWins = CurrentModeS.GetBlueWins();
+					}
+					charImage.color = charCol;
+
+					numWins = teamWins;
+
 				}
+				else{
+					numWins = CurrentModeS.GetPlayerWins(playerNum);
+				}
+
+				if (numWins > 1){
+					crown1.sprite = crownWon;
+				}
+				else{
+					crown1.sprite = crownLost;
+				}
+				if (numWins > 2){
+					crown2.sprite = crownWon;
+				}
+				else{
+					crown2.sprite = crownLost;
+				}
+				crown3.sprite = crownLost;
 			}
 
 		}

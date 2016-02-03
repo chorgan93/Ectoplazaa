@@ -122,6 +122,10 @@ public class CurrentModeS : MonoBehaviour {
 
 	}
 
+	public static int GetPlayerWins(int playerNum){
+		return numberRoundsWon[playerNum-1];
+	}
+
 	public static void SetNumRounds(int newRoundNum){
 
 		numRoundsDefault = numRoundsBall = numRoundsCollectoplaza = numRoundsStock = newRoundNum;

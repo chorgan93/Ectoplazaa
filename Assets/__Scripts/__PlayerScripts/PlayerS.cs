@@ -369,7 +369,9 @@ public class PlayerS : MonoBehaviour {
 		}
 
 
-
+		if (Input.GetKeyDown(KeyCode.K)){
+			numKOsInRow = 3;
+		}
 
 
 		/*if (Input.GetKeyDown(KeyCode.P)){

@@ -59,7 +59,8 @@ public class PlayerEffectS : MonoBehaviour {
 		if (playerRef != null){
 
 			if (attackNum == 0){
-				if (playerRef.attacking || playerRef.groundPounded){ownRender.enabled = true;}
+				if ((playerRef.attacking || playerRef.groundPounded) 
+				    && playerRef.GetComponent<Rigidbody>().velocity != Vector3.zero){ownRender.enabled = true;}
 				else{ownRender.enabled = false;}
 			}
 
@@ -91,9 +92,11 @@ public class PlayerEffectS : MonoBehaviour {
 			ownRender.sprite = effectFrames[currentFrame];
 
 				// rotate according to player head direction (flat while charging, in same dir when flinging)
-			if (playerRef.charging){
-				transform.localRotation = Quaternion.Euler(new Vector3(0,0,90));
+				if (playerRef.charging || playerRef.GetComponent<Rigidbody>().velocity == Vector3.zero){
+						transform.localRotation = Quaternion.Euler(new Vector3(0,0,90));
+					}
 			}
+
 			else{
 				Vector3 fixPos = Vector3.zero;
 				fixPos.z = transform.localPosition.z;
@@ -104,5 +107,5 @@ public class PlayerEffectS : MonoBehaviour {
 
 		}
 	
-	}
+
 }

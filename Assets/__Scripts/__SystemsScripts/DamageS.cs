@@ -34,6 +34,16 @@ public class DamageS : MonoBehaviour {
 
 	// for acid
 	private LineRenderer myLaserRender;
+	public GameObject laserRenderBegin;
+	public GameObject laserRenderEnd;
+	private float laserAnimRate = 0.08f;
+	private float laserAnimCountdown;
+	private int currentLaserFrame = 0;
+
+	public Sprite[] laserEndSprites;
+	public Sprite[] laserBeginSprites;
+	public Texture[] laserMidTextures;
+
 
 	// for megachomp
 	private MegaChompHandlerS megaRef;
@@ -54,6 +64,7 @@ public class DamageS : MonoBehaviour {
 
 		groundPoundSize = new Vector3(0.6f, 1.2f, 0.6f);
 
+		laserAnimCountdown = laserAnimRate;
 
 	}
 
@@ -411,8 +422,38 @@ public class DamageS : MonoBehaviour {
 	private void LaserHandler(){
 
 		if (myLaserRender){
-			myLaserRender.SetPosition(0, playerRef.transform.position);
-			myLaserRender.SetPosition(1, transform.position);
+
+			Vector3 renderStart =playerRef.transform.position;
+			Vector3 renderEnd = transform.position;
+			renderEnd.z = renderStart.z;
+
+			myLaserRender.SetPosition(0, renderStart);
+			myLaserRender.SetPosition(1, renderEnd);
+
+			laserRenderBegin.transform.position = playerRef.transform.position;
+			laserRenderEnd.transform.position = transform.position;
+			Vector3 laserPieceRotation = playerRef.spriteObject.transform.rotation.eulerAngles;
+			laserPieceRotation.z += 90f;
+			if (playerRef.spriteObject.transform.localScale.x > 0){
+				laserPieceRotation.z += 180f;
+			}
+			laserRenderBegin.transform.rotation = laserRenderEnd.transform.rotation = Quaternion.Euler(laserPieceRotation);
+
+			// animate
+			laserAnimCountdown -= Time.deltaTime;
+			if (laserAnimCountdown <= 0){
+				laserAnimCountdown =laserAnimRate;
+				currentLaserFrame++;
+				if (currentLaserFrame > laserMidTextures.Length-1){
+					currentLaserFrame = 0;
+				}
+
+				myLaserRender.materials[0].SetTexture("_MainTex", laserMidTextures[currentLaserFrame]);
+				
+				laserRenderBegin.GetComponent<SpriteRenderer>().sprite = laserBeginSprites[currentLaserFrame];
+				laserRenderEnd.GetComponent<SpriteRenderer>().sprite = laserEndSprites[currentLaserFrame];
+			}
+
 		}
 
 	}
@@ -470,7 +511,8 @@ public class DamageS : MonoBehaviour {
 			// activate laser visual
 			myLaserRender = GetComponent<LineRenderer>();
 			myLaserRender.enabled = true;
-			
+
+
 		}
 		
 		if (!ownColl){
