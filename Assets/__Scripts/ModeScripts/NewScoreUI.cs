@@ -87,13 +87,13 @@ public class NewScoreUI : MonoBehaviour {
 					numWins = CurrentModeS.GetPlayerWins(playerNum);
 				}
 
-				if (numWins > 1){
+				if (numWins >= 1){
 					crown1.sprite = crownWon;
 				}
 				else{
 					crown1.sprite = crownLost;
 				}
-				if (numWins > 2){
+				if (numWins >= 2){
 					crown2.sprite = crownWon;
 				}
 				else{
@@ -134,7 +134,8 @@ public class NewScoreUI : MonoBehaviour {
 	
 				// ball mode
 				if (CurrentModeS.currentMode == 2){
-					textDisplay.text += ": " + (100*myPlayer.score/ScoreKeeperS.scoreThresholdGhostball);
+						//textDisplay.text += ": " + (100*myPlayer.score/ScoreKeeperS.scoreThresholdGhostball);
+						textDisplay.text += ": " + myPlayer.score;
 				}
 				}
 				else{
@@ -166,7 +167,7 @@ public class NewScoreUI : MonoBehaviour {
 						if (teamNum == 2){
 							currentScore = scoreKeeper.GetBlueScore();
 						}
-						textDisplay.text += ": " + (100*currentScore/ScoreKeeperS.scoreThresholdGhostballTeam);
+						textDisplay.text += ": " + currentScore;
 					}
 
 				}

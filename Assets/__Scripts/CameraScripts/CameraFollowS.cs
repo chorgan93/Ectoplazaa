@@ -31,7 +31,7 @@ public class CameraFollowS : MonoBehaviour {
 	private bool focusOnCharacter;
 	private GameObject focusChar;
 	private float specialCamEaseMult = 4f;
-	private float specialCamSize = 15f;
+	private float specialCamSize = 12f;
 	private float specialTimeMax = 0.6f;
 	private float endSpecialCountdown;
 

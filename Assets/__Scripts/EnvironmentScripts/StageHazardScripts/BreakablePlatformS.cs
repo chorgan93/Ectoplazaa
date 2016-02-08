@@ -9,6 +9,9 @@ public class BreakablePlatformS: MonoBehaviour {
 	private SpriteRenderer mySprite;
 	private Collider myCollider;
 
+	public Sprite[] destructStates;
+		private int currentSprite = 0;
+
 	void Start(){
 
 		if (!CurrentModeS.allowHazards){
@@ -16,18 +19,25 @@ public class BreakablePlatformS: MonoBehaviour {
 			gameObject.SetActive(false);
 
 		}
-
+		else{
 		mySprite = GetComponent<SpriteRenderer>();
 		myCollider = GetComponent<Collider>();
+
+			mySprite.sprite = destructStates[currentSprite];
+		}
 
 	}
 
 	private void TakeDamage(){
 
 		durability--;
+		currentSprite++;
 		if (durability <= 0){
 			mySprite.enabled = false;
 			myCollider.enabled = false;
+		}
+		else{
+			mySprite.sprite = destructStates[currentSprite];
 		}
 
 	}

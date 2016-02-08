@@ -36,9 +36,11 @@ public class DamageS : MonoBehaviour {
 	private LineRenderer myLaserRender;
 	public GameObject laserRenderBegin;
 	public GameObject laserRenderEnd;
+	public GameObject laserDrool;
 	private float laserAnimRate = 0.08f;
 	private float laserAnimCountdown;
 	private int currentLaserFrame = 0;
+
 
 	public Sprite[] laserEndSprites;
 	public Sprite[] laserBeginSprites;
@@ -430,14 +432,18 @@ public class DamageS : MonoBehaviour {
 			myLaserRender.SetPosition(0, renderStart);
 			myLaserRender.SetPosition(1, renderEnd);
 
-			laserRenderBegin.transform.position = playerRef.transform.position;
+			Vector3 laserBeginPos = playerRef.transform.position;
+			laserBeginPos.z -= 1f;
+			laserRenderBegin.transform.position = laserDrool.transform.position = laserBeginPos;
+
 			laserRenderEnd.transform.position = transform.position;
 			Vector3 laserPieceRotation = playerRef.spriteObject.transform.rotation.eulerAngles;
 			laserPieceRotation.z += 90f;
 			if (playerRef.spriteObject.transform.localScale.x > 0){
 				laserPieceRotation.z += 180f;
 			}
-			laserRenderBegin.transform.rotation = laserRenderEnd.transform.rotation = Quaternion.Euler(laserPieceRotation);
+			laserRenderBegin.transform.rotation =
+				laserRenderEnd.transform.rotation = Quaternion.Euler(laserPieceRotation);
 
 			// animate
 			laserAnimCountdown -= Time.deltaTime;
@@ -462,9 +468,6 @@ public class DamageS : MonoBehaviour {
 	{
 		
 		object1.GetComponent<Rigidbody> ().AddExplosionForce (5000f, exploPos, 5f); 
-
-		//object1.GetComponent<Rigidbody> ().AddForce (object1.GetComponent<Rigidbody> ().velocity * -knockbackMult);
-		//object2.GetComponent<Rigidbody> ().AddForce (object2.GetComponent<Rigidbody> ().velocity * -knockbackMult);
 		
 		
 		
@@ -475,9 +478,6 @@ public class DamageS : MonoBehaviour {
 
 		object1.GetComponent<Rigidbody> ().AddExplosionForce (5000f, exploPos, 5f); 
 		object2.GetComponent<Rigidbody> ().AddExplosionForce (5000f, exploPos, 5f); 
-
-		//object1.GetComponent<Rigidbody> ().AddForce (object1.GetComponent<Rigidbody> ().velocity * -knockbackMult);
-		//object2.GetComponent<Rigidbody> ().AddForce (object2.GetComponent<Rigidbody> ().velocity * -knockbackMult);
 
 
 

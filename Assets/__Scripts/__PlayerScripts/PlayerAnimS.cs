@@ -359,6 +359,17 @@ public class PlayerAnimS : MonoBehaviour {
 
 		}
 
+		// make sure green glow sprite have same sprite as main sprite
+		if (headRender.enabled){
+			if (!headRenderGreenGlow.enabled){
+				headRenderGreenGlow.enabled = true;
+			}
+			headRenderGreenGlow.sprite = headRender.sprite;
+		}
+		else{
+			headRenderGreenGlow.enabled = false;
+		}
+
 	}
 
 	void FaceTarget () {
@@ -419,16 +430,7 @@ public class PlayerAnimS : MonoBehaviour {
 			
 		}
 
-		// make sure green glow sprite have same sprite as main sprite
-		if (headRender.enabled){
-			if (!headRenderGreenGlow.enabled){
-				headRenderGreenGlow.enabled = true;
-			}
-			headRenderGreenGlow.sprite = headRender.sprite;
-		}
-		else{
-			headRenderGreenGlow.enabled = false;
-		}
+
 
 	}
 	public float GetFaceTarget(Vector3 targetDir){

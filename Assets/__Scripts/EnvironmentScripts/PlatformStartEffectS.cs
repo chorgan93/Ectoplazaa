@@ -23,6 +23,8 @@ public class PlatformStartEffectS : MonoBehaviour {
 	private SpringJoint mySpring;
 	private float sprintAmt = 0;
 
+	// disabling until later
+	/*
 	// Use this for initialization
 	void Start () {
 
@@ -128,5 +130,5 @@ public class PlatformStartEffectS : MonoBehaviour {
 		
 		}
 	
-	}
+	}**/
 }

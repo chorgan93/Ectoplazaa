@@ -36,6 +36,7 @@ public class FlameShooterS : MonoBehaviour {
 		if (!CurrentModeS.allowHazards){
 			gameObject.SetActive(false);
 		}
+		else{
 
 		flameShootCountdown = flameShootRate;
 
@@ -54,6 +55,8 @@ public class FlameShooterS : MonoBehaviour {
 		startColor = mySprite.color;
 
 		flickerTimeMax = warningStartTime/(slowFlickerCount*0.5f + fastFlickerCount*1.0f);
+
+		}
 	
 	}
 	

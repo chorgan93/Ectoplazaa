@@ -8,13 +8,16 @@ public class FlameS : MonoBehaviour {
 
 	void Start(){
 
-		mySprite = GetComponent<SpriteRenderer>();
-		myCollider = GetComponent<Collider>();
-
-		TurnOff();
+	
 
 		if (!CurrentModeS.allowHazards){
 			gameObject.SetActive(false);
+		}
+		else{
+			mySprite = GetComponent<SpriteRenderer>();
+			myCollider = GetComponent<Collider>();
+			
+			TurnOff();
 		}
 
 	}

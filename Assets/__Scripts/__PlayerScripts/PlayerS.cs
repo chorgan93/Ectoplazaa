@@ -267,17 +267,20 @@ public class PlayerS : MonoBehaviour {
 	// acid special
 	public GameObject acidSpecialCollider;
 	private GameObject acidSpecialReference;
-	private float acidSpecialTimeMax = 1.25f;
-	private float acidSpecialStartRotateRate = 1f;
-	private float acidSpecialRotateAccel = 200f;
+	private float acidSpecialTimeMax = 1f;
+	private float acidSpecialStartRotateRate = 0f;
+	private float acidSpecialRotateAccel = 240f;
 	private float acidSpecialCurrentRotateRate;
 	
 	public GameObject char5SpecialHandler;
 
 	public GameObject char6SpecialCollider;
+	private float blobbySpecialDelayMax = 0.6f;
+	private float blobbySpecialDelay;
 
 	[Header("Effect Stuff")]
 	public FlingEffectS flingEffectObject;
+	public GameObject jumpEffectObject;
 
 	//slowed vars
 	private bool isSlowed;
@@ -344,6 +347,7 @@ public class PlayerS : MonoBehaviour {
 
 	void Update () {
 
+		/*
 		Debug.Log("CHAR SELECT DEBUG IS ON; TURN OFF BEFORE BUILDING");
 		if (Input.GetKeyDown(KeyCode.Alpha1)){
 			characterNum = 1;
@@ -371,7 +375,7 @@ public class PlayerS : MonoBehaviour {
 
 		if (Input.GetKeyDown(KeyCode.K)){
 			numKOsInRow = 3;
-		}
+		}**/
 
 
 		/*if (Input.GetKeyDown(KeyCode.P)){
@@ -666,6 +670,14 @@ public class PlayerS : MonoBehaviour {
 				ownRigid.velocity = Vector3.zero;
 			}
 
+			// char 6 counts down delay then explodes
+			if (characterNum == 6){
+				blobbySpecialDelay -= Time.deltaTime;
+				if (blobbySpecialDelay <= 0){
+					BlobblyExplosion();
+				}
+			}
+
 
 			// end when period is over
 
@@ -687,17 +699,17 @@ public class PlayerS : MonoBehaviour {
 		}
 		else{
 			if (!doingSpecial){
-			if (numKOsInRow >= 3 && Input.GetButton("YButtonPlayer" + playerNum + platformType) && !attacking && !charging){
+			if (numKOsInRow >= 2 && Input.GetButton("YButtonPlayer" + playerNum + platformType) && !attacking && !charging){
 
 					CameraFollowS.F.StartSpecialCam(gameObject);
 
 				dangerObj.GetComponent<DamageS>().MakeSlashEffect(transform.position);
 
-				if (characterNum != 6){
+				//if (characterNum != 6){
 					doingSpecial = true;
 					specialCooldown = specialCooldownMax;
 					PauseCharacter();
-				}
+				//}
 
 
 				//CameraShakeS.C.TimeSleep(0.2f);
@@ -1651,6 +1663,8 @@ public class PlayerS : MonoBehaviour {
 
 					jumped = true;
 
+					Instantiate(jumpEffectObject, transform.position,Quaternion.identity);
+
 				}
 			}
 			
@@ -1704,6 +1718,8 @@ public class PlayerS : MonoBehaviour {
 					canAirStrafe = true;
 
 					
+					Instantiate(jumpEffectObject, transform.position,Quaternion.identity);
+
 					Destroy(chargingParticles);
 				}
 
@@ -2491,15 +2507,19 @@ public class PlayerS : MonoBehaviour {
 			
 		}
 		
-		// character 6 (unnamed for now) destroys self with explosion
+		// character 6 (unnamed for now) destroys self with explosion after small delay
 		if (characterNum == 6){
-			GameObject SpecialAttackChar6 = 
-				Instantiate(char6SpecialCollider, transform.position, Quaternion.identity)
-					as GameObject;
-			SpecialAttackChar6.GetComponent<MrWrapsSpecialAttackS>().playerRef = this;
-			SelfDestruct();
+			blobbySpecialDelay = blobbySpecialDelayMax;
 		}
 
+	}
+
+	void BlobblyExplosion(){
+		GameObject SpecialAttackChar6 = 
+			Instantiate(char6SpecialCollider, transform.position, Quaternion.identity)
+				as GameObject;
+		SpecialAttackChar6.GetComponent<MrWrapsSpecialAttackS>().playerRef = this;
+		SelfDestruct();
 	}
 
 	void BackToMenu(){

@@ -10,9 +10,9 @@ public class NewScoreUITeam : MonoBehaviour {
 	public Text textDisplay;
 
 	void Start () {
-		if (!CurrentModeS.isTeamMode){
+		//if (!CurrentModeS.isTeamMode){
 			gameObject.SetActive(false);
-		}
+		//}
 
 		teamImage = GetComponent<Image>();
 
