@@ -59,7 +59,7 @@ public class PlayerEffectS : MonoBehaviour {
 		if (playerRef != null){
 
 			if (attackNum == 0){
-				if ((playerRef.attacking || playerRef.groundPounded) 
+				if ((playerRef.attacking || (playerRef.groundPounded && !playerRef.groundDetect.Grounded())) 
 				    && playerRef.GetComponent<Rigidbody>().velocity != Vector3.zero){ownRender.enabled = true;}
 				else{ownRender.enabled = false;}
 			}

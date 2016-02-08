@@ -27,7 +27,6 @@ public class FlingEffectS : MonoBehaviour {
 	void Initialize () {
 
 		ownRender = GetComponent<SpriteRenderer>();
-		//fadeCol = ownRender.color;
 	
 	}
 	
@@ -35,16 +34,6 @@ public class FlingEffectS : MonoBehaviour {
 	void FixedUpdate () {
 
 		frameRateCountdown -= Time.deltaTime*TimeManagerS.timeMult;
-		/*lifeTimeCountdown -= Time.deltaTime*TimeManagerS.timeMult;
-
-		fadeCol = ownRender.color;
-		fadeCol.a = Mathf.Pow(lifeTimeCountdown/lifeTime, 2);
-		ownRender.color = fadeCol;
-
-		growSize = transform.localScale;
-		growSize.x += growRate*Time.deltaTime;
-		growSize.y = growSize.x;
-		transform.localScale = growSize;*/
 
 		if (frameRateCountdown <= 0){
 			currentFrame++;
@@ -77,7 +66,6 @@ public class FlingEffectS : MonoBehaviour {
 			break;
 		}
 		frameRateCountdown = lifeTime/spritesToUse.Count;
-		//lifeTimeCountdown = lifeTime;
 		ownRender.sprite = spritesToUse[0];
 			
 

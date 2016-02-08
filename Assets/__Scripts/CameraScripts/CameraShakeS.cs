@@ -59,7 +59,6 @@ public class CameraShakeS : MonoBehaviour {
 		else{
 
 		if(shake_intensity > 0 && !sleeping){
-			print ("SHAKING");
 			
 			Vector3 camPos = ownFollow.cameraPos;
 			camPos.x += Random.insideUnitSphere.x * shake_intensity * shakeStrengthMult;

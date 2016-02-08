@@ -281,6 +281,8 @@ public class PlayerS : MonoBehaviour {
 	[Header("Effect Stuff")]
 	public FlingEffectS flingEffectObject;
 	public GameObject jumpEffectObject;
+	public GameObject dashEffectObject;
+	public GameObject groundEffectObject;
 
 	//slowed vars
 	private bool isSlowed;
@@ -699,120 +701,24 @@ public class PlayerS : MonoBehaviour {
 		}
 		else{
 			if (!doingSpecial){
-			if (numKOsInRow >= 2 && Input.GetButton("YButtonPlayer" + playerNum + platformType) && !attacking && !charging){
+			if (numKOsInRow >= 2 && Input.GetButton("YButtonPlayer" + playerNum + platformType) && !attacking && !charging
+				    && CurrentModeS.allowSpecials){
 
 					CameraFollowS.F.StartSpecialCam(gameObject);
 
 				dangerObj.GetComponent<DamageS>().MakeSlashEffect(transform.position);
 
-				//if (characterNum != 6){
-					doingSpecial = true;
-					specialCooldown = specialCooldownMax;
-					PauseCharacter();
-				//}
-
-
-				//CameraShakeS.C.TimeSleep(0.2f);
+			
+				doingSpecial = true;
+				specialCooldown = specialCooldownMax;
+				PauseCharacter();
 				numKOsInRow = 0;
 
 				if (specialParticles != null){
 					Destroy(specialParticles.gameObject);
 				}
 
-					/*
-				// if ghostMask, execute attack immediately
-				if (characterNum == 1){
-
-					GameObject specialAttack = Instantiate(ghostMaskSpecialPrefab, transform.position, Quaternion.identity)
-						as GameObject;
-					specialAttack.GetComponent<GhostMaskSpecialAttackS>().playerRef = this;
-
-				}
-
-				// if acid, prep for DEATH LASER
-				if (characterNum == 2){
-					specialCooldown = acidSpecialTimeMax;
-
-					acidSpecialReference = Instantiate(acidSpecialCollider, transform.position, Quaternion.identity)
-						as GameObject;
-					acidSpecialReference.GetComponent<DamageS>().MakeSpecial(this);
-
-					acidSpecialCurrentRotateRate = acidSpecialStartRotateRate;
-					
-					// face input dir
-					Vector3 inputDir = Vector3.zero;
-					inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
-					inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
-					spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
-					// rotate a tiny bit to allow for error
-					if (spriteObject.transform.localScale.x < 0){
-						spriteObject.transform.Rotate(new Vector3(0,0, 60f));
-						Debug.Log(spriteObject.transform.rotation);
-					}
-					else{
-						spriteObject.transform.Rotate(new Vector3(0,0, -60f));
-						Debug.Log(spriteObject.transform.rotation);
-					}
-					currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z;
-				}
-
-				// if mummy, prep for shots
-				if (characterNum == 3){
-					timeBettwenProjCountdown = 0;
-					currentProj = 0;
-					specialCooldown = 1;
-					
-					// face input dir
-					Vector3 inputDir = Vector3.zero;
-					inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
-					inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
-					spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
-					if (spriteObject.transform.localScale.x < 0){
-						currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z+30f;
-					}
-					else{
-						currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z-30f;
-					}
-				}
-
-				if (characterNum == 4){
-					specialCooldown = 1;
-					GameObject specialAttack = Instantiate(pinkWhipSpecialPrefab, transform.position, transform.rotation)
-						as GameObject;
-					specialAttack.transform.parent = transform;
-					specialAttack.GetComponent<PinkWhipSpecialAttackS>().playerRef = this;
-
- 					// shoot off in dir
-					Vector3 inputDir = Vector3.zero;
-					inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
-					inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
-					pinkWhipSpecialVel = inputDir.normalized*pinkWhipSpecialSpeed;
-
-					TurnOnIgnoreWalls();
-
-				}
-
-				// character 5 does vertical chomp
-				if (characterNum == 5){
-
-					GameObject SpecialAttackChar5 = 
-						Instantiate(char5SpecialHandler, transform.position, Quaternion.identity)
-							as GameObject;
-
-					SpecialAttackChar5.GetComponent<MegaChompHandlerS>().playerRef = this;
-					specialCooldown = 1f;
-
-				}
-
-				// character 6 (unnamed for now) destroys self with explosion
-				if (characterNum == 6){
-					GameObject SpecialAttackChar6 = 
-						Instantiate(char6SpecialCollider, transform.position, Quaternion.identity)
-							as GameObject;
-					SpecialAttackChar6.GetComponent<MrWrapsSpecialAttackS>().playerRef = this;
-					SelfDestruct();
-				}
-				**/
+				
 
 					if (characterNum == 3){
 						
@@ -1573,7 +1479,8 @@ public class PlayerS : MonoBehaviour {
 				hasDoubleJumped = false;
 				if (groundPounded){
 					groundPounded = false;
-					//isDangerous = false;
+
+
 				}
 			}
 		}
@@ -1663,7 +1570,11 @@ public class PlayerS : MonoBehaviour {
 
 					jumped = true;
 
-					Instantiate(jumpEffectObject, transform.position,Quaternion.identity);
+					GameObject jump = Instantiate(jumpEffectObject, transform.position,Quaternion.identity)
+						as GameObject;
+
+					jump.GetComponent<SpriteRenderer>().color = 
+						trailRendererGO.GetComponent<TrailRenderer>().materials[0].color;
 
 				}
 			}
@@ -1718,7 +1629,11 @@ public class PlayerS : MonoBehaviour {
 					canAirStrafe = true;
 
 					
-					Instantiate(jumpEffectObject, transform.position,Quaternion.identity);
+					GameObject jump = Instantiate(jumpEffectObject, transform.position,Quaternion.identity)
+						as GameObject;
+					
+					jump.GetComponent<SpriteRenderer>().color = 
+						trailRendererGO.GetComponent<TrailRenderer>().materials[0].color;
 
 					Destroy(chargingParticles);
 				}
@@ -1821,6 +1736,18 @@ public class PlayerS : MonoBehaviour {
 				soundSource.PlayDodgeSound();
 
 				dodgeButtonDown = true;
+
+				GameObject dashEffect = Instantiate(dashEffectObject, transform.position,Quaternion.identity)
+					as GameObject;
+
+				Vector3 doFlip = dashEffect.transform.localScale;
+				if (spriteObject.transform.localScale.x < 0){
+					doFlip.x *= -1;
+					dashEffect.transform.localScale = doFlip;
+				}
+				
+				dashEffect.GetComponent<SpriteRenderer>().color = 
+					trailRendererGO.GetComponent<TrailRenderer>().materials[0].color;
 				
 			}
 		}
@@ -2222,6 +2149,12 @@ public class PlayerS : MonoBehaviour {
 			}
 			else{
 				soundSource.PlayGroundPoundHit();
+
+				GameObject gpEffect = Instantiate(groundEffectObject, transform.position,Quaternion.identity)
+					as GameObject;
+				
+				gpEffect.GetComponent<SpriteRenderer>().color = 
+					trailRendererGO.GetComponent<TrailRenderer>().materials[0].color;
 				if (other.gameObject.GetComponent<PlatformSoundS>() != null){
 					other.gameObject.GetComponent<PlatformSoundS>().PlayPlatformSounds();
 				}
@@ -2337,7 +2270,7 @@ public class PlayerS : MonoBehaviour {
 	public void AddKO(){
 
 		numKOsInRow ++;
-		if (numKOsInRow >= 3 && characterNum < 7 && CurrentModeS.allowSpecials){
+		if (numKOsInRow >= 2 && characterNum < 7 && CurrentModeS.allowSpecials){
 			if (!specialParticles){
 				GameObject newParticles = Instantiate(chargingSpecialPrefab, transform.position,Quaternion.identity)
 					as GameObject;
