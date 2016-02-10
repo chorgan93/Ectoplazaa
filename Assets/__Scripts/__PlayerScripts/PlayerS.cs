@@ -293,6 +293,8 @@ public class PlayerS : MonoBehaviour {
 
 	private bool specialTriggered = false; // when to actually do the special
 
+	// WII U DEPENDENT INPUT
+	private WiiUControllerManagerS wiiUInput;
 	
 	
 	// Use this for initialization
@@ -2464,5 +2466,11 @@ public class PlayerS : MonoBehaviour {
 		    Input.GetButton("YButtonPlayer"+playerNum+platformType)){
 			Application.LoadLevel("1StartMenu");
 		}
+	}
+
+	public void AddWiiUInputManger(WiiUControllerManagerS wii){
+
+		wiiUInput = wii;
+
 	}
 }
