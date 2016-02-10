@@ -236,6 +236,7 @@ public class PlayerS : MonoBehaviour {
 	//special attack stuff
 	[Header ("Special Attacks")]
 	public int numKOsInRow = 0;
+	private int numKOsForSpecial = 2;
 	private bool doingSpecial = false;
 	private float specialCooldown;
 	private float specialCooldownMax = 1f;
@@ -342,6 +343,13 @@ public class PlayerS : MonoBehaviour {
 		startDrag = ownRigid.drag;
 		
 		startEctoNum = initialHealth; // for ecto mode tail generation
+
+#if UNITY_WIIU
+		if (playerNum > 1){
+			wiiUInput = GameObject.Find("WiiUControlHandlerPlayer" + playerNum).GetComponent<WiiUControllerManagerS>();
+		}
+#endif
+
 
 		
 		//Get number of lives (mode stuff)
@@ -703,8 +711,20 @@ public class PlayerS : MonoBehaviour {
 		}
 		else{
 			if (!doingSpecial){
-			if (numKOsInRow >= 2 && Input.GetButton("YButtonPlayer" + playerNum + platformType) && !attacking && !charging
+#if UNITY_WIIU
+
+
+				if (numKOsInRow >= numKOsForSpecial && ((playerNum > 1 && wiiUInput.specialButtonDown)
+				                         || (playerNum == 1 && Input.GetButton("YButtonPlayer" + playerNum + platformType))) 
+				    && !attacking && !charging && CurrentModeS.allowSpecials){
+
+#else
+
+			if (numKOsInRow >= numKOsForSpecial && Input.GetButton("YButtonPlayer" + playerNum + platformType) && !attacking && !charging
 				    && CurrentModeS.allowSpecials){
+
+#endif
+
 
 					CameraFollowS.F.StartSpecialCam(gameObject);
 
@@ -749,9 +769,22 @@ public class PlayerS : MonoBehaviour {
 		// method for handling attack charge
 		
 		// turn stretch button bool on/off
+
+#if UNITY_WIIU
+
+			if ((playerNum == 1 && (Input.GetAxis("RightTriggerPlayer" + playerNum + platformType) > triggerSensitivity) 
+			    || Input.GetButton("RightBumperPlayer" + playerNum + platformType) 
+			     || (Input.GetButton("BButtonPlayer" + playerNum + platformType) &&  numKOsInRow < numKOsForSpecial)) ||
+			    (playerNum > 1 && wiiUInput.flingButtonDown)){
+
+
+#else
+
 		if ((Input.GetAxis("RightTriggerPlayer" + playerNum + platformType) > triggerSensitivity) 
 		    || Input.GetButton("RightBumperPlayer" + playerNum + platformType) 
-		    || (Input.GetButton("BButtonPlayer" + playerNum + platformType) && numKOsInRow < 3)){
+		    || (Input.GetButton("BButtonPlayer" + playerNum + platformType) && numKOsInRow < numKOsForSpecial)){
+#endif 
+
 			attackTriggerDown = true;
 		}
 		else{
@@ -760,6 +793,8 @@ public class PlayerS : MonoBehaviour {
 			playedLV2ChargeSound = false;
 			playedLV3ChargeSound = false;
 		}
+
+
 		
 		// don't allow charge if already attacking, charging, or dodging
 		
@@ -886,8 +921,24 @@ public class PlayerS : MonoBehaviour {
 						ownRigid.drag = chompDrag;
 						
 						Vector3 attackDir = Vector3.zero;
+
+#if UNITY_WIIU
+
+								if (playerNum == 1){
+									attackDir.x = Input.GetAxis ("HorizontalPlayer" + playerNum + platformType);
+									attackDir.y = Input.GetAxis ("VerticalPlayer" + playerNum + platformType);
+								}
+								else{
+									attackDir.x = wiiUInput.horizontalAxis;
+									attackDir.y = wiiUInput.verticalAxis;
+								}
+
+#else
+
 						attackDir.x = Input.GetAxis ("HorizontalPlayer" + playerNum + platformType);
 						attackDir.y = Input.GetAxis ("VerticalPlayer" + playerNum + platformType);
+
+#endif
 						
 						if (attackDir.x == 0 && attackDir.y == 0) {
 							attackDir.x = 1; 
@@ -957,8 +1008,23 @@ public class PlayerS : MonoBehaviour {
 					
 					
 					attackDir = Vector3.zero;
-					attackDir.x = Input.GetAxis ("HorizontalPlayer" + playerNum + platformType);
-					attackDir.y = Input.GetAxis ("VerticalPlayer" + playerNum + platformType);
+							#if UNITY_WIIU
+							
+							if (playerNum == 1){
+								attackDir.x = Input.GetAxis ("HorizontalPlayer" + playerNum + platformType);
+								attackDir.y = Input.GetAxis ("VerticalPlayer" + playerNum + platformType);
+							}
+							else{
+								attackDir.x = wiiUInput.horizontalAxis;
+								attackDir.y = wiiUInput.verticalAxis;
+							}
+							
+							#else
+							
+							attackDir.x = Input.GetAxis ("HorizontalPlayer" + playerNum + platformType);
+							attackDir.y = Input.GetAxis ("VerticalPlayer" + playerNum + platformType);
+							
+							#endif
 					
 					if (attackDir.x == 0 && attackDir.y == 0) {
 						attackDir.x = 1; 
@@ -1074,8 +1140,26 @@ public class PlayerS : MonoBehaviour {
 			performedAttack = false;
 			attackDir = ownRigid.velocity;
 			
-			float inputX = Input.GetAxis("HorizontalPlayer"+playerNum+platformType);
-			float inputY = Input.GetAxis("VerticalPlayer"+playerNum+platformType);
+					float inputX = 0;
+					float inputY = 0;
+
+					#if UNITY_WIIU
+					
+					if (playerNum == 1){
+						inputX = Input.GetAxis ("HorizontalPlayer" + playerNum + platformType);
+						inputY = Input.GetAxis ("VerticalPlayer" + playerNum + platformType);
+					}
+					else{
+						inputX = wiiUInput.horizontalAxis;
+						inputY = wiiUInput.verticalAxis;
+					}
+					
+					#else
+					
+					inputX = Input.GetAxis ("HorizontalPlayer" + playerNum + platformType);
+					inputY = Input.GetAxis ("VerticalPlayer" + playerNum + platformType);
+					
+					#endif
 			
 			// trigger lv 2
 			if (inputY != 0 || inputX != 0){
@@ -1291,8 +1375,17 @@ public class PlayerS : MonoBehaviour {
 		
 		if (!charging && canAirStrafe && !respawning && !doingSpecial)
 		{
+#if UNITY_WIIU
+					float xForce = 0;
+					if (playerNum == 1){
+						xForce Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
+					}
+					else{
+						xForce = wiiUInput.horizontalAxis;
+					}
+#else
 			float xForce = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
-			//float xForce = Input.GetAxis("Horizontal");
+#endif
 			xForce *= walkSpeed*TimeManagerS.timeMult*Time.deltaTime;
 			
 			if (!groundDetect.Grounded())
@@ -1333,15 +1426,12 @@ public class PlayerS : MonoBehaviour {
 				if((ownRigid.velocity.x > maxSpeed*runMult) && (xForce > 0))
 				{
 					applyForce = false; 
-					//print ("Dont apply force right!");
 				}
 				else if((ownRigid.velocity.x < -maxSpeed*runMult) && (xForce < 0))
 				{
 					applyForce = false; 
-					//print ("Dont apply force left!");
 				}
 				
-				//print (applyForce);
 
 
 				
@@ -1356,20 +1446,7 @@ public class PlayerS : MonoBehaviour {
 				
 				Vector3 fixVel = ownRigid.velocity;
 				
-				/*
-					July 13th: Changing the way max speed in handled, player will not decelerate when over max speed.
-					However the player cannot add force in the direction that the player is going max speed, but can always decelerate. 
-					
-					if (!dontCorrectSpeed){	
-	
-						if (fixVel.x < -maxSpeed){
-							fixVel.x = -maxSpeed;
-						}
-						if (fixVel.x > maxSpeed){
-							fixVel.x = maxSpeed;
-						}
-					}
-					*/
+				
 				
 				if (fixVel.x > 0){
 					facingRight = true;
@@ -1378,16 +1455,9 @@ public class PlayerS : MonoBehaviour {
 					facingRight = false;
 				}
 				
-				//ownRigid.velocity = fixVel;
 			}
 			
 			
-			//print (Input.GetAxis("Horizontal"));
-			
-		}
-		else{
-			// if not allowed to apply force, say so for debugging purposes
-			//print("I can't move!");
 		}
 		
 		
@@ -1494,8 +1564,14 @@ public class PlayerS : MonoBehaviour {
 		
 		
 		// detect button up
+#if UNITY_WIIU
+				if ((playerNum == 1 && !Input.GetButton("AButtonPlayer" + playerNum + platformType)) ||
+				    (playerNum > 1 && wiiUInput.jumpButtonDown))
+				{
+#else
 		if (!Input.GetButton("AButtonPlayer" + playerNum + platformType))
 		{
+#endif
 
 
 			jumpButtonDown = false;
@@ -1511,8 +1587,14 @@ public class PlayerS : MonoBehaviour {
 		
 		
 		
+		#if UNITY_WIIU
+				if (((playerNum == 1 && !Input.GetButton("AButtonPlayer" + playerNum + platformType)) ||
+				    (playerNum > 1 && wiiUInput.jumpButtonDown)) && !jumpButtonDown)
+				{
+#else
 		if (Input.GetButton("AButtonPlayer" + playerNum + platformType) && !jumpButtonDown)
 		{
+#endif
 			
 			
 			//print ("Jump!");
@@ -1684,13 +1766,23 @@ public class PlayerS : MonoBehaviour {
 			}
 		}
 		
+#if UNITY_WIIU
+		if (((!Input.GetButton("XButtonPlayer"+playerNum+platformType) && playerNum == 1) ||
+						     (playerNum > 1 && !wiiUInput.dashButtonDown)) && dodgeButtonDown){
+#else
 		if (!Input.GetButton("XButtonPlayer"+playerNum+platformType) && dodgeButtonDown){
+#endif
 			dodgeButtonDown = false;
 		}
 		
 		// read for dodge input and do dodge
 		if (!dodging && canDodge && dodgeTimeCountdown <= 0){
-			if (Input.GetButton("XButtonPlayer"+playerNum+platformType) && !dodgeButtonDown){
+								#if UNITY_WIIU
+								if (((Input.GetButton("XButtonPlayer"+playerNum+platformType) && playerNum == 1) ||
+								     (playerNum > 1 && wiiUInput.dashButtonDown)) && !dodgeButtonDown){
+									#else
+									if (Input.GetButton("XButtonPlayer"+playerNum+platformType) && !dodgeButtonDown){
+										#endif
 				
 				//print ("DODGED");
 				
@@ -1698,8 +1790,19 @@ public class PlayerS : MonoBehaviour {
 				
 				// read direction from left stick
 				Vector3 dodgeDir = Vector3.zero;
+#if UNITY_WIIU
+										if (playerNum == 1){
+											dodgeDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
+											dodgeDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+										}
+										else{
+											dodgeDir.x = wiiUInput.horizontalInput;
+											dodgeDir.y = wiiUInput.verticalInput;
+										}
+#else
 				dodgeDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
 				dodgeDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+#endif
 				
 				// add force
 				ownRigid.velocity = Vector3.zero;
@@ -2371,8 +2474,19 @@ public class PlayerS : MonoBehaviour {
 			
 			// face input dir
 			Vector3 inputDir = Vector3.zero;
-			inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
-			inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+									#if UNITY_WIIU
+									if (playerNum == 1){
+										inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
+										inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+									}
+									else{
+										inputDir.x = wiiUInput.horizontalInput;
+										inputDir.y = wiiUInput.verticalInput;
+									}
+									#else
+									inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
+									inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+									#endif
 			spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
 			// rotate a tiny bit to allow for error
 			if (spriteObject.transform.localScale.x < 0){
@@ -2394,8 +2508,19 @@ public class PlayerS : MonoBehaviour {
 			
 			// face input dir
 			Vector3 inputDir = Vector3.zero;
-			inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
-			inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+									#if UNITY_WIIU
+									if (playerNum == 1){
+										inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
+										inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+									}
+									else{
+										inputDir.x = wiiUInput.horizontalInput;
+										inputDir.y = wiiUInput.verticalInput;
+									}
+									#else
+									inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
+									inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+									#endif
 			spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
 			if (spriteObject.transform.localScale.x < 0){
 				currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z+30f;
@@ -2414,8 +2539,19 @@ public class PlayerS : MonoBehaviour {
 			
 			// shoot off in dir
 			Vector3 inputDir = Vector3.zero;
-			inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
-			inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+									#if UNITY_WIIU
+									if (playerNum == 1){
+										inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
+										inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+									}
+									else{
+										inputDir.x = wiiUInput.horizontalInput;
+										inputDir.y = wiiUInput.verticalInput;
+									}
+									#else
+									inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
+									inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+									#endif
 			if (inputDir.x == 0 && inputDir.y == 0){
 				inputDir.x = 1f;
 				if (spriteObject.transform.localScale.x > 0){
@@ -2459,6 +2595,7 @@ public class PlayerS : MonoBehaviour {
 
 	void BackToMenu(){
 		// reset for festival demo purposes
+								/*
 		if (Input.GetButton("StartButtonPlayer"+playerNum+platformType) &&
 		    Input.GetButton("AButtonPlayer"+playerNum+platformType) &&
 		    Input.GetButton("BButtonPlayer"+playerNum+platformType) &&
@@ -2466,6 +2603,7 @@ public class PlayerS : MonoBehaviour {
 		    Input.GetButton("YButtonPlayer"+playerNum+platformType)){
 			Application.LoadLevel("1StartMenu");
 		}
+		**/
 	}
 
 	public void AddWiiUInputManger(WiiUControllerManagerS wii){

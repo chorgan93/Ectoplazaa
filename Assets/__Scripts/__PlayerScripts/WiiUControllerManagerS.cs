@@ -9,11 +9,9 @@ public class WiiUControllerManagerS : MonoBehaviour {
 
 	// for non-gamepad (player 2+) players
 
-	// only for in-game: character select will have its own (similar) class
 
-	private int myChannel;
 
-	private PlayerS playerRef;
+	public int myChannel;
 
 	public bool flingButtonDown = false;
 	public bool dashButtonDown = false;
