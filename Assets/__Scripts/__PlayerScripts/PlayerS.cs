@@ -3,27 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class PlayerS : MonoBehaviour {
-
+	
 	//___________________________________CLASS PROPERTIES
-
+	
 	//___________________________________INSTANCE PROPERTIES
-
+	
 	//___________________________________GETTERS AND SETTERS
 	
 	private string platformType;
 	private Rigidbody ownRigid;
-
+	
 	//
 	
 	public GameObject spriteObject;
 	private SpriteRenderer spriteObjRender;
-
+	
 	
 	public int playerNum; //controller, playernumber for UI 
 	public int characterNum; //skin, character chosen;
 	
 	public int score;
-
+	
 	public bool attackTriggerDown;
 	
 	public float walkSpeed;
@@ -45,9 +45,9 @@ public class PlayerS : MonoBehaviour {
 	private bool stopAddingJump;
 	
 	public GroundDetectS groundDetect;
-
+	
 	private float triggerSensitivity = 0.5f;
-
+	
 	public bool isDangerous = false;
 	public float maxHealth = 50;
 	public float initialHealth = 10;
@@ -70,14 +70,14 @@ public class PlayerS : MonoBehaviour {
 	private bool prevGravState;
 	private Vector3 prevVel;
 	private Vector3 prevButtVel;
-
+	
 	// following is for pausing during special attacks/pause menu
 	[HideInInspector]
 	public bool effectPause = false;
 	private bool capturedDanger;
 	private bool capturedGrav;
 	private Vector3 capturedVel;
-
+	
 	
 	
 	public GameObject dangerObj;
@@ -125,14 +125,14 @@ public class PlayerS : MonoBehaviour {
 	
 	[HideInInspector]
 	public bool performedAttack = false;
-
+	
 	
 	private float lv1Force = 4500f; // locked fling speed (NEW)
 	
 	private float lv2OutRate = 16000f; //original 8000
 	private float lv1OutTimeMax = 0.125f;
 	public float lv1OutCountdown;
-
+	
 	public float lv2FlingForce = 100;
 	private float lv3BulletSpeed = 15500; //was 12500
 	private Vector3 bulletVel;
@@ -208,7 +208,7 @@ public class PlayerS : MonoBehaviour {
 	private bool canDodge = true; // allow infinite dodges on ground, one in air
 	public float dodgeTimeMax; // length of time dodge is active
 	public float dodgeInvulnTimeMax; // time to be invuln while dodging
-
+	
 	[HideInInspector]
 	public float dodgeTimeCountdown;
 	public float dodgeForce; // force to apply to character at start of dodge
@@ -224,7 +224,7 @@ public class PlayerS : MonoBehaviour {
 	private float chompDrag = 14; // drag for chomp attack
 	private float dodgeDrag = 16;
 	//private float chompRad = 10f;
-
+	
 	private bool inCharSelect = false; // when in char select, never take damage
 	
 	//[HideInInspector]
@@ -232,7 +232,7 @@ public class PlayerS : MonoBehaviour {
 	
 	//[HideInInspector]
 	public bool nonActive = false; // total disable of character, just show -- for character select screen
-
+	
 	//special attack stuff
 	[Header ("Special Attacks")]
 	public int numKOsInRow = 0;
@@ -240,10 +240,10 @@ public class PlayerS : MonoBehaviour {
 	private bool doingSpecial = false;
 	private float specialCooldown;
 	private float specialCooldownMax = 1f;
-
+	
 	// ghostMask Special
 	public GameObject ghostMaskSpecialPrefab;
-
+	
 	// pinkwhip special
 	public GameObject pinkWhipSpecialPrefab;
 	private Vector3 pinkWhipSpecialVel;
@@ -251,7 +251,7 @@ public class PlayerS : MonoBehaviour {
 	private float pinkWhipSuplexStartSpeed = 5000f;
 	private float pinkWhipSuplexAccel = 1000f;
 	private float pinkWhipSuplexCurrentSpeed;
-
+	
 	// mr wraps special
 	public GameObject mrWrapsSpecialProjectile;
 	private float wrapsSpecialProjSpeed = 7500f;
@@ -261,10 +261,10 @@ public class PlayerS : MonoBehaviour {
 	private int currentProj;
 	private float currentLerpTarget;
 	private float rotateAmt = 12f;
-
+	
 	private GameObject wrapsBandageEffect;
 	public GameObject wrapsBandageEffectPrefab;
-
+	
 	// acid special
 	public GameObject acidSpecialCollider;
 	private GameObject acidSpecialReference;
@@ -274,26 +274,26 @@ public class PlayerS : MonoBehaviour {
 	private float acidSpecialCurrentRotateRate;
 	
 	public GameObject char5SpecialHandler;
-
+	
 	public GameObject char6SpecialCollider;
 	private float blobbySpecialDelayMax = 0.6f;
 	private float blobbySpecialDelay;
-
+	
 	[Header("Effect Stuff")]
 	public FlingEffectS flingEffectObject;
 	public GameObject jumpEffectObject;
 	public GameObject dashEffectObject;
 	public GameObject groundEffectObject;
-
+	
 	//slowed vars
 	private bool isSlowed;
 	private float slowMult = 0.5f;
-
+	
 	private bool pinkPaused = false; // for being held by pinkwhip
 	private PlayerS pinkGrabbed;
-
+	
 	private bool specialTriggered = false; // when to actually do the special
-
+	
 	// WII U DEPENDENT INPUT
 	private WiiUControllerManagerS wiiUInput;
 	
@@ -343,22 +343,22 @@ public class PlayerS : MonoBehaviour {
 		startDrag = ownRigid.drag;
 		
 		startEctoNum = initialHealth; // for ecto mode tail generation
-
-#if UNITY_WIIU
+		
+		#if UNITY_WIIU
 		if (playerNum > 1){
 			wiiUInput = GameObject.Find("WiiUControlHandlerPlayer" + playerNum).GetComponent<WiiUControllerManagerS>();
 		}
-#endif
-
-
+		#endif
+		
+		
 		
 		//Get number of lives (mode stuff)
 		
 		
 	}
-
+	
 	void Update () {
-
+		
 		/*
 		Debug.Log("CHAR SELECT DEBUG IS ON; TURN OFF BEFORE BUILDING");
 		if (Input.GetKeyDown(KeyCode.Alpha1)){
@@ -388,8 +388,8 @@ public class PlayerS : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.K)){
 			numKOsInRow = 3;
 		}**/
-
-
+		
+		
 		/*if (Input.GetKeyDown(KeyCode.P)){
 			if (effectPause){
 				UnpauseCharacter();
@@ -398,7 +398,7 @@ public class PlayerS : MonoBehaviour {
 				PauseCharacter();
 			}
 		}*/
-
+		
 	}
 	
 	
@@ -415,35 +415,35 @@ public class PlayerS : MonoBehaviour {
 				transform.rotation = Quaternion.identity;
 				
 				if (!TimeManagerS.paused) {
-
+					
 					if (!pinkPaused){
-					
-					respawnInvulnTime -= Time.deltaTime * TimeManagerS.timeMult;
-					
-					
-					// if game is active 
-					if (!effectPause && !isDead) {
 						
-						// movement methods
-						CheckWallCast ();
-						Walk ();
-						Jump ();
+						respawnInvulnTime -= Time.deltaTime * TimeManagerS.timeMult;
 						
-						Dodge ();
 						
-						// attack methods
-
-
+						// if game is active 
+						if (!effectPause && !isDead) {
+							
+							// movement methods
+							CheckWallCast ();
+							Walk ();
+							Jump ();
+							
+							Dodge ();
+							
+							// attack methods
+							
+							
+							
+							ChargeAttack ();
+							AttackRelease ();
+							
+						}
 						
-						ChargeAttack ();
-						AttackRelease ();
+						DoSpecial();
 						
-					}
-
-					DoSpecial();
-					
-					MiscAction (); //TRAIL RENDERER UPDATE, OTHER THINGS
-
+						MiscAction (); //TRAIL RENDERER UPDATE, OTHER THINGS
+						
 					}
 					
 					if(canRespawn)
@@ -461,7 +461,7 @@ public class PlayerS : MonoBehaviour {
 					ownRigid.velocity = Vector3.zero;
 				}
 			}
-
+			
 			
 		}
 		
@@ -563,14 +563,14 @@ public class PlayerS : MonoBehaviour {
 	_____________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
 	*/
-
+	
 	void DoSpecial(){
-
+		
 		if (specialTriggered){
-
+			
 			// execute attack according to character num
-
-
+			
+			
 			// ninja pauses while the slash does its thing
 			if (characterNum == 1){
 				
@@ -578,13 +578,13 @@ public class PlayerS : MonoBehaviour {
 				specialCooldown -= Time.deltaTime;
 				ownRigid.velocity = Vector3.zero;
 			}
-
+			
 			// acidMouth does a DEATH LASER
 			if (characterNum == 2){
 				GetComponent<Collider>().enabled = false;
 				specialCooldown -= Time.deltaTime;
 				ownRigid.velocity = Vector3.zero;
-
+				
 				acidSpecialCurrentRotateRate += acidSpecialRotateAccel*Time.deltaTime;
 				if (spriteObject.transform.localScale.x < 0){
 					spriteObject.transform.Rotate(new Vector3(0,0,-acidSpecialCurrentRotateRate*Time.deltaTime));
@@ -592,40 +592,40 @@ public class PlayerS : MonoBehaviour {
 				else{
 					spriteObject.transform.Rotate(new Vector3(0,0,acidSpecialCurrentRotateRate*Time.deltaTime));
 				}
-
+				
 				Vector3 laserDir = spriteObject.transform.right;
 				if (spriteObject.transform.localScale.x > 0){
 					laserDir *= -1;
 				}
-
+				
 				RaycastHit laserHit;
-
-
+				
+				
 				Ray laserRay = new Ray(transform.position+laserDir*transform.localScale.x, laserDir);
-
+				
 				if(Physics.Raycast(laserRay, out laserHit, 10000, LayerMask.NameToLayer("LaserRaycase"),
 				                   QueryTriggerInteraction.Ignore)){
-
-				acidSpecialReference.transform.position = laserHit.point;
+					
+					acidSpecialReference.transform.position = laserHit.point;
 				}
 				else{
 					Debug.Log("FAKE LASER");
 					acidSpecialReference.transform.position = transform.position+laserDir*10000f;
 				}
 			}
-
+			
 			if (characterNum == 3){
-
+				
 				
 				GetComponent<Collider>().enabled = false;
 				timeBettwenProjCountdown -= Time.deltaTime;
 				ownRigid.velocity = Vector3.zero;
-
+				
 				// rotate head after each shot
 				Vector3 targetHeadRot = new Vector3(0, 0, currentLerpTarget);
 				spriteObject.transform.rotation = Quaternion.Euler(targetHeadRot);
-
-
+				
+				
 				if (timeBettwenProjCountdown <= 0){
 					currentProj++;
 					if (currentProj > numProjsMax){
@@ -635,7 +635,7 @@ public class PlayerS : MonoBehaviour {
 						// shoot projectile using head transform
 						GameObject newProj = Instantiate(mrWrapsSpecialProjectile, transform.position,
 						                                 Quaternion.identity) as GameObject;
-
+						
 						Vector3 projVel = spriteObject.transform.right;
 						if (spriteObject.transform.localScale.x > 0){
 							projVel *= -1f;
@@ -643,7 +643,7 @@ public class PlayerS : MonoBehaviour {
 						projVel *= wrapsSpecialProjSpeed*Time.deltaTime;
 						newProj.GetComponent<Rigidbody>().velocity = projVel;
 						newProj.GetComponent<MrWrapsSpecialAttackS>().playerRef = this;
-
+						
 						// rotate head
 						if ( currentProj != numProjsMax ){
 							if (spriteObject.transform.localScale.x < 0){
@@ -653,13 +653,13 @@ public class PlayerS : MonoBehaviour {
 								currentLerpTarget += rotateAmt;
 							}
 						}
-
+						
 						timeBettwenProjCountdown = timeBetweenProjsMax;
-
+						
 					}
 				}
 			}
-
+			
 			// pinkwhip does a modified lv3 with no grav
 			if (characterNum == 4){
 				
@@ -674,14 +674,14 @@ public class PlayerS : MonoBehaviour {
 				}
 				
 			}
-
+			
 			// character 5 pauses while chomp does its thing
 			if (characterNum == 5){
-
+				
 				GetComponent<Collider>().enabled = false;
 				ownRigid.velocity = Vector3.zero;
 			}
-
+			
 			// char 6 counts down delay then explodes
 			if (characterNum == 6){
 				blobbySpecialDelay -= Time.deltaTime;
@@ -689,10 +689,10 @@ public class PlayerS : MonoBehaviour {
 					BlobblyExplosion();
 				}
 			}
-
-
+			
+			
 			// end when period is over
-
+			
 			if (specialCooldown <= 0){
 				doingSpecial = false;
 				specialTriggered = false;
@@ -702,228 +702,228 @@ public class PlayerS : MonoBehaviour {
 				
 				GetComponent<Collider>().enabled = true;
 				UnpauseCharacter();
-
+				
 				if (wrapsBandageEffect){
 					Destroy(wrapsBandageEffect);
 				}
 			}
-
+			
 		}
 		else{
 			if (!doingSpecial){
-#if UNITY_WIIU
-
-
-				if (numKOsInRow >= numKOsForSpecial && ((playerNum > 1 && wiiUInput.specialButtonDown)
-				                         || (playerNum == 1 && Input.GetButton("YButtonPlayer" + playerNum + platformType))) 
-				    && !attacking && !charging && CurrentModeS.allowSpecials){
-
-#else
-
-			if (numKOsInRow >= numKOsForSpecial && Input.GetButton("YButtonPlayer" + playerNum + platformType) && !attacking && !charging
-				    && CurrentModeS.allowSpecials){
-
-#endif
-
-
-					CameraFollowS.F.StartSpecialCam(gameObject);
-
-				dangerObj.GetComponent<DamageS>().MakeSlashEffect(transform.position);
-
-			
-				doingSpecial = true;
-				specialCooldown = specialCooldownMax;
-				PauseCharacter();
-				numKOsInRow = 0;
-
-				if (specialParticles != null){
-					Destroy(specialParticles.gameObject);
-				}
-
+				#if UNITY_WIIU
 				
-
-					if (characterNum == 3){
-						
-						
-						Vector3 spawnBandagesPos = transform.position;
-						spawnBandagesPos.z -= 1;
-						GameObject newBandages = Instantiate(wrapsBandageEffectPrefab, spawnBandagesPos, Quaternion.identity)
-							as GameObject;
-						wrapsBandageEffect = newBandages;
-						wrapsBandageEffect.transform.parent = transform;
-					}
-
+				
+				if (numKOsInRow >= numKOsForSpecial && ((playerNum > 1 && wiiUInput.specialButtonDown)
+				                                        || (playerNum == 1 && Input.GetButton("YButtonPlayer" + playerNum + platformType))) 
+				    && !attacking && !charging && CurrentModeS.allowSpecials){
 					
-					GetComponent<Collider>().enabled = false;
-					ownRigid.velocity = Vector3.zero;
-					spriteObject.transform.rotation = Quaternion.identity;
-
+					#else
+					
+					if (numKOsInRow >= numKOsForSpecial && Input.GetButton("YButtonPlayer" + playerNum + platformType) && !attacking && !charging
+					    && CurrentModeS.allowSpecials){
+						
+						#endif
+						
+						
+						CameraFollowS.F.StartSpecialCam(gameObject);
+						
+						dangerObj.GetComponent<DamageS>().MakeSlashEffect(transform.position);
+						
+						
+						doingSpecial = true;
+						specialCooldown = specialCooldownMax;
+						PauseCharacter();
+						numKOsInRow = 0;
+						
+						if (specialParticles != null){
+							Destroy(specialParticles.gameObject);
+						}
+						
+						
+						
+						if (characterNum == 3){
+							
+							
+							Vector3 spawnBandagesPos = transform.position;
+							spawnBandagesPos.z -= 1;
+							GameObject newBandages = Instantiate(wrapsBandageEffectPrefab, spawnBandagesPos, Quaternion.identity)
+								as GameObject;
+							wrapsBandageEffect = newBandages;
+							wrapsBandageEffect.transform.parent = transform;
+						}
+						
+						
+						GetComponent<Collider>().enabled = false;
+						ownRigid.velocity = Vector3.zero;
+						spriteObject.transform.rotation = Quaternion.identity;
+						
+					}
+				}
 			}
-			}
+			
 		}
-
-	}
-	
-	void ChargeAttack () {
 		
-		// method for handling attack charge
-		
-		// turn stretch button bool on/off
-
-#if UNITY_WIIU
-
+		void ChargeAttack () {
+			
+			// method for handling attack charge
+			
+			// turn stretch button bool on/off
+			
+			#if UNITY_WIIU
+			
 			if ((playerNum == 1 && (Input.GetAxis("RightTriggerPlayer" + playerNum + platformType) > triggerSensitivity) 
-			    || Input.GetButton("RightBumperPlayer" + playerNum + platformType) 
+			     || Input.GetButton("RightBumperPlayer" + playerNum + platformType) 
 			     || (Input.GetButton("BButtonPlayer" + playerNum + platformType) &&  numKOsInRow < numKOsForSpecial)) ||
 			    (playerNum > 1 && wiiUInput.flingButtonDown)){
-
-
-#else
-
-		if ((Input.GetAxis("RightTriggerPlayer" + playerNum + platformType) > triggerSensitivity) 
-		    || Input.GetButton("RightBumperPlayer" + playerNum + platformType) 
-		    || (Input.GetButton("BButtonPlayer" + playerNum + platformType) && numKOsInRow < numKOsForSpecial)){
-#endif 
-
-			attackTriggerDown = true;
-		}
-		else{
-			attackTriggerDown = false;
-			playedLV1ChargeSound = false;
-			playedLV2ChargeSound = false;
-			playedLV3ChargeSound = false;
-		}
-
-
-		
-		// don't allow charge if already attacking, charging, or dodging
-		
-		if (!doingChomp){
-			if (attackTriggerDown && !charging && canCharge && !isDangerous && !doingSpecial && dodgeTimeCountdown <= 0){
-				charging = true;
-				canCharge = false;
-				
-				TriggerCharge();
-				
-				chargeTime = 0;
-				
-				groundLeeway = 0.5f;
-			}
-			
-			if (charging){
-				if(chargingParticles == null)
-				{
-					chargingParticles = Instantiate( chargingParticlePrefab, this.transform.position, Quaternion.identity) as GameObject; 
-					chargingParticles.transform.parent = this.transform; 
-					chargingParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[characterNum-1].GetColor("_TintColor");
-				}
-				
-				groundLeeway = 0.5f;
-				
-				//print ("charging!!");
-				
-				ownRigid.useGravity = false;
-				ownRigid.velocity = Vector3.zero;
-				hasDoubleJumped = true;
-
-				// apply character charge mult
-				float chargeMult = 1;
-				if (characterNum == 1){
-					chargeMult = PlayerCharStatsS.ninja_ChargeMult;
-				}
-				if (characterNum == 2){
-					chargeMult = PlayerCharStatsS.acidMouth_ChargeMult;
-				}
-				if (characterNum == 3){
-					chargeMult = PlayerCharStatsS.mummy_ChargeMult;
-				}
-				if (characterNum == 4){
-					chargeMult = PlayerCharStatsS.pinkWhip_ChargeMult;
-				}
-				if (characterNum == 5){
-					chargeMult = PlayerCharStatsS.char5_ChargeMult;
-				}
-				if (characterNum == 6){
-					chargeMult = PlayerCharStatsS.char6_ChargeMult;
-				}
-				if (characterNum == 7){
-					chargeMult = PlayerCharStatsS.char7_ChargeMult;
-				}
-				
-				chargeTime+=chargeMult*Time.deltaTime*TimeManagerS.timeMult;
-				
-				// play sounds when you hit each threshold
-				if (chargeTime > lv0MaxChargeTime && !playedLV1ChargeSound){
-					//soundSource.PlayChargeLv1();
-					playedLV1ChargeSound = true;
-				}
-				if (chargeTime > medChargeTime && !playedLV2ChargeSound){
-					//soundSource.PlayChargeLv2();
-					playedLV2ChargeSound = true;
-				}
-				if (chargeTime > maxChargeTime && !playedLV3ChargeSound){
-					//soundSource.PlayChargeLv3();
-					playedLV3ChargeSound = true;
-				}
 				
 				
+				#else
 				
-				if (!attackTriggerDown || !chargeSource.isPlaying){
-					GameObject.Destroy( chargingParticles.gameObject); 
+				if ((Input.GetAxis("RightTriggerPlayer" + playerNum + platformType) > triggerSensitivity) 
+				    || Input.GetButton("RightBumperPlayer" + playerNum + platformType) 
+				    || (Input.GetButton("BButtonPlayer" + playerNum + platformType) && numKOsInRow < numKOsForSpecial)){
+					#endif 
 					
-					groundLeeway = attackGroundLeewayMaxTime;
-					attacking = true;
-					charging = false;
-					performedAttack = false;
-					
-					// allow for ground pound
-					if (!jumped){
-						jumped = true;
+					attackTriggerDown = true;
+				}
+				else{
+					attackTriggerDown = false;
+					playedLV1ChargeSound = false;
+					playedLV2ChargeSound = false;
+					playedLV3ChargeSound = false;
+				}
+				
+				
+				
+				// don't allow charge if already attacking, charging, or dodging
+				
+				if (!doingChomp){
+					if (attackTriggerDown && !charging && canCharge && !isDangerous && !doingSpecial && dodgeTimeCountdown <= 0){
+						charging = true;
+						canCharge = false;
+						
+						TriggerCharge();
+						
+						chargeTime = 0;
+						
+						groundLeeway = 0.5f;
 					}
-					else{
+					
+					if (charging){
+						if(chargingParticles == null)
+						{
+							chargingParticles = Instantiate( chargingParticlePrefab, this.transform.position, Quaternion.identity) as GameObject; 
+							chargingParticles.transform.parent = this.transform; 
+							chargingParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[characterNum-1].GetColor("_TintColor");
+						}
+						
+						groundLeeway = 0.5f;
+						
+						//print ("charging!!");
+						
+						ownRigid.useGravity = false;
+						ownRigid.velocity = Vector3.zero;
 						hasDoubleJumped = true;
-					}
-					
-					// butt should not follow
-					//buttObj.isFollowing = false;
-					
-					
-					if (chargeTime >= maxChargeTime){
-						// fully charged attack
-						attackToPerform = 2;
-						attackPriority = 2;
-					}
-					// do redirect attack
-					else if (chargeTime >= medChargeTime){
-						attackToPerform = 1;
-						attackPriority = 1;
-						//print ("do attack 1");
-					}
-					// do fling
-					// TRYING OUT TAKING OUT FLING LV1
-					/*
+						
+						// apply character charge mult
+						float chargeMult = 1;
+						if (characterNum == 1){
+							chargeMult = PlayerCharStatsS.ninja_ChargeMult;
+						}
+						if (characterNum == 2){
+							chargeMult = PlayerCharStatsS.acidMouth_ChargeMult;
+						}
+						if (characterNum == 3){
+							chargeMult = PlayerCharStatsS.mummy_ChargeMult;
+						}
+						if (characterNum == 4){
+							chargeMult = PlayerCharStatsS.pinkWhip_ChargeMult;
+						}
+						if (characterNum == 5){
+							chargeMult = PlayerCharStatsS.char5_ChargeMult;
+						}
+						if (characterNum == 6){
+							chargeMult = PlayerCharStatsS.char6_ChargeMult;
+						}
+						if (characterNum == 7){
+							chargeMult = PlayerCharStatsS.char7_ChargeMult;
+						}
+						
+						chargeTime+=chargeMult*Time.deltaTime*TimeManagerS.timeMult;
+						
+						// play sounds when you hit each threshold
+						if (chargeTime > lv0MaxChargeTime && !playedLV1ChargeSound){
+							//soundSource.PlayChargeLv1();
+							playedLV1ChargeSound = true;
+						}
+						if (chargeTime > medChargeTime && !playedLV2ChargeSound){
+							//soundSource.PlayChargeLv2();
+							playedLV2ChargeSound = true;
+						}
+						if (chargeTime > maxChargeTime && !playedLV3ChargeSound){
+							//soundSource.PlayChargeLv3();
+							playedLV3ChargeSound = true;
+						}
+						
+						
+						
+						if (!attackTriggerDown || !chargeSource.isPlaying){
+							GameObject.Destroy( chargingParticles.gameObject); 
+							
+							groundLeeway = attackGroundLeewayMaxTime;
+							attacking = true;
+							charging = false;
+							performedAttack = false;
+							
+							// allow for ground pound
+							if (!jumped){
+								jumped = true;
+							}
+							else{
+								hasDoubleJumped = true;
+							}
+							
+							// butt should not follow
+							//buttObj.isFollowing = false;
+							
+							
+							if (chargeTime >= maxChargeTime){
+								// fully charged attack
+								attackToPerform = 2;
+								attackPriority = 2;
+							}
+							// do redirect attack
+							else if (chargeTime >= medChargeTime){
+								attackToPerform = 1;
+								attackPriority = 1;
+								//print ("do attack 1");
+							}
+							// do fling
+							// TRYING OUT TAKING OUT FLING LV1
+							/*
 					else if (chargeTime > lv0MaxChargeTime){
 						attackToPerform = 0;
 						attackPriority = 0;
 					}*/
-					// do chomp
-					else{
-						// activate chomp vars
-						doingChomp = true;
-						ownRigid.useGravity = false;
-						canAirStrafe = false;
-						attacking = true;
-						
-						// attack priority of 1 to defeat ground pound
-						attackPriority = 1;
-						attackToPerform = -1;
-						ownRigid.velocity = Vector3.zero;
-						ownRigid.drag = chompDrag;
-						
-						Vector3 attackDir = Vector3.zero;
-
-#if UNITY_WIIU
-
+							// do chomp
+							else{
+								// activate chomp vars
+								doingChomp = true;
+								ownRigid.useGravity = false;
+								canAirStrafe = false;
+								attacking = true;
+								
+								// attack priority of 1 to defeat ground pound
+								attackPriority = 1;
+								attackToPerform = -1;
+								ownRigid.velocity = Vector3.zero;
+								ownRigid.drag = chompDrag;
+								
+								Vector3 attackDir = Vector3.zero;
+								
+								#if UNITY_WIIU
+								
 								if (playerNum == 1){
 									attackDir.x = Input.GetAxis ("HorizontalPlayer" + playerNum + platformType);
 									attackDir.y = Input.GetAxis ("VerticalPlayer" + playerNum + platformType);
@@ -932,82 +932,82 @@ public class PlayerS : MonoBehaviour {
 									attackDir.x = wiiUInput.horizontalAxis;
 									attackDir.y = wiiUInput.verticalAxis;
 								}
-
-#else
-
-						attackDir.x = Input.GetAxis ("HorizontalPlayer" + playerNum + platformType);
-						attackDir.y = Input.GetAxis ("VerticalPlayer" + playerNum + platformType);
-
-#endif
+								
+								#else
+								
+								attackDir.x = Input.GetAxis ("HorizontalPlayer" + playerNum + platformType);
+								attackDir.y = Input.GetAxis ("VerticalPlayer" + playerNum + platformType);
+								
+								#endif
+								
+								if (attackDir.x == 0 && attackDir.y == 0) {
+									attackDir.x = 1; 
+								}
+								
+								if (!isSlowed){
+									ownRigid.AddForce(attackDir.normalized*chompForce*Time.deltaTime, ForceMode.Impulse);
+								}
+								else{
+									ownRigid.AddForce(attackDir.normalized*chompForce*slowMult*Time.deltaTime, ForceMode.Impulse);
+								}
+								
+								
+								GameObject chompObj = Instantiate(chompHitObj, transform.position, Quaternion.identity)
+									as GameObject;
+								chompObj.GetComponent<ChompColliderS>().SetDirection(attackDir.normalized, this);
+								
+								chompTimeCountdown = chompMaxTime;
+							}
+							
+							FlingEffectS newEffect = Instantiate(flingEffectObject, transform.position, Quaternion.identity)
+								as FlingEffectS;
+							newEffect.SetAttack(attackToPerform);
+						}
 						
-						if (attackDir.x == 0 && attackDir.y == 0) {
-							attackDir.x = 1; 
-						}
-
-						if (!isSlowed){
-							ownRigid.AddForce(attackDir.normalized*chompForce*Time.deltaTime, ForceMode.Impulse);
-						}
-						else{
-							ownRigid.AddForce(attackDir.normalized*chompForce*slowMult*Time.deltaTime, ForceMode.Impulse);
-						}
-
-
-						GameObject chompObj = Instantiate(chompHitObj, transform.position, Quaternion.identity)
-							as GameObject;
-						chompObj.GetComponent<ChompColliderS>().SetDirection(attackDir.normalized, this);
 						
-						chompTimeCountdown = chompMaxTime;
 					}
-
-					FlingEffectS newEffect = Instantiate(flingEffectObject, transform.position, Quaternion.identity)
-						as FlingEffectS;
-					newEffect.SetAttack(attackToPerform);
 				}
 				
-				
-			}
-		}
-		
-		// get out of chomp state
-		if (doingChomp){
-			//print (ownRigid.useGravity);
-			//print (chompTimeCountdown);
-			//print (canAirStrafe);
-			chompTimeCountdown -= Time.deltaTime*TimeManagerS.timeMult;
-			if (chompTimeCountdown <= 0){
-				//print ("CHOMP OVER");
-				doingChomp = false;
-				ownRigid.useGravity = true;
-				canAirStrafe = true;
-				ownRigid.velocity = Vector3.zero;
-				attacking = false;
-				chargeTime = 0;
-				ownRigid.drag = startDrag;
-			}
-		}
-		
-	}
-	void AttackRelease () {
-		
-		// method for triggering appropriate attack once charge button is released, based on charge time
-		
-		if (!doingChomp){
-			if (attacking) {
-				
-				// allow for short attacks on the ground
-				if (groundDetect.Grounded()){
-					groundLeeway -= Time.deltaTime * TimeManagerS.timeMult;
+				// get out of chomp state
+				if (doingChomp){
+					//print (ownRigid.useGravity);
+					//print (chompTimeCountdown);
+					//print (canAirStrafe);
+					chompTimeCountdown -= Time.deltaTime*TimeManagerS.timeMult;
+					if (chompTimeCountdown <= 0){
+						//print ("CHOMP OVER");
+						doingChomp = false;
+						ownRigid.useGravity = true;
+						canAirStrafe = true;
+						ownRigid.velocity = Vector3.zero;
+						attacking = false;
+						chargeTime = 0;
+						ownRigid.drag = startDrag;
+					}
 				}
 				
-				if (!performedAttack) 
-				{
-					isDangerous = true;
-
-					
-					GlobalVars.totalFlings[playerNum-1]++; 
-					
-					
-					attackDir = Vector3.zero;
+			}
+			void AttackRelease () {
+				
+				// method for triggering appropriate attack once charge button is released, based on charge time
+				
+				if (!doingChomp){
+					if (attacking) {
+						
+						// allow for short attacks on the ground
+						if (groundDetect.Grounded()){
+							groundLeeway -= Time.deltaTime * TimeManagerS.timeMult;
+						}
+						
+						if (!performedAttack) 
+						{
+							isDangerous = true;
+							
+							
+							GlobalVars.totalFlings[playerNum-1]++; 
+							
+							
+							attackDir = Vector3.zero;
 							#if UNITY_WIIU
 							
 							if (playerNum == 1){
@@ -1025,124 +1025,124 @@ public class PlayerS : MonoBehaviour {
 							attackDir.y = Input.GetAxis ("VerticalPlayer" + playerNum + platformType);
 							
 							#endif
-					
-					if (attackDir.x == 0 && attackDir.y == 0) {
-						attackDir.x = 1; 
-					}
-					
-					// play attack release sound
-					soundSource.PlayReleaseSound ();
-					if (attackToPerform == 2){
-						lv3Flash.ResetFade();
-						soundSource.PlayChargeLv3();
-					}
-					if (attackToPerform == 1){
-						lv2Flash.ResetFade();
-						soundSource.PlayChargeLv2();
-					}
-					if (attackToPerform == 0){
+							
+							if (attackDir.x == 0 && attackDir.y == 0) {
+								attackDir.x = 1; 
+							}
+							
+							// play attack release sound
+							soundSource.PlayReleaseSound ();
+							if (attackToPerform == 2){
+								lv3Flash.ResetFade();
+								soundSource.PlayChargeLv3();
+							}
+							if (attackToPerform == 1){
+								lv2Flash.ResetFade();
+								soundSource.PlayChargeLv2();
+							}
+							if (attackToPerform == 0){
+								
+								soundSource.PlayChargeLv1();
+							}
+						}
 						
-						soundSource.PlayChargeLv1();
+						if (attackToPerform == 2) {
+							FlingFastAttack (false);
+						}
+						if (attackToPerform == 1) {
+							FlingSlowAttack (false);
+							
+							//FlingMiniAttack (false); //replacing for now
+							
+						}  if (attackToPerform == 0) {
+							//JabAttack();
+							FlingMiniAttack (false);
+							
+							//print ("IM DOING THE FLING");
+							
+						}
+						
+						performedAttack = true;
+						
+					} 
+					else 
+					{
+						attackPriority = 0; 
 					}
 				}
 				
-				if (attackToPerform == 2) {
-					FlingFastAttack (false);
-				}
-				if (attackToPerform == 1) {
-					FlingSlowAttack (false);
-					
-					//FlingMiniAttack (false); //replacing for now
-					
-				}  if (attackToPerform == 0) {
-					//JabAttack();
-					FlingMiniAttack (false);
-					
-					//print ("IM DOING THE FLING");
-					
-				}
 				
-				performedAttack = true;
-				
-			} 
-			else 
-			{
-				attackPriority = 0; 
 			}
-		}
-		
-		
-	}
-	
-	
-	void FlingMiniAttack(bool endAttack)
-	{
-		/*
+			
+			
+			void FlingMiniAttack(bool endAttack)
+			{
+				/*
 		Just a small fling in a direction
 		*/
-		
-		if(!performedAttack)
-		{
-			if (attackDir.x == 0 && attackDir.y == 0){
-				attackDir.x = 1;
+				
+				if(!performedAttack)
+				{
+					if (attackDir.x == 0 && attackDir.y == 0){
+						attackDir.x = 1;
+					}
+					
+					// attack priority of 2 (beat ground pound and chomp)
+					attackPriority = 2;
+					
+					bulletVel = attackDir.normalized*Time.deltaTime*lv1Force ;
+					if (isSlowed){
+						bulletVel*=slowMult;
+					}
+					ownRigid.AddForce(bulletVel,ForceMode.VelocityChange);
+					
+					//print(chargeTime); 
+					
+					ownRigid.useGravity = true;
+					
+					//print (bulletVel); 
+				}
+				else
+				{
+					
+				}
+				
+				if(endAttack)
+				{
+					// trigger return early
+					//isDangerous = false;
+					attacking = false;
+					//snapReturning = true;
+				}
+				
 			}
 			
-			// attack priority of 2 (beat ground pound and chomp)
-			attackPriority = 2;
-			
-			bulletVel = attackDir.normalized*Time.deltaTime*lv1Force ;
-			if (isSlowed){
-				bulletVel*=slowMult;
-			}
-			ownRigid.AddForce(bulletVel,ForceMode.VelocityChange);
-			
-			//print(chargeTime); 
-
-			ownRigid.useGravity = true;
-			
-			//print (bulletVel); 
-		}
-		else
-		{
-			
-		}
-		
-		if(endAttack)
-		{
-			// trigger return early
-			//isDangerous = false;
-			attacking = false;
-			//snapReturning = true;
-		}
-		
-	}
-	
-	void FlingSlowAttack(bool endAttack)
-	{
-		
-		// this is beginning of lv 2 attack (before the pikachu up-b direction change)
-		if(endAttack)
-		{
-			
-			//print ("I ended attack");
-			
-
-			lv1OutCountdown = 0;
-			didLv2Fling = true;
-			groundLeeway = 0;
-			ownRigid.useGravity = true;
-			canAirStrafe = true; 
-			
-			// trigger second half (mini fling)
-			
-			//lv2AttackPauseCountdown = lv2AttackPauseTimeMax;
-			
-			performedAttack = false;
-			attackDir = ownRigid.velocity;
-			
+			void FlingSlowAttack(bool endAttack)
+			{
+				
+				// this is beginning of lv 2 attack (before the pikachu up-b direction change)
+				if(endAttack)
+				{
+					
+					//print ("I ended attack");
+					
+					
+					lv1OutCountdown = 0;
+					didLv2Fling = true;
+					groundLeeway = 0;
+					ownRigid.useGravity = true;
+					canAirStrafe = true; 
+					
+					// trigger second half (mini fling)
+					
+					//lv2AttackPauseCountdown = lv2AttackPauseTimeMax;
+					
+					performedAttack = false;
+					attackDir = ownRigid.velocity;
+					
 					float inputX = 0;
 					float inputY = 0;
-
+					
 					#if UNITY_WIIU
 					
 					if (playerNum == 1){
@@ -1160,61 +1160,61 @@ public class PlayerS : MonoBehaviour {
 					inputY = Input.GetAxis ("VerticalPlayer" + playerNum + platformType);
 					
 					#endif
-			
-			// trigger lv 2
-			if (inputY != 0 || inputX != 0){
-				attackDir.x = inputX;
-				attackDir.y = inputY;
-			}
-			chargeTime = medChargeTime*2f;
-			attackToPerform = 0;
-			
-			// trigger lv 1 fling at end of attack
-			FlingMiniAttack(false);
-			
-			soundSource.PlayChargeLv1();
-			
-			//print ("part 2!");
-			
-		}
-		else
-		{
-			if(!performedAttack)
-			{
-				
-				// start of first fling
-				
-				//print ("Start slow fling");
-				
-				// attack priority of 3 to defeat everything below mini fling
-				attackPriority = 3;
-				
-				canAirStrafe = false; 
-				ownRigid.useGravity = false;
-				
-				// set start snap vel
-				bulletVel = attackDir.normalized*Time.deltaTime*lv2OutRate;
-				
-				//print (bulletVel); 
-				
-				lv1OutCountdown = lv1OutTimeMax;
-				
-				startedLv2Pause = false;
-			}
-			else
-			{
-				// this will act the same as weak attack up until attack time is over 
-				// in which case butt does its thing
-				// lerp out to attack target
-				if (lv1OutCountdown > 0)
+					
+					// trigger lv 2
+					if (inputY != 0 || inputX != 0){
+						attackDir.x = inputX;
+						attackDir.y = inputY;
+					}
+					chargeTime = medChargeTime*2f;
+					attackToPerform = 0;
+					
+					// trigger lv 1 fling at end of attack
+					FlingMiniAttack(false);
+					
+					soundSource.PlayChargeLv1();
+					
+					//print ("part 2!");
+					
+				}
+				else
 				{
-					
-					//print ("I am trying to end attack");
-					
-					//print (lv1OutCountdown);
-					
-					// old way without physics
-					/*
+					if(!performedAttack)
+					{
+						
+						// start of first fling
+						
+						//print ("Start slow fling");
+						
+						// attack priority of 3 to defeat everything below mini fling
+						attackPriority = 3;
+						
+						canAirStrafe = false; 
+						ownRigid.useGravity = false;
+						
+						// set start snap vel
+						bulletVel = attackDir.normalized*Time.deltaTime*lv2OutRate;
+						
+						//print (bulletVel); 
+						
+						lv1OutCountdown = lv1OutTimeMax;
+						
+						startedLv2Pause = false;
+					}
+					else
+					{
+						// this will act the same as weak attack up until attack time is over 
+						// in which case butt does its thing
+						// lerp out to attack target
+						if (lv1OutCountdown > 0)
+						{
+							
+							//print ("I am trying to end attack");
+							
+							//print (lv1OutCountdown);
+							
+							// old way without physics
+							/*
 							// set vel to 0
 							ownRigid.velocity = Vector3.zero;
 							
@@ -1223,1378 +1223,1378 @@ public class PlayerS : MonoBehaviour {
 							transform.position = Vector3.Lerp(transform.position,bulletVel,lv1OutRate*Time.deltaTime
 							                                  *TimeManagerS.timeMult);
 							                                  */
+							
+							lv1OutCountdown -= Time.deltaTime*TimeManagerS.timeMult;
+							
+							// vel decrease over time (linear, can be made exponential)
+							ownRigid.velocity = bulletVel*TimeManagerS.timeMult*(lv1OutCountdown/lv1OutTimeMax)*1.2f;
+						}
+						else
+						{
+							//butt should return
+							//buttObj.isFollowing = true;
+							
+							if (!startedLv2Pause){
+								
+								
+								//canAirStrafe = true; 
+								startedLv2Pause = true;
+								ownRigid.velocity = Vector3.zero;
+								
+								// allows time for tail to catch up
+								lv2AttackPauseCountdown = lv2AttackPauseTimeMax;
+							}
+							else{
+								// count down pause time
+								lv2AttackPauseCountdown -= TimeManagerS.timeMult*Time.deltaTime;
+								//print (lv2AttackPauseCountdown);
+								ownRigid.velocity = Vector3.zero;
+								// once this reaches zero, end the attack
+								if (lv2AttackPauseCountdown <= 0){
+									canAirStrafe = true;
+									FlingSlowAttack(true);
+									//print ("part 2!");
+								}
+								
+							}
+						}
+					}
+				}
+				
+				
+			}
+			
+			void FlingFastAttack(bool endAttack)
+			{
+				
+				// lv 3 attack
+				
+				if(endAttack)
+				{
+					// have butt go to head
+					//buttObj.isFollowing = true;
+					// lock in place so no sliding
 					
-					lv1OutCountdown -= Time.deltaTime*TimeManagerS.timeMult;
+					attacking = false;
+					ownRigid.useGravity = true;
+					canAirStrafe = true; 
 					
-					// vel decrease over time (linear, can be made exponential)
-					ownRigid.velocity = bulletVel*TimeManagerS.timeMult*(lv1OutCountdown/lv1OutTimeMax)*1.2f;
+					this.GetComponent<SphereCollider>().material = normalPhysics; 
+					
 				}
 				else
 				{
-					//butt should return
-					//buttObj.isFollowing = true;
-					
-					if (!startedLv2Pause){
-
+					if(!performedAttack)
+					{
 						
-						//canAirStrafe = true; 
-						startedLv2Pause = true;
-						ownRigid.velocity = Vector3.zero;
+						// attack priority of 4 to beat everything 
+						attackPriority = 4;
 						
-						// allows time for tail to catch up
-						lv2AttackPauseCountdown = lv2AttackPauseTimeMax;
-					}
-					else{
-						// count down pause time
-						lv2AttackPauseCountdown -= TimeManagerS.timeMult*Time.deltaTime;
-						//print (lv2AttackPauseCountdown);
-						ownRigid.velocity = Vector3.zero;
-						// once this reaches zero, end the attack
-						if (lv2AttackPauseCountdown <= 0){
-							canAirStrafe = true;
-							FlingSlowAttack(true);
-							//print ("part 2!");
+						
+						
+						
+						if(!groundDetect.Grounded())
+							this.GetComponent<SphereCollider>().material = bouncyPhysics; 
+						
+						// bullet snap
+						bulletVel = attackDir.normalized*Time.deltaTime*lv3BulletSpeed;
+						//dontCorrectSpeed = true;
+						
+						//print ("LV3!!");
+						
+						bool wallHit = false;
+						
+						Physics.Raycast(transform.position,bulletVel.normalized, out newHit, 2f);
+						if (newHit.collider != null)
+						{
+							if (newHit.collider.gameObject.tag == "Ground" || newHit.collider.gameObject.tag == "Wall")
+							{
+								wallHit = true;
+								Debug.Log(newHit.collider.gameObject.name, newHit.collider.gameObject);
+							}
 						}
 						
+						if (!wallHit){
+							//set attack time
+							lv1OutCountdown = lv1OutTimeMax;
+							
+							// turn on platform ghosting
+							TurnOnIgnoreWalls();
+							
+							// add bullet force
+							ownRigid.velocity = Vector3.zero;
+							if (isSlowed){
+								bulletVel*=slowMult;
+							}
+							ownRigid.AddForce(bulletVel,ForceMode.VelocityChange);
+							
+							ownRigid.useGravity = true;
+							
+							Debug.Log(ownRigid.velocity + " : " + bulletVel);
+							
+							// kinesthetics
+							CameraShakeS.C.TimeSleep(0.2f);
+							dangerObj.GetComponent<DamageS>().MakeSlashEffect(transform.position+bulletVel.normalized);
+						}
+						else{
+							// end attack
+							attacking = false;
+							isDangerous = false;
+							charging = false;
+							canCharge = true;
+							ownRigid.useGravity = true;
+						}
 					}
 				}
+				
+				
+				
 			}
-		}
-		
-		
-	}
-	
-	void FlingFastAttack(bool endAttack)
-	{
-		
-		// lv 3 attack
-		
-		if(endAttack)
-		{
-			// have butt go to head
-			//buttObj.isFollowing = true;
-			// lock in place so no sliding
 			
-			attacking = false;
-			ownRigid.useGravity = true;
-			canAirStrafe = true; 
 			
-			this.GetComponent<SphereCollider>().material = normalPhysics; 
 			
-		}
-		else
-		{
-			if(!performedAttack)
-			{
-				
-				// attack priority of 4 to beat everything 
-				attackPriority = 4;
-				
-
-				
-				
-				if(!groundDetect.Grounded())
-					this.GetComponent<SphereCollider>().material = bouncyPhysics; 
-				
-				// bullet snap
-				bulletVel = attackDir.normalized*Time.deltaTime*lv3BulletSpeed;
-				//dontCorrectSpeed = true;
-				
-				//print ("LV3!!");
-				
-				bool wallHit = false;
-				
-				Physics.Raycast(transform.position,bulletVel.normalized, out newHit, 2f);
-				if (newHit.collider != null)
-				{
-					if (newHit.collider.gameObject.tag == "Ground" || newHit.collider.gameObject.tag == "Wall")
-					{
-						wallHit = true;
-						Debug.Log(newHit.collider.gameObject.name, newHit.collider.gameObject);
-					}
-				}
-				
-				if (!wallHit){
-					//set attack time
-					lv1OutCountdown = lv1OutTimeMax;
-
-					// turn on platform ghosting
-					TurnOnIgnoreWalls();
-					
-					// add bullet force
-					ownRigid.velocity = Vector3.zero;
-					if (isSlowed){
-						bulletVel*=slowMult;
-					}
-					ownRigid.AddForce(bulletVel,ForceMode.VelocityChange);
-					
-					ownRigid.useGravity = true;
-
-					Debug.Log(ownRigid.velocity + " : " + bulletVel);
-					
-					// kinesthetics
-					CameraShakeS.C.TimeSleep(0.2f);
-					dangerObj.GetComponent<DamageS>().MakeSlashEffect(transform.position+bulletVel.normalized);
-				}
-				else{
-					// end attack
-					attacking = false;
-					isDangerous = false;
-					charging = false;
-					canCharge = true;
-					ownRigid.useGravity = true;
-				}
-			}
-		}
-		
-		
-		
-	}
-	
-	
-	
-	/*
+			/*
 	_________________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
 	MOVEMENT-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	_____________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
 	*/
-	void Walk () 
-	{
-		
-		// turn variables related to being on the ground on/off
-		if (!groundDetect.Grounded()){ // if in the air
-			groundLeeway = 0;
-		}
-		else{ // if not the air
-			canAirStrafe = true;
-			canDodge = true;
-		}
-		
-		
-		if (!charging && canAirStrafe && !respawning && !doingSpecial)
-		{
-#if UNITY_WIIU
+			void Walk () 
+			{
+				
+				// turn variables related to being on the ground on/off
+				if (!groundDetect.Grounded()){ // if in the air
+					groundLeeway = 0;
+				}
+				else{ // if not the air
+					canAirStrafe = true;
+					canDodge = true;
+				}
+				
+				
+				if (!charging && canAirStrafe && !respawning && !doingSpecial)
+				{
+					#if UNITY_WIIU
 					float xForce = 0;
 					if (playerNum == 1){
-						xForce Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
+						xForce = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
 					}
 					else{
 						xForce = wiiUInput.horizontalAxis;
 					}
-#else
-			float xForce = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
-#endif
-			xForce *= walkSpeed*TimeManagerS.timeMult*Time.deltaTime;
-			
-			if (!groundDetect.Grounded())
-			{
-				xForce*=airControlMult;
-			}
-			
-			// make sure not to do force stuff when up against wall
-			if ((xForce > 0 && !rightCheck) || xForce < 0 && !leftCheck){
-				
-				bool applyForce = true; 
-
-				// apply character run mult
-				float runMult = 1;
-
-				if (characterNum == 1){
-					runMult *= PlayerCharStatsS.ninja_SpeedMult;
-				}
-				if (characterNum == 2){
-					runMult *= PlayerCharStatsS.acidMouth_SpeedMult;
-				}
-				if (characterNum == 3){
-					runMult *= PlayerCharStatsS.mummy_SpeedMult;
-				}
-				if (characterNum == 4){
-					runMult *= PlayerCharStatsS.pinkWhip_SpeedMult;
-				}
-				if (characterNum == 5){
-					runMult *= PlayerCharStatsS.char5_SpeedMult;
-				}
-				if (characterNum == 6){
-					runMult *= PlayerCharStatsS.char6_SpeedMult;
-				}
-				if (characterNum == 7){
-					runMult *= PlayerCharStatsS.char7_SpeedMult;
-				}
-				
-				if((ownRigid.velocity.x > maxSpeed*runMult) && (xForce > 0))
-				{
-					applyForce = false; 
-				}
-				else if((ownRigid.velocity.x < -maxSpeed*runMult) && (xForce < 0))
-				{
-					applyForce = false; 
-				}
-				
-
-
-				
-				if(applyForce){
-					ownRigid.AddForce(new Vector3(xForce*runMult,0,0));
-				}
-
-				if (isSlowed){
-					ownRigid.AddForce(new Vector3(-xForce*0.5f*runMult,0,0));
-				}
-				
-				
-				Vector3 fixVel = ownRigid.velocity;
-				
-				
-				
-				if (fixVel.x > 0){
-					facingRight = true;
-				}
-				if (fixVel.x < 0){
-					facingRight = false;
-				}
-				
-			}
-			
-			
-		}
-		
-		
-	}
-	
-	
-	
-	void Jump () {
-		
-		//print (groundPounded);
-		
-		// turn danger off
-		
-		// allow charge attack
-		
-		// don't do during lv 3
-		if (attacking && attackToPerform == 2){
-		}
-		else{
-			
-			if (groundDetect.Grounded()){
-				if (groundLeeway <= 0){
-					isDangerous = false;
-					attacking = false;
-					didLv2Fling = false;
-					ownRigid.useGravity = true;
-
+					#else
+					float xForce = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
+					#endif
+					xForce *= walkSpeed*TimeManagerS.timeMult*Time.deltaTime;
 					
-					groundPounded = false;
+					if (!groundDetect.Grounded())
+					{
+						xForce*=airControlMult;
+					}
 					
-					charging = false;
+					// make sure not to do force stuff when up against wall
+					if ((xForce > 0 && !rightCheck) || xForce < 0 && !leftCheck){
+						
+						bool applyForce = true; 
+						
+						// apply character run mult
+						float runMult = 1;
+						
+						if (characterNum == 1){
+							runMult *= PlayerCharStatsS.ninja_SpeedMult;
+						}
+						if (characterNum == 2){
+							runMult *= PlayerCharStatsS.acidMouth_SpeedMult;
+						}
+						if (characterNum == 3){
+							runMult *= PlayerCharStatsS.mummy_SpeedMult;
+						}
+						if (characterNum == 4){
+							runMult *= PlayerCharStatsS.pinkWhip_SpeedMult;
+						}
+						if (characterNum == 5){
+							runMult *= PlayerCharStatsS.char5_SpeedMult;
+						}
+						if (characterNum == 6){
+							runMult *= PlayerCharStatsS.char6_SpeedMult;
+						}
+						if (characterNum == 7){
+							runMult *= PlayerCharStatsS.char7_SpeedMult;
+						}
+						
+						if((ownRigid.velocity.x > maxSpeed*runMult) && (xForce > 0))
+						{
+							applyForce = false; 
+						}
+						else if((ownRigid.velocity.x < -maxSpeed*runMult) && (xForce < 0))
+						{
+							applyForce = false; 
+						}
+						
+						
+						
+						
+						if(applyForce){
+							ownRigid.AddForce(new Vector3(xForce*runMult,0,0));
+						}
+						
+						if (isSlowed){
+							ownRigid.AddForce(new Vector3(-xForce*0.5f*runMult,0,0));
+						}
+						
+						
+						Vector3 fixVel = ownRigid.velocity;
+						
+						
+						
+						if (fixVel.x > 0){
+							facingRight = true;
+						}
+						if (fixVel.x < 0){
+							facingRight = false;
+						}
+						
+					}
+					
+					
 				}
 				
-				canCharge = true;
+				
 			}
-		}
-
-		// turn off gravity and pause in place for a bit before ground pound
-		if (chargingGroundPound){
-
-			if(chargingParticles == null)
-			{
-				chargingParticles = 
-					Instantiate( chargingParticlePrefab, this.transform.position, Quaternion.identity) as GameObject; 
-				chargingParticles.transform.parent = this.transform; 
-
-			}
-
-			groundPoundPauseCountdown += Time.deltaTime*TimeManagerS.timeMult;
-			if (groundPoundPauseCountdown >= groundPoundPauseMax){
-				Vector3 groundPoundVel = Vector3.zero;
-				groundPoundVel.y = -groundPoundForce*Time.deltaTime*TimeManagerS.timeMult;
-				if (isSlowed){
-					groundPoundVel *= slowMult;
+			
+			
+			
+			void Jump () {
+				
+				//print (groundPounded);
+				
+				// turn danger off
+				
+				// allow charge attack
+				
+				// don't do during lv 3
+				if (attacking && attackToPerform == 2){
 				}
-				ownRigid.velocity = groundPoundVel;
-				isDangerous = true;
-				ownRigid.useGravity = true;
-
-				hasDoubleJumped = true;
-				
-				canAirStrafe = true;
-
-				chargingGroundPound = false;
-				groundPounded = true;
-				
-				// lowest attack priority
-				attackPriority = 0;
-				
-				//print ("Groundpound!");
-				// play an attack sound
-				//soundSource.PlayChargeLv2();
-				soundSource.PlayGroundPoundReleaseSound();
-				Instantiate(spawnParticlePrefab,this.transform.position, Quaternion.identity);
-
-				Destroy(chargingParticles);
-				
-				// allow for air control
-				//dontCorrectSpeed = false;
-				
-				//SleepTime(groundPoundPauseTime);
-			}
-
-		}
-		
-		// turn jump ability on/off depending on grounded status
-		
-		if (jumped){
-			if (groundDetect.Grounded()){
-				jumped = false;
-				hasDoubleJumped = false;
-				if (groundPounded){
-					groundPounded = false;
-
-
+				else{
+					
+					if (groundDetect.Grounded()){
+						if (groundLeeway <= 0){
+							isDangerous = false;
+							attacking = false;
+							didLv2Fling = false;
+							ownRigid.useGravity = true;
+							
+							
+							groundPounded = false;
+							
+							charging = false;
+						}
+						
+						canCharge = true;
+					}
 				}
-			}
-		}
-		else{
-			if (!groundDetect.Grounded()){
-				jumped = true;
-			}
-		}
-		
-		
-		// detect button up
-#if UNITY_WIIU
+				
+				// turn off gravity and pause in place for a bit before ground pound
+				if (chargingGroundPound){
+					
+					if(chargingParticles == null)
+					{
+						chargingParticles = 
+							Instantiate( chargingParticlePrefab, this.transform.position, Quaternion.identity) as GameObject; 
+						chargingParticles.transform.parent = this.transform; 
+						
+					}
+					
+					groundPoundPauseCountdown += Time.deltaTime*TimeManagerS.timeMult;
+					if (groundPoundPauseCountdown >= groundPoundPauseMax){
+						Vector3 groundPoundVel = Vector3.zero;
+						groundPoundVel.y = -groundPoundForce*Time.deltaTime*TimeManagerS.timeMult;
+						if (isSlowed){
+							groundPoundVel *= slowMult;
+						}
+						ownRigid.velocity = groundPoundVel;
+						isDangerous = true;
+						ownRigid.useGravity = true;
+						
+						hasDoubleJumped = true;
+						
+						canAirStrafe = true;
+						
+						chargingGroundPound = false;
+						groundPounded = true;
+						
+						// lowest attack priority
+						attackPriority = 0;
+						
+						//print ("Groundpound!");
+						// play an attack sound
+						//soundSource.PlayChargeLv2();
+						soundSource.PlayGroundPoundReleaseSound();
+						Instantiate(spawnParticlePrefab,this.transform.position, Quaternion.identity);
+						
+						Destroy(chargingParticles);
+						
+						// allow for air control
+						//dontCorrectSpeed = false;
+						
+						//SleepTime(groundPoundPauseTime);
+					}
+					
+				}
+				
+				// turn jump ability on/off depending on grounded status
+				
+				if (jumped){
+					if (groundDetect.Grounded()){
+						jumped = false;
+						hasDoubleJumped = false;
+						if (groundPounded){
+							groundPounded = false;
+							
+							
+						}
+					}
+				}
+				else{
+					if (!groundDetect.Grounded()){
+						jumped = true;
+					}
+				}
+				
+				
+				// detect button up
+				#if UNITY_WIIU
 				if ((playerNum == 1 && !Input.GetButton("AButtonPlayer" + playerNum + platformType)) ||
-				    (playerNum > 1 && wiiUInput.jumpButtonDown))
+				    (playerNum > 1 && !wiiUInput.jumpButtonDown))
 				{
-#else
-		if (!Input.GetButton("AButtonPlayer" + playerNum + platformType))
-		{
-#endif
-
-
-			jumpButtonDown = false;
-			chargingGroundPound = false;
-			groundPoundPauseCountdown = 0;
-
-			if (chargingParticles){
-				Destroy(chargingParticles);
-			}
-
-
-		}
-		
-		
-		
-		#if UNITY_WIIU
-				if (((playerNum == 1 && !Input.GetButton("AButtonPlayer" + playerNum + platformType)) ||
-				    (playerNum > 1 && wiiUInput.jumpButtonDown)) && !jumpButtonDown)
-				{
-#else
-		if (Input.GetButton("AButtonPlayer" + playerNum + platformType) && !jumpButtonDown)
-		{
-#endif
-			
-			
-			//print ("Jump!");
-			
-			jumpButtonDown = true;
-			
-			if (!jumped)
-			{
-				
-				// don't do regular jump while attacking or charging or dodging
-				if (!attacking && !charging && !dodging)
-				{
-					Vector3 jumpForce = Vector3.zero;
-					
-					jumpForce.y = jumpSpeed*Time.deltaTime*TimeManagerS.timeMult;
-					if (isSlowed){
-						jumpForce.y *= slowMult;
-					}
-
-
-					// apply character jump mult
-					if (characterNum == 1){
-						jumpForce *= PlayerCharStatsS.ninja_JumpMult;
-					}
-					if (characterNum == 2){
-						jumpForce *= PlayerCharStatsS.acidMouth_JumpMult;
-					}
-					if (characterNum == 3){
-						jumpForce *= PlayerCharStatsS.mummy_JumpMult;
-					}
-					if (characterNum == 4){
-						jumpForce *= PlayerCharStatsS.pinkWhip_JumpMult;
-					}
-					if (characterNum == 5){
-						jumpForce *= PlayerCharStatsS.char5_JumpMult;
-					}
-					if (characterNum == 6){
-						jumpForce *= PlayerCharStatsS.char6_JumpMult;
-					}
-					if (characterNum == 7){
-						jumpForce *= PlayerCharStatsS.char7_JumpMult;
-					}
-
-					Vector3 fixVel = ownRigid.velocity;
-					fixVel.y = 0;
-					ownRigid.velocity = fixVel;
-
-					ownRigid.AddForce(jumpForce);
-					
-					Instantiate(jumpParticles, this.transform.position, Quaternion.identity); 
-					
-					// play jump sound
-					soundSource.PlayJumpSound();
-					
-					addingJumpTime = 0;
-					stopAddingJump = false;
-
-					jumped = true;
-
-					GameObject jump = Instantiate(jumpEffectObject, transform.position,Quaternion.identity)
-						as GameObject;
-
-					jump.GetComponent<SpriteRenderer>().color = 
-						trailRendererGO.GetComponent<TrailRenderer>().materials[0].color;
-
-				}
-			}
-			
-			// do ground pound charge if not charging or dodging
-			else if (!groundPounded && !charging && !clingingToWall && !dodging){
-		
-				chargingGroundPound = true;
-				groundPoundPauseCountdown = 0;
-
-				if (!hasDoubleJumped){
-					Vector3 jumpForce = Vector3.zero;
-					
-					// add to jump speed for double jump bc of lack of air boost
-					jumpForce.y = jumpSpeed*1.7f*Time.deltaTime*TimeManagerS.timeMult;
-					
-					
-					// apply character jump mult
-					if (characterNum == 1){
-						jumpForce *= PlayerCharStatsS.ninja_JumpMult;
-					}
-					if (characterNum == 2){
-						jumpForce *= PlayerCharStatsS.acidMouth_JumpMult;
-					}
-					if (characterNum == 3){
-						jumpForce *= PlayerCharStatsS.mummy_JumpMult;
-					}
-					if (characterNum == 4){
-						jumpForce *= PlayerCharStatsS.pinkWhip_JumpMult;
+					#else
+					if (!Input.GetButton("AButtonPlayer" + playerNum + platformType))
+					{
+						#endif
+						
+						
+						jumpButtonDown = false;
+						chargingGroundPound = false;
+						groundPoundPauseCountdown = 0;
+						
+						if (chargingParticles){
+							Destroy(chargingParticles);
+						}
+						
+						
 					}
 					
-					Vector3 fixVel = ownRigid.velocity;
-					fixVel.y = 0;
-					ownRigid.velocity = fixVel;
-					
-					ownRigid.AddForce(jumpForce);
-					
-					Instantiate(jumpParticles, this.transform.position, Quaternion.identity); 
-					
-					// play jump sound
-					soundSource.PlayJumpSound();
-					
-					addingJumpTime = 0;
-					stopAddingJump = false;
-					
-					ownRigid.useGravity = true;
-					hasDoubleJumped = true;
 					
 					
-					addingJumpTime = 0;
-					stopAddingJump = true;
-					canAirStrafe = true;
-
-					
-					GameObject jump = Instantiate(jumpEffectObject, transform.position,Quaternion.identity)
-						as GameObject;
-					
-					jump.GetComponent<SpriteRenderer>().color = 
-						trailRendererGO.GetComponent<TrailRenderer>().materials[0].color;
-
-					Destroy(chargingParticles);
-				}
-
-
-
-			}
-			else{
-				// don't do anything
-			}
-		}
-		
-		
-		// add addtl jump force
-		if ((jumped || hasDoubleJumped) && !chargingGroundPound){
-			if (!jumpButtonDown){
-				stopAddingJump = true;
-			}
-			else{
-				if (!stopAddingJump){
-					Vector3 jumpForce = Vector3.zero;
-					
-					jumpForce.y = addJumpForce*Time.deltaTime*TimeManagerS.timeMult;
-					
-					ownRigid.AddForce(jumpForce);
-					
-					addingJumpTime += Time.deltaTime*TimeManagerS.timeMult;
-					if (addingJumpTime > addJumpForceMaxTime){
-						stopAddingJump = true;
+					#if UNITY_WIIU
+					if (((playerNum == 1 && Input.GetButton("AButtonPlayer" + playerNum + platformType)) ||
+					     (playerNum > 1 && wiiUInput.jumpButtonDown)) && !jumpButtonDown)
+					{
+						#else
+						if (Input.GetButton("AButtonPlayer" + playerNum + platformType) && !jumpButtonDown)
+						{
+							#endif
+							
+							
+							//print ("Jump!");
+							
+							jumpButtonDown = true;
+							
+							if (!jumped)
+							{
+								
+								// don't do regular jump while attacking or charging or dodging
+								if (!attacking && !charging && !dodging)
+								{
+									Vector3 jumpForce = Vector3.zero;
+									
+									jumpForce.y = jumpSpeed*Time.deltaTime*TimeManagerS.timeMult;
+									if (isSlowed){
+										jumpForce.y *= slowMult;
+									}
+									
+									
+									// apply character jump mult
+									if (characterNum == 1){
+										jumpForce *= PlayerCharStatsS.ninja_JumpMult;
+									}
+									if (characterNum == 2){
+										jumpForce *= PlayerCharStatsS.acidMouth_JumpMult;
+									}
+									if (characterNum == 3){
+										jumpForce *= PlayerCharStatsS.mummy_JumpMult;
+									}
+									if (characterNum == 4){
+										jumpForce *= PlayerCharStatsS.pinkWhip_JumpMult;
+									}
+									if (characterNum == 5){
+										jumpForce *= PlayerCharStatsS.char5_JumpMult;
+									}
+									if (characterNum == 6){
+										jumpForce *= PlayerCharStatsS.char6_JumpMult;
+									}
+									if (characterNum == 7){
+										jumpForce *= PlayerCharStatsS.char7_JumpMult;
+									}
+									
+									Vector3 fixVel = ownRigid.velocity;
+									fixVel.y = 0;
+									ownRigid.velocity = fixVel;
+									
+									ownRigid.AddForce(jumpForce);
+									
+									Instantiate(jumpParticles, this.transform.position, Quaternion.identity); 
+									
+									// play jump sound
+									soundSource.PlayJumpSound();
+									
+									addingJumpTime = 0;
+									stopAddingJump = false;
+									
+									jumped = true;
+									
+									GameObject jump = Instantiate(jumpEffectObject, transform.position,Quaternion.identity)
+										as GameObject;
+									
+									jump.GetComponent<SpriteRenderer>().color = 
+										trailRendererGO.GetComponent<TrailRenderer>().materials[0].color;
+									
+								}
+							}
+							
+							// do ground pound charge if not charging or dodging
+							else if (!groundPounded && !charging && !clingingToWall && !dodging){
+								
+								chargingGroundPound = true;
+								groundPoundPauseCountdown = 0;
+								
+								if (!hasDoubleJumped){
+									Vector3 jumpForce = Vector3.zero;
+									
+									// add to jump speed for double jump bc of lack of air boost
+									jumpForce.y = jumpSpeed*1.7f*Time.deltaTime*TimeManagerS.timeMult;
+									
+									
+									// apply character jump mult
+									if (characterNum == 1){
+										jumpForce *= PlayerCharStatsS.ninja_JumpMult;
+									}
+									if (characterNum == 2){
+										jumpForce *= PlayerCharStatsS.acidMouth_JumpMult;
+									}
+									if (characterNum == 3){
+										jumpForce *= PlayerCharStatsS.mummy_JumpMult;
+									}
+									if (characterNum == 4){
+										jumpForce *= PlayerCharStatsS.pinkWhip_JumpMult;
+									}
+									
+									Vector3 fixVel = ownRigid.velocity;
+									fixVel.y = 0;
+									ownRigid.velocity = fixVel;
+									
+									ownRigid.AddForce(jumpForce);
+									
+									Instantiate(jumpParticles, this.transform.position, Quaternion.identity); 
+									
+									// play jump sound
+									soundSource.PlayJumpSound();
+									
+									addingJumpTime = 0;
+									stopAddingJump = false;
+									
+									ownRigid.useGravity = true;
+									hasDoubleJumped = true;
+									
+									
+									addingJumpTime = 0;
+									stopAddingJump = true;
+									canAirStrafe = true;
+									
+									
+									GameObject jump = Instantiate(jumpEffectObject, transform.position,Quaternion.identity)
+										as GameObject;
+									
+									jump.GetComponent<SpriteRenderer>().color = 
+										trailRendererGO.GetComponent<TrailRenderer>().materials[0].color;
+									
+									Destroy(chargingParticles);
+								}
+								
+								
+								
+							}
+							else{
+								// don't do anything
+							}
+						}
+						
+						
+						// add addtl jump force
+						if ((jumped || hasDoubleJumped) && !chargingGroundPound){
+							if (!jumpButtonDown){
+								stopAddingJump = true;
+							}
+							else{
+								if (!stopAddingJump){
+									Vector3 jumpForce = Vector3.zero;
+									
+									jumpForce.y = addJumpForce*Time.deltaTime*TimeManagerS.timeMult;
+									
+									ownRigid.AddForce(jumpForce);
+									
+									addingJumpTime += Time.deltaTime*TimeManagerS.timeMult;
+									if (addingJumpTime > addJumpForceMaxTime){
+										stopAddingJump = true;
+									}
+								}
+							}
+						}
 					}
-				}
-			}
-		}
-	}
-	
-	void Dodge () {
-		
-		if (!TimeManagerS.paused){
-			dodgeTimeCountdown -= Time.deltaTime;
-			if (dodging && dodgeTimeCountdown <= 0){
-				dodging = false;
-				canAirStrafe = true;
-				ownRigid.velocity = Vector3.zero;
-				ownRigid.useGravity = true;
-				ownRigid.drag = startDrag;
-			}
-		}
-		
-#if UNITY_WIIU
-		if (((!Input.GetButton("XButtonPlayer"+playerNum+platformType) && playerNum == 1) ||
+					
+					void Dodge () {
+						
+						if (!TimeManagerS.paused){
+							dodgeTimeCountdown -= Time.deltaTime;
+							if (dodging && dodgeTimeCountdown <= 0){
+								dodging = false;
+								canAirStrafe = true;
+								ownRigid.velocity = Vector3.zero;
+								ownRigid.useGravity = true;
+								ownRigid.drag = startDrag;
+							}
+						}
+						
+						#if UNITY_WIIU
+						if (((!Input.GetButton("XButtonPlayer"+playerNum+platformType) && playerNum == 1) ||
 						     (playerNum > 1 && !wiiUInput.dashButtonDown)) && dodgeButtonDown){
-#else
-		if (!Input.GetButton("XButtonPlayer"+playerNum+platformType) && dodgeButtonDown){
-#endif
-			dodgeButtonDown = false;
-		}
-		
-		// read for dodge input and do dodge
-		if (!dodging && canDodge && dodgeTimeCountdown <= 0){
+							#else
+							if (!Input.GetButton("XButtonPlayer"+playerNum+platformType) && dodgeButtonDown){
+								#endif
+								dodgeButtonDown = false;
+							}
+							
+							// read for dodge input and do dodge
+							if (!dodging && canDodge && dodgeTimeCountdown <= 0){
 								#if UNITY_WIIU
 								if (((Input.GetButton("XButtonPlayer"+playerNum+platformType) && playerNum == 1) ||
 								     (playerNum > 1 && wiiUInput.dashButtonDown)) && !dodgeButtonDown){
 									#else
 									if (Input.GetButton("XButtonPlayer"+playerNum+platformType) && !dodgeButtonDown){
 										#endif
-				
-				//print ("DODGED");
-				
-				// reset dodge time, add invuln, and add dodge force
-				
-				// read direction from left stick
-				Vector3 dodgeDir = Vector3.zero;
-#if UNITY_WIIU
+										
+										//print ("DODGED");
+										
+										// reset dodge time, add invuln, and add dodge force
+										
+										// read direction from left stick
+										Vector3 dodgeDir = Vector3.zero;
+										#if UNITY_WIIU
 										if (playerNum == 1){
 											dodgeDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
 											dodgeDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
 										}
 										else{
-											dodgeDir.x = wiiUInput.horizontalInput;
-											dodgeDir.y = wiiUInput.verticalInput;
+											dodgeDir.x = wiiUInput.horizontalAxis;
+											dodgeDir.y = wiiUInput.verticalAxis;
 										}
-#else
-				dodgeDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
-				dodgeDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
-#endif
-				
-				// add force
-				ownRigid.velocity = Vector3.zero;
-				if (!isSlowed){
-					ownRigid.AddForce(dodgeDir*dodgeForce*Time.deltaTime, ForceMode.Impulse);
-				}
-				else{
-					ownRigid.AddForce(dodgeDir*dodgeForce*slowMult*Time.deltaTime, ForceMode.Impulse);
-				}
-
-				// stop current attack
-
-				attacking = false;
-				isDangerous = false;
-				
-				
-				
-				//print (dodgeDir*dodgeForce*Time.deltaTime);
-				//print (ownRigid.velocity);
-				
-				// reset times
-				dodgeTimeCountdown = dodgeTimeMax;
-				respawnInvulnTime = dodgeInvulnTimeMax;
-				
-				// only allow one dodge in air; should reset if on ground
-				canDodge = false;
-				
-				// turn off grav for dodge
-				ownRigid.useGravity = false;
-				dodging = true;
-				canAirStrafe = false;
-				
-				ownRigid.drag = dodgeDrag;
-
-				// play sound
-				soundSource.PlayDodgeSound();
-
-				dodgeButtonDown = true;
-
-				GameObject dashEffect = Instantiate(dashEffectObject, transform.position,Quaternion.identity)
-					as GameObject;
-
-				Vector3 doFlip = dashEffect.transform.localScale;
-				if (spriteObject.transform.localScale.x < 0){
-					doFlip.x *= -1;
-					dashEffect.transform.localScale = doFlip;
-				}
-				
-				dashEffect.GetComponent<SpriteRenderer>().color = 
-					trailRendererGO.GetComponent<TrailRenderer>().materials[0].color;
-				
-			}
-		}
-		
-	}
-	
-	void MiscAction()
-	{
-		
-		// handles various things including dangerous states and trail renderers
-		
-		//this.GetComponent<LineRenderer>().SetPosition(0,this.transform.position);
-		//this.GetComponent<LineRenderer>().SetPosition(1,buttObj.transform.position);
-		
-		if(isDangerous && !isSlowed){
-			dangerousSprite.GetComponent<SpriteRenderer>().enabled = true; 
-			
-		}
-		else{
-			dangerousSprite.GetComponent<SpriteRenderer>().enabled = false; 
-		}
-		
-		hurtCounter -= 1;
-		
-		if (hurtCounter < 0) {
-			
-			spriteObjRender.color = Color.white;
-			trailRendererGO.GetComponent<TrailRenderer>().material = playerMats [characterNum -1];
-			
-			
-		} else {
-			spriteObjRender.color = hurtTint; 
-			trailRendererGO.GetComponent<TrailRenderer>().material = playerHurtMats[characterNum -1];
-		}
-		
-		// trying to fix something with lv 2
-		if (!groundDetect.Grounded()){
-			if (attackToPerform == 1){
-				groundLeeway = 0;
-			}
-		}
-		else{
-			
-			this.GetComponent<SphereCollider>().material = normalPhysics; 
-		}
-		
-		if (isSpawning) {
-			if (initialSpawnParticles != null) {
-				
-				spriteObject.GetComponent<Renderer> ().enabled = false; 
-				trailRendererGO.GetComponent<TrailRenderer> ().enabled = false; 
-				trailRendererGO2.GetComponent<TrailRenderer> ().enabled = false; 
-				
-			} else {
-				if(!isSpawning && numLives > 0)
-				{
-					Instantiate(spawnParticlePrefab,this.transform.position, Quaternion.identity); 
-					isSpawning = true; 
-					spriteObject.GetComponent<Renderer> ().enabled = true; 
-					trailRendererGO.GetComponent<TrailRenderer> ().enabled = true; 
-					trailRendererGO2.GetComponent<TrailRenderer> ().enabled = true; 
-				}
-			}
-		}
-		
-	}
-	
-	
-	public void SetSkin() //Ninja, Acid, Mummy, Pink
-	{
-		this.GetComponent<LineRenderer> ().material = playerMats [characterNum-1];
-		trailRendererGO.GetComponent<TrailRenderer> ().material = playerMats [characterNum - 1]; 
-		spriteObject.GetComponent<PlayerAnimS> ().SetCurrentSprites (characterNum, 0);
-		GetComponent<TrailHandlerRedubS> ().SetDotMaterial ();
-		
-		
-		
-	}
-	
-	
-	
-	void Respawn () {
-		
-		
-		if (respawning && !effectPause){
-			
-			//Disable player actions and physics
-			ownRigid.useGravity = false;
-			ownRigid.velocity = Vector3.zero;
-			//dangerObj.SetActive(false);
-
-			//Halt collisions
-			GetComponent<Collider>().enabled = false;
-			
-			//Take Away Control
-			isDangerous = false;
-			jumpButtonDown = false;
-			attackTriggerDown = false;
-			charging = false;
-			attacking = false;
-			chargeTime = 0;
-			canAirStrafe = true;
-			
-			if(respawnTimeCountdown == respawnTimeMax)
-			{
-				
-				
-				
-				//VISUAL EFFECTS
-				//Eliminate any current 
-				if(chargingParticles!= null)
-				{
-					GameObject.Destroy(chargingParticles.gameObject); 
-				}
-				if(specialParticles!= null)
-				{
-					GameObject.Destroy(specialParticles.gameObject); 
-				}
-				
-				
-				deathPos = this.transform.position;
-
-				// reset death streak
-				numKOsInRow = 0;
-				
-				//move player to new respawn position right away so trail renderer has time to update.
-				
-				// look for spawn positions that don't have a player attached
-				List<GameObject> newSpawnPts = new List<GameObject>(0);
-				for (int i = 0; i < allSpawnPts.Length; i++){
-					if (!allSpawnPts[i].GetComponent<SpawnPtS>().playerInRange()){
-						newSpawnPts.Add (allSpawnPts[i]);
-					}
-				}
-				
-				int randomSpawn = Mathf.FloorToInt( Random.Range(0, newSpawnPts.Count));
-				GameObject newSpawn = newSpawnPts[randomSpawn];
-				transform.position = newSpawn.transform.position;
-				
-				trailRendererGO.GetComponent<TrailRenderer>().enabled = false ;
-				trailRendererGO2.GetComponent<TrailRenderer>().enabled = false ;
-			}
-			
-			
-			if(respawnParticles != null && numLives > 0){
-				ParticleSystem spawnParticles = respawnParticles.GetComponent<ParticleSystem>();
-				//spawnParticles.startLifetime = 2;
-				respawnParticles.transform.position = 
-					Vector3.Lerp(deathPos, this.transform.position, spawnParticles.time/(respawnTimeMax*0.5f)); 
-
-				if (spawnParticles.isPaused){
-					spawnParticles.Play();
-				}
-
-
-			}
-
-			spriteObjRender.enabled = false;
-
-			
-			//Give back control - should probably be converted to alternate thread -- ienumerator?
-			if (respawnTimeCountdown <= 0 && numLives != 0){
-				Instantiate(spawnParticlePrefab,this.transform.position, Quaternion.identity); 
-				
-				GetComponent<Collider>().enabled = true;
-				spriteObjRender.enabled = true;
-				respawning = false;
-				
-				respawnInvulnTime = 1.5f;
-				
-				ownRigid.useGravity = true;;
-				trailRendererGO.GetComponent<TrailRenderer>().enabled = true ;
-				trailRendererGO2.GetComponent<TrailRenderer>().enabled = true ;
-
-
-				health = initialHealth;
-				
-				//DisableAttacks(); 
-				
-				soundSource.PlayCharIntroSound();
-				
-				//no longer dead
-				isDead = false;
-			}
-			
-			
-			
-			//Countdown
-			respawnTimeCountdown -= Time.deltaTime*TimeManagerS.timeMult;
-			
-			
-			
-			
-			
-		}
-
-		if (effectPause){
-			if(respawnParticles != null){
-				
-				respawnParticles.GetComponent<ParticleSystem>().Pause();
-				
-				
-			}
-		}
-		
-	}
-	
-	public void TakeDamage(float dmg, bool isSpecial){
-
-		if (!inCharSelect){
-		health -= dmg;
-		hurtCounter = hurtTimer; 
-		
-		if (health <= 0){
-
-				ownRigid.velocity = Vector3.zero;
-
-				doingSpecial = false;
-				specialTriggered = false;
-				specialCooldown = 0;
-
-				pinkPaused = false;
-			
-				if (isSpecial){
-					numLives = 0;
-				}
-				else{
-				if (CurrentModeS.currentMode == 1){
-					numLives --; 			//Decrement Counter
-					}
-				}
-			
-			GetComponent<TrailHandlerRedubS>().DestroyPlayerDots(); 
-			
-			UpdateScorekeeper(); 	//Have scorekeeper update (and update UI)
-			
-			respawning = true;
-			respawnTimeCountdown = respawnTimeMax;
-
-			
-			
-			if(numLives <= 0){
-				this.gameObject.SetActive(false);
-				}
-			else{
-					Debug.Log(numLives);
-				respawnParticles = Instantiate(respawnParticlePrefab, this.transform.position, Quaternion.identity) as GameObject;
-				respawnParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[characterNum - 1].GetColor("_TintColor");
-				respawnParticles.GetComponent<ParticleSystem>().startLifetime = respawnTimeCountdown;
-			}
-			
-			Instantiate(deathParticles, this.transform.position, Quaternion.identity); 
-			soundSource.PlayDeathSounds();
-			}
-			
-			
-		}
-	}
-
-	public void TurnOnCharSelect(){
-		inCharSelect = true;
-	}
-	void UpdateScorekeeper()
-	{
-		
-		
-		bool hasMoreLives = (numLives != 0);
-		ScoreKeeperS scoreKeeper = FindObjectOfType<Camera>().GetComponent<ScoreKeeperS>() as ScoreKeeperS;
-		scoreKeeper.PlayerDied(this, hasMoreLives);
-		
-		
-	}
-	public void InstantiateDeathParticles(){
-		
-		Instantiate(deathParticles, this.transform.position, Quaternion.identity); 
-	}
-	
-	public void SleepTime(float delayTime){
-		//pauseDelay = delayTime;
-		//prevGravState = ownRigid.useGravity;
-		//prevVel = ownRigid.velocity;
-		//prevButtVel = buttObjRigid.velocity;
-		//effectPause = true;
-		
-		//print ("PAUSE");
-	}
-
-	public void PauseCharacter(){
-
-		effectPause = true;
-		capturedGrav = ownRigid.useGravity;
-		capturedVel = ownRigid.velocity;
-		capturedDanger = isDangerous;
-
-		ownRigid.useGravity = false;
-		ownRigid.velocity = Vector3.zero;
-		isDangerous = capturedDanger;
-
-	}
-	public void UnpauseCharacter(){
-
-		effectPause = false;
-		ownRigid.useGravity = capturedGrav;
-		ownRigid.velocity = capturedVel;
-		isDangerous = capturedDanger;
-
-	}
-	
-	void OnCollisionEnter(Collision other){
-		
-		
-		Vector3 hitParticleSpawn = this.transform.position; 
-		
-		
-		GameObject newParticles =  Instantiate(hitParticles,hitParticleSpawn,Quaternion.identity) as GameObject;
-		newParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[characterNum - 1].GetColor("_TintColor");
-		
-		if (other.gameObject.tag == "Ground"){
-
-			if (doingSpecial){
-				if (characterNum == 4){
-					
-					// destroy character
-					SelfDestruct();
-					TurnOffIgnoreWalls();
-					
-					
-				}
-			}
-			
-			if (attacking){
-				
-
-				//TURN OFF THE ATTACKS
-				if (attackToPerform == 0)
-				{
-					//JabAttack();
-					FlingMiniAttack(true);
-				}
-				if (attackToPerform == 1)
-				{
-					//FlingMiniAttack(true);
-					//print ("TURN OFF");
-					FlingMiniAttack(true);
-					FlingSlowAttack(true); 
-				}
-				if (attackToPerform == 2)
-				{
-					FlingFastAttack(true); 
-				}
-				
-			}
-			
-			// turn off bounciness
-			this.GetComponent<SphereCollider>().material = normalPhysics; 
-			
-			
-			CameraShakeS.C.SmallShake();
-			
-		}
-		
-		// for hit sounds
-		if ((other.gameObject.tag == "Wall" || other.gameObject.tag == "Ground")){
-
-			if (doingSpecial){
-				if (characterNum == 4){
-
-					// destroy character
-					SelfDestruct();
-					TurnOffIgnoreWalls();
-
-					
-				}
-			}
-			
-			// turn off lv3 ability
-			TurnOffIgnoreWalls();
-			
-			// play bounce sound if not groundpounding
-			if (!groundPounded){
-				if (soundSource != null){
-					if (other.gameObject.GetComponent<PlatformSoundS>() != null){
-						other.gameObject.GetComponent<PlatformSoundS>().PlayPlatformSounds();
-					}
-					else{
-						soundSource.PlayWallHit();
-					}
-					
-					
-				}
-				// tiny shake if not attacking, bigger one if you are
-				if (attacking){
-					CameraShakeS.C.SmallShake();
-				}
-				else{
-					CameraShakeS.C.MicroShake();
-				}
-
-			}
-			else{
-				soundSource.PlayGroundPoundHit();
-
-				GameObject gpEffect = Instantiate(groundEffectObject, transform.position,Quaternion.identity)
-					as GameObject;
-				
-				gpEffect.GetComponent<SpriteRenderer>().color = 
-					trailRendererGO.GetComponent<TrailRenderer>().materials[0].color;
-				if (other.gameObject.GetComponent<PlatformSoundS>() != null){
-					other.gameObject.GetComponent<PlatformSoundS>().PlayPlatformSounds();
-				}
-
-				// bigger shake
-				CameraShakeS.C.SmallShake();
-			}
-			
-			
-		}
-		
-		if (other.gameObject.tag == "Ground"){
-			//print ("HIT GROUND!!");
-			if (groundDetect.Grounded()){
-				attacking = false; 
-				isDangerous = false; 
-			}
-		}
-
-		
-		
-	}
-	
-	public void SelfDestruct(){
-
-		TurnOffIgnoreWalls();
-		UnpauseCharacter();
-		doingSpecial = false;
-		specialTriggered = false;
-		specialCooldown = 0;
-		ownRigid.useGravity = true;
-		TakeDamage(10000, false);
-
-		if (pinkGrabbed != null){
-			pinkGrabbed.transform.parent = null;
-			pinkGrabbed.TurnOffPinkPaused();
-			pinkGrabbed.TakeDamage(999999, true);
-			pinkGrabbed = null;
-		}
-
-
-	}
-
-	public void EndSpecialCooldown(){
-
-		specialCooldown = 0;
-
-	}
-	
-	public void DisableAttacks()
-	{
-		attacking = false; 
-		canAirStrafe = true; 
-		
-		this.GetComponent<SphereCollider>().material = normalPhysics; 
-		
-	}
-	
-	public void TriggerCharge(){
-		chargeSource.volume = maxChargeVolume;
-		chargeSource.Play ();
-	}
-	
-	void ManageCharge () {
-		if (chargeSource.volume > 0){
-			if (!charging){
-				chargeSource.volume -= chargeFadeRate*Time.deltaTime*TimeManagerS.timeMult;
-			}
-			else{
-				chargeSource.volume = maxChargeVolume;
-			}
-		}
-		else{
-			chargeSource.volume = 0;
-			chargeSource.Stop();
-		}
-	}
-	
-
-	public void TurnOnIgnoreWalls(){
-		ownRigid.useGravity = false;
-		gameObject.layer = LayerMask.NameToLayer(physicsLayerNoWalls);
-	}
-	
-	public void TurnOffIgnoreWalls(){
-		//print ("USE GRAV!!");
-		ownRigid.useGravity = true;
-		gameObject.layer = physicsLayerDefault;
-	}
-	
-	// for aim obj
-	public float GetChargeTime(){
-		return(chargeTime);
-	}
-	
-	public float GetChargeLv2Min(){
-		return (medChargeTime);
-	}
-	
-	public float GetChargeLv3Min(){
-		return (maxChargeTime);
-	}
-
-	public bool GetSpecialState(){
-		return doingSpecial;
-	}
-
-	public bool GetChompState(){
-		return doingChomp;
-	}
-
-
-	public void AddKO(){
-
-		numKOsInRow ++;
-		if (numKOsInRow >= 2 && characterNum < 7 && CurrentModeS.allowSpecials){
-			if (!specialParticles){
-				GameObject newParticles = Instantiate(chargingSpecialPrefab, transform.position,Quaternion.identity)
-					as GameObject;
-				specialParticles = newParticles;
-				newParticles.transform.parent = transform;
-			}
-		}
-
-	}
-
-	public void TriggerSlow(){
-
-
-
-		isSlowed = true;
-		if (!doingSpecial){
-			ownRigid.velocity *= slowMult;
-			ownRigid.drag /= slowMult;
-		}
-
-
-
-	}
-
-	public void DisableSlow(){
-
-		isSlowed = false;
-		if (!doingSpecial){
-			ownRigid.velocity /= slowMult;
-			ownRigid.drag *= slowMult;
-		}
-
-	}
-
-	public bool GetSlowedState(){
-
-		return isSlowed;
-
-	}
-
-	public PlayerAnimS GetAnimObj(){
-
-		return (spriteObjRender.GetComponent<PlayerAnimS>());
-
-	}
-
-	public void TurnOnPinkPause(){
-
-		pinkPaused = true;
-		ownRigid.isKinematic = true;
-	
-
-	}
-
-	public void TurnOffPinkPaused(){
-		
-		pinkPaused = false;
-		ownRigid.isKinematic = false;
-		
-		
-	}
-
-
-	public void SetPinkHold(PlayerS pinkTarget){
-		if (pinkGrabbed == null){
-			pinkGrabbed = pinkTarget;
-			pinkGrabbed.transform.parent = transform;
-			pinkTarget.TurnOnPinkPause();
-		}
-	}
-
-	public void SpecialIsDoneAnimating(){
-
-		specialTriggered = true;
-
-		// do special stuff
-
-		// if ghostMask, execute attack immediately
-		if (characterNum == 1){
-			
-			GameObject specialAttack = Instantiate(ghostMaskSpecialPrefab, transform.position, Quaternion.identity)
-				as GameObject;
-			specialAttack.GetComponent<GhostMaskSpecialAttackS>().playerRef = this;
-			
-		}
-		
-		// if acid, prep for DEATH LASER
-		if (characterNum == 2){
-			specialCooldown = acidSpecialTimeMax;
-			
-			acidSpecialReference = Instantiate(acidSpecialCollider, transform.position, Quaternion.identity)
-				as GameObject;
-			acidSpecialReference.GetComponent<DamageS>().MakeSpecial(this);
-			
-			acidSpecialCurrentRotateRate = acidSpecialStartRotateRate;
-			
-			// face input dir
-			Vector3 inputDir = Vector3.zero;
+										#else
+										dodgeDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
+										dodgeDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
+										#endif
+										
+										// add force
+										ownRigid.velocity = Vector3.zero;
+										if (!isSlowed){
+											ownRigid.AddForce(dodgeDir*dodgeForce*Time.deltaTime, ForceMode.Impulse);
+										}
+										else{
+											ownRigid.AddForce(dodgeDir*dodgeForce*slowMult*Time.deltaTime, ForceMode.Impulse);
+										}
+										
+										// stop current attack
+										
+										attacking = false;
+										isDangerous = false;
+										
+										
+										
+										//print (dodgeDir*dodgeForce*Time.deltaTime);
+										//print (ownRigid.velocity);
+										
+										// reset times
+										dodgeTimeCountdown = dodgeTimeMax;
+										respawnInvulnTime = dodgeInvulnTimeMax;
+										
+										// only allow one dodge in air; should reset if on ground
+										canDodge = false;
+										
+										// turn off grav for dodge
+										ownRigid.useGravity = false;
+										dodging = true;
+										canAirStrafe = false;
+										
+										ownRigid.drag = dodgeDrag;
+										
+										// play sound
+										soundSource.PlayDodgeSound();
+										
+										dodgeButtonDown = true;
+										
+										GameObject dashEffect = Instantiate(dashEffectObject, transform.position,Quaternion.identity)
+											as GameObject;
+										
+										Vector3 doFlip = dashEffect.transform.localScale;
+										if (spriteObject.transform.localScale.x < 0){
+											doFlip.x *= -1;
+											dashEffect.transform.localScale = doFlip;
+										}
+										
+										dashEffect.GetComponent<SpriteRenderer>().color = 
+											trailRendererGO.GetComponent<TrailRenderer>().materials[0].color;
+										
+									}
+								}
+								
+							}
+							
+							void MiscAction()
+							{
+								
+								// handles various things including dangerous states and trail renderers
+								
+								//this.GetComponent<LineRenderer>().SetPosition(0,this.transform.position);
+								//this.GetComponent<LineRenderer>().SetPosition(1,buttObj.transform.position);
+								
+								if(isDangerous && !isSlowed){
+									dangerousSprite.GetComponent<SpriteRenderer>().enabled = true; 
+									
+								}
+								else{
+									dangerousSprite.GetComponent<SpriteRenderer>().enabled = false; 
+								}
+								
+								hurtCounter -= 1;
+								
+								if (hurtCounter < 0) {
+									
+									spriteObjRender.color = Color.white;
+									trailRendererGO.GetComponent<TrailRenderer>().material = playerMats [characterNum -1];
+									
+									
+								} else {
+									spriteObjRender.color = hurtTint; 
+									trailRendererGO.GetComponent<TrailRenderer>().material = playerHurtMats[characterNum -1];
+								}
+								
+								// trying to fix something with lv 2
+								if (!groundDetect.Grounded()){
+									if (attackToPerform == 1){
+										groundLeeway = 0;
+									}
+								}
+								else{
+									
+									this.GetComponent<SphereCollider>().material = normalPhysics; 
+								}
+								
+								if (isSpawning) {
+									if (initialSpawnParticles != null) {
+										
+										spriteObject.GetComponent<Renderer> ().enabled = false; 
+										trailRendererGO.GetComponent<TrailRenderer> ().enabled = false; 
+										trailRendererGO2.GetComponent<TrailRenderer> ().enabled = false; 
+										
+									} else {
+										if(!isSpawning && numLives > 0)
+										{
+											Instantiate(spawnParticlePrefab,this.transform.position, Quaternion.identity); 
+											isSpawning = true; 
+											spriteObject.GetComponent<Renderer> ().enabled = true; 
+											trailRendererGO.GetComponent<TrailRenderer> ().enabled = true; 
+											trailRendererGO2.GetComponent<TrailRenderer> ().enabled = true; 
+										}
+									}
+								}
+								
+							}
+							
+							
+							public void SetSkin() //Ninja, Acid, Mummy, Pink
+							{
+								this.GetComponent<LineRenderer> ().material = playerMats [characterNum-1];
+								trailRendererGO.GetComponent<TrailRenderer> ().material = playerMats [characterNum - 1]; 
+								spriteObject.GetComponent<PlayerAnimS> ().SetCurrentSprites (characterNum, 0);
+								GetComponent<TrailHandlerRedubS> ().SetDotMaterial ();
+								
+								
+								
+							}
+							
+							
+							
+							void Respawn () {
+								
+								
+								if (respawning && !effectPause){
+									
+									//Disable player actions and physics
+									ownRigid.useGravity = false;
+									ownRigid.velocity = Vector3.zero;
+									//dangerObj.SetActive(false);
+									
+									//Halt collisions
+									GetComponent<Collider>().enabled = false;
+									
+									//Take Away Control
+									isDangerous = false;
+									jumpButtonDown = false;
+									attackTriggerDown = false;
+									charging = false;
+									attacking = false;
+									chargeTime = 0;
+									canAirStrafe = true;
+									
+									if(respawnTimeCountdown == respawnTimeMax)
+									{
+										
+										
+										
+										//VISUAL EFFECTS
+										//Eliminate any current 
+										if(chargingParticles!= null)
+										{
+											GameObject.Destroy(chargingParticles.gameObject); 
+										}
+										if(specialParticles!= null)
+										{
+											GameObject.Destroy(specialParticles.gameObject); 
+										}
+										
+										
+										deathPos = this.transform.position;
+										
+										// reset death streak
+										numKOsInRow = 0;
+										
+										//move player to new respawn position right away so trail renderer has time to update.
+										
+										// look for spawn positions that don't have a player attached
+										List<GameObject> newSpawnPts = new List<GameObject>(0);
+										for (int i = 0; i < allSpawnPts.Length; i++){
+											if (!allSpawnPts[i].GetComponent<SpawnPtS>().playerInRange()){
+												newSpawnPts.Add (allSpawnPts[i]);
+											}
+										}
+										
+										int randomSpawn = Mathf.FloorToInt( Random.Range(0, newSpawnPts.Count));
+										GameObject newSpawn = newSpawnPts[randomSpawn];
+										transform.position = newSpawn.transform.position;
+										
+										trailRendererGO.GetComponent<TrailRenderer>().enabled = false ;
+										trailRendererGO2.GetComponent<TrailRenderer>().enabled = false ;
+									}
+									
+									
+									if(respawnParticles != null && numLives > 0){
+										ParticleSystem spawnParticles = respawnParticles.GetComponent<ParticleSystem>();
+										//spawnParticles.startLifetime = 2;
+										respawnParticles.transform.position = 
+											Vector3.Lerp(deathPos, this.transform.position, spawnParticles.time/(respawnTimeMax*0.5f)); 
+										
+										if (spawnParticles.isPaused){
+											spawnParticles.Play();
+										}
+										
+										
+									}
+									
+									spriteObjRender.enabled = false;
+									
+									
+									//Give back control - should probably be converted to alternate thread -- ienumerator?
+									if (respawnTimeCountdown <= 0 && numLives != 0){
+										Instantiate(spawnParticlePrefab,this.transform.position, Quaternion.identity); 
+										
+										GetComponent<Collider>().enabled = true;
+										spriteObjRender.enabled = true;
+										respawning = false;
+										
+										respawnInvulnTime = 1.5f;
+										
+										ownRigid.useGravity = true;;
+										trailRendererGO.GetComponent<TrailRenderer>().enabled = true ;
+										trailRendererGO2.GetComponent<TrailRenderer>().enabled = true ;
+										
+										
+										health = initialHealth;
+										
+										//DisableAttacks(); 
+										
+										soundSource.PlayCharIntroSound();
+										
+										//no longer dead
+										isDead = false;
+									}
+									
+									
+									
+									//Countdown
+									respawnTimeCountdown -= Time.deltaTime*TimeManagerS.timeMult;
+									
+									
+									
+									
+									
+								}
+								
+								if (effectPause){
+									if(respawnParticles != null){
+										
+										respawnParticles.GetComponent<ParticleSystem>().Pause();
+										
+										
+									}
+								}
+								
+							}
+							
+							public void TakeDamage(float dmg, bool isSpecial){
+								
+								if (!inCharSelect){
+									health -= dmg;
+									hurtCounter = hurtTimer; 
+									
+									if (health <= 0){
+										
+										ownRigid.velocity = Vector3.zero;
+										
+										doingSpecial = false;
+										specialTriggered = false;
+										specialCooldown = 0;
+										
+										pinkPaused = false;
+										
+										if (isSpecial){
+											numLives = 0;
+										}
+										else{
+											if (CurrentModeS.currentMode == 1){
+												numLives --; 			//Decrement Counter
+											}
+										}
+										
+										GetComponent<TrailHandlerRedubS>().DestroyPlayerDots(); 
+										
+										UpdateScorekeeper(); 	//Have scorekeeper update (and update UI)
+										
+										respawning = true;
+										respawnTimeCountdown = respawnTimeMax;
+										
+										
+										
+										if(numLives <= 0){
+											this.gameObject.SetActive(false);
+										}
+										else{
+											Debug.Log(numLives);
+											respawnParticles = Instantiate(respawnParticlePrefab, this.transform.position, Quaternion.identity) as GameObject;
+											respawnParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[characterNum - 1].GetColor("_TintColor");
+											respawnParticles.GetComponent<ParticleSystem>().startLifetime = respawnTimeCountdown;
+										}
+										
+										Instantiate(deathParticles, this.transform.position, Quaternion.identity); 
+										soundSource.PlayDeathSounds();
+									}
+									
+									
+								}
+							}
+							
+							public void TurnOnCharSelect(){
+								inCharSelect = true;
+							}
+							void UpdateScorekeeper()
+							{
+								
+								
+								bool hasMoreLives = (numLives != 0);
+								ScoreKeeperS scoreKeeper = FindObjectOfType<Camera>().GetComponent<ScoreKeeperS>() as ScoreKeeperS;
+								scoreKeeper.PlayerDied(this, hasMoreLives);
+								
+								
+							}
+							public void InstantiateDeathParticles(){
+								
+								Instantiate(deathParticles, this.transform.position, Quaternion.identity); 
+							}
+							
+							public void SleepTime(float delayTime){
+								//pauseDelay = delayTime;
+								//prevGravState = ownRigid.useGravity;
+								//prevVel = ownRigid.velocity;
+								//prevButtVel = buttObjRigid.velocity;
+								//effectPause = true;
+								
+								//print ("PAUSE");
+							}
+							
+							public void PauseCharacter(){
+								
+								effectPause = true;
+								capturedGrav = ownRigid.useGravity;
+								capturedVel = ownRigid.velocity;
+								capturedDanger = isDangerous;
+								
+								ownRigid.useGravity = false;
+								ownRigid.velocity = Vector3.zero;
+								isDangerous = capturedDanger;
+								
+							}
+							public void UnpauseCharacter(){
+								
+								effectPause = false;
+								ownRigid.useGravity = capturedGrav;
+								ownRigid.velocity = capturedVel;
+								isDangerous = capturedDanger;
+								
+							}
+							
+							void OnCollisionEnter(Collision other){
+								
+								
+								Vector3 hitParticleSpawn = this.transform.position; 
+								
+								
+								GameObject newParticles =  Instantiate(hitParticles,hitParticleSpawn,Quaternion.identity) as GameObject;
+								newParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[characterNum - 1].GetColor("_TintColor");
+								
+								if (other.gameObject.tag == "Ground"){
+									
+									if (doingSpecial){
+										if (characterNum == 4){
+											
+											// destroy character
+											SelfDestruct();
+											TurnOffIgnoreWalls();
+											
+											
+										}
+									}
+									
+									if (attacking){
+										
+										
+										//TURN OFF THE ATTACKS
+										if (attackToPerform == 0)
+										{
+											//JabAttack();
+											FlingMiniAttack(true);
+										}
+										if (attackToPerform == 1)
+										{
+											//FlingMiniAttack(true);
+											//print ("TURN OFF");
+											FlingMiniAttack(true);
+											FlingSlowAttack(true); 
+										}
+										if (attackToPerform == 2)
+										{
+											FlingFastAttack(true); 
+										}
+										
+									}
+									
+									// turn off bounciness
+									this.GetComponent<SphereCollider>().material = normalPhysics; 
+									
+									
+									CameraShakeS.C.SmallShake();
+									
+								}
+								
+								// for hit sounds
+								if ((other.gameObject.tag == "Wall" || other.gameObject.tag == "Ground")){
+									
+									if (doingSpecial){
+										if (characterNum == 4){
+											
+											// destroy character
+											SelfDestruct();
+											TurnOffIgnoreWalls();
+											
+											
+										}
+									}
+									
+									// turn off lv3 ability
+									TurnOffIgnoreWalls();
+									
+									// play bounce sound if not groundpounding
+									if (!groundPounded){
+										if (soundSource != null){
+											if (other.gameObject.GetComponent<PlatformSoundS>() != null){
+												other.gameObject.GetComponent<PlatformSoundS>().PlayPlatformSounds();
+											}
+											else{
+												soundSource.PlayWallHit();
+											}
+											
+											
+										}
+										// tiny shake if not attacking, bigger one if you are
+										if (attacking){
+											CameraShakeS.C.SmallShake();
+										}
+										else{
+											CameraShakeS.C.MicroShake();
+										}
+										
+									}
+									else{
+										soundSource.PlayGroundPoundHit();
+										
+										GameObject gpEffect = Instantiate(groundEffectObject, transform.position,Quaternion.identity)
+											as GameObject;
+										
+										gpEffect.GetComponent<SpriteRenderer>().color = 
+											trailRendererGO.GetComponent<TrailRenderer>().materials[0].color;
+										if (other.gameObject.GetComponent<PlatformSoundS>() != null){
+											other.gameObject.GetComponent<PlatformSoundS>().PlayPlatformSounds();
+										}
+										
+										// bigger shake
+										CameraShakeS.C.SmallShake();
+									}
+									
+									
+								}
+								
+								if (other.gameObject.tag == "Ground"){
+									//print ("HIT GROUND!!");
+									if (groundDetect.Grounded()){
+										attacking = false; 
+										isDangerous = false; 
+									}
+								}
+								
+								
+								
+							}
+							
+							public void SelfDestruct(){
+								
+								TurnOffIgnoreWalls();
+								UnpauseCharacter();
+								doingSpecial = false;
+								specialTriggered = false;
+								specialCooldown = 0;
+								ownRigid.useGravity = true;
+								TakeDamage(10000, false);
+								
+								if (pinkGrabbed != null){
+									pinkGrabbed.transform.parent = null;
+									pinkGrabbed.TurnOffPinkPaused();
+									pinkGrabbed.TakeDamage(999999, true);
+									pinkGrabbed = null;
+								}
+								
+								
+							}
+							
+							public void EndSpecialCooldown(){
+								
+								specialCooldown = 0;
+								
+							}
+							
+							public void DisableAttacks()
+							{
+								attacking = false; 
+								canAirStrafe = true; 
+								
+								this.GetComponent<SphereCollider>().material = normalPhysics; 
+								
+							}
+							
+							public void TriggerCharge(){
+								chargeSource.volume = maxChargeVolume;
+								chargeSource.Play ();
+							}
+							
+							void ManageCharge () {
+								if (chargeSource.volume > 0){
+									if (!charging){
+										chargeSource.volume -= chargeFadeRate*Time.deltaTime*TimeManagerS.timeMult;
+									}
+									else{
+										chargeSource.volume = maxChargeVolume;
+									}
+								}
+								else{
+									chargeSource.volume = 0;
+									chargeSource.Stop();
+								}
+							}
+							
+							
+							public void TurnOnIgnoreWalls(){
+								ownRigid.useGravity = false;
+								gameObject.layer = LayerMask.NameToLayer(physicsLayerNoWalls);
+							}
+							
+							public void TurnOffIgnoreWalls(){
+								//print ("USE GRAV!!");
+								ownRigid.useGravity = true;
+								gameObject.layer = physicsLayerDefault;
+							}
+							
+							// for aim obj
+							public float GetChargeTime(){
+								return(chargeTime);
+							}
+							
+							public float GetChargeLv2Min(){
+								return (medChargeTime);
+							}
+							
+							public float GetChargeLv3Min(){
+								return (maxChargeTime);
+							}
+							
+							public bool GetSpecialState(){
+								return doingSpecial;
+							}
+							
+							public bool GetChompState(){
+								return doingChomp;
+							}
+							
+							
+							public void AddKO(){
+								
+								numKOsInRow ++;
+								if (numKOsInRow >= 2 && characterNum < 7 && CurrentModeS.allowSpecials){
+									if (!specialParticles){
+										GameObject newParticles = Instantiate(chargingSpecialPrefab, transform.position,Quaternion.identity)
+											as GameObject;
+										specialParticles = newParticles;
+										newParticles.transform.parent = transform;
+									}
+								}
+								
+							}
+							
+							public void TriggerSlow(){
+								
+								
+								
+								isSlowed = true;
+								if (!doingSpecial){
+									ownRigid.velocity *= slowMult;
+									ownRigid.drag /= slowMult;
+								}
+								
+								
+								
+							}
+							
+							public void DisableSlow(){
+								
+								isSlowed = false;
+								if (!doingSpecial){
+									ownRigid.velocity /= slowMult;
+									ownRigid.drag *= slowMult;
+								}
+								
+							}
+							
+							public bool GetSlowedState(){
+								
+								return isSlowed;
+								
+							}
+							
+							public PlayerAnimS GetAnimObj(){
+								
+								return (spriteObjRender.GetComponent<PlayerAnimS>());
+								
+							}
+							
+							public void TurnOnPinkPause(){
+								
+								pinkPaused = true;
+								ownRigid.isKinematic = true;
+								
+								
+							}
+							
+							public void TurnOffPinkPaused(){
+								
+								pinkPaused = false;
+								ownRigid.isKinematic = false;
+								
+								
+							}
+							
+							
+							public void SetPinkHold(PlayerS pinkTarget){
+								if (pinkGrabbed == null){
+									pinkGrabbed = pinkTarget;
+									pinkGrabbed.transform.parent = transform;
+									pinkTarget.TurnOnPinkPause();
+								}
+							}
+							
+							public void SpecialIsDoneAnimating(){
+								
+								specialTriggered = true;
+								
+								// do special stuff
+								
+								// if ghostMask, execute attack immediately
+								if (characterNum == 1){
+									
+									GameObject specialAttack = Instantiate(ghostMaskSpecialPrefab, transform.position, Quaternion.identity)
+										as GameObject;
+									specialAttack.GetComponent<GhostMaskSpecialAttackS>().playerRef = this;
+									
+								}
+								
+								// if acid, prep for DEATH LASER
+								if (characterNum == 2){
+									specialCooldown = acidSpecialTimeMax;
+									
+									acidSpecialReference = Instantiate(acidSpecialCollider, transform.position, Quaternion.identity)
+										as GameObject;
+									acidSpecialReference.GetComponent<DamageS>().MakeSpecial(this);
+									
+									acidSpecialCurrentRotateRate = acidSpecialStartRotateRate;
+									
+									// face input dir
+									Vector3 inputDir = Vector3.zero;
 									#if UNITY_WIIU
 									if (playerNum == 1){
 										inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
 										inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
 									}
 									else{
-										inputDir.x = wiiUInput.horizontalInput;
-										inputDir.y = wiiUInput.verticalInput;
+										inputDir.x = wiiUInput.horizontalAxis;
+										inputDir.y = wiiUInput.verticalAxis;
 									}
 									#else
 									inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
 									inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
 									#endif
-			spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
-			// rotate a tiny bit to allow for error
-			if (spriteObject.transform.localScale.x < 0){
-				spriteObject.transform.Rotate(new Vector3(0,0, 60f));
-				Debug.Log(spriteObject.transform.rotation);
-			}
-			else{
-				spriteObject.transform.Rotate(new Vector3(0,0, -60f));
-				Debug.Log(spriteObject.transform.rotation);
-			}
-			currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z;
-		}
-		
-		// if mummy, prep for shots
-		if (characterNum == 3){
-			timeBettwenProjCountdown = timeBetweenProjsMax;
-			currentProj = 0;
-			specialCooldown = 1;
-			
-			// face input dir
-			Vector3 inputDir = Vector3.zero;
+									spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
+									// rotate a tiny bit to allow for error
+									if (spriteObject.transform.localScale.x < 0){
+										spriteObject.transform.Rotate(new Vector3(0,0, 60f));
+										Debug.Log(spriteObject.transform.rotation);
+									}
+									else{
+										spriteObject.transform.Rotate(new Vector3(0,0, -60f));
+										Debug.Log(spriteObject.transform.rotation);
+									}
+									currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z;
+								}
+								
+								// if mummy, prep for shots
+								if (characterNum == 3){
+									timeBettwenProjCountdown = timeBetweenProjsMax;
+									currentProj = 0;
+									specialCooldown = 1;
+									
+									// face input dir
+									Vector3 inputDir = Vector3.zero;
 									#if UNITY_WIIU
 									if (playerNum == 1){
 										inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
 										inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
 									}
 									else{
-										inputDir.x = wiiUInput.horizontalInput;
-										inputDir.y = wiiUInput.verticalInput;
+										inputDir.x = wiiUInput.horizontalAxis;
+										inputDir.y = wiiUInput.verticalAxis;
 									}
 									#else
 									inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
 									inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
 									#endif
-			spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
-			if (spriteObject.transform.localScale.x < 0){
-				currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z+30f;
-			}
-			else{
-				currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z-30f;
-			}
-		}
-		
-		if (characterNum == 4){
-			specialCooldown = 1;
-			GameObject specialAttack = Instantiate(pinkWhipSpecialPrefab, transform.position, transform.rotation)
-				as GameObject;
-			specialAttack.transform.parent = transform;
-			specialAttack.GetComponent<PinkWhipSpecialAttackS>().playerRef = this;
-			
-			// shoot off in dir
-			Vector3 inputDir = Vector3.zero;
+									spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
+									if (spriteObject.transform.localScale.x < 0){
+										currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z+30f;
+									}
+									else{
+										currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z-30f;
+									}
+								}
+								
+								if (characterNum == 4){
+									specialCooldown = 1;
+									GameObject specialAttack = Instantiate(pinkWhipSpecialPrefab, transform.position, transform.rotation)
+										as GameObject;
+									specialAttack.transform.parent = transform;
+									specialAttack.GetComponent<PinkWhipSpecialAttackS>().playerRef = this;
+									
+									// shoot off in dir
+									Vector3 inputDir = Vector3.zero;
 									#if UNITY_WIIU
 									if (playerNum == 1){
 										inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
 										inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
 									}
 									else{
-										inputDir.x = wiiUInput.horizontalInput;
-										inputDir.y = wiiUInput.verticalInput;
+										inputDir.x = wiiUInput.horizontalAxis;
+										inputDir.y = wiiUInput.verticalAxis;
 									}
 									#else
 									inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
 									inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
 									#endif
-			if (inputDir.x == 0 && inputDir.y == 0){
-				inputDir.x = 1f;
-				if (spriteObject.transform.localScale.x > 0){
-					inputDir *= -1f;
-				}
-			}
-			pinkWhipSpecialVel = inputDir.normalized*pinkWhipSpecialSpeed;
-
-			pinkWhipSuplexCurrentSpeed = pinkWhipSuplexStartSpeed;
-			
-			TurnOnIgnoreWalls();
-			
-		}
-		
-		// character 5 does vertical chomp
-		if (characterNum == 5){
-			
-			GameObject SpecialAttackChar5 = 
-				Instantiate(char5SpecialHandler, transform.position, Quaternion.identity)
-					as GameObject;
-			
-			SpecialAttackChar5.GetComponent<MegaChompHandlerS>().playerRef = this;
-			specialCooldown = 1f;
-			
-		}
-		
-		// character 6 (unnamed for now) destroys self with explosion after small delay
-		if (characterNum == 6){
-			blobbySpecialDelay = blobbySpecialDelayMax;
-		}
-
-	}
-
-	void BlobblyExplosion(){
-		GameObject SpecialAttackChar6 = 
-			Instantiate(char6SpecialCollider, transform.position, Quaternion.identity)
-				as GameObject;
-		SpecialAttackChar6.GetComponent<MrWrapsSpecialAttackS>().playerRef = this;
-		SelfDestruct();
-	}
-
-	void BackToMenu(){
-		// reset for festival demo purposes
+									if (inputDir.x == 0 && inputDir.y == 0){
+										inputDir.x = 1f;
+										if (spriteObject.transform.localScale.x > 0){
+											inputDir *= -1f;
+										}
+									}
+									pinkWhipSpecialVel = inputDir.normalized*pinkWhipSpecialSpeed;
+									
+									pinkWhipSuplexCurrentSpeed = pinkWhipSuplexStartSpeed;
+									
+									TurnOnIgnoreWalls();
+									
+								}
+								
+								// character 5 does vertical chomp
+								if (characterNum == 5){
+									
+									GameObject SpecialAttackChar5 = 
+										Instantiate(char5SpecialHandler, transform.position, Quaternion.identity)
+											as GameObject;
+									
+									SpecialAttackChar5.GetComponent<MegaChompHandlerS>().playerRef = this;
+									specialCooldown = 1f;
+									
+								}
+								
+								// character 6 (unnamed for now) destroys self with explosion after small delay
+								if (characterNum == 6){
+									blobbySpecialDelay = blobbySpecialDelayMax;
+								}
+								
+							}
+							
+							void BlobblyExplosion(){
+								GameObject SpecialAttackChar6 = 
+									Instantiate(char6SpecialCollider, transform.position, Quaternion.identity)
+										as GameObject;
+								SpecialAttackChar6.GetComponent<MrWrapsSpecialAttackS>().playerRef = this;
+								SelfDestruct();
+							}
+							
+							void BackToMenu(){
+								// reset for festival demo purposes
 								/*
 		if (Input.GetButton("StartButtonPlayer"+playerNum+platformType) &&
 		    Input.GetButton("AButtonPlayer"+playerNum+platformType) &&
@@ -2604,11 +2604,11 @@ public class PlayerS : MonoBehaviour {
 			Application.LoadLevel("1StartMenu");
 		}
 		**/
-	}
-
-	public void AddWiiUInputManger(WiiUControllerManagerS wii){
-
-		wiiUInput = wii;
-
-	}
-}
+							}
+							
+							public void AddwiiUInputManger(WiiUControllerManagerS wii){
+								
+								wiiUInput = wii;
+								
+							}
+						}

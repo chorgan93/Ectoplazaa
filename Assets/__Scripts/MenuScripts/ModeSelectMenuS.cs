@@ -61,7 +61,8 @@ public class ModeSelectMenuS : MonoBehaviour {
 	void FixedUpdate () {
 		
 		if (startedLoading){
-			if (async.progress >= 0.9f){
+			Debug.Log(async.progress);
+			if (async.progress >= 0.89f){
 				ActivateScene();
 			}
 		}
