@@ -42,7 +42,8 @@ public class WiiUControllerManagerS : MonoBehaviour {
 		
 		WiiU.RemoteState state = rem.state;
 		
-		
+
+
 		switch (state.devType){
 			
 			// IF WII REMOTE & nunchuk
@@ -66,6 +67,9 @@ public class WiiUControllerManagerS : MonoBehaviour {
 			
 			horizontalAxis = state.nunchuk.stick.x;
 			verticalAxis = state.nunchuk.stick.y;
+
+			
+			Debug.Log(myChannel + " : " + state.devType);
 			
 			
 			break;
@@ -91,6 +95,9 @@ public class WiiUControllerManagerS : MonoBehaviour {
 			
 			horizontalAxis = state.nunchuk.stick.x;
 			verticalAxis = state.nunchuk.stick.y;
+
+			
+			Debug.Log(myChannel + " : " + state.devType);
 			
 			
 			break;
@@ -123,8 +130,75 @@ public class WiiUControllerManagerS : MonoBehaviour {
 			
 			horizontalAxis = state.pro.leftStick.x;
 			verticalAxis = state.pro.leftStick.y;
+
+			
+			Debug.Log(myChannel + " : " + state.devType);
 			
 			break;
+
+			case WiiU.RemoteDevType.Classic:
+			
+				if (state.classic.IsTriggered(WiiU.ClassicButton.B) || 
+			    	state.classic.IsTriggered(WiiU.ClassicButton.R) ||
+			    	state.classic.IsTriggered(WiiU.ClassicButton.ZR)){
+					flingButtonDown = true;
+				}
+				else{
+					flingButtonDown = false;
+				}
+				
+				if (state.classic.IsTriggered(WiiU.ClassicButton.Y) || 
+				    state.classic.IsTriggered(WiiU.ClassicButton.L) ||
+			    	state.classic.IsTriggered(WiiU.ClassicButton.ZL)){
+					dashButtonDown = true;
+				}
+				else{
+					dashButtonDown = false;
+				}
+				
+				specialButtonDown = state.classic.IsTriggered(WiiU.ClassicButton.X);
+				jumpButtonDown = state.classic.IsTriggered(WiiU.ClassicButton.B);
+				pauseButtonDown = state.classic.IsTriggered(WiiU.ClassicButton.Plus);
+				
+				horizontalAxis = state.classic.leftStick.x;
+				verticalAxis = state.classic.leftStick.y;
+
+			
+				Debug.Log(myChannel + " : " + state.devType);
+				
+				break;
+
+			case WiiU.RemoteDevType.MotionPlusClassic:
+			
+				if (state.classic.IsTriggered(WiiU.ClassicButton.B) || 
+				    state.classic.IsTriggered(WiiU.ClassicButton.R) ||
+				    state.classic.IsTriggered(WiiU.ClassicButton.ZR)){
+					flingButtonDown = true;
+				}
+				else{
+					flingButtonDown = false;
+				}
+				
+				if (state.classic.IsTriggered(WiiU.ClassicButton.Y) || 
+				    state.classic.IsTriggered(WiiU.ClassicButton.L) ||
+				    state.classic.IsTriggered(WiiU.ClassicButton.ZL)){
+					dashButtonDown = true;
+				}
+				else{
+					dashButtonDown = false;
+				}
+			
+				specialButtonDown = state.classic.IsTriggered(WiiU.ClassicButton.X);
+				jumpButtonDown = state.classic.IsTriggered(WiiU.ClassicButton.B);
+				pauseButtonDown = state.classic.IsTriggered(WiiU.ClassicButton.Plus);
+				
+				horizontalAxis = state.classic.leftStick.x;
+				verticalAxis = state.classic.leftStick.y;
+
+			
+				Debug.Log(myChannel + " : " + state.devType);
+				
+				break;
 			
 			
 		default:
