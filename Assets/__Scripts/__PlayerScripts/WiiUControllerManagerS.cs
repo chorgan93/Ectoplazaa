@@ -51,11 +51,11 @@ public class WiiUControllerManagerS : MonoBehaviour {
 		case WiiU.RemoteDevType.Nunchuk:
 			
 			
-			flingButtonDown = state.IsTriggered(WiiU.RemoteButton.B);
-			jumpButtonDown = state.IsTriggered(WiiU.RemoteButton.A);
+			specialButtonDown = state.IsTriggered(WiiU.RemoteButton.B);
+			dashButtonDown = state.IsTriggered(WiiU.RemoteButton.A);
 			
-			dashButtonDown = state.IsTriggered(WiiU.RemoteButton.NunchukZ);
-			specialButtonDown = state.IsTriggered(WiiU.RemoteButton.NunchukC);
+			flingButtonDown = state.IsTriggered(WiiU.RemoteButton.NunchukZ);
+			jumpButtonDown = state.IsTriggered(WiiU.RemoteButton.NunchukC);
 			
 			if (state.IsTriggered(WiiU.RemoteButton.Minus) ||
 			    state.IsTriggered(WiiU.RemoteButton.Plus)){
@@ -79,11 +79,11 @@ public class WiiUControllerManagerS : MonoBehaviour {
 		case WiiU.RemoteDevType.MotionPlusNunchuk:
 			
 			
-			flingButtonDown = state.IsTriggered(WiiU.RemoteButton.B);
-			jumpButtonDown = state.IsTriggered(WiiU.RemoteButton.A);
+			specialButtonDown = state.IsTriggered(WiiU.RemoteButton.B);
+			dashButtonDown = state.IsTriggered(WiiU.RemoteButton.A);
 			
-			dashButtonDown = state.IsTriggered(WiiU.RemoteButton.NunchukZ);
-			specialButtonDown = state.IsTriggered(WiiU.RemoteButton.NunchukC);
+			flingButtonDown = state.IsTriggered(WiiU.RemoteButton.NunchukZ);
+			jumpButtonDown = state.IsTriggered(WiiU.RemoteButton.NunchukC);
 			
 			if (state.IsTriggered(WiiU.RemoteButton.Minus) ||
 			    state.IsTriggered(WiiU.RemoteButton.Plus)){
