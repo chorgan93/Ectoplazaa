@@ -23,8 +23,8 @@ public class ScoreKeeperS : MonoBehaviour {
 	public static int 			scoreThresholdCollectoplaza = 35;
 	public static int 			scoreThresholdCollectoplazaTeam = 70;
 
-	public static int 			numberLives = 7;
-	public static int 			numberLivesTeam = 7;								//stock mode
+	public static int 			numberLives = 4;
+	public static int 			numberLivesTeam = 4;								//stock mode
 	private int 		numPlayersLeft = 0; 					//stock mode
 	public static int 			scorePerGoalGhostball = 1,
 						scoreThresholdGhostball = 5,
@@ -802,11 +802,13 @@ public class ScoreKeeperS : MonoBehaviour {
 
 	public void AddPoints(int playerNumber)						//Used by Ghostball Goal
 	{	//Should probably be generalized - depending on the mode...?
+		if (playerNumber > 0){
 		if (GlobalVars.playerList.Length>=playerNumber)	//check if active
 		{
 			PlayerS p = GlobalVars.playerList[playerNumber-1].GetComponent<PlayerS>();	//Get Player
 			p.score += scorePerGoalGhostball;				//Add score
 			Debug.Log(p.score);
+		}
 		}
 	}
 

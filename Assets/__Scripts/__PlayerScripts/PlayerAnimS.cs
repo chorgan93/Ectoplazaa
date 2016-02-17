@@ -504,7 +504,7 @@ public class PlayerAnimS : MonoBehaviour {
 
 
 		myCharNum = characterNumber;
-		myColor = colorNum;
+		myColor = 0;
 
 		// Ninja sprite sets
 		if (characterNumber == 1) {

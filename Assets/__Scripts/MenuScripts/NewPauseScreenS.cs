@@ -379,13 +379,13 @@ public class NewPauseScreenS : MonoBehaviour {
 															
 														}
 														
-														private void TurnOnText(){
+	private void TurnOnText(){
+	
+		foreach (GameObject textObj in allTextHolder){
+			textObj.SetActive(true);
+		}
 															
-															foreach (GameObject textObj in allTextHolder){
-																textObj.SetActive(true);
-															}
-															
-														}
+	}
 														
 														private void TurnOffText(){
 															

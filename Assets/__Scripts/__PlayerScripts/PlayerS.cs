@@ -276,7 +276,7 @@ public class PlayerS : MonoBehaviour {
 	public GameObject char5SpecialHandler;
 	
 	public GameObject char6SpecialCollider;
-	private float blobbySpecialDelayMax = 0.6f;
+	private float blobbySpecialDelayMax = 0.3f;
 	private float blobbySpecialDelay;
 	
 	[Header("Effect Stuff")]
@@ -2091,6 +2091,9 @@ public class PlayerS : MonoBehaviour {
 										
 										respawning = true;
 										respawnTimeCountdown = respawnTimeMax;
+
+										// clear ground check
+										groundDetect.RemoveAll();
 										
 										
 										

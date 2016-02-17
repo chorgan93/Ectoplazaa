@@ -8,6 +8,8 @@ public class MrWrapsSpecialAttackS : MonoBehaviour {
 
 	public float lifeTime = 2f;
 
+	public float turnOffColliderTime = 0f;
+
 	public MrWrapsSpecialAttackS subExplosion;
 
 
@@ -27,6 +29,11 @@ public class MrWrapsSpecialAttackS : MonoBehaviour {
 		}
 
 		lifeTime -= Time.deltaTime*TimeManagerS.timeMult;
+
+		if (lifeTime <= turnOffColliderTime){
+			GetComponent<Collider>().enabled = false;
+		}
+
 		if (lifeTime <= 0){
 			Destroy(gameObject);
 		}

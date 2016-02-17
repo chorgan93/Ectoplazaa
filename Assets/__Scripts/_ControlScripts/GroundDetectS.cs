@@ -33,6 +33,10 @@ public class GroundDetectS : MonoBehaviour {
 		}
 	}
 
+	public void RemoveAll(){
+		groundObjs.Clear();
+	}
+
 	public bool Grounded(){
 		if (groundObjs.Count > 0){
 			return true;

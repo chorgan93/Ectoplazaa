@@ -236,18 +236,40 @@ public class TrailHandlerRedubS : MonoBehaviour {
 		if (CurrentModeS.isTeamMode){
 			if (CurrentModeS.currentMode == 0){
 				if (GlobalVars.teamNumber[playerRef.playerNum-1] == 1){
-					dotNum = (int)Mathf.Ceil((currentScoreKeeper.GetRedScore()+playerRef.startEctoNum)*trailLengthMult);
+					if (currentScoreKeeper){
+						dotNum = (int)Mathf.Ceil((currentScoreKeeper.GetRedScore()+playerRef.startEctoNum)*trailLengthMult);
+					}
+					else{
+						dotNum = playerRef.startEctoNum;
+					}
 				}
 				else{
-					dotNum = (int)Mathf.Ceil((currentScoreKeeper.GetBlueScore()+playerRef.startEctoNum)*trailLengthMult);
+					if (currentScoreKeeper){
+						dotNum = (int)Mathf.Ceil((currentScoreKeeper.GetBlueScore()+playerRef.startEctoNum)*trailLengthMult);
+					}
+					else{
+						dotNum = playerRef.startEctoNum;
+					}
 				}
 			}
 			else if (CurrentModeS.currentMode == 2){
 				if (GlobalVars.teamNumber[playerRef.playerNum-1] == 1){
-					dotNum = (int)Mathf.Ceil(ScoreKeeperS.scoreThresholdCollectoplaza*(currentScoreKeeper.GetRedScore()+playerRef.startEctoNum)*trailLengthMult);
+					if (currentScoreKeeper){
+						dotNum = (int)Mathf.Ceil(ScoreKeeperS.scoreThresholdCollectoplaza*
+						                         (currentScoreKeeper.GetRedScore()+playerRef.startEctoNum)*trailLengthMult);
+					}
+					else{
+						dotNum = playerRef.startEctoNum;
+					}
 				}
 				else{
-					dotNum = (int)Mathf.Ceil(ScoreKeeperS.scoreThresholdCollectoplaza*(currentScoreKeeper.GetBlueScore()+playerRef.startEctoNum)*trailLengthMult);
+					if (currentScoreKeeper){
+						dotNum = (int)Mathf.Ceil(ScoreKeeperS.scoreThresholdCollectoplaza*
+						                         (currentScoreKeeper.GetBlueScore()+playerRef.startEctoNum)*trailLengthMult);
+					}
+					else{
+						dotNum = playerRef.startEctoNum;
+					}
 				}
 			}
 			else{
