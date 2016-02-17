@@ -91,13 +91,15 @@ public class NewPauseScreenS : MonoBehaviour {
 										CameraShakeS.C.sleeping = true;
 									}
 									else{
-										pauseActive = false;
-										pauseButtonDownP1 = true;
+										if (playerWhoPaused == i){
+											pauseActive = false;
+											pauseButtonDownP1 = true;
 										
 										
-										// allow camera shake
-										CameraShakeS.C.sleeping = false;
-										Time.timeScale = 1;
+											// allow camera shake
+											CameraShakeS.C.sleeping = false;
+											Time.timeScale = 1;
+										}
 									}
 								}
 							}
@@ -133,13 +135,15 @@ public class NewPauseScreenS : MonoBehaviour {
 												CameraShakeS.C.sleeping = true;
 											}
 											else{
-												pauseActive = false;
-												pauseButtonDownP2 = true;
-												
-												
-												// allow camera shake
-												CameraShakeS.C.sleeping = false;
-												Time.timeScale = 1;
+												if (playerWhoPaused == i){
+													pauseActive = false;
+													pauseButtonDownP2 = true;
+													
+													
+													// allow camera shake
+													CameraShakeS.C.sleeping = false;
+													Time.timeScale = 1;
+												}
 											}
 										}
 									}
@@ -176,13 +180,15 @@ public class NewPauseScreenS : MonoBehaviour {
 														CameraShakeS.C.sleeping = true;
 													}
 													else{
-														pauseActive = false;
-														pauseButtonDownP3 = true;
-														
-														
-														// allow camera shake
-														CameraShakeS.C.sleeping = false;
-														Time.timeScale = 1;
+														if (playerWhoPaused == i){
+															pauseActive = false;
+															pauseButtonDownP3 = true;
+															
+															
+															// allow camera shake
+															CameraShakeS.C.sleeping = false;
+															Time.timeScale = 1;
+														}
 													}
 												}
 											}
@@ -218,13 +224,15 @@ public class NewPauseScreenS : MonoBehaviour {
 																CameraShakeS.C.sleeping = true;
 															}
 															else{
-																pauseActive = false;
-																pauseButtonDownP4 = true;
-																
-																
-																// allow camera shake
-																CameraShakeS.C.sleeping = false;
-																Time.timeScale = 1;
+																if (playerWhoPaused == i){
+																	pauseActive = false;
+																	pauseButtonDownP4 = true;
+																	
+																	
+																	// allow camera shake
+																	CameraShakeS.C.sleeping = false;
+																	Time.timeScale = 1;
+																}
 															}
 														}
 													}

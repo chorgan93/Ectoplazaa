@@ -27,8 +27,8 @@ public class ScoreKeeperS : MonoBehaviour {
 	public static int 			numberLivesTeam = 4;								//stock mode
 	private int 		numPlayersLeft = 0; 					//stock mode
 	public static int 			scorePerGoalGhostball = 1,
-						scoreThresholdGhostball = 5,
-						scoreThresholdGhostballTeam = 7;
+						scoreThresholdGhostball = 3,
+						scoreThresholdGhostballTeam = 5;
 	private bool []		playersPlaying = new bool[4]{false,false,false,false}; //Stock mode
 	public static bool 	gameEnd = false;
 

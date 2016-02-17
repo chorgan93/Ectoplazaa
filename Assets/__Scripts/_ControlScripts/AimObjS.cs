@@ -14,6 +14,7 @@ public class AimObjS : MonoBehaviour {
 
 
 	private PlayerS playerRef;
+	private GameObject playerRender;
 
 	private string platformType;
 
@@ -32,6 +33,7 @@ public class AimObjS : MonoBehaviour {
 		platformType = PlatformS.GetPlatform();
 
 		playerRef = transform.parent.GetComponent<PlayerS>();
+		playerRender = playerRef.spriteObject;
 		transform.parent = null;
 
 		startSize = transform.localScale.x;
@@ -49,7 +51,7 @@ public class AimObjS : MonoBehaviour {
 
 		if (playerRef){
 
-			if (playerRef.spriteObject.GetComponent<SpriteRenderer>().enabled && playerRef.health > 0){
+			if (playerRef.spriteObject.GetComponent<SpriteRenderer>().enabled && !playerRef.respawning){
 
 				chargeBarSprite.SetActive(true);
 	
@@ -96,6 +98,10 @@ public class AimObjS : MonoBehaviour {
 					chargeShakeOffset.z = transform.position.z;
 					chargeBarSprite.transform.localPosition = chargeShakeOffset;
 
+					// shake head offset
+					chargeShakeOffset.z = playerRender.transform.localPosition.z;
+					chargeShakeOffset/=2f;
+					playerRender.transform.localPosition = chargeShakeOffset;
 			
 			float newAngle = 0; 
 
@@ -138,6 +144,7 @@ public class AimObjS : MonoBehaviour {
 				}	
 				else{
 					chargeBarSprite.SetActive(false);
+					playerRender.transform.localPosition = Vector3.zero;
 				}
 
 
@@ -145,6 +152,7 @@ public class AimObjS : MonoBehaviour {
 		}
 		else{
 			chargeBarSprite.SetActive(false);
+			playerRender.transform.localPosition = Vector3.zero;
 		}
 
 	}

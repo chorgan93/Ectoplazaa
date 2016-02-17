@@ -433,10 +433,12 @@ public class DamageS : MonoBehaviour {
 			myLaserRender.SetPosition(1, renderEnd);
 
 			Vector3 laserBeginPos = playerRef.transform.position;
-			laserBeginPos.z -= 1f;
+			laserBeginPos.z -= 3f;
 			laserRenderBegin.transform.position = laserDrool.transform.position = laserBeginPos;
 
-			laserRenderEnd.transform.position = transform.position;
+			Vector3 laserEndPos = transform.position;
+			laserEndPos.z -= 3f;
+			laserRenderEnd.transform.position = laserEndPos;
 			Vector3 laserPieceRotation = playerRef.spriteObject.transform.rotation.eulerAngles;
 			laserPieceRotation.z += 90f;
 			if (playerRef.spriteObject.transform.localScale.x > 0){

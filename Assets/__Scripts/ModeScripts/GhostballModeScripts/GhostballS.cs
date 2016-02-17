@@ -80,6 +80,7 @@ public class GhostballS : MonoBehaviour {
 			}
 			else{
 				CameraShakeS.C.MicroShake();
+					CameraShakeS.C.TimeSleep(0.08f);
 			}
 			}
 		}
