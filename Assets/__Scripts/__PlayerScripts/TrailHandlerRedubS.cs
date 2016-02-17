@@ -240,7 +240,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 						dotNum = (int)Mathf.Ceil((currentScoreKeeper.GetRedScore()+playerRef.startEctoNum)*trailLengthMult);
 					}
 					else{
-						dotNum = playerRef.startEctoNum;
+						dotNum = Mathf.CeilToInt(playerRef.startEctoNum);
 					}
 				}
 				else{
@@ -248,7 +248,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 						dotNum = (int)Mathf.Ceil((currentScoreKeeper.GetBlueScore()+playerRef.startEctoNum)*trailLengthMult);
 					}
 					else{
-						dotNum = playerRef.startEctoNum;
+						dotNum = Mathf.CeilToInt(playerRef.startEctoNum);
 					}
 				}
 			}
@@ -259,7 +259,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 						                         (currentScoreKeeper.GetRedScore()+playerRef.startEctoNum)*trailLengthMult);
 					}
 					else{
-						dotNum = playerRef.startEctoNum;
+						dotNum = Mathf.CeilToInt(playerRef.startEctoNum);
 					}
 				}
 				else{
@@ -268,7 +268,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 						                         (currentScoreKeeper.GetBlueScore()+playerRef.startEctoNum)*trailLengthMult);
 					}
 					else{
-						dotNum = playerRef.startEctoNum;
+						dotNum = Mathf.CeilToInt(playerRef.startEctoNum);
 					}
 				}
 			}
