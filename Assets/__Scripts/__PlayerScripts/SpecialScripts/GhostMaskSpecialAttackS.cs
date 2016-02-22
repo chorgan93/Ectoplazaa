@@ -78,14 +78,14 @@ public class GhostMaskSpecialAttackS : MonoBehaviour {
 
 		if (other.gameObject.tag == "Player"){
 			PlayerS otherPlayer = other.gameObject.GetComponent<PlayerS>();
-			if (otherPlayer != playerRef){
+			if (otherPlayer != playerRef && otherPlayer.health > 0){
 				SlashAttack(otherPlayer);
 			}
 		}
 
 		if (other.gameObject.tag == "PlayerTrail"){
 			PlayerS otherPlayer = other.gameObject.GetComponent<DotColliderS>().whoCreatedMe;
-			if (otherPlayer != playerRef){
+			if (otherPlayer != playerRef && otherPlayer.health > 0){
 				SlashAttack(otherPlayer);
 			}
 		}

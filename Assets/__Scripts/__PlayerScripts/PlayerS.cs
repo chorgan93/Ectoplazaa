@@ -284,6 +284,7 @@ public class PlayerS : MonoBehaviour {
 	public GameObject jumpEffectObject;
 	public GameObject dashEffectObject;
 	public GameObject groundEffectObject;
+	public GameObject elimAnim;
 	
 	//slowed vars
 	private bool isSlowed;
@@ -2080,6 +2081,7 @@ public class PlayerS : MonoBehaviour {
 										
 										if (isSpecial){
 											numLives = 0;
+											Instantiate(elimAnim, transform.position, Quaternion.identity);
 										}
 										else{
 											if (CurrentModeS.currentMode == 1){
