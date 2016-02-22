@@ -36,6 +36,8 @@ public class CameraShakeS : MonoBehaviour {
 	//private Vector3 startPos;
 	
 	public static CameraShakeS	C;
+
+	public static bool timeSleepOn = true;
 	
 	void Start(){
 		
@@ -56,8 +58,7 @@ public class CameraShakeS : MonoBehaviour {
 		}
 		else{
 
-		if(shake_intensity > 0 && !sleeping && ScoreKeeperS.gameStarted){
-			//print ("SHAKING");
+		if(shake_intensity > 0 && !sleeping){
 			
 			Vector3 camPos = ownFollow.cameraPos;
 			camPos.x += Random.insideUnitSphere.x * shake_intensity * shakeStrengthMult;
@@ -75,11 +76,13 @@ public class CameraShakeS : MonoBehaviour {
 		
 		if (sleeping){
 
+			if (timeSleepOn){
 			if (halfSleep){
 				Time.timeScale = 0.5f;
 			}
 			else{
 				Time.timeScale = 0.1f;
+			}
 			}
 			
 			sleepDuration -= Time.deltaTime/Time.timeScale;
@@ -136,8 +139,10 @@ public class CameraShakeS : MonoBehaviour {
 	
 	// time freeze
 	public void TimeSleep(float sleepTime) {
-		
+
+		if (timeSleepOn){
 		Time.timeScale = 0.4f;
+		}
 		
 		//print ("SLEEPING");
 		sleepDuration = sleepTime;

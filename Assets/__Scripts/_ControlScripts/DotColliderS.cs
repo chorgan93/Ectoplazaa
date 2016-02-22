@@ -8,8 +8,8 @@ public class DotColliderS : MonoBehaviour {
 	public PlayerEffectS fireTrail;
 
 	void Start(){
-		lightningTrail.playerRef = whoCreatedMe;
-		fireTrail.playerRef = whoCreatedMe;
+		//lightningTrail.playerRef = whoCreatedMe;
+		//fireTrail.playerRef = whoCreatedMe;
 	}
 
 	void FixedUpdate () {

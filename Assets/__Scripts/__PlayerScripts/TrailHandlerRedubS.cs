@@ -34,6 +34,8 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	public GameObject dotPrefab;
 	public List<GameObject> spawnedDots;
 
+	private ScoreKeeperS currentScoreKeeper;
+
 
 	Vector3 lastLocation, currentLocation; 
 
@@ -55,6 +57,8 @@ public class TrailHandlerRedubS : MonoBehaviour {
 		originalScale = dotPrefab.transform.localScale; 
 
 		playerRigid = playerRef.GetComponent<Rigidbody>();
+
+		currentScoreKeeper = GameObject.Find("Main Camera").GetComponent<ScoreKeeperS>();
 
 
 		//bodyConnector.material = playerRef.GetComponent<Renderer>().material;
@@ -227,8 +231,67 @@ public class TrailHandlerRedubS : MonoBehaviour {
 		//print ("Distance: " + posDistance); 
 		//print ("newDots: " + newDotNumber); 
 
-		
-		int dotNum = (int)Mathf.Ceil((playerRef.score+playerRef.startEctoNum)*trailLengthMult);
+		int dotNum = 1;
+
+		if (CurrentModeS.isTeamMode){
+			if (CurrentModeS.currentMode == 0){
+				if (GlobalVars.teamNumber[playerRef.playerNum-1] == 1){
+					if (currentScoreKeeper){
+						dotNum = (int)Mathf.Ceil((currentScoreKeeper.GetRedScore()+playerRef.startEctoNum)*trailLengthMult);
+					}
+					else{
+						dotNum = Mathf.CeilToInt(playerRef.startEctoNum);
+					}
+				}
+				else{
+					if (currentScoreKeeper){
+						dotNum = (int)Mathf.Ceil((currentScoreKeeper.GetBlueScore()+playerRef.startEctoNum)*trailLengthMult);
+					}
+					else{
+						dotNum = Mathf.CeilToInt(playerRef.startEctoNum);
+					}
+				}
+			}
+			else if (CurrentModeS.currentMode == 2){
+				if (GlobalVars.teamNumber[playerRef.playerNum-1] == 1){
+					if (currentScoreKeeper){
+						dotNum = (int)Mathf.Ceil(ScoreKeeperS.scoreThresholdCollectoplaza*
+						                         (currentScoreKeeper.GetRedScore()+playerRef.startEctoNum)*trailLengthMult);
+					}
+					else{
+						dotNum = Mathf.CeilToInt(playerRef.startEctoNum);
+					}
+				}
+				else{
+					if (currentScoreKeeper){
+						dotNum = (int)Mathf.Ceil(ScoreKeeperS.scoreThresholdCollectoplaza*
+						                         (currentScoreKeeper.GetBlueScore()+playerRef.startEctoNum)*trailLengthMult);
+					}
+					else{
+						dotNum = Mathf.CeilToInt(playerRef.startEctoNum);
+					}
+				}
+			}
+			else{
+				dotNum = (int)Mathf.Ceil((ScoreKeeperS.scoreThresholdCollectoplaza*
+				                          (playerRef.numLives/ScoreKeeperS.numberLives))+playerRef.startEctoNum
+				                         *trailLengthMult);
+			}
+		}
+		else{
+			if (CurrentModeS.currentMode == 0){
+				dotNum = (int)Mathf.Ceil((playerRef.score+playerRef.startEctoNum)*trailLengthMult);
+			}
+			else if (CurrentModeS.currentMode == 2){
+				dotNum = (int)Mathf.Ceil(ScoreKeeperS.scoreThresholdCollectoplaza*
+				                         ((playerRef.score+playerRef.startEctoNum)/ScoreKeeperS.scoreThresholdGhostball)*trailLengthMult);
+			}
+			else{
+				dotNum = (int)Mathf.Ceil((ScoreKeeperS.scoreThresholdCollectoplaza*
+				                          (playerRef.numLives/ScoreKeeperS.numberLives))+playerRef.startEctoNum
+				                         *trailLengthMult);
+			}
+		}
 
 
 		//PLACE DOTS LERPED ALONG THE LAST 2 PLAYER POSITIONS
@@ -290,7 +353,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 			}
 		}
 
-		playerRef.TakeDamage (startingIndex); 
+		playerRef.TakeDamage (startingIndex, false); 
 
 		DestroyPlayerDotsRange (startingIndex);
 

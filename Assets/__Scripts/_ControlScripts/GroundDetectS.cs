@@ -6,35 +6,35 @@ public class GroundDetectS : MonoBehaviour {
 
 	public List<GameObject> groundObjs;
 
-	void FixedUpdate()
-	{
-		GameObject [] playerGOs = GameObject.FindGameObjectsWithTag ("Player"); 
+	void LateUpdate(){
 
-		foreach (GameObject player in playerGOs) {
+		if (groundObjs.Count > 0){
+			for (int i = 0; i < groundObjs.Count; i++){
 
-			if(groundObjs.Contains(player))
-			{
-				if(player.GetComponent<PlayerS>().respawning)
-				{
-					//print ("I FIXED THE GLITCH aww yiss");
-					groundObjs.Remove(player); 
+				if (!groundObjs[i].activeSelf){
+					groundObjs.RemoveAt(i);
 				}
-			}
 
+			}
 		}
 
 	}
 
+
 	void OnTriggerEnter(Collider other){
-		if (other.gameObject.tag == "Ground" || other.gameObject.tag == "Player"){
+		if (other.gameObject.tag == "Ground"){
 			groundObjs.Add(other.gameObject);
 		}
 	}
 
 	void OnTriggerExit(Collider other){
-		if (other.gameObject.tag == "Ground" || other.gameObject.tag == "Player"){
+		if (other.gameObject.tag == "Ground"){
 			groundObjs.Remove(other.gameObject);
 		}
+	}
+
+	public void RemoveAll(){
+		groundObjs.Clear();
 	}
 
 	public bool Grounded(){

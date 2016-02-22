@@ -12,6 +12,8 @@ public class GhostMaskSpecialAttackS : MonoBehaviour {
 
 	public Vector3 slashVel;
 
+	public GameObject slashObj;
+
 	void Start(){
 
 		CameraShakeS.C.SmallShake();
@@ -21,7 +23,7 @@ public class GhostMaskSpecialAttackS : MonoBehaviour {
 	void FixedUpdate () {
 
 		if (playerRef){
-			GetComponent<DamageS>().MakeSpecial(playerRef);
+			//GetComponent<DamageS>().MakeSpecial(playerRef);
 			if (!setPos){
 				if (playerRef.spriteObject.transform.localScale.x < 0){
 					transform.Translate(new Vector3(-spawnDist, 0, 0));
@@ -54,5 +56,39 @@ public class GhostMaskSpecialAttackS : MonoBehaviour {
 		foreach (GameObject player in GlobalVars.playerList){
 			player.GetComponent<PlayerS>().UnpauseCharacter();
 		}
+	}
+
+	void SlashAttack(PlayerS target){
+
+		CameraShakeS.C.SmallShake();
+		CameraShakeS.C.TimeSleep(0.12f);
+
+		Vector3 spawnPos = target.transform.position;
+		spawnPos.z -= 1f;
+
+		GameObject newSlash = Instantiate(slashObj, spawnPos, Quaternion.identity)
+			as GameObject;
+		newSlash.GetComponent<MaskSlashObjS>().targetPlayer = target;
+
+		target.PauseCharacter();
+
+	}
+
+	void OnTriggerEnter(Collider other){
+
+		if (other.gameObject.tag == "Player"){
+			PlayerS otherPlayer = other.gameObject.GetComponent<PlayerS>();
+			if (otherPlayer != playerRef){
+				SlashAttack(otherPlayer);
+			}
+		}
+
+		if (other.gameObject.tag == "PlayerTrail"){
+			PlayerS otherPlayer = other.gameObject.GetComponent<DotColliderS>().whoCreatedMe;
+			if (otherPlayer != playerRef){
+				SlashAttack(otherPlayer);
+			}
+		}
+
 	}
 }

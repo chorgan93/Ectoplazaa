@@ -174,14 +174,12 @@ public class GlobS : MonoBehaviour {
 			//newTouch.GetComponent<SpriteRenderer>().sprite = ectoGlow.sprite;
 			newTouch.transform.localScale = ectoGlow.transform.localScale;
 
-			// kinesthetics?
-			//CameraShakeS.C.MicroShake();
-			//CameraShakeS.C.TimeSleep(0.1f*playerRef.health/playerRef.maxHealth);
-
 			// sfx
 			GameObject newSFX = Instantiate(sfxObj) as GameObject;
 			// pitch shift?
 			newSFX.GetComponent<AudioSource>().pitch += 1*(playerRef.health/playerRef.maxHealth);
+			GameObject.Destroy(parentGO.gameObject);
+			GameObject.Destroy(this.gameObject);
 		}
 	}
 

@@ -3,7 +3,7 @@ using System.Collections;
 
 public class LightningScreenS : MonoBehaviour {
 
-	private float lifeTime = 0.04f;
+	public float lifeTime = 0.04f;
 
 	private float startAlpha = 0.1f;
 

@@ -9,7 +9,11 @@ public class GhostballS : MonoBehaviour {
 	private SpriteRenderer myRenderer;
 
 	private int playerOwner;
+	private int teamOwner;
 	private Color startColor;
+
+	private Color redTeamColor = Color.red;
+	private Color blueTeamColor = Color.blue;
 
 	
 	public GameObject damageEffectObj;
@@ -41,6 +45,31 @@ public class GhostballS : MonoBehaviour {
 		if (other.gameObject.GetComponent<PlayerS>()){
 			PlayerS playerRef = other.gameObject.GetComponent<PlayerS>();
 
+			// team mode
+			if (CurrentModeS.isTeamMode){
+				if (teamOwner != GlobalVars.teamNumber[playerRef.playerNum-1]){
+					teamOwner = GlobalVars.teamNumber[playerRef.playerNum-1];
+					
+					Color newCol = myRenderer.color;
+
+					if (teamOwner == 1){
+						newCol = redTeamColor;
+					}
+					if (teamOwner == 2){
+						newCol = blueTeamColor; 
+
+					}
+					newCol.a = 1;
+					myRenderer.color = newCol;
+					
+					MakeSlashEffectNoScreen(other.gameObject.transform.position);
+				}
+				else{
+					CameraShakeS.C.MicroShake();
+				}
+			}
+			// not team mode
+			else{
 			if (playerOwner != playerRef.playerNum){
 				playerOwner = playerRef.playerNum;
 				Color newCol = playerRef.GetComponentInChildren<TrailRenderer>().materials[0].color;
@@ -51,6 +80,8 @@ public class GhostballS : MonoBehaviour {
 			}
 			else{
 				CameraShakeS.C.MicroShake();
+					CameraShakeS.C.TimeSleep(0.08f);
+			}
 			}
 		}
 
@@ -65,6 +96,7 @@ public class GhostballS : MonoBehaviour {
 		GetComponent<Rigidbody>().velocity = Vector3.zero;
 
 		playerOwner = -1;
+		teamOwner = -1;
 
 	}
 
@@ -73,6 +105,13 @@ public class GhostballS : MonoBehaviour {
 		return playerOwner;
 
 	}
+
+	public int GetCurrentTeam(){
+		
+		return teamOwner;
+		
+	}
+
 
 	public void MakeSlashEffect(Vector3 otherPos){
 		
@@ -135,10 +174,15 @@ public class GhostballS : MonoBehaviour {
 		Vector3 spawnPos = transform.position+effectDir*damageEffectStartRange;
 		spawnPos.z-=1;
 		
-		GameObject slashEffect = Instantiate(damageEffectObjNoScreen,spawnPos,Quaternion.identity)
+		GameObject slashEffect = Instantiate(damageEffectObj,spawnPos,Quaternion.identity)
 			as GameObject;
 		
 		slashEffect.GetComponent<SlashEffectS>().moveDir = effectDir;
+
+		Color halfCol = myRenderer.color;
+		halfCol.a = 0.5f;
+		slashEffect.GetComponent<SlashEffectS>().attachedLightning.GetComponent<Renderer>().material.color 
+			= halfCol;
 		
 		slashEffect.GetComponent<TrailRenderer>().materials[0].color = 
 			myRenderer.color;

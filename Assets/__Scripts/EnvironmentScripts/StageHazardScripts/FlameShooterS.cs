@@ -33,6 +33,11 @@ public class FlameShooterS : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
+		if (!CurrentModeS.allowHazards){
+			gameObject.SetActive(false);
+		}
+		else{
+
 		flameShootCountdown = flameShootRate;
 
 		myFlames = GetComponentInChildren<FlameS>();
@@ -41,7 +46,7 @@ public class FlameShooterS : MonoBehaviour {
 		flameResetPos.y -= myFlames.transform.localScale.y/2+transform.localScale.y/2;
 		flameResetPos.z = myFlames.transform.position.z;
 
-		myFlames.transform.position = flameResetPos;
+		//myFlames.transform.position = flameTargetPos;
 
 		flameTargetPos = transform.position;
 		flameTargetPos.y += myFlames.transform.localScale.y/2+transform.localScale.y/2;
@@ -50,6 +55,8 @@ public class FlameShooterS : MonoBehaviour {
 		startColor = mySprite.color;
 
 		flickerTimeMax = warningStartTime/(slowFlickerCount*0.5f + fastFlickerCount*1.0f);
+
+		}
 	
 	}
 	
@@ -60,10 +67,21 @@ public class FlameShooterS : MonoBehaviour {
 
 			startFlicker = false;
 
+			flameActiveTimeCountdown -= Time.deltaTime*TimeManagerS.timeMult;
+			if (flameActiveTimeCountdown <= 0){
+				flamesActive = false;
+				//myFlames.transform.position = flameResetPos;
+				myFlames.TurnOff();
+				flameShootCountdown = flameShootRate;
+			}
+
+			// flames no longer move so code below is deprecated
+			/*
 			if (flamesMoving){
 
 				Vector3 changeFlamePos = myFlames.transform.position;
-				changeFlamePos.y += flameMoveRate*Time.deltaTime*TimeManagerS.timeMult;
+				//changeFlamePos.y += flameMoveRate*Time.deltaTime*TimeManagerS.timeMult;
+				changeFlamePos.y = flameTargetPos.y;
 				if (changeFlamePos.y >= flameTargetPos.y){
 					changeFlamePos.y = flameTargetPos.y;
 					myFlames.transform.position = changeFlamePos;
@@ -81,6 +99,7 @@ public class FlameShooterS : MonoBehaviour {
 					flameShootCountdown = flameShootRate;
 				}
 			}
+			*/
 		}
 		else{
 

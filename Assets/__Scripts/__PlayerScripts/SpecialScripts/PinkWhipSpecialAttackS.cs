@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PinkWhipSpecialAttackS : MonoBehaviour {
 
-	// put this on a collider that is spawned by ghostmask when special attack triggers
+	// put this on a collider that is spawned by pinkwhip when special attack triggers
 	public PlayerS playerRef;
 
 
