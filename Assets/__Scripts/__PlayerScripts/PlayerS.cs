@@ -2067,6 +2067,8 @@ public class PlayerS : MonoBehaviour {
 									hurtCounter = hurtTimer; 
 									
 									if (health <= 0){
+
+										CameraShakeS.C.PunchIn();
 										
 										ownRigid.velocity = Vector3.zero;
 										

@@ -11,7 +11,7 @@ public class GroundDetectS : MonoBehaviour {
 		if (groundObjs.Count > 0){
 			for (int i = 0; i < groundObjs.Count; i++){
 
-				if (!groundObjs[i].activeSelf){
+				if (!groundObjs[i].activeSelf || !groundObjs[i].GetComponent<Collider>().enabled){
 					groundObjs.RemoveAt(i);
 				}
 

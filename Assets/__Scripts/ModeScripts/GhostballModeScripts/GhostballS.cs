@@ -63,9 +63,11 @@ public class GhostballS : MonoBehaviour {
 					myRenderer.color = newCol;
 					
 					MakeSlashEffectNoScreen(other.gameObject.transform.position);
+					CameraShakeS.C.PunchIn();
 				}
 				else{
 					CameraShakeS.C.MicroShake();
+					CameraShakeS.C.TimeSleep(0.08f);
 				}
 			}
 			// not team mode
@@ -76,7 +78,8 @@ public class GhostballS : MonoBehaviour {
 				newCol.a = 1;
 				myRenderer.color = newCol;
 	
-				MakeSlashEffectNoScreen(other.gameObject.transform.position);
+					MakeSlashEffectNoScreen(other.gameObject.transform.position);
+					CameraShakeS.C.PunchIn();
 			}
 			else{
 				CameraShakeS.C.MicroShake();
