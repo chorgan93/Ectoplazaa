@@ -21,6 +21,11 @@ public class GhostballS : MonoBehaviour {
 	private float damageEffectStartRange = 100f;
 	public GameObject hitEffectFastObj;
 
+	private float attackForce = 7500f;
+	private float lv1Mult = 1.25f;
+	private float lv2Mult = 1.5f;
+	private float lv3Mult = 2f;
+
 	// Use this for initialization
 	void Start () {
 
@@ -44,6 +49,25 @@ public class GhostballS : MonoBehaviour {
 
 		if (other.gameObject.GetComponent<PlayerS>()){
 			PlayerS playerRef = other.gameObject.GetComponent<PlayerS>();
+
+			// add extra force if attacking
+			if (playerRef.attacking){
+				float attackAdd = attackForce*Time.deltaTime;
+				if (playerRef.GetChompState()){
+					attackAdd*=lv1Mult;
+				}
+				if (playerRef.attackToPerform == 1){
+					attackAdd*=lv2Mult;
+				}
+				if (playerRef.attackToPerform == 2){
+					attackAdd*=lv3Mult;
+				}
+
+				Vector3 addAttack = playerRef.GetComponent<Rigidbody>().velocity.normalized;
+				addAttack*=attackAdd;
+				GetComponent<Rigidbody>().AddForce(addAttack, ForceMode.Impulse);
+				Debug.Log(addAttack);
+			}
 
 			// team mode
 			if (CurrentModeS.isTeamMode){

@@ -39,13 +39,13 @@ public class CurrentModeS : MonoBehaviour {
 		switch (currentMode)										//Find parent object for desired mode and enable
 		{
 		case 0:
-			numRounds = numRoundsCollectoplaza;
+			numRounds = numRoundsDefault;
 			break;
 		case 1: 
-			numRounds = numRoundsStock;
+			numRounds = numRoundsDefault;
 			break;
 		case 2: 
-			numRounds = numRoundsBall;
+			numRounds = numRoundsDefault;
 			break;
 		default:
 			numRounds = numRoundsDefault;
@@ -107,6 +107,7 @@ public class CurrentModeS : MonoBehaviour {
 	{
 		numberRoundsWon = new int[4] {0,0,0,0};
 		numberRoundsWonTeam = new int[2] {0,0};
+		numberRoundsCurrent = 0;
 
 	}
 
