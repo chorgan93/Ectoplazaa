@@ -67,7 +67,9 @@ public class MrWrapsSpecialAttackS : MonoBehaviour {
 
 	void OnTriggerEnter (Collider other){
 
-		if (other.gameObject.tag == "Wall" || other.gameObject.tag == "Ground"){
+		if ((other.gameObject.tag == "Wall" || other.gameObject.tag == "Ground") && turnOffColliderTime <= 0){
+
+			Debug.Log("HIT WALL " + other.gameObject.name + " " + transform.position);
 
 			//Destroy and leave behind explosion
 			if (subExplosion){

@@ -411,7 +411,7 @@ public class PlayerS : MonoBehaviour {
 			BackToMenu();
 			
 			if (!ScoreKeeperS.gameEnd && ScoreKeeperS.gameStarted) {
-				
+
 				// trying to stop a stop moving bug
 				transform.rotation = Quaternion.identity;
 				
@@ -442,8 +442,11 @@ public class PlayerS : MonoBehaviour {
 						}
 						
 						DoSpecial();
-						
+
+
 						MiscAction (); //TRAIL RENDERER UPDATE, OTHER THINGS
+				
+
 						
 					}
 					
@@ -451,7 +454,8 @@ public class PlayerS : MonoBehaviour {
 					{
 						Respawn (); // handles respawn during death
 					}
-					
+
+
 				}
 				
 			} else {
@@ -459,7 +463,7 @@ public class PlayerS : MonoBehaviour {
 					
 					// don't allow movement once game is over
 					
-					ownRigid.velocity = Vector3.zero;
+					ownRigid.velocity = Vector3.zero; 
 				}
 			}
 			
@@ -527,35 +531,7 @@ public class PlayerS : MonoBehaviour {
 		}
 		
 	}
-	
-	void ManageDelay(){
-		
-		// was used for early kinesthetic purposes, is now outdated
-		
-		if (TimeManagerS.timeMult != 1){
-			
-			resetFromPause = false;
-			
-			ownRigid.velocity = Vector3.zero;
-			//	buttObjRigid.velocity = Vector3.zero;
-			
-			//pauseDelay -= Time.deltaTime*TimeManagerS.timeMult;
-			
-			ownRigid.useGravity = false;
-			
-			
-		}
-		else{
-			if (!resetFromPause){
-				
-				ownRigid.velocity = prevVel;
-				ownRigid.useGravity = prevGravState;
-			}
-			prevVel = ownRigid.velocity;
-			prevGravState = ownRigid.useGravity;
-			resetFromPause = true;
-		}
-	}
+
 	
 	/*
 	_________________________________________________________________________________________________________________________________________________________________________________________________________________________________
@@ -577,14 +553,14 @@ public class PlayerS : MonoBehaviour {
 				
 				GetComponent<Collider>().enabled = false;
 				specialCooldown -= Time.deltaTime;
-				ownRigid.velocity = Vector3.zero;
+				ownRigid.velocity = Vector3.zero; 
 			}
 			
 			// acidMouth does a DEATH LASER
 			if (characterNum == 2){
 				GetComponent<Collider>().enabled = false;
 				specialCooldown -= Time.deltaTime;
-				ownRigid.velocity = Vector3.zero;
+				ownRigid.velocity = Vector3.zero; 
 				
 				acidSpecialCurrentRotateRate += acidSpecialRotateAccel*Time.deltaTime;
 				if (spriteObject.transform.localScale.x < 0){
@@ -620,7 +596,7 @@ public class PlayerS : MonoBehaviour {
 				
 				GetComponent<Collider>().enabled = false;
 				timeBettwenProjCountdown -= Time.deltaTime;
-				ownRigid.velocity = Vector3.zero;
+				ownRigid.velocity = Vector3.zero; 
 				
 				// rotate head after each shot
 				Vector3 targetHeadRot = new Vector3(0, 0, currentLerpTarget);
@@ -641,7 +617,7 @@ public class PlayerS : MonoBehaviour {
 						if (spriteObject.transform.localScale.x > 0){
 							projVel *= -1f;
 						}
-						projVel *= wrapsSpecialProjSpeed*Time.deltaTime;
+						projVel *= wrapsSpecialProjSpeed*Time.unscaledDeltaTime;
 						newProj.GetComponent<Rigidbody>().velocity = projVel;
 						newProj.GetComponent<MrWrapsSpecialAttackS>().playerRef = this;
 						
@@ -663,16 +639,19 @@ public class PlayerS : MonoBehaviour {
 			
 			// pinkwhip does a modified lv3 with no grav
 			if (characterNum == 4){
-				
+
 				GetComponent<Collider>().enabled = true;
 				ownRigid.useGravity = false;
 				if (!pinkGrabbed){
+					specialCooldown -= Time.deltaTime;
 					ownRigid.velocity = pinkWhipSpecialVel*Time.deltaTime;
 				}
 				else{
 					pinkWhipSuplexCurrentSpeed += pinkWhipSuplexAccel*Time.deltaTime;
 					ownRigid.velocity = new Vector3(0, pinkWhipSuplexCurrentSpeed*Time.deltaTime, 0);
 				}
+
+				Debug.Log(ownRigid.velocity + " : " + pinkWhipSpecialVel*Time.deltaTime);
 				
 			}
 			
@@ -680,7 +659,7 @@ public class PlayerS : MonoBehaviour {
 			if (characterNum == 5){
 				
 				GetComponent<Collider>().enabled = false;
-				ownRigid.velocity = Vector3.zero;
+				ownRigid.velocity = Vector3.zero; 
 			}
 			
 			// char 6 counts down delay then explodes
@@ -700,7 +679,9 @@ public class PlayerS : MonoBehaviour {
 				if (acidSpecialReference){
 					Destroy(acidSpecialReference);
 				}
-				
+
+				ownRigid.useGravity = true;
+
 				GetComponent<Collider>().enabled = true;
 				UnpauseCharacter();
 				
@@ -747,7 +728,7 @@ public class PlayerS : MonoBehaviour {
 							
 							
 							Vector3 spawnBandagesPos = transform.position;
-							spawnBandagesPos.z -= 1;
+							spawnBandagesPos.z += 1;
 							GameObject newBandages = Instantiate(wrapsBandageEffectPrefab, spawnBandagesPos, Quaternion.identity)
 								as GameObject;
 							wrapsBandageEffect = newBandages;
@@ -756,7 +737,7 @@ public class PlayerS : MonoBehaviour {
 						
 						
 						GetComponent<Collider>().enabled = false;
-						ownRigid.velocity = Vector3.zero;
+						ownRigid.velocity = Vector3.zero; 
 						spriteObject.transform.rotation = Quaternion.identity;
 						
 					}
@@ -824,7 +805,7 @@ public class PlayerS : MonoBehaviour {
 						//print ("charging!!");
 						
 						ownRigid.useGravity = false;
-						ownRigid.velocity = Vector3.zero;
+						ownRigid.velocity = Vector3.zero; 
 						hasDoubleJumped = true;
 						
 						// apply character charge mult
@@ -918,7 +899,7 @@ public class PlayerS : MonoBehaviour {
 								// attack priority of 1 to defeat ground pound
 								attackPriority = 1;
 								attackToPerform = -1;
-								ownRigid.velocity = Vector3.zero;
+								ownRigid.velocity = Vector3.zero; 
 								ownRigid.drag = chompDrag;
 								
 								Vector3 attackDir = Vector3.zero;
@@ -980,7 +961,7 @@ public class PlayerS : MonoBehaviour {
 						doingChomp = false;
 						ownRigid.useGravity = true;
 						canAirStrafe = true;
-						ownRigid.velocity = Vector3.zero;
+						ownRigid.velocity = Vector3.zero; 
 						attacking = false;
 						chargeTime = 0;
 						ownRigid.drag = startDrag;
@@ -1217,7 +1198,7 @@ public class PlayerS : MonoBehaviour {
 							// old way without physics
 							/*
 							// set vel to 0
-							ownRigid.velocity = Vector3.zero;
+							ownRigid.velocity = Vector3.zero; 
 							
 							lv1OutCountdown -= Time.deltaTime*TimeManagerS.timeMult;
 							
@@ -1240,7 +1221,7 @@ public class PlayerS : MonoBehaviour {
 								
 								//canAirStrafe = true; 
 								startedLv2Pause = true;
-								ownRigid.velocity = Vector3.zero;
+								ownRigid.velocity = Vector3.zero; 
 								
 								// allows time for tail to catch up
 								lv2AttackPauseCountdown = lv2AttackPauseTimeMax;
@@ -1249,7 +1230,7 @@ public class PlayerS : MonoBehaviour {
 								// count down pause time
 								lv2AttackPauseCountdown -= TimeManagerS.timeMult*Time.deltaTime;
 								//print (lv2AttackPauseCountdown);
-								ownRigid.velocity = Vector3.zero;
+								ownRigid.velocity = Vector3.zero; 
 								// once this reaches zero, end the attack
 								if (lv2AttackPauseCountdown <= 0){
 									canAirStrafe = true;
@@ -1323,15 +1304,14 @@ public class PlayerS : MonoBehaviour {
 							TurnOnIgnoreWalls();
 							
 							// add bullet force
-							ownRigid.velocity = Vector3.zero;
+							ownRigid.velocity = Vector3.zero; 
 							if (isSlowed){
 								bulletVel*=slowMult;
 							}
 							ownRigid.AddForce(bulletVel,ForceMode.VelocityChange);
 							
 							ownRigid.useGravity = true;
-							
-							Debug.Log(ownRigid.velocity + " : " + bulletVel);
+
 							
 							// kinesthetics
 							CameraShakeS.C.TimeSleep(0.2f);
@@ -1761,7 +1741,7 @@ public class PlayerS : MonoBehaviour {
 							if (dodging && dodgeTimeCountdown <= 0){
 								dodging = false;
 								canAirStrafe = true;
-								ownRigid.velocity = Vector3.zero;
+								ownRigid.velocity = Vector3.zero; 
 								ownRigid.useGravity = true;
 								ownRigid.drag = startDrag;
 							}
@@ -1806,7 +1786,7 @@ public class PlayerS : MonoBehaviour {
 										#endif
 										
 										// add force
-										ownRigid.velocity = Vector3.zero;
+										ownRigid.velocity = Vector3.zero; 
 										if (!isSlowed){
 											ownRigid.AddForce(dodgeDir*dodgeForce*Time.deltaTime, ForceMode.Impulse);
 										}
@@ -1942,7 +1922,7 @@ public class PlayerS : MonoBehaviour {
 									
 									//Disable player actions and physics
 									ownRigid.useGravity = false;
-									ownRigid.velocity = Vector3.zero;
+									ownRigid.velocity = Vector3.zero; 
 									//dangerObj.SetActive(false);
 									
 									//Halt collisions
@@ -2071,7 +2051,7 @@ public class PlayerS : MonoBehaviour {
 
 										CameraShakeS.C.PunchIn();
 										
-										ownRigid.velocity = Vector3.zero;
+										ownRigid.velocity = Vector3.zero; 
 										
 										doingSpecial = false;
 										specialTriggered = false;
@@ -2155,7 +2135,7 @@ public class PlayerS : MonoBehaviour {
 								capturedDanger = isDangerous;
 								
 								ownRigid.useGravity = false;
-								ownRigid.velocity = Vector3.zero;
+								ownRigid.velocity = Vector3.zero; 
 								isDangerous = capturedDanger;
 								
 							}
@@ -2528,6 +2508,14 @@ public class PlayerS : MonoBehaviour {
 									inputDir.x = Input.GetAxis("HorizontalPlayer" + playerNum + platformType);
 									inputDir.y = Input.GetAxis("VerticalPlayer" + playerNum + platformType);
 									#endif
+
+									if (inputDir.x == 0 && inputDir.y == 0){
+										inputDir.x = 1f;
+										if (spriteObject.transform.localScale.x > 0){
+											inputDir *= -1f;
+										}
+									}
+
 									spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
 									if (spriteObject.transform.localScale.x < 0){
 										currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z+30f;
@@ -2538,6 +2526,7 @@ public class PlayerS : MonoBehaviour {
 								}
 								
 								if (characterNum == 4){
+									effectPause = false;
 									specialCooldown = 1;
 									GameObject specialAttack = Instantiate(pinkWhipSpecialPrefab, transform.position, transform.rotation)
 										as GameObject;
@@ -2566,6 +2555,10 @@ public class PlayerS : MonoBehaviour {
 										}
 									}
 									pinkWhipSpecialVel = inputDir.normalized*pinkWhipSpecialSpeed;
+									ownRigid.velocity = pinkWhipSpecialVel*Time.deltaTime;
+
+									pinkPaused = false;
+									pinkGrabbed = null;
 									
 									pinkWhipSuplexCurrentSpeed = pinkWhipSuplexStartSpeed;
 									

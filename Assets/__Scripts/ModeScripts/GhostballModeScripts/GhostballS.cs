@@ -22,9 +22,9 @@ public class GhostballS : MonoBehaviour {
 	public GameObject hitEffectFastObj;
 
 	private float attackForce = 7500f;
-	private float lv1Mult = 1.25f;
-	private float lv2Mult = 1.5f;
-	private float lv3Mult = 2f;
+	private float lv1Mult = 1.75f;
+	private float lv2Mult = 3f;
+	private float lv3Mult = 4.5f;
 
 	// Use this for initialization
 	void Start () {
@@ -50,24 +50,34 @@ public class GhostballS : MonoBehaviour {
 		if (other.gameObject.GetComponent<PlayerS>()){
 			PlayerS playerRef = other.gameObject.GetComponent<PlayerS>();
 
+			GetComponent<Rigidbody>().velocity = Vector3.zero;
+			
+			float attackAdd = attackForce*Time.deltaTime;
 			// add extra force if attacking
 			if (playerRef.attacking){
-				float attackAdd = attackForce*Time.deltaTime;
-				if (playerRef.GetChompState()){
-					attackAdd*=lv1Mult;
+			if (playerRef.GetChompState() || playerRef.attackToPerform == 0){
+				//Debug.Log("LV1 HIT " + attackAdd);
+				attackAdd*=lv1Mult;
+				//Debug.Log("LV1 HITAFTER " + attackAdd);
 				}
-				if (playerRef.attackToPerform == 1){
-					attackAdd*=lv2Mult;
+				else if (playerRef.attackToPerform == 1){
+				//Debug.Log("LV2 HIT " + attackAdd);
+				attackAdd*=lv2Mult;
+				//Debug.Log("LV2 HITAFTER " + attackAdd);
 				}
-				if (playerRef.attackToPerform == 2){
-					attackAdd*=lv3Mult;
+			else if (playerRef.attackToPerform == 2){
+				//Debug.Log("LV3 HIT " + attackAdd);
+				attackAdd*=lv3Mult;
+				//Debug.Log("LV3 HITAFTER " + attackAdd);
 				}
+				else{}
+			}
 
-				Vector3 addAttack = playerRef.GetComponent<Rigidbody>().velocity.normalized;
+				Vector3 addAttack = (transform.position-other.contacts[0].point).normalized;
 				addAttack*=attackAdd;
 				GetComponent<Rigidbody>().AddForce(addAttack, ForceMode.Impulse);
-				Debug.Log(addAttack);
-			}
+				//Debug.Log(addAttack);
+
 
 			// team mode
 			if (CurrentModeS.isTeamMode){
@@ -88,10 +98,11 @@ public class GhostballS : MonoBehaviour {
 					
 					MakeSlashEffectNoScreen(other.gameObject.transform.position);
 					CameraShakeS.C.PunchIn();
+					CameraShakeS.C.MicroShake();
+					CameraShakeS.C.TimeSleep(0.08f);
 				}
 				else{
 					CameraShakeS.C.MicroShake();
-					CameraShakeS.C.TimeSleep(0.08f);
 				}
 			}
 			// not team mode
@@ -104,10 +115,11 @@ public class GhostballS : MonoBehaviour {
 	
 					MakeSlashEffectNoScreen(other.gameObject.transform.position);
 					CameraShakeS.C.PunchIn();
+					CameraShakeS.C.MicroShake();
+					CameraShakeS.C.TimeSleep(0.08f);
 			}
 			else{
 				CameraShakeS.C.MicroShake();
-					CameraShakeS.C.TimeSleep(0.08f);
 			}
 			}
 		}

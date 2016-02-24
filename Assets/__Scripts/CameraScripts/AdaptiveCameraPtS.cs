@@ -10,6 +10,7 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 	private Vector3 hitCenter;
 	public Transform centerPt;
 
+
 	public float playerWeight;
 	public float centerWeight;
 	public float hitWeight;
@@ -53,6 +54,7 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 			playerPositions.Add(players[i].transform);
 			playerRefs.Add(players[i].GetComponent<PlayerS>());
 		}
+
 	}
 
 
@@ -174,7 +176,17 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 					}
 				}
 			}
+
+			// if ball mode, add ball into equation
+			checkPos2d.x = ghostBall.transform.position.x;
+			checkPos2d.y = ghostBall.transform.position.y;
+
+			currentDistance = Vector2.Distance(playerPos2d, checkPos2d);
+			if (currentDistance > largestDistance){
+				largestDistance = currentDistance;
+			}
 		}
+
 
 		if (!dontDoCameraThing){
 			CameraFollowS.F.SetCamMult(largestDistance*sizeAddMult);
