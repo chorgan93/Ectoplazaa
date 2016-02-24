@@ -21,6 +21,11 @@ public class GhostballS : MonoBehaviour {
 	private float damageEffectStartRange = 100f;
 	public GameObject hitEffectFastObj;
 
+	private float attackForce = 7500f;
+	private float lv1Mult = 1.75f;
+	private float lv2Mult = 3f;
+	private float lv3Mult = 4.5f;
+
 	// Use this for initialization
 	void Start () {
 
@@ -45,6 +50,35 @@ public class GhostballS : MonoBehaviour {
 		if (other.gameObject.GetComponent<PlayerS>()){
 			PlayerS playerRef = other.gameObject.GetComponent<PlayerS>();
 
+			GetComponent<Rigidbody>().velocity = Vector3.zero;
+			
+			float attackAdd = attackForce*Time.deltaTime;
+			// add extra force if attacking
+			if (playerRef.attacking){
+			if (playerRef.GetChompState() || playerRef.attackToPerform == 0){
+				//Debug.Log("LV1 HIT " + attackAdd);
+				attackAdd*=lv1Mult;
+				//Debug.Log("LV1 HITAFTER " + attackAdd);
+				}
+				else if (playerRef.attackToPerform == 1){
+				//Debug.Log("LV2 HIT " + attackAdd);
+				attackAdd*=lv2Mult;
+				//Debug.Log("LV2 HITAFTER " + attackAdd);
+				}
+			else if (playerRef.attackToPerform == 2){
+				//Debug.Log("LV3 HIT " + attackAdd);
+				attackAdd*=lv3Mult;
+				//Debug.Log("LV3 HITAFTER " + attackAdd);
+				}
+				else{}
+			}
+
+				Vector3 addAttack = (transform.position-other.contacts[0].point).normalized;
+				addAttack*=attackAdd;
+				GetComponent<Rigidbody>().AddForce(addAttack, ForceMode.Impulse);
+				//Debug.Log(addAttack);
+
+
 			// team mode
 			if (CurrentModeS.isTeamMode){
 				if (teamOwner != GlobalVars.teamNumber[playerRef.playerNum-1]){
@@ -63,6 +97,9 @@ public class GhostballS : MonoBehaviour {
 					myRenderer.color = newCol;
 					
 					MakeSlashEffectNoScreen(other.gameObject.transform.position);
+					CameraShakeS.C.PunchIn();
+					CameraShakeS.C.MicroShake();
+					CameraShakeS.C.TimeSleep(0.08f);
 				}
 				else{
 					CameraShakeS.C.MicroShake();
@@ -76,11 +113,13 @@ public class GhostballS : MonoBehaviour {
 				newCol.a = 1;
 				myRenderer.color = newCol;
 	
-				MakeSlashEffectNoScreen(other.gameObject.transform.position);
+					MakeSlashEffectNoScreen(other.gameObject.transform.position);
+					CameraShakeS.C.PunchIn();
+					CameraShakeS.C.MicroShake();
+					CameraShakeS.C.TimeSleep(0.08f);
 			}
 			else{
 				CameraShakeS.C.MicroShake();
-					CameraShakeS.C.TimeSleep(0.08f);
 			}
 			}
 		}

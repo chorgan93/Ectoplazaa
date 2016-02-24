@@ -99,8 +99,8 @@ public class AimObjS : MonoBehaviour {
 					chargeBarSprite.transform.localPosition = chargeShakeOffset;
 
 					// shake head offset
-					chargeShakeOffset.z = playerRender.transform.localPosition.z;
 					chargeShakeOffset/=2f;
+					chargeShakeOffset.z = playerRender.transform.localPosition.z;
 					playerRender.transform.localPosition = chargeShakeOffset;
 			
 			float newAngle = 0; 

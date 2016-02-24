@@ -69,23 +69,19 @@ public class CameraShakeS : MonoBehaviour {
 			shake_intensity -= shake_decay*Time.deltaTime;
 		}
 		}
-		
-	}
-	
-	void FixedUpdate () {
-		
-		if (sleeping){
 
+		if (sleeping){
+			
 			if (timeSleepOn){
-			if (halfSleep){
-				Time.timeScale = 0.5f;
-			}
-			else{
-				Time.timeScale = 0.1f;
-			}
+				if (halfSleep){
+					Time.timeScale = 0.5f;
+				}
+				else{
+					Time.timeScale = 0f;
+				}
 			}
 			
-			sleepDuration -= Time.deltaTime/Time.timeScale;
+			sleepDuration -= Time.unscaledDeltaTime;
 			if (sleepDuration <= 0){
 				Time.timeScale = 1;
 				sleeping = false;
@@ -105,6 +101,12 @@ public class CameraShakeS : MonoBehaviour {
 			}
 			
 		}
+		
+	}
+	
+	void FixedUpdate () {
+		
+
 		
 		
 	}
@@ -147,6 +149,10 @@ public class CameraShakeS : MonoBehaviour {
 		//print ("SLEEPING");
 		sleepDuration = sleepTime;
 		sleeping = true;
+	}
+
+	public void PunchIn(){
+		ownFollow.DeathPunchIn();
 	}
 
 	// time freeze
