@@ -29,6 +29,7 @@ public class CameraFollowS : MonoBehaviour {
 	private AdaptiveCameraPtS inGameFollow;
 
 	private bool focusOnCharacter;
+	private float deathPunchMult = 0.96f;
 	private GameObject focusChar;
 	private float specialCamEaseMult = 4f;
 	private float specialCamSize = 12f;
@@ -159,6 +160,12 @@ public class CameraFollowS : MonoBehaviour {
 			if (endSpecialCountdown<=0){
 				focusOnCharacter = false;
 			}
+		}
+	}
+
+	public void DeathPunchIn(){
+		if (!focusOnCharacter){
+			ownCam.orthographicSize = (minSize + maxSizeDiff*adaptSizeMult)*deathPunchMult;
 		}
 	}
 }

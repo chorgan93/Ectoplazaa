@@ -10,7 +10,7 @@ public class MegaChompHandlerS : MonoBehaviour {
 	private float moveSpeed = 5f;
 	private float chompAccel = 75f; 
 
-	private float stopMovingTimeMax = 0.1f;
+	private float stopMovingTimeMax = 0f;
 	private float stopMovingTimeCountdown;
 
 	private bool playerSet = false;

@@ -807,7 +807,6 @@ public class ScoreKeeperS : MonoBehaviour {
 		{
 			PlayerS p = GlobalVars.playerList[playerNumber-1].GetComponent<PlayerS>();	//Get Player
 			p.score += scorePerGoalGhostball;				//Add score
-			Debug.Log(p.score);
 		}
 		}
 	}
