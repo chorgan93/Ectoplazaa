@@ -149,7 +149,7 @@ public class StartMenu : MonoBehaviour {
 
 			if (buttonPressed){
 				
-				flickerTimeCountdown -= Time.deltaTime*6f;
+				flickerTimeCountdown -= Time.deltaTime*10f;
 			}
 
 			if (flickerTimeCountdown <= 0){
