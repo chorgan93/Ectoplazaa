@@ -14,6 +14,7 @@ public class SingleAnimObjS : MonoBehaviour {
 	public bool addToCamFollow;
 
 	public bool dontDestroy = false;
+	public bool stopAtEnd = false;
 
 	// Use this for initialization
 	void Start () {
@@ -46,7 +47,12 @@ public class SingleAnimObjS : MonoBehaviour {
 					Destroy(gameObject);
 				}
 				else{
-					currentFrame = 0;
+					if (stopAtEnd){
+						currentFrame = animFrames.Count-1;
+					}
+					else{
+						currentFrame = 0;
+					}
 					ownRender.sprite = animFrames[currentFrame];
 				}
 			}else{

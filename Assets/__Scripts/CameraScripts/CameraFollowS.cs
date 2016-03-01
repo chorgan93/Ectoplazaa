@@ -26,6 +26,16 @@ public class CameraFollowS : MonoBehaviour {
 
 	public bool newStartPos = false;
 
+	private AdaptiveCameraPtS inGameFollow;
+
+	private bool focusOnCharacter;
+	private float deathPunchMult = 0.96f;
+	private GameObject focusChar;
+	private float specialCamEaseMult = 4f;
+	private float specialCamSize = 12f;
+	private float specialTimeMax = 0.6f;
+	private float endSpecialCountdown;
+
 
 
 	void Awake () {
@@ -33,7 +43,7 @@ public class CameraFollowS : MonoBehaviour {
 	}
 	
 	void Start(){
-		//poi = GameObject.Find("AdaptiveCameraPt");
+
 		if (!newStartPos){
 		Vector3 resetPos = poi.transform.position;
 		resetPos.z = camOffset.z;
@@ -46,6 +56,10 @@ public class CameraFollowS : MonoBehaviour {
 		currentCamSize = minSize;
 
 		Cursor.visible = false;
+
+		if (poi.GetComponent<AdaptiveCameraPtS>()){
+			inGameFollow = poi.GetComponent<AdaptiveCameraPtS>();
+		}
 
 	}
 
@@ -66,8 +80,16 @@ public class CameraFollowS : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
+
+		EndSpecialCam();
+
 		// [] get the position of the golfball
 		Vector3 poiPos = poi.transform.position;
+
+		if (focusOnCharacter){
+			poiPos = focusChar.transform.position;
+		}
+
 		if (TimeManagerS.paused){
 			poiPos += camOffsetOnPause;
 		}
@@ -76,8 +98,14 @@ public class CameraFollowS : MonoBehaviour {
 		}
 		// [] set the xy of this to that of the golfball
 		cameraPos = this.transform.position;
-		cameraPos.x = (1-camEasing)*cameraPos.x + camEasing*poiPos.x;
-		cameraPos.y = (1-camEasing)*cameraPos.y + camEasing*poiPos.y;
+		if (focusOnCharacter){
+			cameraPos.x = (1-camEasing*specialCamEaseMult)*cameraPos.x + camEasing*specialCamEaseMult*poiPos.x;
+			cameraPos.y = (1-camEasing*specialCamEaseMult)*cameraPos.y + camEasing*specialCamEaseMult*poiPos.y;
+		}
+		else{
+			cameraPos.x = (1-camEasing)*cameraPos.x + camEasing*poiPos.x;
+			cameraPos.y = (1-camEasing)*cameraPos.y + camEasing*poiPos.y;
+		}
 		// Pull back based on Runner's speed
 		//float speedU = (runnerScript.rigidbody.velocity.x)/runnerScript.maxSpeed;
 		//float camZ = (1-speedU)*zNear + speedU*zFar;
@@ -101,12 +129,44 @@ public class CameraFollowS : MonoBehaviour {
 	}
 
 	void FindCurrentSize(){
-		targetCamSize = minSize + maxSizeDiff*adaptSizeMult;
-		currentCamSize = (1-camSizeEasing)*currentCamSize + camSizeEasing*targetCamSize;
+		if (!focusOnCharacter){
+			targetCamSize = minSize + maxSizeDiff*adaptSizeMult;
+			currentCamSize = (1-camSizeEasing)*currentCamSize + camSizeEasing*targetCamSize;
+		}
+		else{
+			targetCamSize = specialCamSize;
+			currentCamSize = (1-camSizeEasing*specialCamEaseMult)*currentCamSize + 
+				camSizeEasing*specialCamEaseMult*targetCamSize;
+		}
+
+
+
 	}
 
 	public void SetCamMult(float newMult){
 		adaptSizeMult = newMult;
+	}
+
+	public void StartSpecialCam(GameObject newTarget){
+		focusOnCharacter = true;
+		focusChar = newTarget;
+		endSpecialCountdown = specialTimeMax;
+
+	}
+
+	private void EndSpecialCam(){
+		if (focusOnCharacter){
+			endSpecialCountdown -= Time.deltaTime/Time.timeScale;
+			if (endSpecialCountdown<=0){
+				focusOnCharacter = false;
+			}
+		}
+	}
+
+	public void DeathPunchIn(){
+		if (!focusOnCharacter){
+			ownCam.orthographicSize = (minSize + maxSizeDiff*adaptSizeMult)*deathPunchMult;
+		}
 	}
 }
 

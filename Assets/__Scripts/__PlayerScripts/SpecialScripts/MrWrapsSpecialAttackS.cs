@@ -8,12 +8,22 @@ public class MrWrapsSpecialAttackS : MonoBehaviour {
 
 	public float lifeTime = 2f;
 
+	public float turnOffColliderTime = 0f;
+
+	public MrWrapsSpecialAttackS subExplosion;
+
+	private Vector3 startSize;
+	private Rigidbody myRigid;
+
 
 	void Start(){
 
 		// do spawn effects (muzzle flare) here and rotate accordingly
 		FaceTarget(GetComponent<Rigidbody>().velocity);
 		CameraShakeS.C.SmallShake();
+
+		startSize = transform.localScale;
+		myRigid = GetComponent<Rigidbody>();
 	}
 
 
@@ -24,7 +34,23 @@ public class MrWrapsSpecialAttackS : MonoBehaviour {
 
 		}
 
+		if(myRigid.velocity != Vector3.zero){
+			if (myRigid.velocity.x > 0){
+				Vector3 flipSize = startSize;
+				flipSize.x *= -1f;
+				transform.localScale = flipSize;
+			}
+			else{
+				transform.localScale = startSize;
+			}
+		}
+
 		lifeTime -= Time.deltaTime*TimeManagerS.timeMult;
+
+		if (lifeTime <= turnOffColliderTime){
+			GetComponent<Collider>().enabled = false;
+		}
+
 		if (lifeTime <= 0){
 			Destroy(gameObject);
 		}
@@ -58,9 +84,17 @@ public class MrWrapsSpecialAttackS : MonoBehaviour {
 
 	void OnTriggerEnter (Collider other){
 
-		if (other.gameObject.tag == "Wall" || other.gameObject.tag == "Ground"){
+		if ((other.gameObject.tag == "Wall" || other.gameObject.tag == "Ground") && turnOffColliderTime <= 0){
+
+			Debug.Log("HIT WALL " + other.gameObject.name + " " + transform.position);
 
 			//Destroy and leave behind explosion
+			if (subExplosion){
+				MrWrapsSpecialAttackS newExplo = Instantiate(subExplosion, transform.position, Quaternion.identity)
+					as MrWrapsSpecialAttackS;
+				newExplo.GetComponent<Rigidbody>().velocity = Vector3.zero;
+				newExplo.playerRef = playerRef;
+			}
 			lifeTime = 0;
 
 		}

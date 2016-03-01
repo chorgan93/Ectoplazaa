@@ -24,6 +24,11 @@ public class PlatformS : MonoBehaviour {
 			return ("Mac");
 		}
 
+		// if wiiu...
+		else if (Application.platform == RuntimePlatform.WiiU){
+			return ("WiiU");
+		}
+
 		// if neither...
 		else{
 			return ("Linux");

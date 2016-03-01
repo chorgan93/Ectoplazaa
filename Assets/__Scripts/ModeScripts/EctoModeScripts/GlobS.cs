@@ -10,7 +10,15 @@ public class GlobS : MonoBehaviour {
 	Vector3 originalScale; 
 
 	bool activated = false; 
-	float deletionTimer = 24f, deletionCounter; 
+	float deletionTimer = 10f, deletionCounter; 
+
+	private float triggerFlashesTime = 3;
+	private int numSuperSlowFlashes = 8;
+	private int numSlowFlashes = 12;
+	private int numFastFlashes = 16;
+	private float currentFlashCountdown;
+	private float timeBetweenFlashes;
+	private int currentFlash;
 
 	float invulnTime = .75f;
 
@@ -19,6 +27,8 @@ public class GlobS : MonoBehaviour {
 	float fadeColRate = 0.005f;
 	private Renderer ownRender;
 	public SpriteRenderer ownSprite;
+
+	public Renderer outline;
 
 	public SpriteRenderer ectoGlow;
 	private float ectoAlpha = 0.5f;
@@ -51,6 +61,9 @@ public class GlobS : MonoBehaviour {
 		ectoColor.a = ectoAlpha;
 		ectoGlow.color = ectoColor;
 		//activated = true;
+
+		timeBetweenFlashes = currentFlashCountdown = triggerFlashesTime/
+			(numSuperSlowFlashes*2+numSlowFlashes+numFastFlashes*0.5f)*1f;
 	}
 
 	void FixedUpdate()
@@ -80,17 +93,19 @@ public class GlobS : MonoBehaviour {
 		// globs decrease in size as time goes on, then destroy selves at end of lifespan
 		if (activated) {
 
-			parentGO.transform.localScale = Vector3.Lerp(originalScale,Vector3.zero, 1f- ( deletionCounter/deletionTimer)); 
 
-			deletionCounter -= 1f; 
+			deletionCounter -= 1f*Time.deltaTime*TimeManagerS.timeMult; 
 
 			ownRigid.useGravity = false;
 
 		}
 		else{
-			parentGO.transform.localScale = Vector3.Lerp(originalScale,Vector3.zero, 1f- ( deletionCounter/deletionTimer)); 
 			
 			deletionCounter -= 1f*Time.deltaTime*TimeManagerS.timeMult; 
+		}
+
+		if (deletionCounter <= triggerFlashesTime){
+			DoFlashes();
 		}
 
 		if (deletionCounter < 0) {
@@ -114,6 +129,28 @@ public class GlobS : MonoBehaviour {
 		}
 	}
 
+	private void DoFlashes(){
+
+		currentFlashCountdown -= Time.deltaTime*TimeManagerS.timeMult;
+		if (currentFlashCountdown <= 0){
+			currentFlash++;
+			if (currentFlash < numSuperSlowFlashes){
+				currentFlashCountdown = timeBetweenFlashes*2f;
+			}
+			else if (currentFlash > numSuperSlowFlashes &&
+			         currentFlash < numFastFlashes){
+				currentFlashCountdown = timeBetweenFlashes;
+			}
+			else{
+				currentFlashCountdown = timeBetweenFlashes/2f;
+			}
+
+			ownRender.enabled = outline.enabled = ownSprite.enabled = ectoGlow.enabled = !ownRender.enabled;
+
+		}
+
+	}
+
 	void OnTriggerEnter(Collider other) 
 	{
 
@@ -124,7 +161,9 @@ public class GlobS : MonoBehaviour {
 			parentGO.GetComponent<Rigidbody> ().velocity = Vector3.zero; 
 
 			PlayerS playerRef = other.gameObject.GetComponent<PlayerS> ();
-			GlobalVars.totalGlobsEaten[playerRef.playerNum -1] ++; 
+			if (playerRef.playerNum > 0){
+				GlobalVars.totalGlobsEaten[playerRef.playerNum -1] ++; 
+			}
 			activated = true; 
 			playerRef.health += 2; 
 
@@ -137,14 +176,12 @@ public class GlobS : MonoBehaviour {
 			//newTouch.GetComponent<SpriteRenderer>().sprite = ectoGlow.sprite;
 			newTouch.transform.localScale = ectoGlow.transform.localScale;
 
-			// kinesthetics?
-			//CameraShakeS.C.MicroShake();
-			//CameraShakeS.C.TimeSleep(0.1f*playerRef.health/playerRef.maxHealth);
-
 			// sfx
 			GameObject newSFX = Instantiate(sfxObj) as GameObject;
 			// pitch shift?
 			newSFX.GetComponent<AudioSource>().pitch += 1*(playerRef.health/playerRef.maxHealth);
+			GameObject.Destroy(parentGO.gameObject);
+			GameObject.Destroy(this.gameObject);
 		}
 	}
 

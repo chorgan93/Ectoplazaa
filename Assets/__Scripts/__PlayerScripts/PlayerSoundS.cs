@@ -24,6 +24,7 @@ public class PlayerSoundS : MonoBehaviour {
 	public List<GameObject> lv3CharChargeSoundObj;
 
 	public List<GameObject> attackReleaseSoundObjs;
+	public List<GameObject> dodgeSoundObjs;
 	public List<GameObject> groundPoundReleaseSoundObjs;
 	public List<GameObject> charIntroSoundObjs;
 	public List<GameObject> joinSoundObjs;
@@ -72,6 +73,14 @@ public class PlayerSoundS : MonoBehaviour {
 		
 	}
 
+	public void PlayDodgeSound(){
+		
+		int dodgeToPlay = Mathf.FloorToInt(Random.Range(0,dodgeSoundObjs.Count));
+		
+		Instantiate(dodgeSoundObjs[dodgeToPlay]);
+		
+	}
+
 	public void PlayReleaseSound(){
 		
 		int releaseToPlay = Mathf.FloorToInt(Random.Range(0,attackReleaseSoundObjs.Count));
@@ -112,8 +121,14 @@ public class PlayerSoundS : MonoBehaviour {
 
 	public void PlayCharIntroSoundQuickFix(){
 
+		if (playerRef){
+
 		
-		characterNum = playerRef.characterNum;
+			characterNum = playerRef.characterNum;
+		}
+		else{
+			characterNum = 0;
+		}
 		
 		// need to hear these
 		

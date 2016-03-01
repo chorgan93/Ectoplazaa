@@ -14,6 +14,7 @@ public class AimObjS : MonoBehaviour {
 
 
 	private PlayerS playerRef;
+	private GameObject playerRender;
 
 	private string platformType;
 
@@ -32,6 +33,7 @@ public class AimObjS : MonoBehaviour {
 		platformType = PlatformS.GetPlatform();
 
 		playerRef = transform.parent.GetComponent<PlayerS>();
+		playerRender = playerRef.spriteObject;
 		transform.parent = null;
 
 		startSize = transform.localScale.x;
@@ -49,11 +51,11 @@ public class AimObjS : MonoBehaviour {
 
 		if (playerRef){
 
-			if (playerRef.spriteObject.GetComponent<SpriteRenderer>().enabled && playerRef.health > 0){
+			if (playerRef.spriteObject.GetComponent<SpriteRenderer>().enabled && !playerRef.respawning){
 
 				chargeBarSprite.SetActive(true);
 	
-		if (playerRef.charging){
+		if (playerRef.charging || (playerRef.attacking && playerRef.attackToPerform == 1)){
 					chargeBarSpriteRender.enabled = true; 
 		}
 		else{
@@ -96,6 +98,10 @@ public class AimObjS : MonoBehaviour {
 					chargeShakeOffset.z = transform.position.z;
 					chargeBarSprite.transform.localPosition = chargeShakeOffset;
 
+					// shake head offset
+					chargeShakeOffset/=2f;
+					chargeShakeOffset.z = playerRender.transform.localPosition.z;
+					playerRender.transform.localPosition = chargeShakeOffset;
 			
 			float newAngle = 0; 
 
@@ -138,13 +144,22 @@ public class AimObjS : MonoBehaviour {
 				}	
 				else{
 					chargeBarSprite.SetActive(false);
+					if (playerRender){
+						playerRender.transform.localPosition = Vector3.zero;
+					}
 				}
 
 
 		}
+			else{
+				chargeBarSprite.SetActive(false);
+			}
 		}
 		else{
 			chargeBarSprite.SetActive(false);
+			if (playerRender){
+				playerRender.transform.localPosition = Vector3.zero;
+			}
 		}
 
 	}

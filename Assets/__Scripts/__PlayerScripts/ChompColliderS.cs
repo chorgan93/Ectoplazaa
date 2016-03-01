@@ -34,6 +34,8 @@ public class ChompColliderS : MonoBehaviour {
 	private float slowMult = 0.5f;
 	private bool slowed = false;
 
+	private bool chompSoundPlayed = false;
+
 
 	private PlayerS playerRef; // the player that created me
 
@@ -85,11 +87,14 @@ public class ChompColliderS : MonoBehaviour {
 
 			inactiveTime -= Time.deltaTime*TimeManagerS.timeMult;
 			if (inactiveTime <= 0){
-				if (!ownCollider.enabled){
-					ownCollider.enabled = true;
-					Instantiate(sfxAttackObj,transform.position,Quaternion.identity);
-					CameraShakeS.C.MicroShake();
+				if (!chompSoundPlayed){
+				ownCollider.enabled = true;
+				//Debug.Log("PLAYED CHOMP SOUND");
+				Instantiate(sfxAttackObj,transform.position,Quaternion.identity);
+				CameraShakeS.C.MicroShake();
+					chompSoundPlayed = true;
 				}
+
 			}
 
 			lifeTime -= Time.deltaTime*TimeManagerS.timeMult;
@@ -172,7 +177,8 @@ public class ChompColliderS : MonoBehaviour {
 			
 			//print("HIT PLAYER " +  otherPlayer.playerNum); 
 			
-			if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0) {
+			if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0 &&
+			    (!CurrentModeS.isTeamMode || (CurrentModeS.isTeamMode && !GlobalVars.OnSameTeam(playerRef,otherPlayer)))) {
 				// only deal damage if higher priority or other player isnt attacking
 				//if ((!otherPlayer.attacking) || (otherPlayer.attacking && otherPlayer.attackPriority < playerRef.attackPriority)) {
 				if (!otherPlayer.attacking){
@@ -202,7 +208,7 @@ public class ChompColliderS : MonoBehaviour {
 					if(otherPlayer.health < 5)
 					{
 						otherPlayer.GetComponent<TrailHandlerRedubS>().SpawnGlobs(otherPlayer.transform.position,2); 
-						otherPlayer.TakeDamage(otherPlayer.health);
+						otherPlayer.TakeDamage(otherPlayer.health, false);
 						GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 						GlobalVars.totalKills[playerRef.playerNum-1] ++; 
 					}
@@ -211,7 +217,7 @@ public class ChompColliderS : MonoBehaviour {
 						int damageTaken = (int)otherPlayer.health+1;  //Mathf.RoundToInt((otherPlayer.health/2f));
 						
 						otherPlayer.GetComponent<TrailHandlerRedubS>().DestroyPlayerDotsRange(damageTaken);
-						otherPlayer.TakeDamage (damageTaken);
+						otherPlayer.TakeDamage (damageTaken, false);
 						GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 						GlobalVars.totalKills[playerRef.playerNum-1] ++; 
 					}
@@ -256,7 +262,8 @@ public class ChompColliderS : MonoBehaviour {
 			
 			PlayerS otherPlayer = other.GetComponent<DotColliderS>().whoCreatedMe;
 			
-			if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0){
+			if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0 &&
+			    (!CurrentModeS.isTeamMode || (CurrentModeS.isTeamMode && !GlobalVars.OnSameTeam(playerRef,otherPlayer)))){
 				
 				//print ("DAMAGING PLAYER " + otherPlayer.playerNum); 
 				
@@ -283,7 +290,7 @@ public class ChompColliderS : MonoBehaviour {
 				if(otherPlayer.health < 5)
 				{
 					otherPlayer.GetComponent<TrailHandlerRedubS>().SpawnGlobs(otherPlayer.transform.position,2); 
-					otherPlayer.TakeDamage(otherPlayer.health);
+					otherPlayer.TakeDamage(otherPlayer.health, false);
 					GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 					GlobalVars.totalKills[playerRef.playerNum-1] ++; 
 				}
@@ -292,7 +299,7 @@ public class ChompColliderS : MonoBehaviour {
 					int damageTaken = (int)otherPlayer.health+1;  //Mathf.RoundToInt((otherPlayer.health/2f));
 					
 					otherPlayer.GetComponent<TrailHandlerRedubS>().DestroyPlayerDotsRange(damageTaken);
-					otherPlayer.TakeDamage (damageTaken);
+					otherPlayer.TakeDamage (damageTaken, false);
 					GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 					GlobalVars.totalKills[playerRef.playerNum-1] ++; 
 				}

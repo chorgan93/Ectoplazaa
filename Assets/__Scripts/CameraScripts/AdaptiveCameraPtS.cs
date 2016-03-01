@@ -10,6 +10,7 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 	private Vector3 hitCenter;
 	public Transform centerPt;
 
+
 	public float playerWeight;
 	public float centerWeight;
 	public float hitWeight;
@@ -32,9 +33,14 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 	public float minY;
 	public float maxY;
 
+	public GameObject ghostBall;
+	private float ghostBallWeight = 0.25f;
+
 	
 	public float xConstraintSizeAdjustMult = 0.1f;
 	public float yConstraintSizeAdjustMult = 0.05f;
+
+	public bool snapCamera = false;
 
 	void Awake () {
 		A = this;
@@ -48,6 +54,7 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 			playerPositions.Add(players[i].transform);
 			playerRefs.Add(players[i].GetComponent<PlayerS>());
 		}
+
 	}
 
 
@@ -63,16 +70,43 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 		// create player centerpt
 
 		if (playerPositions.Count > 0){
+
+			int numSpecialAdd = 0;
+
 			playerCenterPos = Vector3.zero;
 			for (int i = 0; i < playerPositions.Count; i++){
 				playerCenterPos += playerPositions[i].position;
+
+				if (playerRefs[i].GetSpecialState()){
+					playerCenterPos += playerPositions[i].position*2;
+					numSpecialAdd += 2;
+				}
 			}
-			playerCenterPos/=playerPositions.Count;
+			playerCenterPos/=(playerPositions.Count + numSpecialAdd);
+
+			if (numSpecialAdd > 0){
+				snapCamera = true;
+			}
+			else{
+				snapCamera = false;
+			}
 
 			// add two values together and divide by total weight
 
-			adaptPt = (centerPt.transform.position*centerWeight + playerCenterPos*playerWeight
-			           + hitCenter*currentHitWeight)/(centerWeight+playerWeight+currentHitWeight);
+			// factor in ballmode
+			if (CurrentModeS.currentMode == 2){
+
+				adaptPt = (centerPt.transform.position*centerWeight + playerCenterPos*playerWeight
+				           + hitCenter*currentHitWeight + ghostBall.transform.position*ghostBallWeight)
+					/(centerWeight+playerWeight+currentHitWeight+ghostBallWeight);
+
+			}
+			else{
+
+				adaptPt = (centerPt.transform.position*centerWeight + playerCenterPos*playerWeight
+				           + hitCenter*currentHitWeight)/(centerWeight+playerWeight+currentHitWeight);
+
+			}
 		}
 
 		// set pos to adaptPt
@@ -108,40 +142,51 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 	void LateUpdate () {
 
 		// remove players who are out of lives or out of the game
-		if (CurrentModeS.currentMode == 1){
 			for (int i = 0; i < playerRefs.Count; i++){
-				if (playerRefs[i].numLives <= 0){
+				if (playerRefs[i].numLives == 0){
 					playerRefs.RemoveAt(i);
 					playerPositions.RemoveAt(i);
 				}
 			}
-		}
+
 
 	}
 
 	void SetCamMult () {
 
 		largestDistance = 0;
-		Vector2 centerPos2d = Vector2.zero;
-		centerPos2d.x = centerPt.position.x;
-		centerPos2d.y = centerPt.position.y;
 
-		Vector2 playerCenter2d = Vector2.zero;
-		playerCenter2d.x = playerCenterPos.x;
-		playerCenter2d.y = playerCenterPos.y;
+		float currentDistance = 0;
 
-		if (playerPositions.Count > 0){
+		Vector2 playerPos2d = Vector2.zero;
+		Vector2 checkPos2d = Vector2.zero;
+
+		foreach (Transform player in playerPositions){
+			playerPos2d.x = player.position.x;
+			playerPos2d.y = player.position.y;
+
 			for (int i = 0; i < playerPositions.Count; i++){
-				Vector2 playerPos2D = Vector2.zero;
-				playerPos2D.x = playerPositions[i].position.x;
-				playerPos2D.y = playerPositions[i].position.y;
+				if (playerPositions[i] != player){
+					checkPos2d.x = playerPositions[i].transform.position.x;
+					checkPos2d.y = playerPositions[i].transform.position.y;
 
-				float newDistance = Vector2.Distance(playerPos2D,playerCenter2d);
-				if (newDistance > largestDistance){
-					largestDistance = newDistance;
+					currentDistance = Vector2.Distance(playerPos2d, checkPos2d);
+					if (currentDistance > largestDistance){
+						largestDistance = currentDistance;
+					}
 				}
 			}
+
+			// if ball mode, add ball into equation
+			checkPos2d.x = ghostBall.transform.position.x;
+			checkPos2d.y = ghostBall.transform.position.y;
+
+			currentDistance = Vector2.Distance(playerPos2d, checkPos2d);
+			if (currentDistance > largestDistance){
+				largestDistance = currentDistance;
+			}
 		}
+
 
 		if (!dontDoCameraThing){
 			CameraFollowS.F.SetCamMult(largestDistance*sizeAddMult);

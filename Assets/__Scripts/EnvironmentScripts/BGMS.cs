@@ -104,7 +104,6 @@ public class BGMS : MonoBehaviour {
 		currentVolume = 0;
 		ownSource.volume = currentVolume;
 		delayChange = delayTime;
-		print (ownSource.volume);
 
 		//print ("duck volume");
 	}

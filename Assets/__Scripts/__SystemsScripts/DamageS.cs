@@ -30,9 +30,22 @@ public class DamageS : MonoBehaviour {
 
 	// for pink
 	private bool isPinkSpecialCollider = false;
+	public GameObject pinkExplosionPrefab;
 
 	// for acid
 	private LineRenderer myLaserRender;
+	public GameObject laserRenderBegin;
+	public GameObject laserRenderEnd;
+	public GameObject laserDrool;
+	private float laserAnimRate = 0.08f;
+	private float laserAnimCountdown;
+	private int currentLaserFrame = 0;
+
+
+	public Sprite[] laserEndSprites;
+	public Sprite[] laserBeginSprites;
+	public Texture[] laserMidTextures;
+
 
 	// for megachomp
 	private MegaChompHandlerS megaRef;
@@ -53,6 +66,7 @@ public class DamageS : MonoBehaviour {
 
 		groundPoundSize = new Vector3(0.6f, 1.2f, 0.6f);
 
+		laserAnimCountdown = laserAnimRate;
 
 	}
 
@@ -110,8 +124,9 @@ public class DamageS : MonoBehaviour {
 				
 				PlayerS otherPlayer = other.gameObject.GetComponent<PlayerS> ();
 
-				if (otherPlayer != playerRef){
-					//print("HIT PLAYER " +  otherPlayer.playerNum); 
+				if (otherPlayer != playerRef && 
+						    (!CurrentModeS.isTeamMode 
+						 || (CurrentModeS.isTeamMode && !GlobalVars.OnSameTeam(playerRef, otherPlayer)))){
 					
 					if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0) {
 						// only deal damage if higher priority or other player isnt attacking
@@ -140,7 +155,9 @@ public class DamageS : MonoBehaviour {
 							if(otherPlayer.health < 5)
 							{
 								otherPlayer.GetComponent<TrailHandlerRedubS>().SpawnGlobs(otherPlayer.transform.position,2); 
-								otherPlayer.TakeDamage(otherPlayer.health);
+										if (!isPinkSpecialCollider){
+								otherPlayer.TakeDamage(otherPlayer.health, specialAttackDmg);
+										}
 								GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 								GlobalVars.totalKills[playerRef.playerNum-1] ++; 
 
@@ -151,7 +168,9 @@ public class DamageS : MonoBehaviour {
 								int damageTaken = (int)otherPlayer.health+1;  //Mathf.RoundToInt((otherPlayer.health/2f));
 								
 								otherPlayer.GetComponent<TrailHandlerRedubS>().DestroyPlayerDotsRange(damageTaken);
-								otherPlayer.TakeDamage (damageTaken);
+										if (!isPinkSpecialCollider){
+											otherPlayer.TakeDamage (damageTaken, specialAttackDmg);
+										}
 								GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 								GlobalVars.totalKills[playerRef.playerNum-1] ++; 
 							}
@@ -159,9 +178,12 @@ public class DamageS : MonoBehaviour {
 							//print ("KILL!"); 
 
 							if (isPinkSpecialCollider){
-								playerRef.SelfDestruct();
-								Destroy(gameObject);	
+										playerRef.SetPinkHold(otherPlayer);
+										if (pinkExplosionPrefab){
+											Instantiate(pinkExplosionPrefab, transform.position, Quaternion.identity);
+										}
 							}
+
 							
 							MakeExplosion(otherPlayer.gameObject, Vector3.Lerp(otherPlayer.transform.position,playerRef.transform.position, 0.5f)); 
 							
@@ -214,7 +236,9 @@ public class DamageS : MonoBehaviour {
 
 			PlayerS otherPlayer = other.GetComponent<DotColliderS>().whoCreatedMe;
 
-			if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0){
+					if (otherPlayer != playerRef && otherPlayer.health > 0 && otherPlayer.respawnInvulnTime <= 0
+					   && (!CurrentModeS.isTeamMode 
+					 || (CurrentModeS.isTeamMode && !GlobalVars.OnSameTeam(playerRef, otherPlayer)))){
 
 				//print ("DAMAGING PLAYER " + otherPlayer.playerNum); 
 				
@@ -245,7 +269,9 @@ public class DamageS : MonoBehaviour {
 				if(otherPlayer.health < 5)
 				{
 					otherPlayer.GetComponent<TrailHandlerRedubS>().SpawnGlobs(otherPlayer.transform.position,2); 
-					otherPlayer.TakeDamage(otherPlayer.health);
+							if (!isPinkSpecialCollider){
+								otherPlayer.TakeDamage(otherPlayer.health, specialAttackDmg);
+							}
 					GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 					GlobalVars.totalKills[playerRef.playerNum-1] ++; 
 
@@ -256,15 +282,19 @@ public class DamageS : MonoBehaviour {
 					int damageTaken = (int)otherPlayer.health+1;  //Mathf.RoundToInt((otherPlayer.health/2f));
 					
 					otherPlayer.GetComponent<TrailHandlerRedubS>().DestroyPlayerDotsRange(damageTaken);
-					otherPlayer.TakeDamage (damageTaken);
+							if (!isPinkSpecialCollider){
+								otherPlayer.TakeDamage (damageTaken, specialAttackDmg);
+							}
 					GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 					GlobalVars.totalKills[playerRef.playerNum-1] ++; 
 				}
 
-				if (isPinkSpecialCollider){
-					playerRef.SelfDestruct();
-					Destroy(gameObject);	
-				}
+						if (isPinkSpecialCollider){
+							playerRef.SetPinkHold(otherPlayer);
+							if (pinkExplosionPrefab){
+								Instantiate(pinkExplosionPrefab, transform.position, Quaternion.identity);
+							}
+						}
 
 				if (specialAttackDmg){
 					otherPlayer.numLives = 0;
@@ -321,6 +351,9 @@ public class DamageS : MonoBehaviour {
 			= playerRef.playerParticleMats
 			[playerRef.characterNum-1].GetColor("_TintColor");
 
+		slashEffect.GetComponent<TrailRenderer>().materials[0].color = 
+			playerRef.trailRendererGO.GetComponent<TrailRenderer>().materials[0].color;
+
 		spawnPos = (transform.position+otherPos)/2;
 		spawnPos.z = transform.position.z +1;
 
@@ -359,6 +392,9 @@ public class DamageS : MonoBehaviour {
 			as GameObject;
 		
 		slashEffect.GetComponent<SlashEffectS>().moveDir = effectDir;
+
+		slashEffect.GetComponent<TrailRenderer>().materials[0].color = 
+			playerRef.trailRendererGO.GetComponent<TrailRenderer>().materials[0].color;
 		
 		spawnPos = (transform.position+otherPos)/2;
 		spawnPos.z = transform.position.z +1;
@@ -388,8 +424,44 @@ public class DamageS : MonoBehaviour {
 	private void LaserHandler(){
 
 		if (myLaserRender){
-			myLaserRender.SetPosition(0, playerRef.transform.position);
-			myLaserRender.SetPosition(1, transform.position);
+
+			Vector3 renderStart =playerRef.transform.position;
+			Vector3 renderEnd = transform.position;
+			renderEnd.z = renderStart.z;
+
+			myLaserRender.SetPosition(0, renderStart);
+			myLaserRender.SetPosition(1, renderEnd);
+
+			Vector3 laserBeginPos = playerRef.transform.position;
+			laserBeginPos.z -= 3f;
+			laserRenderBegin.transform.position = laserDrool.transform.position = laserBeginPos;
+
+			Vector3 laserEndPos = transform.position;
+			laserEndPos.z -= 3f;
+			laserRenderEnd.transform.position = laserEndPos;
+			Vector3 laserPieceRotation = playerRef.spriteObject.transform.rotation.eulerAngles;
+			laserPieceRotation.z += 90f;
+			if (playerRef.spriteObject.transform.localScale.x > 0){
+				laserPieceRotation.z += 180f;
+			}
+			laserRenderBegin.transform.rotation =
+				laserRenderEnd.transform.rotation = Quaternion.Euler(laserPieceRotation);
+
+			// animate
+			laserAnimCountdown -= Time.deltaTime;
+			if (laserAnimCountdown <= 0){
+				laserAnimCountdown =laserAnimRate;
+				currentLaserFrame++;
+				if (currentLaserFrame > laserMidTextures.Length-1){
+					currentLaserFrame = 0;
+				}
+
+				myLaserRender.materials[0].SetTexture("_MainTex", laserMidTextures[currentLaserFrame]);
+				
+				laserRenderBegin.GetComponent<SpriteRenderer>().sprite = laserBeginSprites[currentLaserFrame];
+				laserRenderEnd.GetComponent<SpriteRenderer>().sprite = laserEndSprites[currentLaserFrame];
+			}
+
 		}
 
 	}
@@ -398,9 +470,6 @@ public class DamageS : MonoBehaviour {
 	{
 		
 		object1.GetComponent<Rigidbody> ().AddExplosionForce (5000f, exploPos, 5f); 
-
-		//object1.GetComponent<Rigidbody> ().AddForce (object1.GetComponent<Rigidbody> ().velocity * -knockbackMult);
-		//object2.GetComponent<Rigidbody> ().AddForce (object2.GetComponent<Rigidbody> ().velocity * -knockbackMult);
 		
 		
 		
@@ -411,9 +480,6 @@ public class DamageS : MonoBehaviour {
 
 		object1.GetComponent<Rigidbody> ().AddExplosionForce (5000f, exploPos, 5f); 
 		object2.GetComponent<Rigidbody> ().AddExplosionForce (5000f, exploPos, 5f); 
-
-		//object1.GetComponent<Rigidbody> ().AddForce (object1.GetComponent<Rigidbody> ().velocity * -knockbackMult);
-		//object2.GetComponent<Rigidbody> ().AddForce (object2.GetComponent<Rigidbody> ().velocity * -knockbackMult);
 
 
 
@@ -447,7 +513,8 @@ public class DamageS : MonoBehaviour {
 			// activate laser visual
 			myLaserRender = GetComponent<LineRenderer>();
 			myLaserRender.enabled = true;
-			
+
+
 		}
 		
 		if (!ownColl){

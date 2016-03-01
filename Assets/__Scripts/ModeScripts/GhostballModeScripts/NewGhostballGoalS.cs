@@ -20,7 +20,13 @@ public class NewGhostballGoalS : MonoBehaviour {
 	{
 		if (c == ghostBall.GetComponent<Collider>())
 		{
-			AddScore(ghostBall.GetCurrentPlayer());
+			if (!CurrentModeS.isTeamMode){
+				AddScore(ghostBall.GetCurrentPlayer());
+			}
+			else{
+				AddScoreTeam(ghostBall.GetCurrentTeam());
+			}
+			ghostBall.MakeSlashEffect(transform.position);
 			goalScored = true;
 		}
 	}
@@ -30,6 +36,9 @@ public class NewGhostballGoalS : MonoBehaviour {
 
 		scoreKeeper.AddPoints(playerToScore);
 
+	}
+	void AddScoreTeam(int teamToScore){
+		scoreKeeper.AddPointsTeam(teamToScore);
 	}
 	public void Disable(){
 
