@@ -13,7 +13,7 @@ public class StartMenu : MonoBehaviour {
 	private float inputDelay = 2f;
 
 
-	public GameObject [] postcards; 
+	//public GameObject [] postcards; 
 
 	public GameObject cursorObj;
 	float cursorSpeed = 0.2f; 
@@ -63,6 +63,7 @@ public class StartMenu : MonoBehaviour {
 	public List<GameObject> scrollSoundObjs;
 	public List<GameObject> selectSoundObjs;
 	public GameObject advSoundObj;
+	public GameObject bellSoundObj;
 
 	private string competitiveNextScene = "7CompetitiveModeSelect";
 	private string partyNextScene = "8PartyModeSelect";
@@ -71,10 +72,20 @@ public class StartMenu : MonoBehaviour {
 	private float holdBTime = 0;
 	private float holdBMaxTime = 1;
 
+	private bool showTitle = false;
+	public TextMesh flickerText;
+	private float flickerTimeMax = 0.8f;
+	private float flickerTimeCountdown;
+	public GameObject titleCameraPos;
+	private bool buttonPressed = false;
+	public GameObject bell;
+
 	AsyncOperation async;
 
 	void Start () 
 	{
+
+		flickerTimeCountdown = flickerTimeMax;
 
 		fullscreenOn = Screen.fullScreen;
 		inputDelay = inputDelayStart;
@@ -82,7 +93,7 @@ public class StartMenu : MonoBehaviour {
 		platformType = PlatformS.GetPlatform (); 
 		cameraFollow = GameObject.Find("Main Camera").GetComponent<CameraFollowS>();
 
-		if (started){
+		/*if (started){
 			foreach (GameObject postcard in postcards) 
 			{
 				
@@ -91,7 +102,7 @@ public class StartMenu : MonoBehaviour {
 			}
 			Instantiate(selectSoundObjs[0]);
 			inputDelay = 0;
-		}
+		}**/
 
 		cursorObj.transform.position = cursorPositions[currentCursorPos].transform.position;
 	}
@@ -119,24 +130,31 @@ public class StartMenu : MonoBehaviour {
 
 		if (!started) 
 		{
+			flickerTimeCountdown -= Time.deltaTime;
+
 			if (Input.GetButton ("AButtonAllPlayers" + platformType) || Input.GetKey (KeyCode.KeypadEnter)) 
 			{
-				started = true;
-				int i = 1; 
-				foreach (GameObject postcard in postcards) 
-				{
-					int direction = 0; 
-					if(i>=0)
-						direction = 1; 
-					else
-						direction = -1; 
+				if (!buttonPressed){
 
-					postcard.GetComponent<Rigidbody> ().AddForce (Vector3.right * Random.Range(200000,400000f)*direction*Time.deltaTime); 
-					postcard.GetComponent<Rigidbody> ().AddTorque (Vector3.forward * Random.Range(200000000f,400000000f)*direction*Time.deltaTime); 
-					i--; 
+				Instantiate(bellSoundObj);
+				showTitle = true;
+				CameraShakeS.C.SmallShake();
+
+
+					buttonPressed = true;
+
+				Invoke ("StartGame", 1f); 
 				}
+			}
 
-				Instantiate(advSoundObj);
+			if (buttonPressed){
+				
+				flickerTimeCountdown -= Time.deltaTime*6f;
+			}
+
+			if (flickerTimeCountdown <= 0){
+				flickerTimeCountdown = flickerTimeMax;
+				flickerText.gameObject.SetActive(!flickerText.gameObject.activeSelf);
 			}
 		}
 
@@ -148,6 +166,9 @@ public class StartMenu : MonoBehaviour {
 
 
 			if (inputDelay <= 0){
+
+				showTitle = false;
+				bell.gameObject.SetActive(false);
 
 				cursorObj.SetActive(true);
 
@@ -528,6 +549,10 @@ public class StartMenu : MonoBehaviour {
 			else{
 				// turn off cursor
 					cursorObj.SetActive(false);
+
+				if (showTitle){
+					cameraFollow.poi = titleCameraPos;
+				}
 				}
 
 			}
@@ -538,6 +563,12 @@ public class StartMenu : MonoBehaviour {
 
 	public void StartLoading() {
 		StartCoroutine("load");
+	}
+
+	private void StartGame(){
+		started = true;
+		Instantiate(advSoundObj);
+		flickerText.gameObject.SetActive(false);
 	}
 	
 	IEnumerator load() {

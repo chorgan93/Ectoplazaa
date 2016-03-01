@@ -121,8 +121,14 @@ public class PlayerSoundS : MonoBehaviour {
 
 	public void PlayCharIntroSoundQuickFix(){
 
+		if (playerRef){
+
 		
-		characterNum = playerRef.characterNum;
+			characterNum = playerRef.characterNum;
+		}
+		else{
+			characterNum = 0;
+		}
 		
 		// need to hear these
 		

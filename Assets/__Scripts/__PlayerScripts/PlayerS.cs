@@ -1484,6 +1484,8 @@ public class PlayerS : MonoBehaviour {
 						chargingParticles = 
 							Instantiate( chargingParticlePrefab, this.transform.position, Quaternion.identity) as GameObject; 
 						chargingParticles.transform.parent = this.transform; 
+						chargingParticles.GetComponent<ParticleSystem>().startColor = 
+							playerParticleMats[characterNum - 1].GetColor("_TintColor"); 
 						
 					}
 					
@@ -1512,7 +1514,12 @@ public class PlayerS : MonoBehaviour {
 						// play an attack sound
 						//soundSource.PlayChargeLv2();
 						soundSource.PlayGroundPoundReleaseSound();
-						Instantiate(spawnParticlePrefab,this.transform.position, Quaternion.identity);
+						GameObject spwn = Instantiate(spawnParticlePrefab,this.transform.position, Quaternion.identity)
+							as GameObject;
+
+						
+						spwn.GetComponent<ParticleSystem>().startColor = 
+							playerParticleMats[characterNum - 1].GetColor("_TintColor"); 
 						
 						Destroy(chargingParticles);
 						
@@ -1625,7 +1632,10 @@ public class PlayerS : MonoBehaviour {
 									
 									ownRigid.AddForce(jumpForce);
 									
-									Instantiate(jumpParticles, this.transform.position, Quaternion.identity); 
+									GameObject jmp = Instantiate(jumpParticles, this.transform.position, Quaternion.identity)
+										as GameObject;
+									jmp.GetComponent<ParticleSystem>().startColor = 
+										playerParticleMats[characterNum - 1].GetColor("_TintColor"); 
 									
 									// play jump sound
 									soundSource.PlayJumpSound();
@@ -1677,7 +1687,10 @@ public class PlayerS : MonoBehaviour {
 									
 									ownRigid.AddForce(jumpForce);
 									
-									Instantiate(jumpParticles, this.transform.position, Quaternion.identity); 
+									GameObject jmp = Instantiate(jumpParticles, this.transform.position, Quaternion.identity)
+										as GameObject;
+									jmp.GetComponent<ParticleSystem>().startColor = 
+										playerParticleMats[characterNum - 1].GetColor("_TintColor"); 
 									
 									// play jump sound
 									soundSource.PlayJumpSound();
@@ -2085,7 +2098,6 @@ public class PlayerS : MonoBehaviour {
 											this.gameObject.SetActive(false);
 										}
 										else{
-											Debug.Log(numLives);
 											respawnParticles = Instantiate(respawnParticlePrefab, this.transform.position, Quaternion.identity) as GameObject;
 											respawnParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[characterNum - 1].GetColor("_TintColor");
 											respawnParticles.GetComponent<ParticleSystem>().startLifetime = respawnTimeCountdown;
