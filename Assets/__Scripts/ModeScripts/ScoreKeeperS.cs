@@ -672,6 +672,10 @@ public class ScoreKeeperS : MonoBehaviour {
 
 
 		if (CurrentModeS.DoAnotherRound()){
+				
+				winningPlayerSprite.gameObject.SetActive(false);
+				winningPlayerTail.gameObject.SetActive(false);
+				CameraFollowS.F.StartSpecialCam(GlobalVars.playerList[winningPlayerNum-1], 3f);
 			winText.text = "P" + winningPlayerNum + "\nwins Round " + CurrentModeS.GetRoundsCurrent() + "!";
 		}
 		else{
@@ -688,7 +692,7 @@ public class ScoreKeeperS : MonoBehaviour {
 
 			if(p != null)
 			{
-				p.SetActive (false); 
+				//p.SetActive (false); 
 				//GameObject.Destroy(p.gameObject); 
 			}
 

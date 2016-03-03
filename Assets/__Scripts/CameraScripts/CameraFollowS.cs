@@ -154,6 +154,13 @@ public class CameraFollowS : MonoBehaviour {
 
 	}
 
+	public void StartSpecialCam(GameObject newTarget, float newSpecialTime){
+		focusOnCharacter = true;
+		focusChar = newTarget;
+		endSpecialCountdown = newSpecialTime;
+		
+	}
+
 	private void EndSpecialCam(){
 		if (focusOnCharacter){
 			endSpecialCountdown -= Time.deltaTime/Time.timeScale;

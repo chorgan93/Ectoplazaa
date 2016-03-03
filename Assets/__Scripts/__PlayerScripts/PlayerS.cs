@@ -413,7 +413,7 @@ public class PlayerS : MonoBehaviour {
 			ManageCharge();
 			BackToMenu();
 			
-			if (!ScoreKeeperS.gameEnd && ScoreKeeperS.gameStarted) {
+			if (ScoreKeeperS.gameStarted) {
 
 				// trying to stop a stop moving bug
 				transform.rotation = Quaternion.identity;
