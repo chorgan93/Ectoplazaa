@@ -11,6 +11,8 @@ public class BreakablePlatformS: MonoBehaviour {
 
 	public Sprite[] destructStates;
 		private int currentSprite = 0;
+	private float changeSpriteRate = 0.12f;
+	private float changeSpriteCountdown = 0;
 
 	private float shakeIntensity = 1.5f;
 	private float shakeDecay = 5f;
@@ -37,6 +39,23 @@ public class BreakablePlatformS: MonoBehaviour {
 
 	void FixedUpdate () {
 
+		if (mySprite.enabled){
+			if (durability < 5-currentSprite){
+				changeSpriteCountdown -= Time.deltaTime;
+				if (changeSpriteCountdown <= 0){
+					changeSpriteCountdown = changeSpriteRate;
+					currentSprite ++;
+					if (currentSprite >= 5){
+						mySprite.enabled = false;
+						myCollider.enabled = false;
+					}
+					else{
+						mySprite.sprite = destructStates[currentSprite];
+					}
+				}
+			}
+		}
+
 		if (currentShakeIntensity > 0){
 
 			currentShakeIntensity -= shakeDecay*Time.deltaTime;
@@ -60,14 +79,17 @@ public class BreakablePlatformS: MonoBehaviour {
 
 	private void TakeDamage(){
 
-		durability--;
-		currentSprite++;
+		durability-=3;
+		//currentSprite++;
+
+		changeSpriteCountdown = 0;
+
 		if (durability <= 0){
-			mySprite.enabled = false;
-			myCollider.enabled = false;
+			//mySprite.enabled = false;
+			//myCollider.enabled = false;
 		}
 		else{
-			mySprite.sprite = destructStates[currentSprite];
+			//mySprite.sprite = destructStates[currentSprite];
 			TriggerShake();
 		}
 

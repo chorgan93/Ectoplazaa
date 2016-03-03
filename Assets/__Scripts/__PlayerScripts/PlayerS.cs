@@ -212,6 +212,8 @@ public class PlayerS : MonoBehaviour {
 	[HideInInspector]
 	public float dodgeTimeCountdown;
 	public float dodgeForce; // force to apply to character at start of dodge
+	private float dodgeCooldownMax = 0.6f;
+	private float dodgeCooldown;
 	
 	// NEW Lv0 "Chomp" attack vars
 	private float lv0MaxChargeTime = 0.3f; // if charge time is under this time, trigger lv0
@@ -268,9 +270,10 @@ public class PlayerS : MonoBehaviour {
 	// acid special
 	public GameObject acidSpecialCollider;
 	private GameObject acidSpecialReference;
-	private float acidSpecialTimeMax = 1f;
+	private float acidSpecialTimeMax = 1.8f;
 	private float acidSpecialStartRotateRate = 0f;
-	private float acidSpecialRotateAccel = 240f;
+	private float acidSpecialRotateAccel = 80f;
+	private float acidSpecialRotateMax = 5000f;
 	private float acidSpecialCurrentRotateRate;
 	
 	public GameObject char5SpecialHandler;
@@ -563,11 +566,14 @@ public class PlayerS : MonoBehaviour {
 				ownRigid.velocity = Vector3.zero; 
 				
 				acidSpecialCurrentRotateRate += acidSpecialRotateAccel*Time.deltaTime;
+				if (acidSpecialCurrentRotateRate > acidSpecialRotateMax){
+					acidSpecialCurrentRotateRate = acidSpecialRotateMax;
+				}
 				if (spriteObject.transform.localScale.x < 0){
-					spriteObject.transform.Rotate(new Vector3(0,0,-acidSpecialCurrentRotateRate*Time.deltaTime));
+					spriteObject.transform.Rotate(new Vector3(0,0,acidSpecialCurrentRotateRate*Time.deltaTime));
 				}
 				else{
-					spriteObject.transform.Rotate(new Vector3(0,0,acidSpecialCurrentRotateRate*Time.deltaTime));
+					spriteObject.transform.Rotate(new Vector3(0,0,-acidSpecialCurrentRotateRate*Time.deltaTime));
 				}
 				
 				Vector3 laserDir = spriteObject.transform.right;
@@ -1343,6 +1349,8 @@ public class PlayerS : MonoBehaviour {
 	*/
 			void Walk () 
 			{
+
+				dodgeCooldown -= Time.deltaTime;
 				
 				// turn variables related to being on the ground on/off
 				if (!groundDetect.Grounded()){ // if in the air
@@ -1350,7 +1358,9 @@ public class PlayerS : MonoBehaviour {
 				}
 				else{ // if not the air
 					canAirStrafe = true;
-					canDodge = true;
+					if (dodgeCooldown <= 0){
+						canDodge = true;
+					}
 				}
 				
 				
@@ -1811,6 +1821,7 @@ public class PlayerS : MonoBehaviour {
 										
 										attacking = false;
 										isDangerous = false;
+										dodgeCooldown = dodgeCooldownMax;
 										
 										
 										
@@ -2489,11 +2500,11 @@ public class PlayerS : MonoBehaviour {
 									spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
 									// rotate a tiny bit to allow for error
 									if (spriteObject.transform.localScale.x < 0){
-										spriteObject.transform.Rotate(new Vector3(0,0, 60f));
+										spriteObject.transform.Rotate(new Vector3(0,0, -75f));
 										Debug.Log(spriteObject.transform.rotation);
 									}
 									else{
-										spriteObject.transform.Rotate(new Vector3(0,0, -60f));
+										spriteObject.transform.Rotate(new Vector3(0,0, 75f));
 										Debug.Log(spriteObject.transform.rotation);
 									}
 									currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z;
