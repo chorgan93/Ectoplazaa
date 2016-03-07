@@ -28,6 +28,9 @@ public class FlameShooterS : MonoBehaviour {
 	private float flickerCountdown;
 	private bool startFlicker = false;
 
+	public Material flashMat;
+	private Material spriteMat;
+
 	private FlameS myFlames;
 
 	// Use this for initialization
@@ -55,6 +58,8 @@ public class FlameShooterS : MonoBehaviour {
 		startColor = mySprite.color;
 
 		flickerTimeMax = warningStartTime/(slowFlickerCount*0.5f + fastFlickerCount*1.0f);
+
+			spriteMat = mySprite.material;
 
 		}
 	
@@ -136,11 +141,11 @@ public class FlameShooterS : MonoBehaviour {
 					flickerCountdown = flickerTimeMax;
 				}
 
-				if (mySprite.color == startColor){
-					mySprite.color = warningColor;
+				if (mySprite.material == spriteMat){
+					mySprite.material = flashMat;
 				}
 				else{
-					mySprite.color = startColor;
+					mySprite.material = spriteMat;
 				}
 
 				if (currentFlicker > slowFlickerCount + fastFlickerCount){
@@ -149,7 +154,7 @@ public class FlameShooterS : MonoBehaviour {
 			}
 		}
 		else{
-			mySprite.color = startColor;
+			mySprite.material = spriteMat;
 			currentFlicker = 0;
 			flickerCountdown = flickerTimeMax*2;
 		}

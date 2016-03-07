@@ -60,17 +60,20 @@ public class GhostMaskSpecialAttackS : MonoBehaviour {
 
 	void SlashAttack(PlayerS target){
 
-		CameraShakeS.C.SmallShake();
-		CameraShakeS.C.TimeSleep(0.12f);
+		if (!target.effectPause){
 
-		Vector3 spawnPos = target.transform.position;
-		spawnPos.z -= 1f;
-
-		GameObject newSlash = Instantiate(slashObj, spawnPos, Quaternion.identity)
-			as GameObject;
-		newSlash.GetComponent<MaskSlashObjS>().targetPlayer = target;
-
-		target.PauseCharacter();
+			CameraShakeS.C.SmallShake();
+			//CameraShakeS.C.TimeSleep(0.1f);
+	
+			Vector3 spawnPos = target.transform.position;
+			spawnPos.z -= 1f;
+	
+			GameObject newSlash = Instantiate(slashObj, spawnPos, Quaternion.identity)
+				as GameObject;
+			newSlash.GetComponent<MaskSlashObjS>().targetPlayer = target;
+				
+			target.PauseCharacter();
+		}
 
 	}
 

@@ -12,12 +12,18 @@ public class MrWrapsSpecialAttackS : MonoBehaviour {
 
 	public MrWrapsSpecialAttackS subExplosion;
 
+	private Vector3 startSize;
+	private Rigidbody myRigid;
+
 
 	void Start(){
 
 		// do spawn effects (muzzle flare) here and rotate accordingly
 		FaceTarget(GetComponent<Rigidbody>().velocity);
 		CameraShakeS.C.SmallShake();
+
+		startSize = transform.localScale;
+		myRigid = GetComponent<Rigidbody>();
 	}
 
 
@@ -26,6 +32,17 @@ public class MrWrapsSpecialAttackS : MonoBehaviour {
 		if (playerRef){
 			GetComponent<DamageS>().MakeSpecial(playerRef);
 
+		}
+
+		if(myRigid.velocity != Vector3.zero){
+			if (myRigid.velocity.x > 0){
+				Vector3 flipSize = startSize;
+				flipSize.x *= -1f;
+				transform.localScale = flipSize;
+			}
+			else{
+				transform.localScale = startSize;
+			}
 		}
 
 		lifeTime -= Time.deltaTime*TimeManagerS.timeMult;

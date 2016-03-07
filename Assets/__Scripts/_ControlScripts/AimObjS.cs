@@ -144,15 +144,22 @@ public class AimObjS : MonoBehaviour {
 				}	
 				else{
 					chargeBarSprite.SetActive(false);
-					playerRender.transform.localPosition = Vector3.zero;
+					if (playerRender){
+						playerRender.transform.localPosition = Vector3.zero;
+					}
 				}
 
 
 		}
+			else{
+				chargeBarSprite.SetActive(false);
+			}
 		}
 		else{
 			chargeBarSprite.SetActive(false);
-			playerRender.transform.localPosition = Vector3.zero;
+			if (playerRender){
+				playerRender.transform.localPosition = Vector3.zero;
+			}
 		}
 
 	}
