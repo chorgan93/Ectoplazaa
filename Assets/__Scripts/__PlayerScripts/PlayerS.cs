@@ -43,6 +43,9 @@ public class PlayerS : MonoBehaviour {
 	public float addJumpForceMaxTime;
 	private float addingJumpTime;
 	private bool stopAddingJump;
+
+	private float groundPoundDelay;
+	private float groundPoundDelayMax = 0.2f;
 	
 	public GroundDetectS groundDetect;
 	
@@ -1200,6 +1203,7 @@ public class PlayerS : MonoBehaviour {
 						lv1OutCountdown = lv1OutTimeMax;
 						
 						startedLv2Pause = false;
+						CameraShakeS.C.SmallShake();
 					}
 					else
 					{
@@ -1333,6 +1337,7 @@ public class PlayerS : MonoBehaviour {
 							
 							// kinesthetics
 							CameraShakeS.C.TimeSleep(0.2f);
+							CameraShakeS.C.LargeShake();
 							dangerObj.GetComponent<DamageS>().MakeSlashEffect(transform.position+bulletVel.normalized);
 						}
 						else{
@@ -1475,6 +1480,8 @@ public class PlayerS : MonoBehaviour {
 				// turn danger off
 				
 				// allow charge attack
+
+				groundPoundDelay -= Time.deltaTime;
 				
 				// don't do during lv 3
 				if (attacking && attackToPerform == 2){
@@ -1610,8 +1617,52 @@ public class PlayerS : MonoBehaviour {
 							//print ("Jump!");
 							
 							jumpButtonDown = true;
+
+							// check for ground pound first
+
+							#if UNITY_WIIU
+							if (jumped && ((playerNum == 1 && Input.GetAxis("VerticalPlayer" + playerNum + platformType) < -0.7f) ||
+							     (playerNum > 1 && wiiUInput.verticalAxis) < -0.7f) && !groundPounded && groundPoundDelay <= 0)
+							{
+								#else
+								if (jumped && Input.GetAxis("VerticalPlayer" + playerNum + platformType) < -0.7f && !groundPounded
+								    && groundPoundDelay <= 0)
+								{
+									#endif
+
+									// do ground pound
+									Vector3 groundPoundVel = Vector3.zero;
+									groundPoundVel.y = -groundPoundForce*Time.deltaTime*TimeManagerS.timeMult;
+									if (isSlowed){
+										groundPoundVel *= slowMult;
+									}
+									ownRigid.velocity = groundPoundVel;
+									isDangerous = true;
+									ownRigid.useGravity = true;
+									
+									hasDoubleJumped = true;
+									
+									canAirStrafe = false;
+									
+									chargingGroundPound = false;
+									groundPounded = true;
+									
+									// attack priority
+									attackPriority = 2;
+
+									// play an attack sound
+									soundSource.PlayGroundPoundReleaseSound();
+									GameObject spwn = Instantiate(spawnParticlePrefab,this.transform.position, Quaternion.identity)
+										as GameObject;
+									
+									
+									spwn.GetComponent<ParticleSystem>().startColor = 
+										playerParticleMats[characterNum - 1].GetColor("_TintColor"); 
+									
+									Destroy(chargingParticles);
+								}
 							
-							if (!jumped)
+							else if (!jumped || !hasDoubleJumped)
 							{
 								
 								// don't do regular jump while attacking or charging or dodging
@@ -1664,8 +1715,16 @@ public class PlayerS : MonoBehaviour {
 									
 									addingJumpTime = 0;
 									stopAddingJump = false;
-									
+
+									if (!jumped){
 									jumped = true;
+											// add some ground pound delay
+											groundPoundDelay = groundPoundDelayMax;
+									}
+									else{
+											hasDoubleJumped = true;
+											groundPoundDelay = groundPoundDelayMax;
+									}
 									
 									GameObject jump = Instantiate(jumpEffectObject, transform.position,Quaternion.identity)
 										as GameObject;
@@ -1675,7 +1734,7 @@ public class PlayerS : MonoBehaviour {
 									
 								}
 							}
-							
+							/*
 							// do ground pound charge if not charging or dodging
 							else if (!groundPounded && !charging && !clingingToWall && !dodging){
 								
@@ -1737,10 +1796,10 @@ public class PlayerS : MonoBehaviour {
 									
 									Destroy(chargingParticles);
 								}
+
 								
 								
-								
-							}
+							}*/
 							else{
 								// don't do anything
 							}
@@ -2086,6 +2145,7 @@ public class PlayerS : MonoBehaviour {
 									if (health <= 0){
 
 										CameraShakeS.C.PunchIn();
+
 										
 										ownRigid.velocity = Vector3.zero; 
 										
@@ -2114,6 +2174,8 @@ public class PlayerS : MonoBehaviour {
 
 										// clear ground check
 										groundDetect.RemoveAll();
+
+											CameraShakeS.C.LargeShake();
 										
 										
 										
@@ -2237,7 +2299,6 @@ public class PlayerS : MonoBehaviour {
 									this.GetComponent<SphereCollider>().material = normalPhysics; 
 									
 									
-									CameraShakeS.C.SmallShake();
 									
 								}
 								
