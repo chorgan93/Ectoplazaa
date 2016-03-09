@@ -12,6 +12,8 @@ public class GameStartS : MonoBehaviour {
 	void Start () 
 	{
 
+		spawnPts = GameObject.FindGameObjectsWithTag("Spawn");
+
 		if (!GlobalVars.characterSelected) //create a default 4 players on scene open if they didnt come from character select 
 		{ 
 			//string [] joystickNames = Input.GetJoystickNames ();

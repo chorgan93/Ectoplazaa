@@ -907,6 +907,8 @@ public class PlayerS : MonoBehaviour {
 								attackToPerform = -1;
 								ownRigid.velocity = Vector3.zero; 
 								ownRigid.drag = chompDrag;
+
+								soundSource.PlayCharAttackSound(0);
 								
 								Vector3 attackDir = Vector3.zero;
 								
@@ -1022,16 +1024,18 @@ public class PlayerS : MonoBehaviour {
 							soundSource.PlayReleaseSound ();
 							if (attackToPerform == 2){
 								lv3Flash.ResetFade();
-								soundSource.PlayChargeLv3();
+								//soundSource.PlayChargeLv3();
 							}
 							if (attackToPerform == 1){
 								lv2Flash.ResetFade();
-								soundSource.PlayChargeLv2();
+								//soundSource.PlayChargeLv2();
 							}
 							if (attackToPerform == 0){
 								
-								soundSource.PlayChargeLv1();
+								//soundSource.PlayChargeLv1();
 							}
+
+							soundSource.PlayCharAttackSound(attackToPerform);
 						}
 						
 						if (attackToPerform == 2) {
@@ -1160,7 +1164,8 @@ public class PlayerS : MonoBehaviour {
 					// trigger lv 1 fling at end of attack
 					FlingMiniAttack(false);
 					
-					soundSource.PlayChargeLv1();
+					//soundSource.PlayChargeLv1();
+					soundSource.PlayCharAttackSound(0);
 					
 					//print ("part 2!");
 					
@@ -2115,7 +2120,12 @@ public class PlayerS : MonoBehaviour {
 										}
 										
 										Instantiate(deathParticles, this.transform.position, Quaternion.identity); 
-										soundSource.PlayDeathSounds();
+										if (numLives <= 0){
+											soundSource.PlaySpecialDeathSounds();
+										}
+										else{
+											soundSource.PlayDeathSounds();
+										}
 									}
 									
 									
