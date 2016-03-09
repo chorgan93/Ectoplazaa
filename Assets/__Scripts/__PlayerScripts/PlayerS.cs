@@ -455,13 +455,6 @@ public class PlayerS : MonoBehaviour {
 
 						
 					}
-<<<<<<< HEAD
-
-					// DoSpecial();
-					
-					MiscAction (); //TRAIL RENDERER UPDATE, OTHER THINGS
-=======
->>>>>>> Experimental
 					
 					if(canRespawn)
 					{
