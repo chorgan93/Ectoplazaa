@@ -1633,7 +1633,7 @@ public class PlayerS : MonoBehaviour {
 									
 									hasDoubleJumped = true;
 									
-									canAirStrafe = true;
+									canAirStrafe = false;
 									
 									chargingGroundPound = false;
 									groundPounded = true;
