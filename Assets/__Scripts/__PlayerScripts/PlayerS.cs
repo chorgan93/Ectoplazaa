@@ -1196,6 +1196,7 @@ public class PlayerS : MonoBehaviour {
 						lv1OutCountdown = lv1OutTimeMax;
 						
 						startedLv2Pause = false;
+						CameraShakeS.C.SmallShake();
 					}
 					else
 					{
@@ -1329,6 +1330,7 @@ public class PlayerS : MonoBehaviour {
 							
 							// kinesthetics
 							CameraShakeS.C.TimeSleep(0.2f);
+							CameraShakeS.C.LargeShake();
 							dangerObj.GetComponent<DamageS>().MakeSlashEffect(transform.position+bulletVel.normalized);
 						}
 						else{
@@ -2136,6 +2138,7 @@ public class PlayerS : MonoBehaviour {
 									if (health <= 0){
 
 										CameraShakeS.C.PunchIn();
+
 										
 										ownRigid.velocity = Vector3.zero; 
 										
@@ -2164,6 +2167,8 @@ public class PlayerS : MonoBehaviour {
 
 										// clear ground check
 										groundDetect.RemoveAll();
+
+											CameraShakeS.C.LargeShake();
 										
 										
 										
@@ -2287,7 +2292,6 @@ public class PlayerS : MonoBehaviour {
 									this.GetComponent<SphereCollider>().material = normalPhysics; 
 									
 									
-									CameraShakeS.C.SmallShake();
 									
 								}
 								
