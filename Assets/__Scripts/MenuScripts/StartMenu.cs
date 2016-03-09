@@ -79,6 +79,7 @@ public class StartMenu : MonoBehaviour {
 	public GameObject titleCameraPos;
 	private bool buttonPressed = false;
 	public GameObject bell;
+	public GameObject fadeIn;
 
 	AsyncOperation async;
 
@@ -93,18 +94,17 @@ public class StartMenu : MonoBehaviour {
 		platformType = PlatformS.GetPlatform (); 
 		cameraFollow = GameObject.Find("Main Camera").GetComponent<CameraFollowS>();
 
-		/*if (started){
-			foreach (GameObject postcard in postcards) 
-			{
-				
-				postcard.SetActive(false); 
-
-			}
-			Instantiate(selectSoundObjs[0]);
-			inputDelay = 0;
-		}**/
+		if(started){
+			cameraFollow.poi = titleCameraPos;
+			bell.gameObject.SetActive(false);
+			flickerText.gameObject.SetActive(false);
+		}
 
 		cursorObj.transform.position = cursorPositions[currentCursorPos].transform.position;
+
+
+		fadeIn.SetActive(false);
+		
 	}
 	
 	// Update is called once per frame
@@ -149,7 +149,7 @@ public class StartMenu : MonoBehaviour {
 
 			if (buttonPressed){
 				
-				flickerTimeCountdown -= Time.deltaTime*10f;
+				flickerTimeCountdown -= Time.deltaTime*12f;
 			}
 
 			if (flickerTimeCountdown <= 0){
@@ -569,6 +569,7 @@ public class StartMenu : MonoBehaviour {
 		started = true;
 		Instantiate(advSoundObj);
 		flickerText.gameObject.SetActive(false);
+		fadeIn.SetActive(true);
 	}
 	
 	IEnumerator load() {

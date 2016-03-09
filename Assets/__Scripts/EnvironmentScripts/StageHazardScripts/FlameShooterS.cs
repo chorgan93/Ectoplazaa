@@ -10,6 +10,7 @@ public class FlameShooterS : MonoBehaviour {
 	private Vector3 flameResetPos;
 
 	[Header("Flame Timing (In Seconds)")]
+	public float flameShootOffset = 7f;
 	public float flameShootRate = 7f;
 	private float flameShootCountdown;
 	public float flameActiveTime = 3f;
@@ -41,7 +42,7 @@ public class FlameShooterS : MonoBehaviour {
 		}
 		else{
 
-		flameShootCountdown = flameShootRate;
+		flameShootCountdown = flameShootOffset;
 
 		myFlames = GetComponentInChildren<FlameS>();
 

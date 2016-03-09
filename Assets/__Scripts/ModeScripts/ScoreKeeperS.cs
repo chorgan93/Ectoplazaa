@@ -83,7 +83,7 @@ public class ScoreKeeperS : MonoBehaviour {
 	private int numRedPlayersOut;
 	private int numBluePlayersOut;
 
-	void Start () 
+	void Awake () 
 	{
 		endGameObj.SetActive(false);
 		gameStarted = false;
@@ -95,13 +95,13 @@ public class ScoreKeeperS : MonoBehaviour {
 		currentMode = CurrentModeS.currentMode;						//get what mode to use.
 
 
-		//SetupMode();
-		
 		startCountdown = countdownRateMax;
 
 		foreach (GameObject layout in mapLayoutsForMode){
 			layout.SetActive(false);
 		}
+		SetupLevel();
+
 
 		if (CurrentModeS.isTeamMode){
 			numPlayersRed = numPlayersRedStart = GlobalVars.NumPlayersRedTeam();
@@ -128,7 +128,7 @@ public class ScoreKeeperS : MonoBehaviour {
 		}
 		if (!spawnedScoreboard)
 		{
-			SetupMode (); 
+			SetupCharacters (); 
 		}
 
 
@@ -183,7 +183,7 @@ public class ScoreKeeperS : MonoBehaviour {
 
 
 
-	void SetupMode()
+	void SetupLevel()
 	{
 		currentMode = CurrentModeS.currentMode;
 		
@@ -195,6 +195,9 @@ public class ScoreKeeperS : MonoBehaviour {
 */		
 		// turn on mode stage layout
 		mapLayoutsForMode[currentMode].SetActive(true);
+	}
+
+	void SetupCharacters(){
 		
 		
 		switch (currentMode)										//Find parent object for desired mode and enable
@@ -672,6 +675,10 @@ public class ScoreKeeperS : MonoBehaviour {
 
 
 		if (CurrentModeS.DoAnotherRound()){
+				
+				winningPlayerSprite.gameObject.SetActive(false);
+				winningPlayerTail.gameObject.SetActive(false);
+				CameraFollowS.F.StartSpecialCam(GlobalVars.playerList[winningPlayerNum-1], 3f);
 			winText.text = "P" + winningPlayerNum + "\nwins Round " + CurrentModeS.GetRoundsCurrent() + "!";
 		}
 		else{
@@ -688,7 +695,7 @@ public class ScoreKeeperS : MonoBehaviour {
 
 			if(p != null)
 			{
-				p.SetActive (false); 
+				//p.SetActive (false); 
 				//GameObject.Destroy(p.gameObject); 
 			}
 

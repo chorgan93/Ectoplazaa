@@ -161,11 +161,13 @@ public class GlobS : MonoBehaviour {
 			parentGO.GetComponent<Rigidbody> ().velocity = Vector3.zero; 
 
 			PlayerS playerRef = other.gameObject.GetComponent<PlayerS> ();
-			if (playerRef.playerNum > 0){
-				GlobalVars.totalGlobsEaten[playerRef.playerNum -1] ++; 
-			}
+			if (playerRef){
+				if (playerRef.playerNum > 0){
+					GlobalVars.totalGlobsEaten[playerRef.playerNum -1] ++; 
+				}
 			activated = true; 
 			playerRef.health += 2; 
+
 
 			this.GetComponent<SphereCollider>().enabled = false ;
 
@@ -182,6 +184,8 @@ public class GlobS : MonoBehaviour {
 			newSFX.GetComponent<AudioSource>().pitch += 1*(playerRef.health/playerRef.maxHealth);
 			GameObject.Destroy(parentGO.gameObject);
 			GameObject.Destroy(this.gameObject);
+				
+			}
 		}
 	}
 
