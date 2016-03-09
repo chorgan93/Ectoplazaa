@@ -69,27 +69,41 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 
 		// create player centerpt
 
+		float minXPlayer = 0;
+		float maxXPlayer = 0;
+		float minYPlayer = 0;
+		float maxYPlayer = 0;
+
 		if (playerPositions.Count > 0){
 
-			int numSpecialAdd = 0;
 
 			playerCenterPos = Vector3.zero;
 			for (int i = 0; i < playerPositions.Count; i++){
-				playerCenterPos += playerPositions[i].position;
 
-				if (playerRefs[i].GetSpecialState()){
-					playerCenterPos += playerPositions[i].position*2;
-					numSpecialAdd += 2;
+				if (i == 0){
+					minXPlayer = maxXPlayer = playerPositions[i].position.x;
+					minYPlayer = maxYPlayer = playerPositions[i].position.y;
 				}
-			}
-			playerCenterPos/=(playerPositions.Count + numSpecialAdd);
+				else{
+					if (playerPositions[i].position.x < minXPlayer){
+						minXPlayer = playerPositions[i].position.x;
+					}
+					if (playerPositions[i].position.y < minYPlayer){
+						minYPlayer = playerPositions[i].position.y;
+					}
+					if (playerPositions[i].position.x > maxXPlayer){
+						maxXPlayer = playerPositions[i].position.x;
+					}
+					if (playerPositions[i].position.y > maxYPlayer){
+						maxYPlayer = playerPositions[i].position.y;
+					}
+				}
 
-			if (numSpecialAdd > 0){
-				snapCamera = true;
+
 			}
-			else{
-				snapCamera = false;
-			}
+
+			playerCenterPos.x = (minXPlayer + maxXPlayer)/2f;
+			playerCenterPos.y = (minYPlayer + maxYPlayer)/2f;
 
 			// add two values together and divide by total weight
 

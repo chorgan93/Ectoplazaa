@@ -1612,11 +1612,11 @@ public class PlayerS : MonoBehaviour {
 							// check for ground pound first
 
 							#if UNITY_WIIU
-							if (jumped && ((playerNum == 1 && Input.GetAxis("VerticalPlayer" + playerNum + platformType) < 0.4f) ||
-							     (playerNum > 1 && wiiUInput.verticalAxis) < 0.4f) && !groundPounded && groundPoundDelay <= 0)
+							if (jumped && ((playerNum == 1 && Input.GetAxis("VerticalPlayer" + playerNum + platformType) < -0.7f) ||
+							     (playerNum > 1 && wiiUInput.verticalAxis) < -0.7f) && !groundPounded && groundPoundDelay <= 0)
 							{
 								#else
-								if (jumped && Input.GetAxis("VerticalPlayer" + playerNum + platformType) < 0.4f && !groundPounded
+								if (jumped && Input.GetAxis("VerticalPlayer" + playerNum + platformType) < -0.7f && !groundPounded
 								    && groundPoundDelay <= 0)
 								{
 									#endif
