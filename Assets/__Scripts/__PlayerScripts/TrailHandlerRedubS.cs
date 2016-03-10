@@ -19,7 +19,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 	private TrailRenderer trailRendererMain; 
 	private TrailRenderer trailRendererGlow; 
 
-	float trailRenderTime, trailRenderTimeMin = 0.2f, trailRenderTimeMax= 2f; // handle tail length
+	float trailRenderTime, trailRenderTimeMin = 0.2f, trailRenderTimeMax= 0.3f; // handle tail length
 
 
 	public GameObject deathParticles; 

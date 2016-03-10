@@ -348,7 +348,7 @@ public class PlayerS : MonoBehaviour {
 		chargeSource = GetComponent<AudioSource>();
 		
 		startDrag = ownRigid.drag;
-		
+
 		startEctoNum = initialHealth; // for ecto mode tail generation
 		
 		#if UNITY_WIIU
@@ -914,6 +914,8 @@ public class PlayerS : MonoBehaviour {
 								soundSource.PlayCharAttackSound(0);
 								
 								Vector3 attackDir = Vector3.zero;
+
+								CameraShakeS.C.MicroShake();
 								
 								#if UNITY_WIIU
 								
@@ -2096,8 +2098,9 @@ public class PlayerS : MonoBehaviour {
 										trailRendererGO.GetComponent<TrailRenderer>().enabled = true ;
 										trailRendererGO2.GetComponent<TrailRenderer>().enabled = true ;
 										
-										
-										health = initialHealth;
+											
+											initialHealth *= 0.5f;
+										health = Mathf.CeilToInt(initialHealth);
 										
 										//DisableAttacks(); 
 										
@@ -2324,12 +2327,9 @@ public class PlayerS : MonoBehaviour {
 											
 											
 										}
-										// tiny shake if not attacking, bigger one if you are
+										// tiny shake if  attacking
 										if (attacking){
 											CameraShakeS.C.SmallShake();
-										}
-										else{
-											CameraShakeS.C.MicroShake();
 										}
 										
 									}

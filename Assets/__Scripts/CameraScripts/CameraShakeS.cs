@@ -12,11 +12,11 @@ public class CameraShakeS : MonoBehaviour {
 	
 	public float 				camZ = -10;
 	
-	private float				smallShakeIntensity = 1.2f; // amount of shake
-	private float				smallShakeDuration = 0.3f; // how long shake lasts
+	private float				smallShakeIntensity = 1.6f; // amount of shake
+	private float				smallShakeDuration = 0.22f; // how long shake lasts
 	
-	private float				largeShakeIntensity = 2.4f;
-	private float				largeShakeDuration = 0.4f;
+	private float				largeShakeIntensity = 3.2f;
+	private float				largeShakeDuration = 0.32f;
 	
 	// how long time pauses when sleep function is called
 	public float				sleepDuration;

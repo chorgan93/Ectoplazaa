@@ -123,8 +123,11 @@ public class NewScoreUI : MonoBehaviour {
 					if (collectPercent > 100){
 						collectPercent = 100;
 					}
+						if (collectPercent < 0){
+							collectPercent = 0;
+						}
 						
-					textDisplay.text += ": " + collectPercent + "%";
+					textDisplay.text += ": " + collectPercent;
 				}
 	
 				// stock
