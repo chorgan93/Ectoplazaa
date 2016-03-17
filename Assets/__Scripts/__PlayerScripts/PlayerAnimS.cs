@@ -391,7 +391,7 @@ public class PlayerAnimS : MonoBehaviour {
 
 		// face direction based on velocity
 		Vector3 faceSize = headRender.transform.localScale;
-		if (headRigid.velocity.x > 0){
+		if (headRigid.velocity.x > 0 || (headRigid.velocity.x == 0 && headRigid.velocity.y != 0)){
 			faceSize.x = -headRenderSize.x;
 		}
 		if (headRigid.velocity.x < 0){

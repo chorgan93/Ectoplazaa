@@ -13,7 +13,6 @@ public class CharacterSelectMenu : MonoBehaviour {
 	public bool[] hasSelected = new bool[4]; // adding extra step of character select
 	public GameObject [] joinTexts; 
 	public GameObject [] spawnPoints;
-	public GameObject [] characterNumText; 
 	
 	public List<GameObject> blackScreens;
 	
@@ -206,8 +205,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 									}
 								}
 							}
-							
-							characterNumText[i-1].GetComponent<TextMesh>().text = "characterNum: " + defaultSkin;
+
 							
 							hasJoined[i-1] = true; 
 							//totalPlayers += 1; 
@@ -298,8 +296,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 								blackScreens[i-1].SetActive(false);
 								
 								//print("Total Players: " + totalPlayers); 
-								
-								characterNumText[i-1].GetComponent<TextMesh>().text = "";
+
 								
 								Renderer [] renderers = joinTexts[i-1].GetComponentsInChildren<Renderer>();
 								
@@ -356,8 +353,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 										
 									}
 									
-									
-									characterNumText[i-1].GetComponent<TextMesh>().text = "characterNum: " + newSkin;
+
 									
 									
 									players[i-1].GetComponent<PlayerS>().characterNum = newSkin;
@@ -419,9 +415,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 											
 										}
 										
-										
-										characterNumText[i-1].GetComponent<TextMesh>().text = "characterNum: " + newSkin;
-										
+
 										
 										players[i-1].GetComponent<PlayerS>().characterNum = newSkin;
 										GlobalVars.characterNumber[i-1] = newSkin;
@@ -527,11 +521,18 @@ public class CharacterSelectMenu : MonoBehaviour {
 										}
 										
 										// START BUTTON CODE FOR GAME START
-										
+										#if UNITY_WIIU
+										if ((Input.GetButton ("StartButtonAllPlayers"+ platformType) || 
+										     i > 1 && GetWiiUPauseButton(i)) && 
+										    ((totalPlayers >= 2 && !CurrentModeS.isTeamMode) || 
+										 (totalPlayers >= 2 && CurrentModeS.isTeamMode && GlobalVars.ValidTeams()))){
+											#else
 										if (Input.GetButton ("StartButtonAllPlayers"+ platformType) && 
 										    ((totalPlayers >= 2 && !CurrentModeS.isTeamMode) || 
 										 (totalPlayers >= 2 && CurrentModeS.isTeamMode && GlobalVars.ValidTeams()))) //START GAME---------------------------------------
 										{
+#endif
+											Debug.Log("Start game!!");
 											//SET GLOBAL VARS
 											GlobalVars.totalPlayers = totalPlayers; 
 											

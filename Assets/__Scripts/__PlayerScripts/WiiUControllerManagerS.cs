@@ -22,6 +22,9 @@ public class WiiUControllerManagerS : MonoBehaviour {
 	
 	public float horizontalAxis = 0;
 	public float verticalAxis = 0;
+
+	private float spitUpdateMax = 10;
+	private float spitUpdateCountdown;
 	
 	
 	
@@ -42,7 +45,7 @@ public class WiiUControllerManagerS : MonoBehaviour {
 		
 		WiiU.RemoteState state = rem.state;
 		
-
+		spitUpdateCountdown -= Time.deltaTime;
 
 		switch (state.devType){
 			
@@ -68,8 +71,9 @@ public class WiiUControllerManagerS : MonoBehaviour {
 			horizontalAxis = state.nunchuk.stick.x;
 			verticalAxis = state.nunchuk.stick.y;
 
-			
-			Debug.Log(myChannel + " : " + state.devType);
+
+			//Debug.Log(myChannel + " : " + state.devType);
+
 			
 			
 			break;
@@ -97,7 +101,7 @@ public class WiiUControllerManagerS : MonoBehaviour {
 			verticalAxis = state.nunchuk.stick.y;
 
 			
-			Debug.Log(myChannel + " : " + state.devType);
+			//Debug.Log(myChannel + " : " + state.devType);
 			
 			
 			break;
@@ -132,7 +136,7 @@ public class WiiUControllerManagerS : MonoBehaviour {
 			verticalAxis = state.pro.leftStick.y;
 
 			
-			Debug.Log(myChannel + " : " + state.devType);
+			//Debug.Log(myChannel + " : " + state.devType);
 			
 			break;
 
@@ -164,7 +168,7 @@ public class WiiUControllerManagerS : MonoBehaviour {
 				verticalAxis = state.classic.leftStick.y;
 
 			
-				Debug.Log(myChannel + " : " + state.devType);
+				//Debug.Log(myChannel + " : " + state.devType);
 				
 				break;
 
@@ -196,7 +200,7 @@ public class WiiUControllerManagerS : MonoBehaviour {
 				verticalAxis = state.classic.leftStick.y;
 
 			
-				Debug.Log(myChannel + " : " + state.devType);
+				//Debug.Log(myChannel + " : " + state.devType);
 				
 				break;
 			
@@ -207,6 +211,17 @@ public class WiiUControllerManagerS : MonoBehaviour {
 			break;
 			
 		}
+
+		if (spitUpdateCountdown <= 0){
+		
+		
+			Debug.Log("Channel " + myChannel + " REPORT:" + "\nflingButtonDown: " + flingButtonDown
+			          + "\ndashButtonDown: " + dashButtonDown + "\njumpButtonDown: " + jumpButtonDown
+			          "\nspecialButtonDown: " + specialButtonDown "\npauseButtonDown: " + pauseButtonDown);
+
+			spitUpdateCountdown = spitUpdateMax;
+
+		}
 		
 	}
 	
@@ -214,7 +229,7 @@ public class WiiUControllerManagerS : MonoBehaviour {
 	#endif
 	
 	private void SetAllToDefault(){
-		
+
 		bool flingButtonDown = false;
 		bool dashButtonDown = false;
 		bool jumpButtonDown = false;

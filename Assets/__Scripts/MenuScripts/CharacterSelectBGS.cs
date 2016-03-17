@@ -8,6 +8,14 @@ public class CharacterSelectBGS : MonoBehaviour {
 	public Texture[] possBgs;
 	public Color[] possColors;
 
+	public int[] speedStats;
+	public int[] jumpStats;
+	public int[] chargeStats;
+
+	public SpriteRenderer[] speedStars;
+	public SpriteRenderer[] jumpStars;
+	public SpriteRenderer[] chargeStars;
+
 	private Renderer myRenderer;
 	public Renderer childRender;
 
@@ -20,6 +28,9 @@ public class CharacterSelectBGS : MonoBehaviour {
 	public TextMesh specialNameHolder;
 
 	public CharacterSelectMenu menuRef;
+
+	public Sprite[] filledStars;
+	public Sprite unfilledStar;
 
 	// Use this for initialization
 	void Start () {
@@ -49,6 +60,39 @@ public class CharacterSelectBGS : MonoBehaviour {
 
 				charNameHolder.text = charNames[GlobalVars.characterNumber[myPlayerNum-1]-1];
 				specialNameHolder.text = specialNames[GlobalVars.characterNumber[myPlayerNum-1]-1];
+
+				for (int i = 0; i < speedStars.Length; i++){
+					if (i < speedStats[GlobalVars.characterNumber[myPlayerNum-1]-1]){
+						//speedStars[i].SetActive(true);
+						speedStars[i].sprite = filledStars[GlobalVars.characterNumber[myPlayerNum-1]-1];
+					}
+					else{
+						//speedStars[i].SetActive(false);
+						speedStars[i].sprite = unfilledStar;
+					}
+				}
+
+				for (int j = 0; j < jumpStars.Length; j++){
+					if (j < jumpStats[GlobalVars.characterNumber[myPlayerNum-1]-1]){
+						//jumpStars[j].SetActive(true);
+						jumpStars[j].sprite = filledStars[GlobalVars.characterNumber[myPlayerNum-1]-1];
+					}
+					else{
+						//jumpStars[j].SetActive(false);
+						jumpStars[j].sprite = unfilledStar;
+					}
+				}
+
+				for (int k = 0; k < chargeStars.Length; k++){
+					if (k < chargeStats[GlobalVars.characterNumber[myPlayerNum-1]-1]){
+						//chargeStars[k].SetActive(true);
+						chargeStars[k].sprite = filledStars[GlobalVars.characterNumber[myPlayerNum-1]-1];
+					}
+					else{
+						//chargeStars[k].SetActive(false);
+						chargeStars[k].sprite = unfilledStar;
+					}
+				}
 			}
 			else{
 

@@ -60,7 +60,7 @@ public class CameraShakeS : MonoBehaviour {
 		}
 		else{
 
-		if(shake_intensity > 0 && !sleeping){
+		if(shake_intensity > 0){
 			
 			Vector3 camPos = ownFollow.cameraPos;
 			camPos.x += Random.insideUnitSphere.x * shake_intensity * shakeStrengthMult;
@@ -68,7 +68,7 @@ public class CameraShakeS : MonoBehaviour {
 			camPos.z = transform.position.z;
 			transform.position = camPos;
 			
-			shake_intensity -= shake_decay*Time.deltaTime;
+			shake_intensity -= shake_decay*Time.unscaledDeltaTime;
 		}
 		}
 

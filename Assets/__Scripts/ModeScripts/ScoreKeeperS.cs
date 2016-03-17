@@ -788,7 +788,8 @@ public class ScoreKeeperS : MonoBehaviour {
 				Application.LoadLevel(Application.loadedLevelName);
 			}
 			else{
-			// hard coding in return to map select
+				// hard coding in return to map select
+				CurrentModeS.ResetWinRecord();
 				Application.LoadLevel("2MapSelect");
 			}
 		}

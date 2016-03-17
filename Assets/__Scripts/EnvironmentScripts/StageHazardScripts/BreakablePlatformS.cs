@@ -7,7 +7,10 @@ public class BreakablePlatformS: MonoBehaviour {
 	private int durability = 5;
 
 	private SpriteRenderer mySprite;
+	public Material flashMat;
+	private Material defaultMat;
 	private Collider myCollider;
+	private int flashFrames = 0;
 
 	public Sprite[] destructStates;
 		private int currentSprite = 0;
@@ -35,6 +38,15 @@ public class BreakablePlatformS: MonoBehaviour {
 
 		spriteOffset = Vector3.zero;
 
+		defaultMat = mySprite.material;
+
+	}
+
+	void Update () {
+		flashFrames--;
+		if (flashFrames <= 0 && mySprite.material != defaultMat){
+			mySprite.material = defaultMat;
+		}
 	}
 
 	void FixedUpdate () {
@@ -92,6 +104,9 @@ public class BreakablePlatformS: MonoBehaviour {
 			//mySprite.sprite = destructStates[currentSprite];
 			TriggerShake();
 		}
+
+		mySprite.material = flashMat;
+		flashFrames = 5;
 
 
 	}

@@ -7,6 +7,9 @@ public class NewScoreUI : MonoBehaviour {
 	public int playerNum;
 
 	public Image charImage;
+	private float charImageAlpha = 0.4f;
+	public Image charImageFill;
+	private float charImageFillAlpha = 0.8f;
 
 	public Sprite[] charImages;
 	public Sprite[] charImagesLeft;
@@ -39,6 +42,14 @@ public class NewScoreUI : MonoBehaviour {
 			crown2.gameObject.SetActive(false);
 		}
 
+		Color fixCol = charImage.color;
+		fixCol.a = charImageAlpha;
+		charImage.color = fixCol;
+
+		fixCol = charImageFill.color;
+		fixCol.a = charImageFillAlpha;
+		charImageFill.color = fixCol;
+
 	}
 	
 	// Update is called once per frame
@@ -62,6 +73,8 @@ public class NewScoreUI : MonoBehaviour {
 				else{
 					charImage.sprite = charImages[GlobalVars.characterNumber[playerNum-1]-1];
 				}
+
+				charImageFill.sprite = charImage.sprite;
 
 				int numWins = 0;
 
@@ -111,6 +124,7 @@ public class NewScoreUI : MonoBehaviour {
 
 			if (myPlayer.numLives == 0){
 				textDisplay.text += ": " + " OUT";
+				charImageFill.fillAmount = 0f;
 			}
 			else{
 				if (!CurrentModeS.isTeamMode){
@@ -128,17 +142,23 @@ public class NewScoreUI : MonoBehaviour {
 						}
 						
 					textDisplay.text += ": " + collectPercent;
+
+						charImageFill.fillAmount = collectPercent/100f;
 				}
 	
 				// stock
 				if (CurrentModeS.currentMode == 1){
 					textDisplay.text += ": " + (myPlayer.numLives);
+						
+						charImageFill.fillAmount = myPlayer.numLives*1f/ScoreKeeperS.numberLives*1f;
 				}
 	
 				// ball mode
 				if (CurrentModeS.currentMode == 2){
 						//textDisplay.text += ": " + (100*myPlayer.score/ScoreKeeperS.scoreThresholdGhostball);
 						textDisplay.text += ": " + myPlayer.score;
+
+						charImageFill.fillAmount = myPlayer.score*1f/ScoreKeeperS.scoreThresholdGhostballTeam*1f;
 				}
 				}
 				else{
@@ -154,11 +174,14 @@ public class NewScoreUI : MonoBehaviour {
 						}
 						
 						textDisplay.text += ": " + collectPercent + "%";
+						
+						charImageFill.fillAmount = collectPercent/100f;
 					}
 					
 					// stock
 					if (CurrentModeS.currentMode == 1){
 						textDisplay.text += ": " + (myPlayer.numLives);
+						charImageFill.fillAmount = myPlayer.numLives*1f/ScoreKeeperS.numberLivesTeam*1f;
 					}
 					
 					// ball mode
@@ -171,6 +194,8 @@ public class NewScoreUI : MonoBehaviour {
 							currentScore = scoreKeeper.GetBlueScore();
 						}
 						textDisplay.text += ": " + currentScore;
+						
+						charImageFill.fillAmount = currentScore*1f/ScoreKeeperS.scoreThresholdGhostballTeam*1f;
 					}
 
 				}
