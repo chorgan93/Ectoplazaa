@@ -72,6 +72,16 @@ public class TrailHandlerRedubS : MonoBehaviour {
 		InitialDotSpawn (); 
 
 		trailRendererMain = trailRendererGO.GetComponent<TrailRenderer>();
+
+		if (CurrentModeS.isTeamMode){
+			if (GlobalVars.IsRedTeam(playerRef.playerNum)){
+				trailRendererMain.materials[0].color = Color.red;
+			}
+			else{
+				trailRendererMain.materials[0].color = Color.blue;
+			}
+		}
+
 		trailRendererGlow = trailRendererGO2.GetComponent<TrailRenderer>();
 	}
 

@@ -501,8 +501,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 												else{
 													GlobalVars.teamNumber[i-1] = 1;
 												}
-												
-												Debug.Log(players[i-1]);
+
 												players[i-1].GetComponent<PlayerS>().GetAnimObj().RefreshTeamColor();
 											}
 										}

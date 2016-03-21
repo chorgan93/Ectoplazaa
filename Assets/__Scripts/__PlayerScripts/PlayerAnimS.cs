@@ -169,6 +169,9 @@ public class PlayerAnimS : MonoBehaviour {
 	private float specialFrameRateCountdown;
 	private int currentSpecialFrame = 0;
 
+	public Material teamSpriteMaterialRed;
+	public Material teamSpriteMaterialBlue;
+
 
 
 	// Use this for initialization
@@ -191,10 +194,14 @@ public class PlayerAnimS : MonoBehaviour {
 
 		if (CurrentModeS.isTeamMode){
 			if (GlobalVars.teamNumber[playerRef.playerNum-1] == 1){
-				startColor = redTeamColor;
+				headRender.material = teamSpriteMaterialRed;
+				startColor = headRender.color;
+				//headRender.material.color = redTeamColor;
 			}
 			else{
-				startColor = blueTeamColor;
+				headRender.material = teamSpriteMaterialBlue;
+				startColor = headRender.color;
+			//	headRender.material.color = blueTeamColor;
 			}
 		}
 		else{
@@ -652,10 +659,12 @@ public class PlayerAnimS : MonoBehaviour {
 
 	public void RefreshTeamColor(){
 		if (GlobalVars.teamNumber[playerRef.playerNum-1] == 1){
-			startColor = redTeamColor;
+		//	startColor = redTeamColor;
+			headRender.material = teamSpriteMaterialRed;
 		}
 		else{
-			startColor = blueTeamColor;
+		//	startColor = blueTeamColor;
+			headRender.material = teamSpriteMaterialBlue;
 		}
 	}
 

@@ -85,7 +85,12 @@ public class FlameS : MonoBehaviour {
 
 		if (other.gameObject.GetComponent<PlayerS>()){
 
-			other.gameObject.GetComponent<PlayerS>().TakeDamage(9999, false);
+			if (other.gameObject.GetComponent<PlayerS>().respawnInvulnTime <= 0
+			    && other.gameObject.GetComponent<PlayerS>().dodgeTimeCountdown <= 0){
+
+				other.gameObject.GetComponent<PlayerS>().TakeDamage(9999, false);
+			
+			}
 
 		}
 

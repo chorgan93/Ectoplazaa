@@ -213,15 +213,11 @@ public class GhostballS : MonoBehaviour {
 		Vector3 spawnPos = transform.position+effectDir*damageEffectStartRange;
 		spawnPos.z-=1;
 		
-		GameObject slashEffect = Instantiate(damageEffectObj,spawnPos,Quaternion.identity)
+		GameObject slashEffect = Instantiate(damageEffectObjNoScreen,spawnPos,Quaternion.identity)
 			as GameObject;
 		
 		slashEffect.GetComponent<SlashEffectS>().moveDir = effectDir;
 
-		Color halfCol = myRenderer.color;
-		halfCol.a = 0.5f;
-		slashEffect.GetComponent<SlashEffectS>().attachedLightning.GetComponent<Renderer>().material.color 
-			= halfCol;
 		
 		slashEffect.GetComponent<TrailRenderer>().materials[0].color = 
 			myRenderer.color;
