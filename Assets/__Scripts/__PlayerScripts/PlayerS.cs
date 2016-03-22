@@ -282,7 +282,7 @@ public class PlayerS : MonoBehaviour {
 	public GameObject char5SpecialHandler;
 	
 	public GameObject char6SpecialCollider;
-	private float blobbySpecialDelayMax = 0.3f;
+	private float blobbySpecialDelayMax = 0.2f;
 	private float blobbySpecialDelay;
 	
 	[Header("Effect Stuff")]

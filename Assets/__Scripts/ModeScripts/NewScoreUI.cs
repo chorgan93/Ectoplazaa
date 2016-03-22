@@ -14,6 +14,9 @@ public class NewScoreUI : MonoBehaviour {
 	public Sprite[] charImages;
 	public Sprite[] charImagesLeft;
 
+	public Material spriteMaterialRedTeam;
+	public Material spriteMaterialBlueTeam;
+
 	public Text textDisplay;
 
 	private PlayerS myPlayer;
@@ -85,13 +88,17 @@ public class NewScoreUI : MonoBehaviour {
 
 					if (teamNum == 1){
 						charCol = Color.red;
+						charImage.material = spriteMaterialRedTeam;
+						charImageFill.material = spriteMaterialRedTeam;
 						teamWins = CurrentModeS.GetRedWins();
 					}
 					else{
 						charCol = Color.blue;
+						charImage.material = spriteMaterialBlueTeam;
+						charImageFill.material = spriteMaterialBlueTeam;
 						teamWins = CurrentModeS.GetBlueWins();
 					}
-					charImage.color = charCol;
+					//charImage.color = charCol;
 
 					numWins = teamWins;
 

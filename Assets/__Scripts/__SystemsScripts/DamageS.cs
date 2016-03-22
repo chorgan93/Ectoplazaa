@@ -359,6 +359,9 @@ public class DamageS : MonoBehaviour {
 
 		GameObject hitEffect = Instantiate(hitEffectObj,spawnPos,Quaternion.identity) as GameObject;
 
+		hitEffect.GetComponent<SpriteRenderer>().color = playerRef.playerParticleMats
+			[playerRef.characterNum-1].GetColor("_TintColor");
+
 		// rotate hit effect to match slash
 		float rotateZ = 0;
 		

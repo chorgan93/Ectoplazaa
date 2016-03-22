@@ -41,6 +41,8 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 	bool lastRespawnVal = false; 
 
+	private bool useRedTeam = false;
+
 
 
 	private float invulnAlpha = 0.5f;
@@ -75,10 +77,10 @@ public class TrailHandlerRedubS : MonoBehaviour {
 
 		if (CurrentModeS.isTeamMode){
 			if (GlobalVars.IsRedTeam(playerRef.playerNum)){
-				trailRendererMain.materials[0].color = Color.red;
+				useRedTeam = true;
 			}
 			else{
-				trailRendererMain.materials[0].color = Color.blue;
+				useRedTeam = false;
 			}
 		}
 
@@ -188,6 +190,15 @@ public class TrailHandlerRedubS : MonoBehaviour {
 		else{
 			Color mainCol = trailRendererMain.materials[0].color;
 			Color greenCol = trailRendererGlow.materials[0].color;
+
+			if (CurrentModeS.isTeamMode){
+				if (useRedTeam){
+					mainCol = Color.red;
+				}
+				else{
+					mainCol = Color.blue;
+				}
+			}
 			
 			mainCol.a = greenCol.a = 1;
 			
@@ -516,6 +527,19 @@ public class TrailHandlerRedubS : MonoBehaviour {
 			Gizmos.DrawWireSphere (spawnedDots[i].transform.position, spawnedDots[i].transform.localScale.x/2f);
 		}
 
+
+	}
+
+	public void ResetTeam(){
+
+		if (CurrentModeS.isTeamMode){
+			if (GlobalVars.IsRedTeam(playerRef.playerNum)){
+				useRedTeam = true;
+			}
+			else{
+				useRedTeam = false;
+			}
+		}
 
 	}
 

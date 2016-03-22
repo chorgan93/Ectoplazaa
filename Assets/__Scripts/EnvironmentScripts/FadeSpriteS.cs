@@ -18,6 +18,9 @@ public class FadeSpriteS : MonoBehaviour {
 			GameObject newFade = Instantiate(fadeObj,transform.position,Quaternion.identity)
 				as GameObject;
 			newFade.transform.localScale = transform.localScale;
+			if (transform.parent != null){
+				newFade.transform.localScale *= transform.parent.localScale.x;
+			}
 			SpriteRenderer newFadeRender = newFade.GetComponent<SpriteRenderer>();
 			newFadeRender.color = GetComponent<SpriteRenderer>().color;
 			newFadeRender.sprite = GetComponent<SpriteRenderer>().sprite;

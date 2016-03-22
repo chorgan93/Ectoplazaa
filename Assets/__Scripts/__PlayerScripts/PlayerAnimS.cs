@@ -666,6 +666,8 @@ public class PlayerAnimS : MonoBehaviour {
 		//	startColor = blueTeamColor;
 			headRender.material = teamSpriteMaterialBlue;
 		}
+
+		playerRef.GetComponent<TrailHandlerRedubS>().ResetTeam();
 	}
 
 	public void CheckSpecialAnimation(){

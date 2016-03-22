@@ -83,6 +83,9 @@ public class ScoreKeeperS : MonoBehaviour {
 	private int numRedPlayersOut;
 	private int numBluePlayersOut;
 
+	public Material teamWinRedMat;
+	public Material teamWinBlueMat;
+
 	void Awake () 
 	{
 		endGameObj.SetActive(false);
@@ -345,7 +348,7 @@ public class ScoreKeeperS : MonoBehaviour {
 			}
 			}
 			else{
-				// not in team mode
+				//  in team mode
 				if ( !hasMoreLives )																//If Eliminated...
 				{			
 					if (GlobalVars.teamNumber[p.playerNum-1] == 1){
@@ -461,6 +464,9 @@ public class ScoreKeeperS : MonoBehaviour {
 						else{
 							numBluePlayersOut++;
 						}
+					}
+					else{
+						winningPlayerNum = i;
 					}
 					
 					// Endgame for Collectoplaza mode
@@ -622,9 +628,8 @@ public class ScoreKeeperS : MonoBehaviour {
 
 		// for non-team win settings
 		int characterNum = 0;
-		if (!CurrentModeS.isTeamMode){
-			characterNum = GlobalVars.playerList [winningPlayerNum - 1].GetComponent<PlayerS> ().characterNum-1;
-		}
+		characterNum = GlobalVars.playerList [winningPlayerNum - 1].GetComponent<PlayerS> ().characterNum-1;
+
 
 		scoreBarObj.SetActive (false); 
 
@@ -640,12 +645,16 @@ public class ScoreKeeperS : MonoBehaviour {
 
 		if (CurrentModeS.isTeamMode){
 
-			winningPlayerSprite.SetActive(false);
+			//winningPlayerSprite.SetActive(false);
 
 			// red team win
 			if (winningTeamNum == 1){
 				endFlash.GetComponent<Renderer>().material.color = Color.red;
+				winningPlayerSprite.GetComponent<SpriteRenderer>().material = teamWinRedMat;
 				if (CurrentModeS.DoAnotherRound()){
+					winningPlayerSprite.gameObject.SetActive(false);
+					winningPlayerTail.gameObject.SetActive(false);
+					CameraFollowS.F.StartSpecialCam(GlobalVars.playerList[winningPlayerNum-1], 3f);
 					winText.text = "RED TEAM\nwins Round " + CurrentModeS.GetRoundsCurrent() + "!";
 				}
 				else{
@@ -655,15 +664,24 @@ public class ScoreKeeperS : MonoBehaviour {
 			// blue team win
 			else{
 				endFlash.GetComponent<Renderer>().material.color = Color.blue;
+				winningPlayerSprite.GetComponent<SpriteRenderer>().material = teamWinBlueMat;
 				if (CurrentModeS.DoAnotherRound()){
+					winningPlayerSprite.gameObject.SetActive(false);
+					winningPlayerTail.gameObject.SetActive(false);
+					CameraFollowS.F.StartSpecialCam(GlobalVars.playerList[winningPlayerNum-1], 3f);
 					winText.text = "BLUE TEAM\nwins Round " + CurrentModeS.GetRoundsCurrent() + "!";
 				}
 				else{
 					winText.text = "BLUE TEAM\nwins!";
 				}
 			}
+
+			winningPlayerSprite.GetComponent<SpriteRenderer> ().sprite = playerHighResSprites [characterNum];
+			winningPlayerTail.GetComponent<Renderer>().material = winningPlayerSprite.GetComponent<SpriteRenderer>().material;
+
 			
-			winningPlayerTail.GetComponent<Renderer>().material = endFlash.GetComponent<Renderer>().material;
+			GlobalVars.playerList[winningPlayerNum-1].GetComponent<PlayerSoundS>().PlayCharIntroSound();
+			GlobalVars.lastWinningPlayer = winningPlayerNum;
 		}
 		else{
 		GlobalVars.playerList[winningPlayerNum-1].GetComponent<PlayerSoundS>().PlayCharIntroSound();
@@ -690,16 +708,6 @@ public class ScoreKeeperS : MonoBehaviour {
 		}
 	
 		SpawnEndText(); 
-
-		foreach (GameObject p in GlobalVars.playerList) {
-
-			if(p != null)
-			{
-				//p.SetActive (false); 
-				//GameObject.Destroy(p.gameObject); 
-			}
-
-		}
 
 	}
 
