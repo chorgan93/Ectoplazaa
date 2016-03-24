@@ -2026,6 +2026,8 @@ public class PlayerS : MonoBehaviour {
 									attacking = false;
 									chargeTime = 0;
 									canAirStrafe = true;
+
+										isSlowed = false;
 									
 									if(respawnTimeCountdown == respawnTimeMax)
 									{
