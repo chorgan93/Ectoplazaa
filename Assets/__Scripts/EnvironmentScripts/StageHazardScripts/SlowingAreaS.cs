@@ -3,11 +3,16 @@ using System.Collections;
 
 public class SlowingAreaS : MonoBehaviour {
 
+	private PlatformSoundS mySoundObj;
+
 	void Start(){
 
 		if (!CurrentModeS.allowHazards){
 			gameObject.SetActive(false);
+
 		}
+
+		mySoundObj = GetComponent<PlatformSoundS>();
 
 	}
 
@@ -20,6 +25,8 @@ public class SlowingAreaS : MonoBehaviour {
 			if (!playerRef.GetSlowedState()){
 				playerRef.TriggerSlow();
 			}
+
+			mySoundObj.PlayPlatformSounds();
 		}
 	
 	}
@@ -33,6 +40,8 @@ public class SlowingAreaS : MonoBehaviour {
 			if (playerRef.GetSlowedState()){
 				playerRef.DisableSlow();
 			}
+
+			mySoundObj.PlayPlatformSounds();
 		}
 		
 	}
