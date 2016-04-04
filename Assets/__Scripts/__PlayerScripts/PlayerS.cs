@@ -242,6 +242,7 @@ public class PlayerS : MonoBehaviour {
 	[Header ("Special Attacks")]
 	public int numKOsInRow = 0;
 	private int numKOsForSpecial = 2;
+	public int numKOSPublic  { get { return numKOsForSpecial; } }
 	private bool doingSpecial = false;
 	private float specialCooldown;
 	private float specialCooldownMax = 1f;
@@ -687,6 +688,11 @@ public class PlayerS : MonoBehaviour {
 				specialTriggered = false;
 				if (acidSpecialReference){
 					Destroy(acidSpecialReference);
+					soundSource.PlayAcidSpecialEnd();
+				}
+
+				if (characterNum == 5){
+					soundSource.PlayJabberSpecialEnd();
 				}
 
 				ownRigid.useGravity = true;
@@ -726,6 +732,9 @@ public class PlayerS : MonoBehaviour {
 						specialCooldown = specialCooldownMax;
 						PauseCharacter();
 						numKOsInRow = 0;
+
+						
+						soundSource.PlaySpecialZoom();
 						
 						if (specialParticles != null){
 							Destroy(specialParticles.gameObject);
@@ -2155,7 +2164,9 @@ public class PlayerS : MonoBehaviour {
 										
 										if (isSpecial){
 											numLives = 0;
-											Instantiate(elimAnim, transform.position, Quaternion.identity);
+											GameObject owObj = Instantiate(elimAnim, transform.position, Quaternion.identity)
+													as GameObject;
+												owObj.GetComponent<SpriteRenderer>().color = playerParticleMats[characterNum - 1].GetColor("_TintColor");
 										}
 										else{
 											if (CurrentModeS.currentMode == 1){
@@ -2459,12 +2470,13 @@ public class PlayerS : MonoBehaviour {
 								
 								numKOsInRow ++;
 								if (numKOsInRow >= 2 && characterNum < 7 && CurrentModeS.allowSpecials){
-									if (!specialParticles){
+										soundSource.PlaySpecialEarn();
+									/*if (!specialParticles){
 										GameObject newParticles = Instantiate(chargingSpecialPrefab, transform.position,Quaternion.identity)
 											as GameObject;
 										specialParticles = newParticles;
 										newParticles.transform.parent = transform;
-									}
+									}*/
 								}
 								
 							}
@@ -2542,6 +2554,8 @@ public class PlayerS : MonoBehaviour {
 									GameObject specialAttack = Instantiate(ghostMaskSpecialPrefab, transform.position, Quaternion.identity)
 										as GameObject;
 									specialAttack.GetComponent<GhostMaskSpecialAttackS>().playerRef = this;
+
+										soundSource.PlaySpectoSlash();
 									
 								}
 								
@@ -2581,6 +2595,8 @@ public class PlayerS : MonoBehaviour {
 										Debug.Log(spriteObject.transform.rotation);
 									}
 									currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z;
+
+										soundSource.PlayAcidSpecial();
 								}
 								
 								// if mummy, prep for shots
@@ -2619,6 +2635,8 @@ public class PlayerS : MonoBehaviour {
 									else{
 										currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z-30f;
 									}
+
+										soundSource.PlayMummySpecial();
 								}
 								
 								if (characterNum == 4){
@@ -2659,6 +2677,8 @@ public class PlayerS : MonoBehaviour {
 									pinkWhipSuplexCurrentSpeed = pinkWhipSuplexStartSpeed;
 									
 									TurnOnIgnoreWalls();
+
+										soundSource.PlayPinkSpecial();
 									
 								}
 								
@@ -2671,6 +2691,8 @@ public class PlayerS : MonoBehaviour {
 									
 									SpecialAttackChar5.GetComponent<MegaChompHandlerS>().playerRef = this;
 									specialCooldown = 1f;
+
+										soundSource.PlayJabberSpecial();
 									
 								}
 								
@@ -2687,6 +2709,8 @@ public class PlayerS : MonoBehaviour {
 										as GameObject;
 								SpecialAttackChar6.GetComponent<MrWrapsSpecialAttackS>().playerRef = this;
 								SelfDestruct();
+
+									soundSource.PlayBlobbySpecial();
 							}
 							
 							void BackToMenu(){

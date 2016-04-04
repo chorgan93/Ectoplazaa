@@ -19,7 +19,7 @@ public class CharacterSelectBGS : MonoBehaviour {
 	private Renderer myRenderer;
 	public Renderer childRender;
 
-	private Vector2 offsetChangeRate = new Vector2(0.25f,0.1f);
+	private Vector2 offsetChangeRate = new Vector2(-0.13f,0.06f);
 
 	public string[] charNames;
 	public string[] specialNames;

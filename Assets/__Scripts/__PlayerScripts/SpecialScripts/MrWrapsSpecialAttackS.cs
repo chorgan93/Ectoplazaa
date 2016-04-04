@@ -12,6 +12,8 @@ public class MrWrapsSpecialAttackS : MonoBehaviour {
 
 	public MrWrapsSpecialAttackS subExplosion;
 
+	public GameObject exploAnim;
+
 	private Vector3 startSize;
 	private Rigidbody myRigid;
 
@@ -92,6 +94,10 @@ public class MrWrapsSpecialAttackS : MonoBehaviour {
 			if (subExplosion){
 				MrWrapsSpecialAttackS newExplo = Instantiate(subExplosion, transform.position, Quaternion.identity)
 					as MrWrapsSpecialAttackS;
+
+				// spawn explosion animation
+				Instantiate(exploAnim, transform.position, Quaternion.identity);
+
 				newExplo.GetComponent<Rigidbody>().velocity = Vector3.zero;
 				newExplo.playerRef = playerRef;
 			}

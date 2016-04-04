@@ -22,6 +22,8 @@ public class PlayerEffectS : MonoBehaviour {
 
 	private SpriteRenderer ownRender;
 
+	public bool isSpecial = false;
+
 	// Use this for initialization
 	void Start () {
 
@@ -58,6 +60,12 @@ public class PlayerEffectS : MonoBehaviour {
 		// turn on at appropriate charge
 		if (playerRef != null){
 
+			if (isSpecial){
+
+
+
+			}
+			else{
 			if (attackNum == 0){
 				if ((playerRef.attacking || (playerRef.groundPounded && !playerRef.groundDetect.Grounded())) 
 				    && playerRef.GetComponent<Rigidbody>().velocity != Vector3.zero){ownRender.enabled = true;}
@@ -103,6 +111,7 @@ public class PlayerEffectS : MonoBehaviour {
 				transform.localPosition = fixPos;
 				transform.localRotation = Quaternion.identity;
 			}
+		}
 		}
 
 		}

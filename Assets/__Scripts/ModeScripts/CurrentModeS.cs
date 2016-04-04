@@ -3,14 +3,14 @@ using System.Collections;
 
 public class CurrentModeS : MonoBehaviour {
 
-	public static int currentMode = 1; // 0 = Ectoplasm, 1 = Stock, 2=Rocket League, 3=???
+	public static int currentMode = 0; // 0 = Ectoplasm, 1 = Stock, 2=Rocket League, 3=???
 
 	public static bool isTeamMode = false;
 
 	public static int numRoundsCollectoplaza =3;
 	public static int numRoundsStock =3;
 	public static int numRoundsBall =2;
-	public static int numRoundsDefault =2;
+	public static int numRoundsDefault =3;
 	private static int numRounds = -1;
 	private static int [] numberRoundsWon = new int[4] {0,0,0,0};
 	private static int [] numberRoundsWonTeam = new int[2] {0,0};

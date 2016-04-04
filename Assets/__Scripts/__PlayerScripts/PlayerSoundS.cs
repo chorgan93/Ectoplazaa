@@ -59,6 +59,18 @@ public class PlayerSoundS : MonoBehaviour {
 	public List<GameObject> jabberLv3AttackSoundObjs;
 	public List<GameObject> blobbyLv3AttackSoundObjs;
 
+	public GameObject earnSpecialSoundObj;
+	public GameObject zoomSpecialSoundObj;
+	
+	public GameObject spectoSlashObj;
+	public GameObject pinkSpecialObj;
+	public GameObject mummySpecialObj;
+	public GameObject acidSpecialObj;
+	public GameObject acidSpecialObjEnd;
+	public GameObject blobbySpecialObj;
+	public GameObject jabberSpecialObj;
+	public GameObject jabberSpecialObjEnd;
+
 
 	private int characterNum;
 
@@ -75,6 +87,51 @@ public class PlayerSoundS : MonoBehaviour {
 		
 		characterNum = playerRef.characterNum;
 	}
+
+	public void PlaySpectoSlash(){
+		Instantiate(spectoSlashObj);
+	}
+
+	public void PlayPinkSpecial(){
+		Instantiate(pinkSpecialObj);
+	}
+
+	public void PlayMummySpecial(){
+		Instantiate(mummySpecialObj);
+	}
+
+	public void PlayAcidSpecial(){
+		Instantiate(acidSpecialObj);
+	}
+
+	public void PlayAcidSpecialEnd(){
+		Instantiate(acidSpecialObjEnd);
+	}
+
+	public void PlayJabberSpecial(){
+		Instantiate(jabberSpecialObj);
+	}
+	
+	public void PlayJabberSpecialEnd(){
+		Instantiate(jabberSpecialObjEnd);
+	}
+
+	public void PlayBlobbySpecial(){
+		Instantiate(blobbySpecialObj);
+	}
+
+	public void PlaySpecialZoom(){
+
+		Instantiate(zoomSpecialSoundObj);
+
+	}
+
+	public void PlaySpecialEarn(){
+		
+		Instantiate(earnSpecialSoundObj);
+
+	}
+
 	
 	public void PlayWallHit(){
 

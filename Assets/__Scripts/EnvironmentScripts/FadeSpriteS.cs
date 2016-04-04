@@ -8,7 +8,7 @@ public class FadeSpriteS : MonoBehaviour {
 	public float spawnRate = 0.1f;
 	private float spawnRateCountdown;
 
-	
+
 	// Update is called once per frame
 	void FixedUpdate () {
 

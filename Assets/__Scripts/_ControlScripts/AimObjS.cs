@@ -20,7 +20,7 @@ public class AimObjS : MonoBehaviour {
 
 	private SpriteRenderer chargeBarSpriteRender;
 
-	public Sprite [] chargeBarSprites; 
+	public Material [] chargeBarMats; 
 	public GameObject chargeBarSprite; 
 
 	private float maxShakeOffset = 0.3f;
@@ -69,16 +69,16 @@ public class AimObjS : MonoBehaviour {
 
 			if (playerRef.GetChargeTime() > lv3Min){
 
-						chargeBarSpriteRender.sprite = chargeBarSprites[2]; 
+						chargeBarSpriteRender.material = chargeBarMats[2]; 
 						transform.localScale = new Vector3(startSize*lv3SizeMult,startSize*lv3SizeMult,1);
 			}
 			else if (playerRef.GetChargeTime() > lv2Min){
 				
-						chargeBarSpriteRender.sprite = chargeBarSprites[1]; 
+						chargeBarSpriteRender.material = chargeBarMats[1]; 
 				transform.localScale = new Vector3(startSize*lv2SizeMult,startSize*lv2SizeMult,1);
 			}
 			else{
-						chargeBarSpriteRender.sprite = chargeBarSprites[0]; 
+						chargeBarSpriteRender.material = chargeBarMats[0]; 
 
 				transform.localScale = new Vector3(startSize,startSize,1);
 			}

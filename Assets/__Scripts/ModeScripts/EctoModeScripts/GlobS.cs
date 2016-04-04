@@ -41,6 +41,8 @@ public class GlobS : MonoBehaviour {
 
 	public Rigidbody ownRigid;
 
+	public GameObject[] soundEffect;
+
 	// Use this for initialization
 	void Start () {
 		deletionCounter = deletionTimer;
@@ -167,6 +169,9 @@ public class GlobS : MonoBehaviour {
 				}
 			activated = true; 
 			playerRef.health += 2; 
+
+				int soundtoplay = Mathf.FloorToInt(Random.Range(0,soundEffect.Length));
+				Instantiate(soundEffect[soundtoplay]);
 
 
 			this.GetComponent<SphereCollider>().enabled = false ;

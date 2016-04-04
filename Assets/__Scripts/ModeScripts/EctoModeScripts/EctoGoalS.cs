@@ -12,6 +12,8 @@ public class EctoGoalS : MonoBehaviour {
 	public List<Color> playerCols;
 	private SpriteRenderer mySprite;
 
+	public GameObject sfxObject;
+
 	public List<GameObject> spawnPts; // 0 is spawn for 2 player, 1 for 3 player, 2 for 4 player
 
 	// Use this for initialization
@@ -71,6 +73,8 @@ public class EctoGoalS : MonoBehaviour {
 					myPlayer.score += numToAdd;
 	
 					myPlayer.GetComponent<TrailHandlerRedubS>().updateDots = true;
+
+					Instantiate(sfxObject);
 				}
 			}
 		}

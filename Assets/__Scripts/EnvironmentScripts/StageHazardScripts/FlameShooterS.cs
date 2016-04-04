@@ -61,6 +61,7 @@ public class FlameShooterS : MonoBehaviour {
 		flickerTimeMax = warningStartTime/(slowFlickerCount*0.5f + fastFlickerCount*1.0f);
 
 			spriteMat = mySprite.material;
+			spriteMat.color = startColor;
 
 		}
 	
@@ -117,6 +118,8 @@ public class FlameShooterS : MonoBehaviour {
 			WarningFlashes();
 
 			if (flameShootCountdown <= 0){
+				
+				mySprite.material = spriteMat;
 				flamesActive = true;
 				flamesMoving = true;
 				myFlames.TurnOn();

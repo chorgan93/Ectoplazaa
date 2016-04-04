@@ -7,6 +7,8 @@ public class NewGhostballGoalS : MonoBehaviour {
 	private ScoreKeeperS 			scoreKeeper;
 	private GhostballS				ghostBall;
 
+	public GameObject sfxObj;
+
 	public bool goalScored = false;
 
 	// Use this for initialization
@@ -28,6 +30,8 @@ public class NewGhostballGoalS : MonoBehaviour {
 			}
 			ghostBall.MakeSlashEffect(transform.position);
 			goalScored = true;
+
+			Instantiate(sfxObj);
 		}
 	}
 	
