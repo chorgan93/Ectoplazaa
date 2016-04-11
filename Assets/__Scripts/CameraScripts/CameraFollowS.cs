@@ -36,6 +36,7 @@ public class CameraFollowS : MonoBehaviour {
 	private float specialTimeMax = 0.6f;
 	private float endSpecialCountdown;
 
+	public bool levelCamera;
 
 
 	void Awake () {
@@ -59,6 +60,11 @@ public class CameraFollowS : MonoBehaviour {
 
 		if (poi.GetComponent<AdaptiveCameraPtS>()){
 			inGameFollow = poi.GetComponent<AdaptiveCameraPtS>();
+		}
+
+		if (levelCamera){
+			ownCam.orthographicSize = 1f;
+			transform.position = new Vector3(0,0,-10f);
 		}
 
 	}
@@ -151,6 +157,14 @@ public class CameraFollowS : MonoBehaviour {
 		focusOnCharacter = true;
 		focusChar = newTarget;
 		endSpecialCountdown = specialTimeMax;
+
+	}
+
+	public void StartLevelCam(GameObject newTarget){
+		focusOnCharacter = true;
+		focusChar = newTarget;
+		endSpecialCountdown = 1000f;
+		specialCamSize = 4f;
 
 	}
 

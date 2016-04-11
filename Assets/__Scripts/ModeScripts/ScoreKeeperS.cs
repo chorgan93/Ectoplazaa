@@ -839,6 +839,10 @@ public class ScoreKeeperS : MonoBehaviour {
 		}
 	}
 
+	public int GetWinningPlayer(){
+		return winningPlayerNum;
+	}
+
 	public  float GetRedScore(){
 
 		return redTeamScore;

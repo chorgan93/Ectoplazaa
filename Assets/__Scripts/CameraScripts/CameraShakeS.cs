@@ -181,6 +181,10 @@ public class CameraShakeS : MonoBehaviour {
 	public void DisableShaking(){
 		delayShakeTime = 1f;
 	}
+
+	public void CancelShakeDelay(){
+		delayShakeTime = 0;
+	}
 }
 
 

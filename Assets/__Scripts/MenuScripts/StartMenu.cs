@@ -81,6 +81,9 @@ public class StartMenu : MonoBehaviour {
 	public GameObject bell;
 	public GameObject fadeIn;
 
+	public GameObject startObject;
+	public GameObject optionSlashEffect;
+
 	AsyncOperation async;
 
 	void Start () 
@@ -95,15 +98,18 @@ public class StartMenu : MonoBehaviour {
 		cameraFollow = GameObject.Find("Main Camera").GetComponent<CameraFollowS>();
 
 		if(started){
-			cameraFollow.poi = titleCameraPos;
+			cameraFollow.poi = cursorPositions[0];
 			bell.gameObject.SetActive(false);
 			flickerText.gameObject.SetActive(false);
+		}
+		else{
+			
+			fadeIn.SetActive(false);
 		}
 
 		cursorObj.transform.position = cursorPositions[currentCursorPos].transform.position;
 
 
-		fadeIn.SetActive(false);
 		
 	}
 	
@@ -138,10 +144,13 @@ public class StartMenu : MonoBehaviour {
 
 				Instantiate(bellSoundObj);
 				showTitle = true;
+					CameraShakeS.C.CancelShakeDelay();
 				CameraShakeS.C.SmallShake();
 
 
 					buttonPressed = true;
+
+					startObject.SetActive(true);
 
 				Invoke ("StartGame", 1f); 
 				}
@@ -562,7 +571,7 @@ public class StartMenu : MonoBehaviour {
 	// for pre loading of level select
 
 	public void StartLoading() {
-		StartCoroutine("load");
+		StartCoroutine(load ());
 	}
 
 	private void StartGame(){
@@ -575,6 +584,10 @@ public class StartMenu : MonoBehaviour {
 	IEnumerator load() {
 		Debug.LogWarning("ASYNC LOAD STARTED - " +
 		                 "DO NOT EXIT PLAY MODE UNTIL SCENE LOADS... UNITY WILL CRASH");
+
+		fadeIn.GetComponent<FadeObjS>().fadeRate*=5f;
+		fadeIn.GetComponent<FadeObjS>().FadeOut();
+
 		async = Application.LoadLevelAsync(nextScene);
 		async.allowSceneActivation = false;
 		yield return async;

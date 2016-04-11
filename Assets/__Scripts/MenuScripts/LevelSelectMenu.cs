@@ -10,6 +10,7 @@ public class LevelSelectMenu : MonoBehaviour {
 	float cursorSpeed= .25f;
 	public List<GameObject> cursorPositions;
 	public List<GameObject> cameraPositions;
+	public List<GameObject> levelCards;
 	public List<string> nextLevelStrings;
 
 	public static string selectedLevelString = "4Concierge";
@@ -35,6 +36,8 @@ public class LevelSelectMenu : MonoBehaviour {
 
 	public GameObject levelSelectSFXObj;
 	public List<GameObject> scrollSFXObjs;
+
+	public FadeObjS fadeIn;
 
 	AsyncOperation async;
 
@@ -69,6 +72,7 @@ public class LevelSelectMenu : MonoBehaviour {
 		else if (startedLoadDelay){
 			loadDelay -= Time.deltaTime;
 			followRef.poi = loadPt;
+
 			if (loadDelay <= 0){
 				startedLoading = true;
 				StartLoading();
@@ -118,12 +122,14 @@ public class LevelSelectMenu : MonoBehaviour {
 		// set position of cursor
 		cursorObj.transform.position = Vector3.Lerp( cursorObj.transform.position, cursorPositions[currentCursorPos].transform.position,cursorSpeed);
 
-		// move to character select function
+ 		// move to game
 		if (Input.GetButton("AButtonAllPlayers" + platformType)){
 			nextSceneString = selectedLevelString = nextLevelStrings[currentCursorPos];
 			//Application.LoadLevel(nextSceneString);
 					startedLoadDelay = true;
+					fadeIn.FadeOut();
 					Instantiate(levelSelectSFXObj);
+					followRef.StartLevelCam(levelCards[currentCursorPos]);
 		}
 		}
 		}

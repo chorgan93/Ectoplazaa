@@ -11,8 +11,7 @@ public class ModeSelectMenuS : MonoBehaviour {
 	public List<GameObject> cursorPositions;
 	//public List<string> nextLevelStrings;
 	public List<int> modesToChoose;
-	
-	//public static string selectedLevelString = "4Concierge";
+
 	public string nextSceneString;
 	public string backSceneString;
 	
@@ -28,13 +27,20 @@ public class ModeSelectMenuS : MonoBehaviour {
 	private float loadDelay = 0.5f;
 	private bool startedLoadDelay = false;
 	private bool startedLoading = false;
+
+	public FadeObjS fadeIn;
 	
 	public GameObject loadPt;
+	public GameObject loadBackPt;
 	
 	private CameraFollowS followRef;
 	
 	public GameObject levelSelectSFXObj;
 	public List<GameObject> scrollSFXObjs;
+
+	public List<GameObject> cameraPts;
+
+	private bool goingBack = false;
 	
 	AsyncOperation async;
 	
@@ -43,15 +49,15 @@ public class ModeSelectMenuS : MonoBehaviour {
 	void Start () {
 		
 		platformType = PlatformS.GetPlatform();
-		
-		//cursorObj.transform.position = Vector3.Lerp( cursorObj.transform.position, cursorPositions[currentCursorPos].transform.position,cursorSpeed);
+
+
 		cursorObj.transform.position = cursorPositions[currentCursorPos].transform.position;
 		
 		followRef = GetComponent<CameraFollowS>();
-		
-		//playerNum = GlobalVars.lastWinningPlayer;
-		//cursorLabel.color = cursorCols[GlobalVars.lastWinningPlayer-1];
-		//cursorLabel.text = "P" + GlobalVars.lastWinningPlayer;
+		followRef.poi = cameraPts[0];
+
+		loadBackPt.transform.position = followRef.transform.position;
+
 		cursorLabel.text = "";
 		
 		
@@ -64,15 +70,26 @@ public class ModeSelectMenuS : MonoBehaviour {
 			Debug.Log(async.progress);
 			if (async.progress >= 0.89f){
 				ActivateScene();
+
 			}
 		}
 		
 		else if (startedLoadDelay){
 			loadDelay -= Time.deltaTime;
+			if (goingBack){
+				followRef.poi = loadBackPt;
+			}
+			else{
 			followRef.poi = loadPt;
+			}
 			if (loadDelay <= 0){
 				startedLoading = true;
+				if (goingBack){
+					StartLoadingOut();
+				}
+				else{
 				StartLoading();
+				}
 			}
 		}
 		
@@ -81,10 +98,15 @@ public class ModeSelectMenuS : MonoBehaviour {
 				delayInput -= Time.deltaTime;
 			}
 			else{
+				// follow cursor
+				followRef.poi = cameraPts[currentCursorPos];
 				
 				// back function
 				if (Input.GetButton("BButtonAllPlayers" + platformType)){
-					Application.LoadLevel(backSceneString);
+					fadeIn.FadeOut();
+					startedLoadDelay = true;
+					goingBack = true;
+					Instantiate(levelSelectSFXObj);
 				}
 				
 				// select level function
@@ -119,10 +141,10 @@ public class ModeSelectMenuS : MonoBehaviour {
 				
 				// move to character select function
 				if (Input.GetButton("AButtonAllPlayers" + platformType)){
-					//nextSceneString = nextLevelStrings[currentCursorPos];
-					//Application.LoadLevel(nextSceneString);
 					CurrentModeS.currentMode = modesToChoose[currentCursorPos];
 					startedLoadDelay = true;
+					
+					fadeIn.FadeOut();
 					Instantiate(levelSelectSFXObj);
 				}
 			}
@@ -131,13 +153,28 @@ public class ModeSelectMenuS : MonoBehaviour {
 	}
 	
 	public void StartLoading() {
-		StartCoroutine("load");
+		StartCoroutine(load());
 	}
+
+	public void StartLoadingOut(){
+		StartCoroutine(loadOut ());
+	}
+
 	
 	IEnumerator load() {
 		Debug.LogWarning("ASYNC LOAD STARTED - " +
 		                 "DO NOT EXIT PLAY MODE UNTIL SCENE LOADS... UNITY WILL CRASH");
+
 		async = Application.LoadLevelAsync(nextSceneString);
+		async.allowSceneActivation = false;
+		yield return async;
+	}
+
+	IEnumerator loadOut (){
+		Debug.LogWarning("ASYNC LOAD STARTED - " +
+		                 "DO NOT EXIT PLAY MODE UNTIL SCENE LOADS... UNITY WILL CRASH");
+		
+		async = Application.LoadLevelAsync(backSceneString);
 		async.allowSceneActivation = false;
 		yield return async;
 	}

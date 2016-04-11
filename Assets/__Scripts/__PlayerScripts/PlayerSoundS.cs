@@ -71,6 +71,8 @@ public class PlayerSoundS : MonoBehaviour {
 	public GameObject jabberSpecialObj;
 	public GameObject jabberSpecialObjEnd;
 
+	private GameObject currentSpecialSoundObj;
+
 
 	private int characterNum;
 
@@ -124,11 +126,17 @@ public class PlayerSoundS : MonoBehaviour {
 
 		Instantiate(zoomSpecialSoundObj);
 
+		if (currentSpecialSoundObj != null){
+			Destroy(currentSpecialSoundObj);
+		}
+
 	}
 
 	public void PlaySpecialEarn(){
-		
-		Instantiate(earnSpecialSoundObj);
+
+		if (!currentSpecialSoundObj){
+			currentSpecialSoundObj = (GameObject)Instantiate(earnSpecialSoundObj);
+		}
 
 	}
 
@@ -415,6 +423,10 @@ public class PlayerSoundS : MonoBehaviour {
 		
 		
 		//Instantiate(lv3ChargeSoundObj);
+		if (currentSpecialSoundObj != null){
+			Destroy(currentSpecialSoundObj);
+		}
+
 		
 		int numToPlay = characterNum;
 		if (numToPlay < 0){
@@ -463,6 +475,10 @@ public class PlayerSoundS : MonoBehaviour {
 		
 		
 		//Instantiate(lv3ChargeSoundObj);
+		if (currentSpecialSoundObj != null){
+			Destroy(currentSpecialSoundObj);
+		}
+
 		
 		int numToPlay = characterNum;
 		if (numToPlay < 0){
