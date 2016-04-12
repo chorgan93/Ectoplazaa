@@ -72,6 +72,7 @@ public class PlayerSoundS : MonoBehaviour {
 	public GameObject jabberSpecialObjEnd;
 
 	private GameObject currentSpecialSoundObj;
+	private GameObject currentLaserSoundObj;
 
 
 	private int characterNum;
@@ -103,11 +104,15 @@ public class PlayerSoundS : MonoBehaviour {
 	}
 
 	public void PlayAcidSpecial(){
-		Instantiate(acidSpecialObj);
+		currentLaserSoundObj = (GameObject)Instantiate(acidSpecialObj);
 	}
 
 	public void PlayAcidSpecialEnd(){
 		Instantiate(acidSpecialObjEnd);
+
+		if (currentLaserSoundObj != null){
+			Destroy(currentLaserSoundObj);
+		}
 	}
 
 	public void PlayJabberSpecial(){

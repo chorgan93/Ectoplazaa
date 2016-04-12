@@ -298,14 +298,16 @@ public class NewScoreUI : MonoBehaviour {
 				}
 			}
 
+			if (myPlayer.numLives == 0){
+				textDisplay.text = "OUT";
+			}
+			else{
+				textDisplay.text = "P" + playerNum;
+			}
+
+
 		}
 
-		if (myPlayer.numLives == 0){
-			textDisplay.text = "OUT";
-		}
-		else{
-			textDisplay.text = "P" + playerNum;
-		}
 
 
 	

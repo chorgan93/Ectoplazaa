@@ -48,6 +48,8 @@ public class CharacterSelectMenu : MonoBehaviour {
 	private WiiUControllerManagerS wiiUInput2;
 	private WiiUControllerManagerS wiiUInput3;
 	private WiiUControllerManagerS wiiUInput4;
+
+	public FadeObjS fadeIn;
 	
 	int totalPlayers = 0; 
 	
@@ -553,6 +555,7 @@ public class CharacterSelectMenu : MonoBehaviour {
 											
 											//Application.LoadLevel(nextLevelString);
 											startedLoadDelay = true;
+												fadeIn.FadeOut();
 											Instantiate(selectSFXObj);
 										}
 										

@@ -84,6 +84,10 @@ public class StartMenu : MonoBehaviour {
 	public GameObject startObject;
 	public GameObject optionSlashEffect;
 
+	public Material greenSpriteMat;
+	public Material startSpriteMat;
+	public SpriteRenderer[] menuOptionSprites;
+
 	AsyncOperation async;
 
 	void Start () 
@@ -109,7 +113,7 @@ public class StartMenu : MonoBehaviour {
 
 		cursorObj.transform.position = cursorPositions[currentCursorPos].transform.position;
 
-
+		menuOptionSprites[0].material = greenSpriteMat;
 		
 	}
 	
@@ -182,9 +186,10 @@ public class StartMenu : MonoBehaviour {
 				cursorObj.SetActive(true);
 
 				// move cursor function
-				if (Mathf.Abs(Input.GetAxis("Vertical")) > cursorSensitivity){
+				if (Mathf.Abs(Input.GetAxis("Vertical")) > cursorSensitivity || (Mathf.Abs(Input.GetAxis("Horizontal")) > cursorSensitivity && !onOptions)){
 					if (!movedCursor){
-						if (Input.GetAxis("Vertical") < 0){
+						if ((Mathf.Abs(Input.GetAxis("Vertical")) > cursorSensitivity && Input.GetAxis("Vertical") < 0) ||
+						    (Mathf.Abs(Input.GetAxis("Horizontal")) > cursorSensitivity && Input.GetAxis("Horizontal") > 0)){
 							// add to current level selected
 							currentCursorPos ++;
 							if (onOptions){
@@ -209,6 +214,17 @@ public class StartMenu : MonoBehaviour {
 									currentCursorPos = cursorPositions.Count-1;
 								}
 							}
+						}
+
+						int i = 0;
+						foreach(SpriteRenderer render in menuOptionSprites){
+							if (i == currentCursorPos){
+								render.material = greenSpriteMat;
+							}
+							else{
+								render.material = startSpriteMat;
+							}
+							i++;
 						}
 
 						movedCursor = true;
@@ -243,6 +259,8 @@ public class StartMenu : MonoBehaviour {
 							cameraFollow.poi = loadingCenterPt;
 							nextScene = competitiveNextScene;
 							Instantiate(advSoundObj);
+
+
 						}
 
 						// team option
@@ -254,6 +272,7 @@ public class StartMenu : MonoBehaviour {
 							cameraFollow.poi = loadingCenterPt;
 							nextScene = competitiveNextScene;
 							Instantiate(advSoundObj);
+
 						}
 	
 						// "options" option
@@ -264,6 +283,7 @@ public class StartMenu : MonoBehaviour {
 							currentCursorPos = 0;
 							int soundToPlay = Mathf.FloorToInt(Random.Range(0,selectSoundObjs.Count));
 							Instantiate(selectSoundObjs[soundToPlay]);
+
 						}
 		
 						// "credits" option
@@ -273,6 +293,7 @@ public class StartMenu : MonoBehaviour {
 							inputDelay = inputDelayTransition;
 							int soundToPlay = Mathf.FloorToInt(Random.Range(0,selectSoundObjs.Count));
 							Instantiate(selectSoundObjs[soundToPlay]);
+
 						}
 					}
 
