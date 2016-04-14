@@ -38,6 +38,9 @@ public class LevelSelectMenu : MonoBehaviour {
 	public List<GameObject> scrollSFXObjs;
 
 	public FadeObjS fadeIn;
+	
+	private float fadeItemTime = 0.2f;
+	public FadeObjS[] fadeObjs;
 
 	AsyncOperation async;
 
@@ -57,6 +60,7 @@ public class LevelSelectMenu : MonoBehaviour {
 		//cursorLabel.text = "P" + GlobalVars.lastWinningPlayer;
 		cursorLabel.text = "";
 
+		StartCoroutine(FadeMenuItems());
 	
 	}
 	
@@ -138,6 +142,22 @@ public class LevelSelectMenu : MonoBehaviour {
 
 	public void StartLoading() {
 		StartCoroutine("load");
+	}
+
+	private IEnumerator FadeMenuItems(){
+		
+		delayInput = 1000f;
+		
+		yield return new WaitForSeconds(0.3f);
+		
+		foreach(FadeObjS fade in fadeObjs){
+			
+			fade.gameObject.SetActive(true);
+			
+			yield return new WaitForSeconds(fadeItemTime);
+		}
+		
+		delayInput = 0;
 	}
 	
 	IEnumerator load() {

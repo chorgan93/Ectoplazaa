@@ -5,6 +5,7 @@ public class FadeObjS : MonoBehaviour {
 
 	public float fadeRate = 1;
 	private SpriteRenderer ownRender;
+	private TextMesh ownText;
 
 	public float delayFade = 0.25f;
 
@@ -19,6 +20,9 @@ public class FadeObjS : MonoBehaviour {
 	void Start () {
 
 		ownRender = GetComponent<SpriteRenderer>();
+		if (!ownRender){
+			ownText = GetComponent<TextMesh>();
+		}
 
 		if (loadingObj){
 			loadingObj.SetActive(false);
@@ -34,6 +38,7 @@ public class FadeObjS : MonoBehaviour {
 			delayFade -= Time.deltaTime * TimeManagerS.timeMult;
 		}
 	else{
+			if (ownRender){
 			if (!stopFade){
 		Color fadeCol = ownRender.color;
 				if (fadingOut){
@@ -62,6 +67,36 @@ public class FadeObjS : MonoBehaviour {
 			}
 				}
 		}
+			}
+			else{
+				if (!stopFade){
+					Color fadeCol = ownText.color;
+					if (fadingOut){
+						fadeCol.a += fadeRate*Time.deltaTime*TimeManagerS.timeMult;
+					}
+					else{
+						fadeCol.a -= fadeRate*Time.deltaTime*TimeManagerS.timeMult;
+					}
+					ownText.color = fadeCol;
+					Debug.Log("Fading text");
+					if (!fadingOut){
+						if (fadeCol.a <= 0){
+							if (dontDestroy){
+								fadeCol.a = 0;
+								stopFade = true;
+							}
+							else{
+								Destroy(gameObject);
+							}
+						}
+					}
+					else{
+						if (fadeCol.a >= 1){
+							fadeCol.a = 1;
+						}
+					}
+				}
+			}
 		}
 
 	}

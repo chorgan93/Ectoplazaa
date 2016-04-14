@@ -41,6 +41,11 @@ public class ModeSelectMenuS : MonoBehaviour {
 	public List<GameObject> cameraPts;
 
 	private bool goingBack = false;
+
+	
+	private float fadeItemTime = 0.2f;
+	public FadeObjS[] fadeObjs;
+	public FadeObjS[] fadeObjsText;
 	
 	AsyncOperation async;
 	
@@ -59,6 +64,8 @@ public class ModeSelectMenuS : MonoBehaviour {
 		loadBackPt.transform.position = followRef.transform.position;
 
 		cursorLabel.text = "";
+
+		StartCoroutine(FadeMenuItems());
 		
 		
 	}
@@ -158,6 +165,36 @@ public class ModeSelectMenuS : MonoBehaviour {
 
 	public void StartLoadingOut(){
 		StartCoroutine(loadOut ());
+	}
+
+	private IEnumerator FadeMenuItems(){
+		
+		delayInput = 1000f;
+		
+		yield return new WaitForSeconds(0.3f);
+		
+		foreach(FadeObjS fade in fadeObjs){
+
+			fade.gameObject.SetActive(true);
+			
+			yield return new WaitForSeconds(fadeItemTime);
+		}
+
+		delayInput = 0;
+	}
+
+	private IEnumerator FadeMenuText(){
+
+		
+		yield return new WaitForSeconds(0.3f);
+		
+		foreach(FadeObjS fade in fadeObjsText){
+			
+			fade.gameObject.SetActive(true);
+			
+			yield return new WaitForSeconds(fadeItemTime);
+		}
+
 	}
 
 	

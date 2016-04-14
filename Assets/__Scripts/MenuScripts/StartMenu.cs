@@ -88,6 +88,9 @@ public class StartMenu : MonoBehaviour {
 	public Material startSpriteMat;
 	public SpriteRenderer[] menuOptionSprites;
 
+	private float fadeItemTime = 0.2f;
+	public FadeObjS[] fadeObjs;
+
 	AsyncOperation async;
 
 	void Start () 
@@ -105,6 +108,7 @@ public class StartMenu : MonoBehaviour {
 			cameraFollow.poi = cursorPositions[0];
 			bell.gameObject.SetActive(false);
 			flickerText.gameObject.SetActive(false);
+			StartCoroutine(FadeMenuItems());
 		}
 		else{
 			
@@ -156,6 +160,7 @@ public class StartMenu : MonoBehaviour {
 
 					startObject.SetActive(true);
 
+
 				Invoke ("StartGame", 1f); 
 				}
 			}
@@ -183,7 +188,7 @@ public class StartMenu : MonoBehaviour {
 				showTitle = false;
 				bell.gameObject.SetActive(false);
 
-				cursorObj.SetActive(true);
+				//cursorObj.SetActive(true);
 
 				// move cursor function
 				if (Mathf.Abs(Input.GetAxis("Vertical")) > cursorSensitivity || (Mathf.Abs(Input.GetAxis("Horizontal")) > cursorSensitivity && !onOptions)){
@@ -600,6 +605,34 @@ public class StartMenu : MonoBehaviour {
 		Instantiate(advSoundObj);
 		flickerText.gameObject.SetActive(false);
 		fadeIn.SetActive(true);
+		Invoke("StartFade", 1f);
+	}
+
+	private void StartFade(){
+
+		StartCoroutine(FadeMenuItems());
+
+	}
+
+
+	private IEnumerator FadeMenuItems(){
+
+		cursorObj.SetActive(false);
+
+		yield return new WaitForSeconds(0.3f);
+
+		foreach(FadeObjS fade in fadeObjs){
+
+			inputDelay = 1000f;
+			fade.gameObject.SetActive(true);
+
+			yield return new WaitForSeconds(fadeItemTime);
+		}
+
+		inputDelay = 0;
+		cursorObj.SetActive(true);
+
+
 	}
 	
 	IEnumerator load() {

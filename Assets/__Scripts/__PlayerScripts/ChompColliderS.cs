@@ -335,11 +335,21 @@ public class ChompColliderS : MonoBehaviour {
 		slashEffect.GetComponent<SlashEffectS>().moveDir = effectDir;
 		slashEffect.GetComponent<SlashEffectS>().attachedLightning.GetComponent<Renderer>().material.color = playerRef.playerParticleMats
 			[playerRef.characterNum-1].GetColor("_TintColor");
+
+		slashEffect.GetComponent<TrailRenderer>().materials[0].color = playerRef.playerParticleMats
+			[playerRef.characterNum-1].GetColor("_TintColor");
+
 		
 		spawnPos = (transform.position+otherPos)/2;
 		spawnPos.z = transform.position.z +1;
 		
 		GameObject hitEffect = Instantiate(hitEffectObj,spawnPos,Quaternion.identity) as GameObject;
+
+		
+		hitEffect.GetComponent<Renderer>().material.color = playerRef.playerParticleMats
+			[playerRef.characterNum-1].GetColor("_TintColor");
+
+
 		
 		// rotate hit effect to match slash
 		float rotateZ = 0;
