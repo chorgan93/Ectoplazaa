@@ -39,7 +39,7 @@ public class LevelSelectMenu : MonoBehaviour {
 
 	public FadeObjS fadeIn;
 	
-	private float fadeItemTime = 0.2f;
+	private float fadeItemTime = 0.12f;
 	public FadeObjS[] fadeObjs;
 
 	AsyncOperation async;
@@ -95,9 +95,10 @@ public class LevelSelectMenu : MonoBehaviour {
 		}
 
 		// select level function
-		if (Mathf.Abs(Input.GetAxis("Horizontal")) > moveCursorSensitivity){
+				if (Mathf.Abs(Input.GetAxis("Horizontal")) > moveCursorSensitivity || Mathf.Abs(Input.GetAxis("Vertical")) > moveCursorSensitivity){
 			if (!movedCursor){
-				if (Input.GetAxis("Horizontal") > 0){
+						if ((Mathf.Abs(Input.GetAxis("Horizontal")) > moveCursorSensitivity && Input.GetAxis("Horizontal") > 0) ||
+						    (Mathf.Abs(Input.GetAxis("Vertical")) > moveCursorSensitivity && Input.GetAxis("Vertical") < 0)){
 					// add to current level selected
 					currentCursorPos ++;
 					if (currentCursorPos > cursorPositions.Count-1){
@@ -146,9 +147,9 @@ public class LevelSelectMenu : MonoBehaviour {
 
 	private IEnumerator FadeMenuItems(){
 		
-		delayInput = 1000f;
+		delayInput = 1f;
 		
-		yield return new WaitForSeconds(0.3f);
+		yield return new WaitForSeconds(0.6f);
 		
 		foreach(FadeObjS fade in fadeObjs){
 			
