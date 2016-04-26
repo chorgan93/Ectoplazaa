@@ -88,6 +88,8 @@ public class StartMenu : MonoBehaviour {
 	public Material startSpriteMat;
 	public SpriteRenderer[] menuOptionSprites;
 
+	private bool didInitialFade = false;
+
 	private float fadeItemTime = 0.2f;
 	public FadeObjS[] fadeObjs;
 
@@ -188,7 +190,9 @@ public class StartMenu : MonoBehaviour {
 				showTitle = false;
 				bell.gameObject.SetActive(false);
 
-				//cursorObj.SetActive(true);
+				if (didInitialFade){
+					cursorObj.SetActive(true);
+				}
 
 				// move cursor function
 				if (Mathf.Abs(Input.GetAxis("Vertical")) > cursorSensitivity || (Mathf.Abs(Input.GetAxis("Horizontal")) > cursorSensitivity && !onOptions)){
@@ -251,8 +255,7 @@ public class StartMenu : MonoBehaviour {
 					cameraFollow.poi = startMenuPoiPos[currentCursorPos];
 
 					// select menu option
-					if (Input.GetButton ("AButtonAllPlayers" + platformType) 
-					    || Input.GetKey (KeyCode.KeypadEnter)) 
+					if (Input.GetButton ("AButtonAllPlayers" + platformType)) 
 					{
 						// "play" option
 						if (currentCursorPos == 0){
@@ -325,6 +328,17 @@ public class StartMenu : MonoBehaviour {
 						movedCursor = false;
 						currentCursorPos = 0;
 						inputDelay = inputDelayTransition;
+
+						int i = 0;
+						foreach(SpriteRenderer render in menuOptionSprites){
+							if (i == currentCursorPos){
+								render.material = greenSpriteMat;
+							}
+							else{
+								render.material = startSpriteMat;
+							}
+							i++;
+						}
 
 						int soundToPlay = Mathf.FloorToInt(Random.Range(0,scrollSoundObjs.Count));
 						Instantiate(scrollSoundObjs[soundToPlay]);
@@ -632,6 +646,7 @@ public class StartMenu : MonoBehaviour {
 		inputDelay = 0;
 		cursorObj.SetActive(true);
 
+		didInitialFade = true;
 
 	}
 	

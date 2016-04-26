@@ -43,7 +43,6 @@ public class FadeObjS : MonoBehaviour {
 		Color fadeCol = ownRender.color;
 				if (fadingOut){
 					fadeCol.a += fadeRate*Time.deltaTime*TimeManagerS.timeMult;
-					Debug.Log("FADING");
 				}
 				else{
 		fadeCol.a -= fadeRate*Time.deltaTime*TimeManagerS.timeMult;
@@ -54,7 +53,6 @@ public class FadeObjS : MonoBehaviour {
 				if (dontDestroy){
 					fadeCol.a = 0;
 						stopFade = true;
-							Debug.Log("STOP FADE!");
 				}
 				else{
 					Destroy(gameObject);
