@@ -22,6 +22,13 @@ public class PlayerEffectS : MonoBehaviour {
 
 	private SpriteRenderer ownRender;
 
+	
+	
+	public GameObject dustObj;
+	public float spawnRad = 3f;
+	public float spawnRate = 0.08f;
+	private float spawnRateCountdown;
+
 	public bool isSpecial = false;
 
 	// Use this for initialization
@@ -41,6 +48,10 @@ public class PlayerEffectS : MonoBehaviour {
 		 && attackNum == 2)
 		|| (playerRef.attacking && playerRef.attackToPerform >= attackNum)){
 			ownRender.enabled = true;
+
+					if (attackNum >= 2){
+						SpawnSmoke();
+					}
 		}
 		else{
 			ownRender.enabled = false;
@@ -103,6 +114,10 @@ public class PlayerEffectS : MonoBehaviour {
 				if (playerRef.charging || playerRef.GetComponent<Rigidbody>().velocity == Vector3.zero){
 						transform.localRotation = Quaternion.Euler(new Vector3(0,0,90));
 					}
+
+					if (attackNum >= 1 && playerRef.attacking){
+						SpawnSmoke();
+					}
 			}
 
 			else{
@@ -114,7 +129,26 @@ public class PlayerEffectS : MonoBehaviour {
 		}
 		}
 
+	}
+
+	void SpawnSmoke(){
+
+		spawnRateCountdown -= Time.deltaTime;
+		if (spawnRateCountdown <= 0){
+			spawnRateCountdown = spawnRate;
+
+			Vector3 spawnPos = transform.position+Random.insideUnitSphere*spawnRad;
+			spawnPos.z = transform.position.z+1f;
+
+			if (attackNum == 2){
+				SpawnManagerS.Instance.SpawnSmoke(spawnPos, Quaternion.Euler(new Vector3(0,0,Random.Range(0,360))));
+			}
+			if (attackNum == 1){
+				SpawnManagerS.Instance.SpawnElectricity(spawnPos, Quaternion.Euler(new Vector3(0,0,Random.Range(0,360))));
+			}
 		}
+
+	}
 	
 
 }

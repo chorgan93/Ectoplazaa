@@ -32,10 +32,18 @@ public class CharacterSelectBGS : MonoBehaviour {
 	public Sprite[] filledStars;
 	public Sprite unfilledStar;
 
+	public Sprite[] bedroomSprites;
+	public SpriteRenderer bedroomBG;
+	private Sprite unselectedBG;
+
+	private float fadeOutRate = 2.5f;
+
 	// Use this for initialization
 	void Start () {
 
 		myRenderer = GetComponent<Renderer>();
+
+		unselectedBG = bedroomBG.sprite;
 	
 	}
 	
@@ -44,6 +52,13 @@ public class CharacterSelectBGS : MonoBehaviour {
 
 		if (!menuRef.hasJoined[myPlayerNum-1]){
 			myRenderer.enabled = false;
+			//bedroomBG.sprite = unselectedBG;
+
+			if (bedroomBG.color.a > 0){
+				Color fadeCol = bedroomBG.color;
+				fadeCol.a -= Time.deltaTime*fadeOutRate;
+				bedroomBG.color = fadeCol;
+			}
 		}
 		else{
 			if (!menuRef.hasSelected[myPlayerNum-1]){
@@ -93,10 +108,18 @@ public class CharacterSelectBGS : MonoBehaviour {
 						chargeStars[k].sprite = unfilledStar;
 					}
 				}
+				
+				bedroomBG.sprite = bedroomSprites[GlobalVars.characterNumber[myPlayerNum-1]-1];
 			}
 			else{
 
 				myRenderer.enabled = false;
+				//bedroomBG.sprite = unselectedBG;
+				if (bedroomBG.color.a < 1){
+					Color fadeCol = bedroomBG.color;
+					fadeCol.a = 1;
+					bedroomBG.color = fadeCol;
+				}
 
 			}
 		}

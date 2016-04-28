@@ -36,6 +36,8 @@ public class StartMenu : MonoBehaviour {
 
 	// options menu variables
 	public List<GameObject> optionsCursorPositions;
+	public List<GameObject> creditsCursorPositions;
+	public List<GameObject> creditsCameraPositions;
 	private bool movedCursorLeftRight = false;
 	public TextMesh musicVolumeDisplay;
 	public float musicVolumeChangeStep = 0.25f;
@@ -92,6 +94,8 @@ public class StartMenu : MonoBehaviour {
 
 	private float fadeItemTime = 0.2f;
 	public FadeObjS[] fadeObjs;
+
+	public WhiteFlashS whiteFlash;
 
 	AsyncOperation async;
 
@@ -206,6 +210,11 @@ public class StartMenu : MonoBehaviour {
 									currentCursorPos = 0;
 								}
 							}
+							else if (onCredits){
+								if (currentCursorPos > creditsCursorPositions.Count-1){
+									currentCursorPos = 0;
+								}
+							}
 							else{
 								if (currentCursorPos > cursorPositions.Count-1){
 									currentCursorPos = 0;
@@ -218,6 +227,9 @@ public class StartMenu : MonoBehaviour {
 							if (currentCursorPos < 0){
 								if (onOptions){
 									currentCursorPos = optionsCursorPositions.Count-1;
+								}
+								else if (onCredits){
+									currentCursorPos = creditsCursorPositions.Count - 1;
 								}
 								else{
 									currentCursorPos = cursorPositions.Count-1;
@@ -268,6 +280,9 @@ public class StartMenu : MonoBehaviour {
 							nextScene = competitiveNextScene;
 							Instantiate(advSoundObj);
 
+							//fadeIn.GetComponent<FadeObjS>().fadeRate*=2f;
+							fadeIn.GetComponent<FadeObjS>().FadeOut();
+
 
 						}
 
@@ -281,11 +296,15 @@ public class StartMenu : MonoBehaviour {
 							nextScene = competitiveNextScene;
 							Instantiate(advSoundObj);
 
+							//fadeIn.GetComponent<FadeObjS>().fadeRate*=2f;
+							fadeIn.GetComponent<FadeObjS>().FadeOut();
+
 						}
 	
 						// "options" option
 						if (currentCursorPos == 2){
 							onOptions = true;
+							whiteFlash.StartFlash();
 							//cameraFollow.poi = optionsCenterPt;
 							inputDelay = inputDelayTransition;
 							currentCursorPos = 0;
@@ -297,7 +316,9 @@ public class StartMenu : MonoBehaviour {
 						// "credits" option
 						if (currentCursorPos == 3){
 							onCredits = true;
-							cameraFollow.poi = creditsCenterPt;
+							currentCursorPos = 0;
+							whiteFlash.StartFlash();
+							//cameraFollow.poi = creditsCenterPt;
 							inputDelay = inputDelayTransition;
 							int soundToPlay = Mathf.FloorToInt(Random.Range(0,selectSoundObjs.Count));
 							Instantiate(selectSoundObjs[soundToPlay]);
@@ -324,6 +345,7 @@ public class StartMenu : MonoBehaviour {
 					if (Input.GetButton ("BButtonAllPlayers" + platformType)) {
 						onCredits = false;
 						onOptions = false;
+						whiteFlash.StartFlash();
 						//cameraFollow.poi = mainMenuCenterPt;
 						movedCursor = false;
 						currentCursorPos = 0;
@@ -592,6 +614,11 @@ public class StartMenu : MonoBehaviour {
 							hazardOnDisplay.text = "OFF";
 						}
 					}
+					if (onCredits){
+						cameraFollow.poi = creditsCameraPositions[currentCursorPos];
+						cursorObj.transform.position = Vector3.Lerp(cursorObj.transform.position, creditsCursorPositions[currentCursorPos].transform.position, cursorSpeed);
+
+					}
 				}
 			}
 			// when input delay IS active
@@ -654,8 +681,7 @@ public class StartMenu : MonoBehaviour {
 		Debug.LogWarning("ASYNC LOAD STARTED - " +
 		                 "DO NOT EXIT PLAY MODE UNTIL SCENE LOADS... UNITY WILL CRASH");
 
-		fadeIn.GetComponent<FadeObjS>().fadeRate*=5f;
-		fadeIn.GetComponent<FadeObjS>().FadeOut();
+
 
 		async = Application.LoadLevelAsync(nextScene);
 		async.allowSceneActivation = false;

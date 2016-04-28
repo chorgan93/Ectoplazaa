@@ -22,6 +22,11 @@ public class StartMovementS : MonoBehaviour {
 		startY = transform.position.y - yDistanceToTravel;
 
 		yDifference = endY - startY;
+
+		
+		float currentY = startY;
+		
+		transform.position = new Vector3(transform.position.x, currentY, transform.position.z);
 	
 	}
 	

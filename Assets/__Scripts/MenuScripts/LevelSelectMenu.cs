@@ -39,8 +39,8 @@ public class LevelSelectMenu : MonoBehaviour {
 
 	public FadeObjS fadeIn;
 	
-	private float fadeItemTime = 0.12f;
-	public FadeObjS[] fadeObjs;
+	private float fadeItemTime = 0.2f;
+	public GameObject[] fadeObjs;
 
 	AsyncOperation async;
 
@@ -148,12 +148,11 @@ public class LevelSelectMenu : MonoBehaviour {
 	private IEnumerator FadeMenuItems(){
 		
 		delayInput = 1f;
+
 		
-		yield return new WaitForSeconds(0.6f);
-		
-		foreach(FadeObjS fade in fadeObjs){
+		foreach(GameObject fade in fadeObjs){
 			
-			fade.gameObject.SetActive(true);
+			fade.SetActive(true);
 			
 			yield return new WaitForSeconds(fadeItemTime);
 		}

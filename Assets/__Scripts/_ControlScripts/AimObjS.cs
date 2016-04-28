@@ -95,7 +95,7 @@ public class AimObjS : MonoBehaviour {
 					// shake sprite pos
 					chargeShakeOffset = Random.insideUnitSphere* 
 						(maxShakeOffset*Mathf.Pow((playerRef.GetChargeTime()/maxChargeHoldTime), 2));
-					chargeShakeOffset.z = transform.position.z;
+					chargeShakeOffset.z = 0;
 					chargeBarSprite.transform.localPosition = chargeShakeOffset;
 
 					// shake head offset
