@@ -22,7 +22,8 @@ public class PlayerEffectS : MonoBehaviour {
 
 	private SpriteRenderer ownRender;
 
-	
+	private Quaternion startRotation;
+	private Quaternion attackRotation;
 	
 	public GameObject dustObj;
 	public float spawnRad = 3f;
@@ -33,6 +34,9 @@ public class PlayerEffectS : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
+		attackRotation = transform.localRotation;
+		startRotation = Quaternion.Euler(attackRotation.x, attackRotation.y, attackRotation.z+90f);
 
 		currentFrame = Mathf.FloorToInt(Random.Range(0,effectFrames.Count));
 
@@ -49,9 +53,7 @@ public class PlayerEffectS : MonoBehaviour {
 		|| (playerRef.attacking && playerRef.attackToPerform >= attackNum)){
 			ownRender.enabled = true;
 
-					if (attackNum >= 2){
-						SpawnSmoke();
-					}
+				
 		}
 		else{
 			ownRender.enabled = false;
@@ -92,6 +94,13 @@ public class PlayerEffectS : MonoBehaviour {
 			if (playerRef.charging && playerRef.GetChargeTime() > playerRef.GetChargeLv3Min()){
 				ownRender.enabled = true;
 			}
+
+					if (playerRef.attacking){
+						transform.localRotation = attackRotation;
+					}
+					else{
+						transform.localRotation = startRotation;
+					}
 		}
 		// turn off once not attacking
 		if (!playerRef.isDangerous && !playerRef.charging){
@@ -110,10 +119,7 @@ public class PlayerEffectS : MonoBehaviour {
 			}
 			ownRender.sprite = effectFrames[currentFrame];
 
-				// rotate according to player head direction (flat while charging, in same dir when flinging)
-				if (playerRef.charging || playerRef.GetComponent<Rigidbody>().velocity == Vector3.zero){
-						transform.localRotation = Quaternion.Euler(new Vector3(0,0,90));
-					}
+				
 
 					if (attackNum >= 1 && playerRef.attacking){
 						SpawnSmoke();
