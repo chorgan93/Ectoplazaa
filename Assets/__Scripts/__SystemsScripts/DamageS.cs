@@ -153,8 +153,8 @@ public class DamageS : MonoBehaviour {
 					*/
 							
 							if(otherPlayer.health < 5)
-							{
-								otherPlayer.GetComponent<TrailHandlerRedubS>().SpawnGlobs(otherPlayer.transform.position,2); 
+									{
+										otherPlayer.GetComponent<TrailHandlerRedubS>().SpawnGlobs(otherPlayer.transform.position,otherPlayer.health); 
 										if (!isPinkSpecialCollider){
 								otherPlayer.TakeDamage(otherPlayer.health, specialAttackDmg);
 										}
@@ -166,8 +166,8 @@ public class DamageS : MonoBehaviour {
 							else
 							{
 								int damageTaken = (int)otherPlayer.health+1;  //Mathf.RoundToInt((otherPlayer.health/2f));
-								
-								otherPlayer.GetComponent<TrailHandlerRedubS>().DestroyPlayerDotsRange(damageTaken);
+										
+										otherPlayer.GetComponent<TrailHandlerRedubS>().SpawnGlobs(otherPlayer.transform.position,otherPlayer.health); 
 										if (!isPinkSpecialCollider){
 											otherPlayer.TakeDamage (damageTaken, specialAttackDmg);
 										}

@@ -528,6 +528,9 @@ public class CharacterSelectMenu : MonoBehaviour {
 										    ((totalPlayers >= 2 && !CurrentModeS.isTeamMode) || 
 										 (totalPlayers >= 2 && CurrentModeS.isTeamMode && GlobalVars.ValidTeams()))){
 											#else
+											if (Input.GetButton ("StartButtonAllPlayers"+ platformType)){
+												Debug.Log(totalPlayers);
+											}
 										if (Input.GetButton ("StartButtonAllPlayers"+ platformType) && 
 										    ((totalPlayers >= 2 && !CurrentModeS.isTeamMode) || 
 										 (totalPlayers >= 2 && CurrentModeS.isTeamMode && GlobalVars.ValidTeams()))) //START GAME---------------------------------------

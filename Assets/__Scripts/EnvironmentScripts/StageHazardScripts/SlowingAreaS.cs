@@ -15,7 +15,7 @@ public class SlowingAreaS : MonoBehaviour {
 	private float animRateCountdown;
 
 	private int blobsToSpawn = 5;
-	private float blobSpeed = 1000f;
+	private float blobSpeed = 2000f;
 
 	private bool animating = true;
 

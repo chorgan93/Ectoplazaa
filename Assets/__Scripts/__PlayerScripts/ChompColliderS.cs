@@ -207,7 +207,7 @@ public class ChompColliderS : MonoBehaviour {
 					
 					if(otherPlayer.health < 5)
 					{
-						otherPlayer.GetComponent<TrailHandlerRedubS>().SpawnGlobs(otherPlayer.transform.position,2); 
+						otherPlayer.GetComponent<TrailHandlerRedubS>().SpawnGlobs(otherPlayer.transform.position,otherPlayer.health); 
 						otherPlayer.TakeDamage(otherPlayer.health, false);
 						GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 						GlobalVars.totalKills[playerRef.playerNum-1] ++; 
@@ -216,7 +216,8 @@ public class ChompColliderS : MonoBehaviour {
 					{
 						int damageTaken = (int)otherPlayer.health+1;  //Mathf.RoundToInt((otherPlayer.health/2f));
 						
-						otherPlayer.GetComponent<TrailHandlerRedubS>().DestroyPlayerDotsRange(damageTaken);
+						//otherPlayer.GetComponent<TrailHandlerRedubS>().DestroyPlayerDotsRange(damageTaken);
+						otherPlayer.GetComponent<TrailHandlerRedubS>().SpawnGlobs(otherPlayer.transform.position,otherPlayer.health); 
 						otherPlayer.TakeDamage (damageTaken, false);
 						GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 						GlobalVars.totalKills[playerRef.playerNum-1] ++; 
@@ -289,7 +290,7 @@ public class ChompColliderS : MonoBehaviour {
 				
 				if(otherPlayer.health < 5)
 				{
-					otherPlayer.GetComponent<TrailHandlerRedubS>().SpawnGlobs(otherPlayer.transform.position,2); 
+					otherPlayer.GetComponent<TrailHandlerRedubS>().SpawnGlobs(otherPlayer.transform.position,otherPlayer.health); 
 					otherPlayer.TakeDamage(otherPlayer.health, false);
 					GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 					GlobalVars.totalKills[playerRef.playerNum-1] ++; 
@@ -298,7 +299,7 @@ public class ChompColliderS : MonoBehaviour {
 				{
 					int damageTaken = (int)otherPlayer.health+1;  //Mathf.RoundToInt((otherPlayer.health/2f));
 					
-					otherPlayer.GetComponent<TrailHandlerRedubS>().DestroyPlayerDotsRange(damageTaken);
+					otherPlayer.GetComponent<TrailHandlerRedubS>().SpawnGlobs(otherPlayer.transform.position,otherPlayer.health); 
 					otherPlayer.TakeDamage (damageTaken, false);
 					GlobalVars.totalDeaths[otherPlayer.playerNum-1] ++;
 					GlobalVars.totalKills[playerRef.playerNum-1] ++; 

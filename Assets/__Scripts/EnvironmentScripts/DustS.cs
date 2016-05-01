@@ -16,6 +16,8 @@ public class DustS : MonoBehaviour {
 	public bool isSmoke = false;
 	public bool isElec = false;
 
+	private float startFade = 0.6f;
+
 	// Use this for initialization
 	void Start () {
 
@@ -23,6 +25,10 @@ public class DustS : MonoBehaviour {
 		myRender = GetComponent<SpriteRenderer>();
 
 		startDelayFade = delayFadeRate;
+
+		Color fadeCol = myRender.color;
+		fadeCol.a = startFade;
+		myRender.color = fadeCol;
 	
 	}
 	
@@ -77,7 +83,7 @@ public class DustS : MonoBehaviour {
 		transform.rotation = newRot;
 
 		Color fadeCol = myRender.color;
-		fadeCol.a = 1;
+		fadeCol.a = startFade;
 		myRender.color = fadeCol;
 
 		gameObject.SetActive(true);

@@ -11,6 +11,9 @@ public class SpawnManagerS : MonoBehaviour {
 	private List<DustS> electrictyObjs = new List<DustS>();
 	public GameObject elecPrefab;
 
+	private List<GlobS> globObjs = new List<GlobS>();
+	public GameObject globPrefab;
+
 	// Use this for initialization
 	void Awake () {
 
@@ -38,6 +41,34 @@ public class SpawnManagerS : MonoBehaviour {
 
 		smokeObjs.Add(smoke);
 
+	}
+
+	// Update is called once per frame
+	public GlobS SpawnOrb (Vector3 pos, Quaternion rot) {
+
+		GlobS newGlob;
+		
+		if (globObjs.Count > 0){
+			
+			globObjs[0].TurnOn(pos, rot);
+			newGlob = globObjs[0];
+			globObjs.RemoveAt(0);
+			
+		}
+		else{
+			
+			GameObject newOrb = Instantiate(globPrefab, pos, rot) as GameObject;
+			newGlob = newOrb.GetComponentInChildren<GlobS>();
+		}
+
+		return newGlob;
+		
+	}
+	
+	public void ReturnOrb(GlobS glob){
+		
+		globObjs.Add(glob);
+		
 	}
 
 	public void SpawnElectricity (Vector3 pos, Quaternion rot) {

@@ -3,7 +3,7 @@ using System.Collections;
 
 public class CurrentModeS : MonoBehaviour {
 
-	public static int currentMode = 1; // 0 = Ectoplasm, 1 = Stock, 2=Rocket League, 3=???
+	public static int currentMode = 0; // 0 = Ectoplasm, 1 = Stock, 2=Rocket League, 3=???
 
 	public static bool isTeamMode = false;
 

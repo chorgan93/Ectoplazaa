@@ -21,6 +21,7 @@ public class GlobS : MonoBehaviour {
 	private int currentFlash;
 
 	float invulnTime = .75f;
+	private float invulnTimeOrig;
 
 	float sizeRandomizer = 0.25f;
 
@@ -34,6 +35,7 @@ public class GlobS : MonoBehaviour {
 	private float ectoAlpha = 0.5f;
 
 	public float gravTime = 3f;
+	private float originalGravTime;
 
 	public GameObject sfxObj;
 
@@ -66,6 +68,9 @@ public class GlobS : MonoBehaviour {
 
 		timeBetweenFlashes = currentFlashCountdown = triggerFlashesTime/
 			(numSuperSlowFlashes*2+numSlowFlashes+numFastFlashes*0.5f)*1f;
+
+		originalGravTime = gravTime;
+		invulnTimeOrig = invulnTime;
 	}
 
 	void FixedUpdate()
@@ -112,8 +117,9 @@ public class GlobS : MonoBehaviour {
 
 		if (deletionCounter < 0) {
 
-			GameObject.Destroy(parentGO.gameObject);
-			GameObject.Destroy(this.gameObject);
+			//GameObject.Destroy(parentGO.gameObject);
+			//GameObject.Destroy(this.gameObject);
+			TurnOff();
 
 		}
 
@@ -187,8 +193,9 @@ public class GlobS : MonoBehaviour {
 			GameObject newSFX = Instantiate(sfxObj) as GameObject;
 			// pitch shift?
 			newSFX.GetComponent<AudioSource>().pitch += 1*(playerRef.health/playerRef.maxHealth);
-			GameObject.Destroy(parentGO.gameObject);
-			GameObject.Destroy(this.gameObject);
+			//GameObject.Destroy(parentGO.gameObject);
+			//GameObject.Destroy(this.gameObject);
+				TurnOff();
 				
 			}
 		}
@@ -201,6 +208,52 @@ public class GlobS : MonoBehaviour {
 			parentGO.GetComponent<Rigidbody> ().velocity = newVelocity; 
 			parentGO.GetComponent<Renderer>().material = playerRef.GetComponent<PlayerS>().playerMats[playerRef.GetComponent<PlayerS>().characterNum -1]; 
 		}
+	}
+
+	public void Reinitialize(){
+
+		parentGO.SetActive(true);
+
+		currentFlash = 0;
+
+		activated = false;
+		this.GetComponent<SphereCollider>().enabled = true ;
+
+		ownRender.enabled = outline.enabled = ownSprite.enabled = ectoGlow.enabled = true;
+
+		deletionCounter = deletionTimer;
+		gravTime = originalGravTime;
+
+		invulnTime = invulnTimeOrig;
+
+		// randomize size of orbs
+		
+		Vector3 newSize = originalScale;
+		newSize.x += sizeRandomizer*Random.insideUnitCircle.x;
+		newSize.y = newSize.x;
+		parentGO.transform.localScale = newSize;
+
+		
+		// set color to player color from which ecto was spawned
+		Color ectoColor = ownSprite.color;
+		ectoColor.a = ectoAlpha;
+		ectoGlow.color = ectoColor;
+		
+		timeBetweenFlashes = currentFlashCountdown = triggerFlashesTime/
+			(numSuperSlowFlashes*2+numSlowFlashes+numFastFlashes*0.5f)*1f;
+	}
+
+	public void TurnOn(Vector3 pos, Quaternion rot){
+		parentGO.transform.position = pos;
+		parentGO.transform.rotation = rot;
+		Reinitialize();
+	}
+
+	private void TurnOff(){
+
+		parentGO.SetActive(false);
+		SpawnManagerS.Instance.ReturnOrb(this);
+
 	}
 
 

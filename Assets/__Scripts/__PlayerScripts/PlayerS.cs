@@ -56,7 +56,7 @@ public class PlayerS : MonoBehaviour {
 	public float initialHealth = 10;
 	[HideInInspector]
 	public float startEctoNum;
-	public float health = 10;
+	public int health = 10;
 	public float ectoScore;
 	
 	public bool facingRight = false;
@@ -2143,7 +2143,7 @@ public class PlayerS : MonoBehaviour {
 								
 							}
 							
-							public void TakeDamage(float dmg, bool isSpecial){
+							public void TakeDamage(int dmg, bool isSpecial){
 								
 								if (!inCharSelect){
 									health -= dmg;

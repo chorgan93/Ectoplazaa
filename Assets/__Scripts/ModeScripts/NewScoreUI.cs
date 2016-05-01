@@ -172,6 +172,7 @@ public class NewScoreUI : MonoBehaviour {
 				textDisplay.GetComponent<Outline>().effectColor = charCol;
 			}
 
+
 		}
 		else{
 

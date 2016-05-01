@@ -71,7 +71,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 		currentLocation = playerRef.transform.position; 
 
 		// spawn tail lengths based on initial health
-		InitialDotSpawn (); 
+		//InitialDotSpawn (); 
 
 		trailRendererMain = trailRendererGO.GetComponent<TrailRenderer>();
 
@@ -97,7 +97,7 @@ public class TrailHandlerRedubS : MonoBehaviour {
 			if(lastRespawnVal == true)
 			{
 				// make sure to do initial dot spawn on respawn
-				InitialDotSpawn(); 
+				//InitialDotSpawn(); 
 			}
 
 			// keep track of tail mult
@@ -124,10 +124,9 @@ public class TrailHandlerRedubS : MonoBehaviour {
 				trailLengthMult = PlayerCharStatsS.char7_TailMult;
 			}
 
-			//PlaceDots (); 
-			PlaceDots ();  // spawns new dots and replaces old ones
-			RemoveDots (); // removes old dots at end of tail
-			UpdateTail (); // handles trail renderer
+			//PlaceDots ();  // spawns new dots and replaces old ones
+			//RemoveDots (); // removes old dots at end of tail
+			//UpdateTail (); // handles trail renderer
 		} else {
 			lastLocation = playerRef.transform.position;
 			currentLocation = playerRef.transform.position; 
@@ -476,7 +475,8 @@ public class TrailHandlerRedubS : MonoBehaviour {
 			for (int i = startingIndex; i > 0; i--) {
 
 
-				SpawnGlobs(spawnedDots[i].transform.position,1);
+				//SpawnGlobs(spawnedDots[i].transform.position,1);
+				SpawnGlobs(transform.position, 1);
 	
 				GameObject newParticles = Instantiate (deathParticles,spawnedDots[i].transform.position,Quaternion.identity) as GameObject;
 				newParticles.GetComponent<ParticleSystem>().startColor = playerRef.playerParticleMats[playerRef.characterNum - 1].GetColor("_TintColor");
@@ -499,13 +499,13 @@ public class TrailHandlerRedubS : MonoBehaviour {
 			for (int i = 0; i < numberOfGlobs; i++) {
 				
 				
-				GameObject newGlob = Instantiate (playerGlob, spawnPos, Quaternion.identity) as GameObject; 
+				GlobS newGlob = SpawnManagerS.Instance.SpawnOrb (transform.position, Quaternion.identity); 
 				
 				// set random new velocity
 				Vector3 newGlobVel = Random.insideUnitSphere * 8000f * Time.deltaTime;
 				newGlobVel.z = 0;
-				newGlob.GetComponentInChildren<SpriteRenderer>().color = playerRef.playerParticleMats[playerRef.characterNum - 1].GetColor("_TintColor");
-				newGlob.GetComponentInChildren<GlobS> ().SetVelocityMaterial (newGlobVel, playerRef.gameObject); 
+				newGlob.transform.parent.GetComponentInChildren<SpriteRenderer>().color = playerRef.playerParticleMats[playerRef.characterNum - 1].GetColor("_TintColor");
+				newGlob.SetVelocityMaterial (newGlobVel, playerRef.gameObject); 
 			}
 		}
 	}
