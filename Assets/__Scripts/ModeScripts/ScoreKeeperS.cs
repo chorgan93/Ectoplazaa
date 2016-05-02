@@ -20,8 +20,8 @@ public class ScoreKeeperS : MonoBehaviour {
 
 	public Sprite [] 	playerHighResSprites; 
 
-	public static int 			scoreThresholdCollectoplaza = 35;
-	public static int 			scoreThresholdCollectoplazaTeam = 70;
+	public static int 			scoreThresholdCollectoplaza = 40;
+	public static int 			scoreThresholdCollectoplazaTeam = 90;
 
 	public static int 			numberLives = 4;
 	public static int 			numberLivesTeam = 4;								//stock mode

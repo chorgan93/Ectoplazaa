@@ -174,7 +174,7 @@ public class GlobS : MonoBehaviour {
 					GlobalVars.totalGlobsEaten[playerRef.playerNum -1] ++; 
 				}
 			activated = true; 
-			playerRef.health += 2; 
+			playerRef.health += 1; 
 
 				int soundtoplay = Mathf.FloorToInt(Random.Range(0,soundEffect.Length));
 				Instantiate(soundEffect[soundtoplay]);
@@ -217,7 +217,9 @@ public class GlobS : MonoBehaviour {
 		currentFlash = 0;
 
 		activated = false;
-		this.GetComponent<SphereCollider>().enabled = true ;
+	
+		parentGO.GetComponent<SphereCollider>().enabled = true ;
+		GetComponent<SphereCollider>().enabled = true ;
 
 		ownRender.enabled = outline.enabled = ownSprite.enabled = ectoGlow.enabled = true;
 
