@@ -12,6 +12,9 @@ public class BreakablePlatformS: MonoBehaviour {
 	private Collider myCollider;
 	private int flashFrames = 0;
 
+	public GameObject[] pieces;
+	private float pieceSpeed = 5000f;
+
 	public Sprite[] destructStates;
 		private int currentSprite = 0;
 	private float changeSpriteRate = 0.12f;
@@ -47,6 +50,11 @@ public class BreakablePlatformS: MonoBehaviour {
 		if (flashFrames <= 0 && mySprite.material != defaultMat){
 			mySprite.material = defaultMat;
 		}
+
+		// for DEBUG purposes
+		/*if (Input.GetKeyDown(KeyCode.K)){
+			TakeDamage();
+		}**/
 	}
 
 	void FixedUpdate () {
@@ -60,6 +68,7 @@ public class BreakablePlatformS: MonoBehaviour {
 					if (currentSprite >= 5){
 						mySprite.enabled = false;
 						myCollider.enabled = false;
+						SpawnPieces();
 					}
 					else{
 						mySprite.sprite = destructStates[currentSprite];
@@ -87,6 +96,32 @@ public class BreakablePlatformS: MonoBehaviour {
 	private void TriggerShake(){
 		CameraShakeS.C.SmallShake();
 		currentShakeIntensity = shakeIntensity;
+	}
+
+	private void SpawnPieces(){
+		
+		
+		Vector3 pieceForce;
+
+		foreach (GameObject piece in pieces){
+
+			piece.transform.position = transform.position;
+
+			piece.gameObject.SetActive(true);
+
+
+				pieceForce = Random.insideUnitSphere;
+				pieceForce.z = 0;
+				pieceForce *= pieceSpeed;
+				
+				piece.GetComponent<Rigidbody>().AddForce(pieceForce*Time.deltaTime, ForceMode.Impulse);
+				
+
+		}
+
+
+
+
 	}
 
 	private void TakeDamage(){
