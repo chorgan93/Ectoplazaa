@@ -76,7 +76,7 @@ public class StartMenu : MonoBehaviour {
 
 	private bool showTitle = false;
 	public TextMesh flickerText;
-	private float flickerTimeMax = 0.8f;
+	public float flickerTimeMax = 0.8f;
 	private float flickerTimeCountdown;
 	public GameObject titleCameraPos;
 	private bool buttonPressed = false;
