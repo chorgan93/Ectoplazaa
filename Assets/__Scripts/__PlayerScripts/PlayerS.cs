@@ -2070,7 +2070,7 @@ public class PlayerS : MonoBehaviour {
 											}
 										}
 										
-										int randomSpawn = Mathf.FloorToInt( Random.Range(0, newSpawnPts.Count));
+										int randomSpawn = Mathf.RoundToInt( Random.Range(0, newSpawnPts.Count-1));
 										GameObject newSpawn = newSpawnPts[randomSpawn];
 										transform.position = newSpawn.transform.position;
 										
