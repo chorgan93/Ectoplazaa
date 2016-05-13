@@ -13,6 +13,7 @@ public class GameStartS : MonoBehaviour {
 	{
 
 		spawnPts = GameObject.FindGameObjectsWithTag("Spawn");
+		Vector3 spawnPos = Vector3.zero;
 
 		if (!GlobalVars.characterSelected) //create a default 4 players on scene open if they didnt come from character select 
 		{ 
@@ -21,7 +22,9 @@ public class GameStartS : MonoBehaviour {
 
 			for (int i = 0; i < 4; i++) 
 			{
-				GameObject newPlayer = Instantiate (playerPrefab, spawnPts [i].transform.position, Quaternion.identity) as GameObject;
+				spawnPos = spawnPts [i].transform.position;
+				//spawnPos.z = -1;
+				GameObject newPlayer = Instantiate (playerPrefab, spawnPos, Quaternion.identity) as GameObject;
 				newPlayer.GetComponent<PlayerS> ().playerNum = i + 1; 
 				newPlayer.GetComponent<PlayerS>().characterNum = GlobalVars.characterNumber[i]; 
 				newPlayer.gameObject.name = "Player" + (i+1);
@@ -34,11 +37,14 @@ public class GameStartS : MonoBehaviour {
 		} 
 		else //CHARACTERS WENT THROUGH CHARACTER SELECT
 		{
+
 			for (int i = 0; i < 4; i++) {
-				if (GlobalVars.characterNumber [i] != 0) {
+				if (GlobalVars.characterNumber [i] > 0) {
 					GlobalVars.characterIsPlaying[i] = true; 
 					print("Spawned Player " + (i+1)); 
-					GameObject newPlayer = Instantiate (playerPrefab, spawnPts [i].transform.position, Quaternion.identity) as GameObject;
+					spawnPos = spawnPts [i].transform.position;
+					//spawnPos.z = -1;
+					GameObject newPlayer = Instantiate (playerPrefab, spawnPos, Quaternion.identity) as GameObject;
 					newPlayer.GetComponent<PlayerS> ().playerNum = i + 1; 
 					newPlayer.GetComponent<PlayerS>().characterNum = GlobalVars.characterNumber[i];
 					newPlayer.GetComponent<PlayerS>().colorNum = GlobalVars.colorNumber[i];
