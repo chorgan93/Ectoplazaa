@@ -274,10 +274,10 @@ public class PlayerS : MonoBehaviour {
 	// acid special
 	public GameObject acidSpecialCollider;
 	private GameObject acidSpecialReference;
-	private float acidSpecialTimeMax = 1.8f;
+	private float acidSpecialTimeMax = 1.6f;
 	private float acidSpecialStartRotateRate = 0f;
 	private float acidSpecialRotateAccel = 80f;
-	private float acidSpecialRotateMax = 5000f;
+	private float acidSpecialRotateMax = 3000f;
 	private float acidSpecialCurrentRotateRate;
 	
 	public GameObject char5SpecialHandler;
@@ -659,6 +659,8 @@ public class PlayerS : MonoBehaviour {
 				else{
 					pinkWhipSuplexCurrentSpeed += pinkWhipSuplexAccel*Time.deltaTime;
 					ownRigid.velocity = new Vector3(0, pinkWhipSuplexCurrentSpeed*Time.deltaTime, 0);
+					spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(ownRigid.velocity);
+
 				}
 
 				Debug.Log(ownRigid.velocity + " : " + pinkWhipSpecialVel*Time.deltaTime);
@@ -1306,6 +1308,12 @@ public class PlayerS : MonoBehaviour {
 						
 						// bullet snap
 						bulletVel = attackDir.normalized*Time.deltaTime*lv3BulletSpeed;
+
+						if (characterNum == 2){
+							// if acidmouth reduce vel a bit
+							bulletVel *= 0.75f;
+							Debug.Log("LOWERED VEL");
+						}
 						//dontCorrectSpeed = true;
 						
 						//print ("LV3!!");
@@ -2541,6 +2549,9 @@ public class PlayerS : MonoBehaviour {
 									pinkGrabbed = pinkTarget;
 									pinkGrabbed.transform.parent = transform;
 									pinkTarget.TurnOnPinkPause();
+
+										Vector3 pinkDir = (pinkTarget.transform.position-transform.position).normalized;
+										pinkTarget.transform.localPosition = pinkDir;
 								}
 							}
 							
@@ -2630,6 +2641,7 @@ public class PlayerS : MonoBehaviour {
 										}
 									}
 
+
 									spriteObject.GetComponent<PlayerAnimS>().FaceTargetInstant(inputDir);
 									if (spriteObject.transform.localScale.x < 0){
 										currentLerpTarget = spriteObject.transform.rotation.eulerAngles.z+30f;
@@ -2670,6 +2682,9 @@ public class PlayerS : MonoBehaviour {
 											inputDir *= -1f;
 										}
 									}
+
+										inputDir.y = 0;
+
 									pinkWhipSpecialVel = inputDir.normalized*pinkWhipSpecialSpeed;
 									ownRigid.velocity = pinkWhipSpecialVel*Time.deltaTime;
 
