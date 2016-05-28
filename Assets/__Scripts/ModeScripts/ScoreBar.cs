@@ -131,7 +131,7 @@ public class ScoreBar : MonoBehaviour {
 					GameObject playerScore = Instantiate (stockModeDisplayPrefab, transform.position,Quaternion.identity)
 						as GameObject;
 					playerScores[i] = playerScore;
-					playerScore.GetComponent<StockDisplayS>().myPlayer = playerRefs[i];
+					//playerScore.GetComponent<StockDisplayS>().myPlayer = playerRefs[i];
 
 
 

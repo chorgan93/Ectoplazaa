@@ -54,14 +54,14 @@ public class WiiUControllerManagerS : MonoBehaviour {
 		case WiiU.RemoteDevType.Nunchuk:
 			
 			
-			specialButtonDown = state.IsTriggered(WiiU.RemoteButton.B);
-			dashButtonDown = state.IsTriggered(WiiU.RemoteButton.A);
+			specialButtonDown = state.IsPressed(WiiU.RemoteButton.NunchukC);
+			dashButtonDown = state.IsPressed(WiiU.RemoteButton.NunchukZ);
 			
-			flingButtonDown = state.IsTriggered(WiiU.RemoteButton.NunchukZ);
-			jumpButtonDown = state.IsTriggered(WiiU.RemoteButton.NunchukC);
+			flingButtonDown = state.IsPressed(WiiU.RemoteButton.B);
+			jumpButtonDown = state.IsPressed(WiiU.RemoteButton.A);
 			
-			if (state.IsTriggered(WiiU.RemoteButton.Minus) ||
-			    state.IsTriggered(WiiU.RemoteButton.Plus)){
+			if (state.IsPressed(WiiU.RemoteButton.Minus) ||
+			    state.IsPressed(WiiU.RemoteButton.Plus)){
 				pauseButtonDown = true;
 			}
 			else{
@@ -83,14 +83,14 @@ public class WiiUControllerManagerS : MonoBehaviour {
 		case WiiU.RemoteDevType.MotionPlusNunchuk:
 			
 			
-			specialButtonDown = state.IsTriggered(WiiU.RemoteButton.B);
-			dashButtonDown = state.IsTriggered(WiiU.RemoteButton.A);
+			specialButtonDown = state.IsPressed(WiiU.RemoteButton.B);
+			dashButtonDown = state.IsPressed(WiiU.RemoteButton.A);
 			
-			flingButtonDown = state.IsTriggered(WiiU.RemoteButton.NunchukZ);
-			jumpButtonDown = state.IsTriggered(WiiU.RemoteButton.NunchukC);
+			flingButtonDown = state.IsPressed(WiiU.RemoteButton.NunchukZ);
+			jumpButtonDown = state.IsPressed(WiiU.RemoteButton.NunchukC);
 			
-			if (state.IsTriggered(WiiU.RemoteButton.Minus) ||
-			    state.IsTriggered(WiiU.RemoteButton.Plus)){
+			if (state.IsPressed(WiiU.RemoteButton.Minus) ||
+			    state.IsPressed(WiiU.RemoteButton.Plus)){
 				pauseButtonDown = true;
 			}
 			else{
@@ -110,27 +110,27 @@ public class WiiUControllerManagerS : MonoBehaviour {
 			
 		case WiiU.RemoteDevType.ProController:
 			
-			if (state.pro.IsTriggered(WiiU.ProControllerButton.B) || 
-			    state.pro.IsTriggered(WiiU.ProControllerButton.R) ||
-			    state.pro.IsTriggered(WiiU.ProControllerButton.ZR)){
+			if (state.pro.IsPressed(WiiU.ProControllerButton.B) || 
+			    state.pro.IsPressed(WiiU.ProControllerButton.R) ||
+			    state.pro.IsPressed(WiiU.ProControllerButton.ZR)){
 				flingButtonDown = true;
 			}
 			else{
 				flingButtonDown = false;
 			}
 			
-			if (state.pro.IsTriggered(WiiU.ProControllerButton.Y) || 
-			    state.pro.IsTriggered(WiiU.ProControllerButton.L) ||
-			    state.pro.IsTriggered(WiiU.ProControllerButton.ZL)){
+			if (state.pro.IsPressed(WiiU.ProControllerButton.Y) || 
+			    state.pro.IsPressed(WiiU.ProControllerButton.L) ||
+			    state.pro.IsPressed(WiiU.ProControllerButton.ZL)){
 				dashButtonDown = true;
 			}
 			else{
 				dashButtonDown = false;
 			}
 			
-			specialButtonDown = state.pro.IsTriggered(WiiU.ProControllerButton.X);
-			jumpButtonDown = state.pro.IsTriggered(WiiU.ProControllerButton.B);
-			pauseButtonDown = state.pro.IsTriggered(WiiU.ProControllerButton.Plus);
+			specialButtonDown = state.pro.IsPressed(WiiU.ProControllerButton.X);
+			jumpButtonDown = state.pro.IsPressed(WiiU.ProControllerButton.B);
+			pauseButtonDown = state.pro.IsPressed(WiiU.ProControllerButton.Plus);
 			
 			horizontalAxis = state.pro.leftStick.x;
 			verticalAxis = state.pro.leftStick.y;
@@ -142,27 +142,27 @@ public class WiiUControllerManagerS : MonoBehaviour {
 
 			case WiiU.RemoteDevType.Classic:
 			
-				if (state.classic.IsTriggered(WiiU.ClassicButton.B) || 
-			    	state.classic.IsTriggered(WiiU.ClassicButton.R) ||
-			    	state.classic.IsTriggered(WiiU.ClassicButton.ZR)){
+				if (state.classic.IsPressed(WiiU.ClassicButton.B) || 
+			    	state.classic.IsPressed(WiiU.ClassicButton.R) ||
+			    	state.classic.IsPressed(WiiU.ClassicButton.ZR)){
 					flingButtonDown = true;
 				}
 				else{
 					flingButtonDown = false;
 				}
 				
-				if (state.classic.IsTriggered(WiiU.ClassicButton.Y) || 
-				    state.classic.IsTriggered(WiiU.ClassicButton.L) ||
-			    	state.classic.IsTriggered(WiiU.ClassicButton.ZL)){
+				if (state.classic.IsPressed(WiiU.ClassicButton.Y) || 
+				    state.classic.IsPressed(WiiU.ClassicButton.L) ||
+			    	state.classic.IsPressed(WiiU.ClassicButton.ZL)){
 					dashButtonDown = true;
 				}
 				else{
 					dashButtonDown = false;
 				}
 				
-				specialButtonDown = state.classic.IsTriggered(WiiU.ClassicButton.X);
-				jumpButtonDown = state.classic.IsTriggered(WiiU.ClassicButton.B);
-				pauseButtonDown = state.classic.IsTriggered(WiiU.ClassicButton.Plus);
+				specialButtonDown = state.classic.IsPressed(WiiU.ClassicButton.X);
+				jumpButtonDown = state.classic.IsPressed(WiiU.ClassicButton.B);
+				pauseButtonDown = state.classic.IsPressed(WiiU.ClassicButton.Plus);
 				
 				horizontalAxis = state.classic.leftStick.x;
 				verticalAxis = state.classic.leftStick.y;
@@ -174,27 +174,27 @@ public class WiiUControllerManagerS : MonoBehaviour {
 
 			case WiiU.RemoteDevType.MotionPlusClassic:
 			
-				if (state.classic.IsTriggered(WiiU.ClassicButton.B) || 
-				    state.classic.IsTriggered(WiiU.ClassicButton.R) ||
-				    state.classic.IsTriggered(WiiU.ClassicButton.ZR)){
+				if (state.classic.IsPressed(WiiU.ClassicButton.B) || 
+				    state.classic.IsPressed(WiiU.ClassicButton.R) ||
+				    state.classic.IsPressed(WiiU.ClassicButton.ZR)){
 					flingButtonDown = true;
 				}
 				else{
 					flingButtonDown = false;
 				}
 				
-				if (state.classic.IsTriggered(WiiU.ClassicButton.Y) || 
-				    state.classic.IsTriggered(WiiU.ClassicButton.L) ||
-				    state.classic.IsTriggered(WiiU.ClassicButton.ZL)){
+				if (state.classic.IsPressed(WiiU.ClassicButton.Y) || 
+				    state.classic.IsPressed(WiiU.ClassicButton.L) ||
+				    state.classic.IsPressed(WiiU.ClassicButton.ZL)){
 					dashButtonDown = true;
 				}
 				else{
 					dashButtonDown = false;
 				}
 			
-				specialButtonDown = state.classic.IsTriggered(WiiU.ClassicButton.X);
-				jumpButtonDown = state.classic.IsTriggered(WiiU.ClassicButton.B);
-				pauseButtonDown = state.classic.IsTriggered(WiiU.ClassicButton.Plus);
+				specialButtonDown = state.classic.IsPressed(WiiU.ClassicButton.X);
+				jumpButtonDown = state.classic.IsPressed(WiiU.ClassicButton.B);
+				pauseButtonDown = state.classic.IsPressed(WiiU.ClassicButton.Plus);
 				
 				horizontalAxis = state.classic.leftStick.x;
 				verticalAxis = state.classic.leftStick.y;
@@ -216,8 +216,8 @@ public class WiiUControllerManagerS : MonoBehaviour {
 		
 		
 			Debug.Log("Channel " + myChannel + " REPORT:" + "\nflingButtonDown: " + flingButtonDown
-			          + "\ndashButtonDown: " + dashButtonDown + "\njumpButtonDown: " + jumpButtonDown
-			          "\nspecialButtonDown: " + specialButtonDown "\npauseButtonDown: " + pauseButtonDown);
+			          + "\ndashButtonDown: " + dashButtonDown + "\njumpButtonDown: " + jumpButtonDown +
+			          "\nspecialButtonDown: " + specialButtonDown + "\npauseButtonDown: " + pauseButtonDown);
 
 			spitUpdateCountdown = spitUpdateMax;
 

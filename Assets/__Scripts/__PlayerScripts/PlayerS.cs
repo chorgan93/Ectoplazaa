@@ -84,6 +84,7 @@ public class PlayerS : MonoBehaviour {
 	
 	
 	public GameObject dangerObj;
+	private float attackTimeCheck = 0;
 	public bool canRespawn = true;
 	public bool respawning = false;
 	private float respawnTimeMax = 2f;
@@ -788,6 +789,10 @@ public class PlayerS : MonoBehaviour {
 					#endif 
 					
 					attackTriggerDown = true;
+
+					if (playerNum > 1){
+					Debug.Log("PLAYER " + playerNum + " CHARGING");
+					}
 				}
 				else{
 					attackTriggerDown = false;
@@ -991,6 +996,17 @@ public class PlayerS : MonoBehaviour {
 						ownRigid.drag = startDrag;
 					}
 				}
+				else{
+					// stop that DANG bug
+					// BAD FIX search for BAD FIX
+					if (isDangerous){
+						attackTimeCheck += Time.deltaTime;
+						if (attackTimeCheck > 0.2f && attackToPerform != 1 && Mathf.Abs(ownRigid.velocity.y) <= 1f){
+							DisableAttacks();
+							isDangerous = false;
+						}
+					}
+				}
 				
 			}
 			void AttackRelease () {
@@ -1008,7 +1024,7 @@ public class PlayerS : MonoBehaviour {
 						if (!performedAttack) 
 						{
 							isDangerous = true;
-							
+							attackTimeCheck = 0;
 							
 							GlobalVars.totalFlings[playerNum-1]++; 
 							
@@ -1634,7 +1650,7 @@ public class PlayerS : MonoBehaviour {
 
 							#if UNITY_WIIU
 							if (jumped && ((playerNum == 1 && Input.GetAxis("VerticalPlayer" + playerNum + platformType) < -0.7f) ||
-							     (playerNum > 1 && wiiUInput.verticalAxis) < -0.7f) && !groundPounded && groundPoundDelay <= 0)
+							     (playerNum > 1 && wiiUInput.verticalAxis < -0.7f)) && !groundPounded && groundPoundDelay <= 0)
 							{
 								#else
 								if (jumped && Input.GetAxis("VerticalPlayer" + playerNum + platformType) < -0.7f && !groundPounded
