@@ -72,7 +72,7 @@ public class DustS : MonoBehaviour {
 
 	}
 
-	public void TurnOn(Vector3 newPos, Quaternion newRot){
+	public void TurnOn(Vector3 newPos, Quaternion newRot, Color col){
 
 		Vector3 resetSize = new Vector3(startSize, startSize, 1);
 
@@ -82,7 +82,7 @@ public class DustS : MonoBehaviour {
 		transform.position = newPos;
 		transform.rotation = newRot;
 
-		Color fadeCol = myRender.color;
+		Color fadeCol = col;
 		fadeCol.a = startFade;
 		myRender.color = fadeCol;
 

@@ -32,6 +32,8 @@ public class PlayerEffectS : MonoBehaviour {
 
 	public bool isSpecial = false;
 
+	private Color playerColor = Color.white;
+
 	// Use this for initialization
 	void Start () {
 
@@ -62,6 +64,8 @@ public class PlayerEffectS : MonoBehaviour {
 			else{
 				ownRender.enabled = false;
 			}
+
+			playerColor = playerRef.playerParticleMats[playerRef.characterNum - 1].GetColor("_TintColor");
 		}
 		
 		ownRender.sprite = effectFrames[currentFrame];
@@ -147,7 +151,7 @@ public class PlayerEffectS : MonoBehaviour {
 			spawnPos.z = transform.position.z+1f;
 
 			if (attackNum == 2){
-				SpawnManagerS.Instance.SpawnSmoke(spawnPos, Quaternion.Euler(new Vector3(0,0,Random.Range(0,360))));
+				SpawnManagerS.Instance.SpawnSmoke(spawnPos, Quaternion.Euler(new Vector3(0,0,Random.Range(0,360))), playerColor);
 			}
 			if (attackNum == 1){
 				SpawnManagerS.Instance.SpawnElectricity(spawnPos, Quaternion.Euler(new Vector3(0,0,Random.Range(0,360))));

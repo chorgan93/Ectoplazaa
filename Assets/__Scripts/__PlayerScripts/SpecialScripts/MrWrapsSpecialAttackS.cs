@@ -17,6 +17,12 @@ public class MrWrapsSpecialAttackS : MonoBehaviour {
 	private Vector3 startSize;
 	private Rigidbody myRigid;
 
+	
+	public bool spawnSmoke = false;
+	private float spawnRateCountdown;
+	private float spawnRate = 0.03f;
+	private float spawnRad = 4f;
+
 
 	void Start(){
 
@@ -26,6 +32,8 @@ public class MrWrapsSpecialAttackS : MonoBehaviour {
 
 		startSize = transform.localScale;
 		myRigid = GetComponent<Rigidbody>();
+
+		spawnRateCountdown = spawnRate;
 	}
 
 
@@ -45,6 +53,8 @@ public class MrWrapsSpecialAttackS : MonoBehaviour {
 			else{
 				transform.localScale = startSize;
 			}
+
+			SpawnSmoke();
 		}
 
 		lifeTime -= Time.deltaTime*TimeManagerS.timeMult;
@@ -57,6 +67,21 @@ public class MrWrapsSpecialAttackS : MonoBehaviour {
 			Destroy(gameObject);
 		}
 
+	}
+
+	void SpawnSmoke(){
+		
+		spawnRateCountdown -= Time.deltaTime;
+		if (spawnRateCountdown <= 0){
+			spawnRateCountdown = spawnRate;
+			
+			Vector3 spawnPos = transform.position+Random.insideUnitSphere*spawnRad;
+			spawnPos.z = transform.position.z+1f;
+
+				SpawnManagerS.Instance.SpawnSmoke(spawnPos, Quaternion.Euler(new Vector3(0,0,Random.Range(0,360))), Color.cyan);
+			
+		}
+		
 	}
 
 	void FaceTarget (Vector3 targetDir) {

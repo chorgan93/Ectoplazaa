@@ -24,17 +24,22 @@ public class SpawnManagerS : MonoBehaviour {
 	
 	}
 
-	public void SpawnSmoke (Vector3 pos, Quaternion rot) {
+	public void SpawnSmoke (Vector3 pos, Quaternion rot, Color col) {
+
+		if (col == null){
+			col = Color.white;
+		}
 
 		if (smokeObjs.Count > 0){
 			
-			smokeObjs[0].TurnOn(pos, rot);
+			smokeObjs[0].TurnOn(pos, rot, col);
 			smokeObjs.RemoveAt(0);
 			
 		}
 		else{
 			
-			Instantiate(smokePrefab, pos, rot);
+			GameObject newSmoke = Instantiate(smokePrefab, pos, rot) as GameObject;
+			newSmoke.GetComponent<SpriteRenderer>().color = col;
 		}
 	
 	}
@@ -98,7 +103,7 @@ public class SpawnManagerS : MonoBehaviour {
 
 		if (electrictyObjs.Count > 0){
 			
-			electrictyObjs[0].TurnOn(pos, rot);
+			electrictyObjs[0].TurnOn(pos, rot, Color.white);
 			electrictyObjs.RemoveAt(0);
 			
 		}

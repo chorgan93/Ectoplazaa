@@ -45,6 +45,11 @@ public class DamageS : MonoBehaviour {
 	public Sprite[] laserEndSprites;
 	public Sprite[] laserBeginSprites;
 	public Texture[] laserMidTextures;
+	
+	public bool spawnSmoke = false;
+	private float spawnRateCountdown;
+	private float spawnRate = 0.03f;
+	private float spawnRad = 6f;
 
 
 	// for megachomp
@@ -454,6 +459,8 @@ public class DamageS : MonoBehaviour {
 			laserRenderBegin.transform.rotation =
 				laserRenderEnd.transform.rotation = Quaternion.Euler(laserPieceRotation);
 
+			SpawnSmoke();
+
 			// animate
 			laserAnimCountdown -= Time.deltaTime;
 			if (laserAnimCountdown <= 0){
@@ -532,6 +539,21 @@ public class DamageS : MonoBehaviour {
 		megaRef = mega;
 
 
+	}
+
+	void SpawnSmoke(){
+		
+		spawnRateCountdown -= Time.deltaTime;
+		if (spawnRateCountdown <= 0){
+			spawnRateCountdown = spawnRate;
+			
+			Vector3 spawnPos = laserRenderEnd.transform.position+Random.insideUnitSphere*spawnRad;
+			spawnPos.z = transform.position.z-1f;
+			
+			SpawnManagerS.Instance.SpawnSmoke(spawnPos, Quaternion.Euler(new Vector3(0,0,Random.Range(0,360))), Color.magenta);
+			
+		}
+		
 	}
 
 	public void EnablePinkSpecial(){
