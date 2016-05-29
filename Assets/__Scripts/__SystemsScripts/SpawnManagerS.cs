@@ -14,14 +14,16 @@ public class SpawnManagerS : MonoBehaviour {
 	private List<GlobS> globObjs = new List<GlobS>();
 	public GameObject globPrefab;
 
+	private List<KOAnimObjS> koObjs = new List<KOAnimObjS>();
+	public GameObject koPrefab;
+	
 	// Use this for initialization
 	void Awake () {
 
 		Instance = this;
 	
 	}
-	
-	// Update is called once per frame
+
 	public void SpawnSmoke (Vector3 pos, Quaternion rot) {
 
 		if (smokeObjs.Count > 0){
@@ -68,6 +70,27 @@ public class SpawnManagerS : MonoBehaviour {
 	public void ReturnOrb(GlobS glob){
 		
 		globObjs.Add(glob);
+		
+	}
+
+	public void SpawnKO (Vector3 pos, Quaternion rot) {
+
+		if (koObjs.Count > 0){
+			
+			koObjs[0].TurnOn(pos, rot);
+			koObjs.RemoveAt(0);
+			
+		}
+		else{
+			
+			Instantiate(koPrefab, pos, rot);
+		}
+		
+	}
+	
+	public void ReturnKO(KOAnimObjS smoke){
+		
+		koObjs.Add(smoke);
 		
 	}
 
