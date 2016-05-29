@@ -407,6 +407,10 @@ public class PlayerS : MonoBehaviour {
 				PauseCharacter();
 			}
 		}*/
+
+		if (Input.GetKeyDown(KeyCode.K)){
+			TakeDamage(health+1000, false);
+		}
 		
 	}
 	
@@ -2198,6 +2202,9 @@ public class PlayerS : MonoBehaviour {
 											if (CurrentModeS.currentMode == 1){
 												numLives --; 			//Decrement Counter
 											}
+
+												// play ko anim
+												SpawnManagerS.Instance.SpawnKO(transform.position, Quaternion.identity);
 										}
 										
 										GetComponent<TrailHandlerRedubS>().DestroyPlayerDots(); 

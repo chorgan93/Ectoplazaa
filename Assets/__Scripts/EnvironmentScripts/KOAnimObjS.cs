@@ -41,6 +41,7 @@ public class KOAnimObjS : MonoBehaviour {
 				}
 
 				SpawnManagerS.Instance.ReturnKO(this);
+				gameObject.SetActive(false);
 			}else{
 				ownRender.sprite = animFrames[currentFrame];
 			}
