@@ -46,6 +46,8 @@ public class ModeSelectMenuS : MonoBehaviour {
 	private float fadeItemTime = 0.2f;
 	public FadeObjS[] fadeObjs;
 	public FadeObjS[] fadeObjsText;
+
+	public ModeDescriptionS modeDescriptionObj;
 	
 	AsyncOperation async;
 	
@@ -110,6 +112,7 @@ public class ModeSelectMenuS : MonoBehaviour {
 				
 				// back function
 				if (Input.GetButton("BButtonAllPlayers" + platformType)){
+					modeDescriptionObj.TurnOff();
 					fadeIn.FadeOut();
 					startedLoadDelay = true;
 					goingBack = true;
@@ -136,6 +139,7 @@ public class ModeSelectMenuS : MonoBehaviour {
 						int soundToPlay = Mathf.FloorToInt(Random.Range(0,scrollSFXObjs.Count));
 						
 						Instantiate(scrollSFXObjs[soundToPlay]);
+						modeDescriptionObj.SetMode(currentCursorPos);
 						movedCursor = true;
 					}
 				}
@@ -149,6 +153,7 @@ public class ModeSelectMenuS : MonoBehaviour {
 				// move to character select function
 				if (Input.GetButton("AButtonAllPlayers" + platformType)){
 					CurrentModeS.currentMode = modesToChoose[currentCursorPos];
+					modeDescriptionObj.TurnOff();
 					startedLoadDelay = true;
 					
 					fadeIn.FadeOut();
@@ -172,6 +177,8 @@ public class ModeSelectMenuS : MonoBehaviour {
 		delayInput = 1000f;
 		
 		yield return new WaitForSeconds(0.3f);
+		
+		modeDescriptionObj.TurnOn();
 		
 		foreach(FadeObjS fade in fadeObjs){
 
@@ -199,6 +206,7 @@ public class ModeSelectMenuS : MonoBehaviour {
 
 	
 	IEnumerator load() {
+
 		Debug.LogWarning("ASYNC LOAD STARTED - " +
 		                 "DO NOT EXIT PLAY MODE UNTIL SCENE LOADS... UNITY WILL CRASH");
 
@@ -208,6 +216,8 @@ public class ModeSelectMenuS : MonoBehaviour {
 	}
 
 	IEnumerator loadOut (){
+
+
 		Debug.LogWarning("ASYNC LOAD STARTED - " +
 		                 "DO NOT EXIT PLAY MODE UNTIL SCENE LOADS... UNITY WILL CRASH");
 		
