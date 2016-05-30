@@ -17,6 +17,8 @@ public class MrWrapsSpecialAttackS : MonoBehaviour {
 	private Vector3 startSize;
 	private Rigidbody myRigid;
 
+	public GameObject startSFX;
+	public GameObject endSFX;
 	
 	public bool spawnSmoke = false;
 	private float spawnRateCountdown;
@@ -34,6 +36,9 @@ public class MrWrapsSpecialAttackS : MonoBehaviour {
 		myRigid = GetComponent<Rigidbody>();
 
 		spawnRateCountdown = spawnRate;
+		if (startSFX != null){
+			Instantiate(startSFX);
+		}
 	}
 
 
@@ -64,6 +69,9 @@ public class MrWrapsSpecialAttackS : MonoBehaviour {
 		}
 
 		if (lifeTime <= 0){
+			if (endSFX != null){
+				Instantiate(endSFX);
+			}
 			Destroy(gameObject);
 		}
 
@@ -113,7 +121,6 @@ public class MrWrapsSpecialAttackS : MonoBehaviour {
 
 		if ((other.gameObject.tag == "Wall" || other.gameObject.tag == "Ground") && turnOffColliderTime <= 0){
 
-			Debug.Log("HIT WALL " + other.gameObject.name + " " + transform.position);
 
 			//Destroy and leave behind explosion
 			if (subExplosion){

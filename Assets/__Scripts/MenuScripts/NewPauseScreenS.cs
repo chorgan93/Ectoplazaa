@@ -29,6 +29,11 @@ public class NewPauseScreenS : MonoBehaviour {
 	private WiiUControllerManagerS wiiUInput2;
 	private WiiUControllerManagerS wiiUInput3;
 	private WiiUControllerManagerS wiiUInput4;
+
+	public GameObject startSFX;
+	public GameObject selectSFX;
+	public GameObject moveSFX;
+	public GameObject endSFX;
 	
 	// Use this for initialization
 	void Start () {
@@ -63,10 +68,7 @@ public class NewPauseScreenS : MonoBehaviour {
 				// this is super gross but im doing it because get button down doesn't want to work for some reason
 				if (i == 1){
 					#if UNITY_WIIU
-					if ((i == 1 && !Input.GetButton("StartButtonPlayer"+i+platformType)) ||
-					    (i == 2 && !wiiUInput2.pauseButtonDown) ||
-					    (i == 3 && !wiiUInput3.pauseButtonDown) ||
-					    (i == 4 && !wiiUInput4.pauseButtonDown)){
+					if (!Input.GetButton("StartButtonPlayer"+i+platformType)){
 						#else
 						if (!Input.GetButton("StartButtonPlayer"+i+platformType)){
 							#endif
@@ -75,10 +77,7 @@ public class NewPauseScreenS : MonoBehaviour {
 						
 						if (!pauseButtonDownP1){
 							#if UNITY_WIIU
-							if ((i == 1 && Input.GetButton("StartButtonPlayer"+i+platformType)) ||
-							    (i == 2 && wiiUInput2.pauseButtonDown) ||
-							    (i == 3 && wiiUInput3.pauseButtonDown) ||
-							    (i == 4 && wiiUInput4.pauseButtonDown)){
+							if (Input.GetButton("StartButtonPlayer"+i+platformType)){
 								#else
 								if (Input.GetButton("StartButtonPlayer"+i+platformType)){
 									#endif
@@ -86,6 +85,10 @@ public class NewPauseScreenS : MonoBehaviour {
 										pauseActive = true;
 										playerWhoPaused = i;
 										pauseButtonDownP1 = true;
+
+										if (startSFX != null){
+											Instantiate(startSFX);
+										}
 										
 										// dont allow camera shake
 										CameraShakeS.C.sleeping = true;
@@ -107,10 +110,7 @@ public class NewPauseScreenS : MonoBehaviour {
 						
 						if (i == 2){
 							#if UNITY_WIIU
-							if ((i == 1 && !Input.GetButton("StartButtonPlayer"+i+platformType)) ||
-							    (i == 2 && !wiiUInput2.pauseButtonDown) ||
-							    (i == 3 && !wiiUInput3.pauseButtonDown) ||
-							    (i == 4 && !wiiUInput4.pauseButtonDown)){
+							if (!wiiUInput2.pauseButtonDown){
 								#else
 								if (!Input.GetButton("StartButtonPlayer"+i+platformType)){
 									#endif
@@ -119,10 +119,7 @@ public class NewPauseScreenS : MonoBehaviour {
 								
 								if (!pauseButtonDownP2){
 									#if UNITY_WIIU
-									if ((i == 1 && Input.GetButton("StartButtonPlayer"+i+platformType)) ||
-									    (i == 2 && wiiUInput2.pauseButtonDown) ||
-									    (i == 3 && wiiUInput3.pauseButtonDown) ||
-									    (i == 4 && wiiUInput4.pauseButtonDown)){
+									if (wiiUInput2.pauseButtonDown){
 										#else
 										if (Input.GetButton("StartButtonPlayer"+i+platformType)){
 											#endif
@@ -130,6 +127,10 @@ public class NewPauseScreenS : MonoBehaviour {
 												pauseActive = true;
 												playerWhoPaused = i;
 												pauseButtonDownP2 = true;
+
+												if (startSFX != null){
+													Instantiate(startSFX);
+												}
 												
 												// dont allow camera shake
 												CameraShakeS.C.sleeping = true;
@@ -151,10 +152,7 @@ public class NewPauseScreenS : MonoBehaviour {
 								
 								if (i == 3){
 									#if UNITY_WIIU
-									if ((i == 1 && !Input.GetButton("StartButtonPlayer"+i+platformType)) ||
-									    (i == 2 && !wiiUInput2.pauseButtonDown) ||
-									    (i == 3 && !wiiUInput3.pauseButtonDown) ||
-									    (i == 4 && !wiiUInput4.pauseButtonDown)){
+									if (!wiiUInput3.pauseButtonDown){
 										#else
 										if (!Input.GetButton("StartButtonPlayer"+i+platformType)){
 											#endif
@@ -163,10 +161,7 @@ public class NewPauseScreenS : MonoBehaviour {
 										
 										if (!pauseButtonDownP3){
 											#if UNITY_WIIU
-											if ((i == 1 && Input.GetButton("StartButtonPlayer"+i+platformType)) ||
-											    (i == 2 && wiiUInput2.pauseButtonDown) ||
-											    (i == 3 && wiiUInput3.pauseButtonDown) ||
-											    (i == 4 && wiiUInput4.pauseButtonDown)){
+											if (wiiUInput3.pauseButtonDown){
 												#else
 												if (Input.GetButton("StartButtonPlayer"+i+platformType)){
 													#endif
@@ -174,6 +169,10 @@ public class NewPauseScreenS : MonoBehaviour {
 														pauseActive = true;
 														playerWhoPaused = i;
 														pauseButtonDownP3 = true;
+
+														if (startSFX != null){
+															Instantiate(startSFX);
+														}
 														
 														
 														// dont allow camera shake
@@ -196,10 +195,7 @@ public class NewPauseScreenS : MonoBehaviour {
 										
 										if (i == 4){
 											#if UNITY_WIIU
-											if ((i == 1 && !Input.GetButton("StartButtonPlayer"+i+platformType)) ||
-											    (i == 2 && !wiiUInput2.pauseButtonDown) ||
-											    (i == 3 && !wiiUInput3.pauseButtonDown) ||
-											    (i == 4 && !wiiUInput4.pauseButtonDown)){
+											if (!wiiUInput4.pauseButtonDown){
 												#else
 												if (!Input.GetButton("StartButtonPlayer"+i+platformType)){
 													#endif
@@ -208,10 +204,7 @@ public class NewPauseScreenS : MonoBehaviour {
 												
 												if (!pauseButtonDownP4){
 													#if UNITY_WIIU
-													if ((i == 1 && Input.GetButton("StartButtonPlayer"+i+platformType)) ||
-													    (i == 2 && wiiUInput2.pauseButtonDown) ||
-													    (i == 3 && wiiUInput3.pauseButtonDown) ||
-													    (i == 4 && wiiUInput4.pauseButtonDown)){
+													if (wiiUInput4.pauseButtonDown){
 														#else
 														if (Input.GetButton("StartButtonPlayer"+i+platformType)){
 															#endif
@@ -219,6 +212,10 @@ public class NewPauseScreenS : MonoBehaviour {
 																pauseActive = true;
 																playerWhoPaused = i;
 																pauseButtonDownP4 = true;
+
+																if (startSFX != null){
+																	Instantiate(startSFX);
+																}
 																
 																// turn off camera shake
 																CameraShakeS.C.sleeping = true;
@@ -296,6 +293,9 @@ public class NewPauseScreenS : MonoBehaviour {
 																}
 																
 																movedCursor = true;
+																if (moveSFX != null){
+																	Instantiate(moveSFX);
+																}
 															}
 														}
 														else{
@@ -322,6 +322,10 @@ public class NewPauseScreenS : MonoBehaviour {
 																	// allow camera shake
 																	CameraShakeS.C.sleeping = false;
 																	Time.timeScale = 1;
+
+																	if (selectSFX != null){
+																		Instantiate(selectSFX);
+																	}
 																}
 															}
 															
@@ -345,6 +349,10 @@ public class NewPauseScreenS : MonoBehaviour {
 																		// allow camera shake
 																		CameraShakeS.C.sleeping = false;
 																		Time.timeScale = 1;
+
+																		if (selectSFX != null){
+																			Instantiate(selectSFX);
+																		}
 																	}
 																}
 																
@@ -368,6 +376,10 @@ public class NewPauseScreenS : MonoBehaviour {
 																			// allow camera shake
 																			CameraShakeS.C.sleeping = false;
 																			Time.timeScale = 1;
+
+																			if (endSFX != null){
+																				Instantiate(endSFX);
+																			}
 																		}
 																	}
 																	
@@ -388,6 +400,8 @@ public class NewPauseScreenS : MonoBehaviour {
 														}
 														
 	private void TurnOnText(){
+
+
 	
 		foreach (GameObject textObj in allTextHolder){
 			textObj.SetActive(true);

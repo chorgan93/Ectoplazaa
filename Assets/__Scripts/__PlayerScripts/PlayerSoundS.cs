@@ -31,12 +31,17 @@ public class PlayerSoundS : MonoBehaviour {
 	public List<GameObject> deathSoundObjs;
 
 	public List<GameObject> ninjaDeathSoundObjs;
+	public List<GameObject> ninjaSpecialDeathSoundObjs;
 	public List<GameObject> acidDeathSoundObjs;
+	public List<GameObject> acidSpecialDeathSoundObjs;
 	public List<GameObject> mummyDeathSoundObjs;
+	public List<GameObject> mummySpecialDeathSoundObjs;
 	public List<GameObject> pinkDeathSoundObjs;
 	public List<GameObject> pinkSpecialDeathSoundObjs;
 	public List<GameObject> jabberDeathSoundObjs;
+	public List<GameObject> jabberSpecialDeathSoundObjs;
 	public List<GameObject> blobbyDeathSoundObjs;
+	public List<GameObject> blobbySpecialDeathSoundObjs;
 	
 	public List<GameObject> ninjaLv1AttackSoundObjs;
 	public List<GameObject> acidLv1AttackSoundObjs;
@@ -499,15 +504,15 @@ public class PlayerSoundS : MonoBehaviour {
 			Instantiate(ninjaDeathSoundObjs[randomChoice]);
 			break;
 		case 1:
-			randomChoice = Mathf.FloorToInt(Random.Range(0, ninjaDeathSoundObjs.Count));
+			randomChoice = Mathf.FloorToInt(Random.Range(0, ninjaSpecialDeathSoundObjs.Count));
 			Instantiate(ninjaDeathSoundObjs[randomChoice]);
 			break;
 		case 2:
-			randomChoice = Mathf.FloorToInt(Random.Range(0, acidDeathSoundObjs.Count));
+			randomChoice = Mathf.FloorToInt(Random.Range(0, acidSpecialDeathSoundObjs.Count));
 			Instantiate(acidDeathSoundObjs[randomChoice]);
 			break;
 		case 3:
-			randomChoice = Mathf.FloorToInt(Random.Range(0, mummyDeathSoundObjs.Count));
+			randomChoice = Mathf.FloorToInt(Random.Range(0, mummySpecialDeathSoundObjs.Count));
 			Instantiate(mummyDeathSoundObjs[randomChoice]);
 			break;
 		case 4:
@@ -516,11 +521,11 @@ public class PlayerSoundS : MonoBehaviour {
 			Debug.Log(pinkSpecialDeathSoundObjs[randomChoice].name);
 			break;
 		case 5:
-			randomChoice = Mathf.FloorToInt(Random.Range(0, jabberDeathSoundObjs.Count));
+			randomChoice = Mathf.FloorToInt(Random.Range(0, jabberSpecialDeathSoundObjs.Count));
 			Instantiate(jabberDeathSoundObjs[randomChoice]);
 			break;
 		case 6:
-			randomChoice = Mathf.FloorToInt(Random.Range(0, blobbyDeathSoundObjs.Count));
+			randomChoice = Mathf.FloorToInt(Random.Range(0, blobbySpecialDeathSoundObjs.Count));
 			Instantiate(blobbyDeathSoundObjs[randomChoice]);
 			break;
 		}
