@@ -36,6 +36,8 @@ public class CameraFollowS : MonoBehaviour {
 	private float specialTimeMax = 0.6f;
 	private float endSpecialCountdown;
 
+	public GameObject focusCharacter { get { return focusChar; } }
+
 	public bool levelCamera;
 
 
