@@ -26,6 +26,8 @@ public class GhostballS : MonoBehaviour {
 	private float lv2Mult = 3f;
 	private float lv3Mult = 4.5f;
 
+	public GameObject[] hitSounds;
+
 	// Use this for initialization
 	void Start () {
 
@@ -45,12 +47,22 @@ public class GhostballS : MonoBehaviour {
 	
 	}
 
+	public void PlayHitSound(){
+
+		int hitSoundToPlay = Mathf.RoundToInt(Random.Range(0, hitSounds.Length-1));
+
+		Instantiate(hitSounds[hitSoundToPlay]);
+
+	}
+
 	void OnCollisionEnter(Collision other){
 
 		if (other.gameObject.GetComponent<PlayerS>()){
 			PlayerS playerRef = other.gameObject.GetComponent<PlayerS>();
 
 			GetComponent<Rigidbody>().velocity = Vector3.zero;
+
+			PlayHitSound();
 			
 			float attackAdd = attackForce*Time.deltaTime;
 			// add extra force if attacking

@@ -31,6 +31,8 @@ public class NewGhostballGoalS : MonoBehaviour {
 			ghostBall.MakeSlashEffect(transform.position);
 			goalScored = true;
 
+			ghostBall.PlayHitSound();
+
 			Instantiate(sfxObj);
 		}
 	}
