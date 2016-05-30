@@ -81,14 +81,20 @@ public class GhostMaskSpecialAttackS : MonoBehaviour {
 
 		if (other.gameObject.tag == "Player" && other.gameObject.GetComponent<PlayerS>()){
 			PlayerS otherPlayer = other.gameObject.GetComponent<PlayerS>();
-			if (otherPlayer != playerRef && otherPlayer.health > 0){
+			if (otherPlayer != playerRef && 
+			    (!CurrentModeS.isTeamMode 
+			 || (CurrentModeS.isTeamMode && !GlobalVars.OnSameTeam(playerRef, otherPlayer)))
+			   && otherPlayer.respawnInvulnTime <= 0 && otherPlayer.health > 0){
 				SlashAttack(otherPlayer);
 			}
 		}
 
 		if (other.gameObject.tag == "PlayerTrail"){
 			PlayerS otherPlayer = other.gameObject.GetComponent<DotColliderS>().whoCreatedMe;
-			if (otherPlayer != playerRef && otherPlayer.health > 0){
+			if (otherPlayer != playerRef && 
+			    (!CurrentModeS.isTeamMode 
+			 || (CurrentModeS.isTeamMode && !GlobalVars.OnSameTeam(playerRef, otherPlayer)))
+			    && otherPlayer.respawnInvulnTime <= 0 && otherPlayer.health > 0){
 				SlashAttack(otherPlayer);
 			}
 		}

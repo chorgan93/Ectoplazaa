@@ -14,6 +14,8 @@ public class MaskSlashObjS : MonoBehaviour {
 
 	public GameObject lightingScreen;
 
+	public GameObject soundObj;
+
 	// Use this for initialization
 	void Start () {
 	
@@ -21,6 +23,10 @@ public class MaskSlashObjS : MonoBehaviour {
 		myRender.sprite = slashFrames[currentFrame];
 
 		animRateCountdown = animRateMax;
+
+		if (soundObj != null){
+			Instantiate(soundObj);
+		}
 
 	}
 	

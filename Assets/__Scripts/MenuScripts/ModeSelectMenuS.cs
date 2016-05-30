@@ -177,14 +177,17 @@ public class ModeSelectMenuS : MonoBehaviour {
 		delayInput = 1000f;
 		
 		yield return new WaitForSeconds(0.3f);
-		
-		modeDescriptionObj.TurnOn();
+
 		
 		foreach(FadeObjS fade in fadeObjs){
 
 			fade.gameObject.SetActive(true);
 			
 			yield return new WaitForSeconds(fadeItemTime);
+
+			if (!modeDescriptionObj.isTurnedOn){
+				modeDescriptionObj.TurnOn();
+			}
 		}
 
 		delayInput = 0;

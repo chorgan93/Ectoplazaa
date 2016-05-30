@@ -21,6 +21,8 @@ public class ModeDescriptionS : MonoBehaviour {
 	public Image bg;
 	public Text text;
 
+	public bool isTurnedOn = false;
+
 	// Use this for initialization
 	void Start () {
 
@@ -95,6 +97,8 @@ public class ModeDescriptionS : MonoBehaviour {
 
 		fadingIn = true;
 		fadingOut = false;
+
+		isTurnedOn  = true;
 
 	}
 

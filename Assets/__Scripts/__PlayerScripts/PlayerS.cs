@@ -2221,9 +2221,7 @@ public class PlayerS : MonoBehaviour {
 											this.gameObject.SetActive(false);
 										}
 										else{
-											respawnParticles = Instantiate(respawnParticlePrefab, this.transform.position, Quaternion.identity) as GameObject;
-											respawnParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[characterNum - 1].GetColor("_TintColor");
-											respawnParticles.GetComponent<ParticleSystem>().startLifetime = respawnTimeCountdown;
+												Invoke("ActivateRespawnParticles", 0.08f);
 										}
 										
 										Instantiate(deathParticles, this.transform.position, Quaternion.identity); 
@@ -2238,6 +2236,12 @@ public class PlayerS : MonoBehaviour {
 									
 								}
 							}
+
+								private void ActivateRespawnParticles(){
+									respawnParticles = Instantiate(respawnParticlePrefab, this.transform.position, Quaternion.identity) as GameObject;
+									respawnParticles.GetComponent<ParticleSystem>().startColor = playerParticleMats[characterNum - 1].GetColor("_TintColor");
+									respawnParticles.GetComponent<ParticleSystem>().startLifetime = respawnTimeCountdown-0.08f;
+								}
 							
 							public void TurnOnCharSelect(){
 								inCharSelect = true;
