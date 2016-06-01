@@ -293,6 +293,9 @@ public class PlayerS : MonoBehaviour {
 	public GameObject dashEffectObject;
 	public GameObject groundEffectObject;
 	public GameObject elimAnim;
+
+	private PlayerScoreEffectS _scoreEffect;
+	public PlayerScoreEffectS scoreEffect { get { return _scoreEffect; } }
 	
 	//slowed vars
 	private bool isSlowed;
@@ -735,6 +738,8 @@ public class PlayerS : MonoBehaviour {
 						specialCooldown = specialCooldownMax;
 						PauseCharacter();
 						numKOsInRow = 0;
+
+						ScoreKeeperS.lastPlayerToScore = playerNum;
 
 						
 						soundSource.PlaySpecialZoom();
@@ -1855,6 +1860,10 @@ public class PlayerS : MonoBehaviour {
 							}
 						}
 					}
+
+						public void SetScoreEffect(PlayerScoreEffectS newEffect){
+							_scoreEffect = newEffect;
+						}
 					
 					void Dodge () {
 						
@@ -2135,8 +2144,10 @@ public class PlayerS : MonoBehaviour {
 										trailRendererGO.GetComponent<TrailRenderer>().enabled = true ;
 										trailRendererGO2.GetComponent<TrailRenderer>().enabled = true ;
 										
-											
-											initialHealth *= 0.5f;
+											initialHealth *= 0.75f;
+											if (initialHealth <= startEctoNum){
+												initialHealth = startEctoNum;
+											}
 										health = Mathf.CeilToInt(initialHealth);
 										
 										//DisableAttacks(); 
@@ -2172,6 +2183,7 @@ public class PlayerS : MonoBehaviour {
 							public void TakeDamage(int dmg, bool isSpecial){
 								
 								if (!inCharSelect){
+										int healthBeforeDeath = health;
 									health -= dmg;
 									hurtCounter = hurtTimer; 
 									
@@ -2189,15 +2201,25 @@ public class PlayerS : MonoBehaviour {
 										pinkPaused = false;
 										
 										if (isSpecial){
-											numLives = 0;
+												numLives = 0;
 											GameObject owObj = Instantiate(elimAnim, transform.position, Quaternion.identity)
 													as GameObject;
 												owObj.GetComponent<SpriteRenderer>().color = playerParticleMats[characterNum - 1].GetColor("_TintColor");
 										}
 										else{
-											if (CurrentModeS.currentMode == 1){
+												if (CurrentModeS.currentMode == 1){
+													_scoreEffect.StartFlicker("-1!");
 												numLives --; 			//Decrement Counter
 											}
+												if (CurrentModeS.currentMode == 0){
+													int amtToLose = Mathf.CeilToInt(healthBeforeDeath-initialHealth*0.75f);
+													if (initialHealth<=startEctoNum){
+														amtToLose = Mathf.CeilToInt(healthBeforeDeath-startEctoNum);
+													}
+													if (amtToLose > 0){
+													_scoreEffect.StartFlicker("-" + amtToLose + "!");
+													}
+												}
 
 												// play ko anim
 												SpawnManagerS.Instance.SpawnKO(transform.position, Quaternion.identity);
@@ -2217,10 +2239,12 @@ public class PlayerS : MonoBehaviour {
 										
 										
 										
-										if(numLives <= 0){
+											if(numLives <= 0){
+												_scoreEffect.StartFlicker("P" + playerNum + " OUT!!");
 											this.gameObject.SetActive(false);
 										}
 										else{
+
 												Invoke("ActivateRespawnParticles", 0.08f);
 										}
 										

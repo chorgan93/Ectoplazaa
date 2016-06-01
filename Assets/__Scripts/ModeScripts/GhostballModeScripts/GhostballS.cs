@@ -9,6 +9,7 @@ public class GhostballS : MonoBehaviour {
 	private SpriteRenderer myRenderer;
 
 	private int playerOwner;
+	private PlayerS _playerRef;
 	private int teamOwner;
 	private Color startColor;
 
@@ -93,6 +94,8 @@ public class GhostballS : MonoBehaviour {
 
 			// team mode
 			if (CurrentModeS.isTeamMode){
+				_playerRef = playerRef;
+				playerOwner = playerRef.playerNum;
 				if (teamOwner != GlobalVars.teamNumber[playerRef.playerNum-1]){
 					teamOwner = GlobalVars.teamNumber[playerRef.playerNum-1];
 					
@@ -121,6 +124,7 @@ public class GhostballS : MonoBehaviour {
 			else{
 			if (playerOwner != playerRef.playerNum){
 				playerOwner = playerRef.playerNum;
+					_playerRef = playerRef;
 				Color newCol = playerRef.GetComponentInChildren<TrailRenderer>().materials[0].color;
 				newCol.a = 1;
 				myRenderer.color = newCol;
@@ -146,6 +150,7 @@ public class GhostballS : MonoBehaviour {
 		transform.position = respawnPos;
 		GetComponent<Rigidbody>().velocity = Vector3.zero;
 
+		_playerRef = null;
 		playerOwner = -1;
 		teamOwner = -1;
 
@@ -155,6 +160,12 @@ public class GhostballS : MonoBehaviour {
 
 		return playerOwner;
 
+	}
+
+	public PlayerS GetCurrentPlayerRef(){
+		
+		return _playerRef;
+		
 	}
 
 	public int GetCurrentTeam(){

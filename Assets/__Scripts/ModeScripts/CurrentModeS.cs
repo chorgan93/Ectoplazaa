@@ -3,9 +3,9 @@ using System.Collections;
 
 public class CurrentModeS : MonoBehaviour {
 
-	public static int currentMode = 1; // 0 = Ectoplasm, 1 = Stock, 2=Rocket League, 3=???
+	public static int currentMode = 2; // 0 = Ectoplasm, 1 = Stock, 2=Rocket League, 3=???
 
-	public static bool isTeamMode = false;
+	public static bool isTeamMode = true;
 
 	public static int numRoundsCollectoplaza =3;
 	public static int numRoundsStock =3;
@@ -79,7 +79,6 @@ public class CurrentModeS : MonoBehaviour {
 		bool bDoAnother = true;
 		//See if one player has one.
 		if (isTeamMode){
-			Debug.Log(numberRoundsWonTeam[0] + " : " + numRounds);
 			if (numberRoundsWonTeam[0] >= numRounds || numberRoundsWonTeam[1] >= numRounds){
 				bDoAnother = false;
 			}

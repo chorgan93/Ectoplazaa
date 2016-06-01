@@ -37,6 +37,8 @@ public class ScoreKeeperS : MonoBehaviour {
 
 	bool 				spawnedScoreboard = false;
 
+	public static int lastPlayerToScore = 1;
+
 	public static bool 	gameStarted = false;
 
 	public GameObject 	timer3;
@@ -75,6 +77,9 @@ public class ScoreKeeperS : MonoBehaviour {
 	private int redTeamScore = 0;
 	private int blueTeamScore = 0;
 
+	private int redTeamScoreCalc = 0;
+	private int blueTeamScoreCalc = 0;
+
 	private int numPlayersRed = 0;
 	private int numPlayersBlue = 0;
 
@@ -85,6 +90,8 @@ public class ScoreKeeperS : MonoBehaviour {
 
 	public Material teamWinRedMat;
 	public Material teamWinBlueMat;
+
+	private bool roundEnded = false;
 
 	void Awake () 
 	{
@@ -450,9 +457,13 @@ public class ScoreKeeperS : MonoBehaviour {
 		else{
 			numRedPlayersOut = 0;
 			numBluePlayersOut = 0;
-
+			
+			redTeamScoreCalc = 0;
+			blueTeamScoreCalc = 0;
 			
 			for (int i = 0; i < 4; i++) {
+
+
 				if (GlobalVars.characterNumber [i] != 0) {
 					PlayerS currentPlayer = GlobalVars.playerList [i].GetComponent<PlayerS> ();
 					
@@ -466,29 +477,41 @@ public class ScoreKeeperS : MonoBehaviour {
 						}
 					}
 					else{
-						winningPlayerNum = i;
+						winningPlayerNum = i+1;
 					}
 					
 					// Endgame for Collectoplaza mode
 					if(currentMode == 0)
 					{
 						// calculate score on frame
-						redTeamScore = 0;
-						blueTeamScore = 0;
 						if (GlobalVars.teamNumber[i] == 1){
-							redTeamScore += currentPlayer.score;
+							redTeamScoreCalc += currentPlayer.score;
+
+							if (redTeamScoreCalc >= scoreThresholdCollectoplazaTeam){
+								
+								gameEnd = true;
+								winningTeamNum = 1;
+								winningPlayerNum = lastPlayerToScore;
+								
+								SpawnRoundEndScreen();
+								
+							}
 						}
 						else{
-							blueTeamScore += currentPlayer.score;
+							blueTeamScoreCalc += currentPlayer.score;
+
+							if (blueTeamScoreCalc >= scoreThresholdCollectoplazaTeam){
+								
+								gameEnd = true;
+								winningTeamNum = 2;
+								winningPlayerNum = lastPlayerToScore;
+								
+								SpawnRoundEndScreen();
+								
+							}
 						}
-						if (currentPlayer.score >= scoreThresholdCollectoplaza){
-							
-							gameEnd = true;
-							winningPlayerNum = i + 1;
-							
-							SpawnRoundEndScreen();
-							
-						}
+
+
 					}
 					// Stock Mode
 					else if(currentMode == 1)
@@ -498,11 +521,32 @@ public class ScoreKeeperS : MonoBehaviour {
 					//Ghostball Mode
 					else if(currentMode == 2)
 					{
-						if (currentPlayer.score >= scoreThresholdGhostball ) {
-							gameEnd = true;
-							winningPlayerNum = i + 1;
-							SpawnRoundEndScreen();
+						// calculate score on frame
+						if (GlobalVars.teamNumber[i] == 1){
+							redTeamScoreCalc = redTeamScore;
 							
+							if (redTeamScoreCalc >= scoreThresholdGhostballTeam){
+								
+								gameEnd = true;
+								winningTeamNum = 1;
+								winningPlayerNum = lastPlayerToScore;
+								
+								SpawnRoundEndScreen();
+								
+							}
+						}
+						else{
+							blueTeamScoreCalc  = blueTeamScore;
+							
+							if (blueTeamScoreCalc >= scoreThresholdGhostballTeam){
+								
+								gameEnd = true;
+								winningTeamNum = 2;
+								winningPlayerNum = lastPlayerToScore;
+								
+								SpawnRoundEndScreen();
+								
+							}
 						}
 					}
 				} 
@@ -521,31 +565,13 @@ public class ScoreKeeperS : MonoBehaviour {
 					SpawnRoundEndScreen();
 				}
 
-				// then check mode-specific
-				if (currentMode == 0){
-					if (redTeamScore >= scoreThresholdCollectoplazaTeam){
-						gameEnd = true;
-						winningTeamNum = 1;
-						SpawnRoundEndScreen();
-					}
-					if (blueTeamScore >= scoreThresholdCollectoplazaTeam){
-						gameEnd = true;
-						winningTeamNum = 2;
-						SpawnRoundEndScreen();
-					}
-				}
-				if (currentMode == 2){
-					if (redTeamScore >= scoreThresholdGhostballTeam){
-						gameEnd = true;
-						winningTeamNum = 1;
-						SpawnRoundEndScreen();
-					}
-					if (blueTeamScore >= scoreThresholdGhostballTeam){
-						gameEnd = true;
-						winningTeamNum = 2;
-						SpawnRoundEndScreen();
-					}
-				}
+			}
+
+			if (redTeamScoreCalc != redTeamScore){
+				redTeamScore = redTeamScoreCalc;
+			}
+			if (blueTeamScoreCalc != blueTeamScore){
+				blueTeamScore = blueTeamScoreCalc;
 			}
 		}
 	}
@@ -567,6 +593,7 @@ public class ScoreKeeperS : MonoBehaviour {
 
 	void SpawnRoundEndScreen()
 	{
+		if (!roundEnded){
 		//Do some coroutine to spawn the UI stuffs?
 		//Check number of rounds
 		if (CurrentModeS.isTeamMode){
@@ -591,6 +618,8 @@ public class ScoreKeeperS : MonoBehaviour {
 		}*/
 
 		SpawnEndScreen();
+			roundEnded = true;
+		}
 	}
 	IEnumerator RoundEndScreen()
 	{
@@ -651,6 +680,7 @@ public class ScoreKeeperS : MonoBehaviour {
 			if (winningTeamNum == 1){
 				endFlash.GetComponent<Renderer>().material.color = Color.red;
 				winningPlayerSprite.GetComponent<SpriteRenderer>().material = teamWinRedMat;
+				Debug.Log(CurrentModeS.DoAnotherRound());
 				if (CurrentModeS.DoAnotherRound()){
 					winningPlayerSprite.gameObject.SetActive(false);
 					winningPlayerTail.gameObject.SetActive(false);
@@ -827,16 +857,17 @@ public class ScoreKeeperS : MonoBehaviour {
 		}
 	}
 
-	public void AddPointsTeam(int teamNumber)						//Used by Ghostball Goal
+	public void AddPointsTeam(int teamNumber, int playerNumber)						//Used by Ghostball Goal
 	{	//Should probably be generalized - depending on the mode...?
 
-		Debug.Log(teamNumber);
 		if (teamNumber == 1){
 			redTeamScore += scorePerGoalGhostball;
 		}
 		if (teamNumber == 2){
 			blueTeamScore += scorePerGoalGhostball;
 		}
+
+		lastPlayerToScore = playerNumber;
 	}
 
 	public int GetWinningPlayer(){

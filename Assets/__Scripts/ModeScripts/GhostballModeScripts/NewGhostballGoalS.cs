@@ -22,18 +22,21 @@ public class NewGhostballGoalS : MonoBehaviour {
 	{
 		if (c == ghostBall.GetComponent<Collider>())
 		{
+			if (ghostBall.GetCurrentPlayerRef() != null){
 			if (!CurrentModeS.isTeamMode){
 				AddScore(ghostBall.GetCurrentPlayer());
 			}
 			else{
-				AddScoreTeam(ghostBall.GetCurrentTeam());
+				AddScoreTeam(ghostBall.GetCurrentTeam(), ghostBall.GetCurrentPlayer());
 			}
+				ghostBall.GetCurrentPlayerRef().scoreEffect.StartFlicker("+1!", ghostBall.transform.position);
 			ghostBall.MakeSlashEffect(transform.position);
 			goalScored = true;
 
 			ghostBall.PlayHitSound();
 
 			Instantiate(sfxObj);
+			}
 		}
 	}
 	
@@ -43,8 +46,8 @@ public class NewGhostballGoalS : MonoBehaviour {
 		scoreKeeper.AddPoints(playerToScore);
 
 	}
-	void AddScoreTeam(int teamToScore){
-		scoreKeeper.AddPointsTeam(teamToScore);
+	void AddScoreTeam(int teamToScore, int player){
+		scoreKeeper.AddPointsTeam(teamToScore,  player);
 	}
 	public void Disable(){
 

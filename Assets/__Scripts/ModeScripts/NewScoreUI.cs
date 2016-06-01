@@ -33,6 +33,10 @@ public class NewScoreUI : MonoBehaviour {
 	public Image crown3;
 
 	public Image[] afterlivesStock;
+	public Image[] ballModeScore;
+
+	public Sprite ballScored;
+	public Sprite ballNotScored;
 
 	public Sprite crownWon;
 	public Sprite crownLost;
@@ -83,8 +87,7 @@ public class NewScoreUI : MonoBehaviour {
 
 
 	}
-	
-	// Update is called once per frame
+
 	void LateUpdate () {
 
 		if (ScoreKeeperS.gameEnd){
@@ -195,7 +198,7 @@ public class NewScoreUI : MonoBehaviour {
 				if (CurrentModeS.currentMode == 0){
 	
 					int collectPercent = Mathf.RoundToInt
-						(100*(myPlayer.health-myPlayer.startEctoNum)/ScoreKeeperS.scoreThresholdCollectoplaza);
+						(100*(myPlayer.score)/ScoreKeeperS.scoreThresholdCollectoplaza);
 	
 					if (collectPercent > 100){
 						collectPercent = 100;
@@ -248,7 +251,11 @@ public class NewScoreUI : MonoBehaviour {
 					if (CurrentModeS.currentMode == 0){
 						
 						int collectPercent = Mathf.RoundToInt
-							(100*(myPlayer.health-myPlayer.startEctoNum)/ScoreKeeperS.scoreThresholdCollectoplaza);
+							(100*(scoreKeeper.GetRedScore())/ScoreKeeperS.scoreThresholdCollectoplazaTeam);
+						if (teamNum == 2){
+							collectPercent = Mathf.RoundToInt
+								(100*(scoreKeeper.GetBlueScore())/ScoreKeeperS.scoreThresholdCollectoplazaTeam);
+						}
 						
 						if (collectPercent > 100){
 							collectPercent = 100;

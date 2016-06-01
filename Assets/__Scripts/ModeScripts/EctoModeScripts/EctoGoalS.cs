@@ -58,6 +58,7 @@ public class EctoGoalS : MonoBehaviour {
 		if (other.gameObject.tag == "Player"){
 			if (other.gameObject.GetComponent<PlayerS>().playerNum == playerNum || playerNum == 5){
 				myPlayer = other.gameObject.GetComponent<PlayerS>();
+				ScoreKeeperS.lastPlayerToScore = myPlayer.playerNum;
 				GameObject newParticles =  Instantiate(myPlayer.deathParticles,transform.position,Quaternion.identity) as GameObject;
 
 				newParticles.GetComponent<ParticleSystem>().startColor = 
@@ -71,6 +72,8 @@ public class EctoGoalS : MonoBehaviour {
 				if (numToAdd > 0){
 					myPlayer.initialHealth = myPlayer.health;
 					myPlayer.score += numToAdd;
+
+					myPlayer.scoreEffect.StartFlicker("+" + numToAdd + "!");
 	
 					myPlayer.GetComponent<TrailHandlerRedubS>().updateDots = true;
 
