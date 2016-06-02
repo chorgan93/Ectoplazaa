@@ -76,7 +76,6 @@ public class FadeObjS : MonoBehaviour {
 						fadeCol.a -= fadeRate*Time.deltaTime*TimeManagerS.timeMult;
 					}
 					ownText.color = fadeCol;
-					Debug.Log("Fading text");
 					if (!fadingOut){
 						if (fadeCol.a <= 0){
 							if (dontDestroy){

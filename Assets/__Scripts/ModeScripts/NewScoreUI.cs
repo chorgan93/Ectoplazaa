@@ -117,7 +117,7 @@ public class NewScoreUI : MonoBehaviour {
 
 		if (!myPlayer){
 
-			if (GlobalVars.totalPlayers < playerNum){
+			if (GlobalVars.playerList[playerNum-1] == null){
 				gameObject.SetActive(false);
 			}
 			else{
