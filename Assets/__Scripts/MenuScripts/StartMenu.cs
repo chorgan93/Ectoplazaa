@@ -111,7 +111,7 @@ public class StartMenu : MonoBehaviour {
 		cameraFollow = GameObject.Find("Main Camera").GetComponent<CameraFollowS>();
 
 		if(started){
-			cameraFollow.poi = cursorPositions[0];
+			cameraFollow.poi = startMenuPoiPos[0];
 			bell.gameObject.SetActive(false);
 			flickerText.gameObject.SetActive(false);
 			StartCoroutine(FadeMenuItems());
