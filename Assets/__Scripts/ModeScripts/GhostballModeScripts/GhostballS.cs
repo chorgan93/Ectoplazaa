@@ -7,6 +7,7 @@ public class GhostballS : MonoBehaviour {
 	public ParticleSystem respawnParticles;
 	private ParticleSystem currentRespawnParticles;
 	private SpriteRenderer myRenderer;
+	private Sprite defaultSprite;
 
 	private int playerOwner;
 	private PlayerS _playerRef;
@@ -29,11 +30,34 @@ public class GhostballS : MonoBehaviour {
 
 	public GameObject[] hitSounds;
 
+	public Sprite[] blinkSprites;
+	public float blinkFrameRate = 0.08f;
+	private float blinkFrameCountdown;
+	private int currentBlinkFrame = 0;
+	private bool blinking = false;
+	public float blinkTimeMin = 2f;
+	public float blinkTimeMax = 8f;
+	private float blinkCountdown;
+
+	
+	public Sprite[] hitSprites;
+	public float hitFrameRate = 0.08f;
+	private float hitFrameCountdown;
+	private int currentHitFrame = 0;
+	private bool gettingHit = false;
+
+	public GameObject hitWhiteFlash;
+	private float hitFlashTimeMax = 0.08f;
+	private float hitFlashCountdown;
+
 	// Use this for initialization
 	void Start () {
 
 		myRenderer = GetComponent<SpriteRenderer>();
+		defaultSprite = myRenderer.sprite;
 		startColor = myRenderer.color;
+
+		blinkCountdown = Random.Range(blinkTimeMin, blinkTimeMax);
 	
 	}
 	
@@ -42,8 +66,12 @@ public class GhostballS : MonoBehaviour {
 
 		if (currentRespawnParticles){
 			if (!currentRespawnParticles.isPlaying){
+				hitWhiteFlash.SetActive(false);
 				Destroy(currentRespawnParticles);
 			}
+		}
+		else{
+			HandleBlinking();
 		}
 	
 	}
@@ -56,6 +84,72 @@ public class GhostballS : MonoBehaviour {
 
 	}
 
+	private void PlayHitAnimation(){
+
+		blinking = false;
+		currentBlinkFrame = 0;
+		hitFlashCountdown = hitFlashTimeMax;
+		hitWhiteFlash.SetActive(true);
+
+		gettingHit = true;
+		currentHitFrame = 0;
+		myRenderer.sprite = hitSprites[currentHitFrame];
+		hitFrameCountdown= hitFrameRate+hitFlashTimeMax;
+
+	}
+
+	private void HandleBlinking(){
+
+		if (gettingHit){
+			hitFrameCountdown -= Time.deltaTime;
+			if (hitFrameCountdown <= 0){
+				currentHitFrame++;
+				if (currentHitFrame >= hitSprites.Length){
+					gettingHit = false;
+					blinkCountdown = Random.Range(blinkTimeMin, blinkTimeMax);
+					myRenderer.sprite = defaultSprite;
+				}
+				else{
+					myRenderer.sprite = hitSprites[currentHitFrame];
+					hitFrameCountdown = hitFrameRate;
+				}
+			}
+
+			if (hitWhiteFlash.activeSelf){
+				hitFlashCountdown -= Time.deltaTime;
+				if (hitFlashCountdown <=0){
+					hitWhiteFlash.SetActive(false);
+				}
+			}
+		}
+		else if (blinking){
+			blinkFrameCountdown -= Time.deltaTime;
+			if (blinkFrameCountdown <= 0){
+				currentBlinkFrame++;
+				if (currentBlinkFrame >= blinkSprites.Length){
+					blinking = false;
+					blinkCountdown = Random.Range(blinkTimeMin, blinkTimeMax);
+					myRenderer.sprite = defaultSprite;
+				}
+				else{
+					myRenderer.sprite = blinkSprites[currentBlinkFrame];
+					blinkFrameCountdown = blinkFrameRate;
+				}
+			}
+
+		}
+		else{
+			blinkCountdown -= Time.deltaTime;
+			if (blinkCountdown <= 0){
+				blinking = true;
+				currentBlinkFrame = 0;
+				blinkFrameCountdown = blinkFrameRate;
+				myRenderer.sprite = blinkSprites[currentBlinkFrame];
+			}
+		}
+
+	}
+
 	void OnCollisionEnter(Collision other){
 
 		if (other.gameObject.GetComponent<PlayerS>()){
@@ -64,6 +158,7 @@ public class GhostballS : MonoBehaviour {
 			GetComponent<Rigidbody>().velocity = Vector3.zero;
 
 			PlayHitSound();
+			PlayHitAnimation();
 			
 			float attackAdd = attackForce*Time.deltaTime;
 			// add extra force if attacking
