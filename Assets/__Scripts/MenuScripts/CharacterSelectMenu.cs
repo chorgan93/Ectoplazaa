@@ -279,12 +279,13 @@ public class CharacterSelectMenu : MonoBehaviour {
 							if(hasJoined[i-1])
 							{
 								hasJoined[i-1] = false; 
-								hasSelected[i-1] = false;
-								totalPlayers -= 1; 
-								if (totalPlayers <= 0){
-									totalPlayers = 0;
+								if (hasSelected[i-1]){
+									totalPlayers -= 1; 
+									hasSelected[i-1] = false;
+									if (totalPlayers <= 0){
+										totalPlayers = 0;
+									}
 								}
-								
 								if (CurrentModeS.isTeamMode){
 									
 									GlobalVars.teamNumber[i-1] = 0;

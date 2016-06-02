@@ -95,9 +95,9 @@ public class NewScoreUI : MonoBehaviour {
 
 				// reposition for 3 ball set (5 is default setup)
 				float ballX = ballModeScore[0].rectTransform.sizeDelta.x;
-				ballModeScore[0].rectTransform.anchoredPosition += new Vector2(ballX, 0);
+				ballModeScore[0].rectTransform.anchoredPosition += new Vector2(ballX*0.75f, 0);
 				ballModeScore[1].rectTransform.anchoredPosition += new Vector2(ballX, 0);
-				ballModeScore[2].rectTransform.anchoredPosition += new Vector2(ballX, 0);
+				ballModeScore[2].rectTransform.anchoredPosition += new Vector2(ballX*1.25f, 0);
 
 				// turn off extra two images
 				ballModeScore[3].gameObject.SetActive(false);
