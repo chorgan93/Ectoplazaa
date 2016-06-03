@@ -19,6 +19,11 @@ public class FlameS : MonoBehaviour {
 	private int currentFlameSprite;
 	private int currentSmokeSprite;
 
+	public GameObject burstSFXObj;
+	public GameObject loopSFXObj;
+	public GameObject scorchSFXObj;
+	private GameObject loopSFXCurrent;
+
 	void Start(){
 
 	
@@ -69,6 +74,13 @@ public class FlameS : MonoBehaviour {
 		if (CurrentModeS.allowHazards){
 			mySprite.enabled = true;
 			myCollider.enabled = true;
+
+			if (loopSFXCurrent != null){
+				Destroy(loopSFXCurrent);
+			}
+			loopSFXCurrent = Instantiate(loopSFXObj) as GameObject;
+
+			Instantiate(burstSFXObj);
 		}
 		
 	}
@@ -78,6 +90,10 @@ public class FlameS : MonoBehaviour {
 		mySprite.enabled = false;
 		smokeSprite.enabled = false;
 		myCollider.enabled = false;
+
+		if (loopSFXCurrent != null){
+			Destroy(loopSFXCurrent);
+		}
 
 	}
 
@@ -89,6 +105,7 @@ public class FlameS : MonoBehaviour {
 			    && other.gameObject.GetComponent<PlayerS>().dodgeTimeCountdown <= 0){
 
 				other.gameObject.GetComponent<PlayerS>().TakeDamage(9999, false);
+				Instantiate(scorchSFXObj);
 			
 			}
 
