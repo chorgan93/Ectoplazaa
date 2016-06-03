@@ -2392,7 +2392,9 @@ public class PlayerS : MonoBehaviour {
 												other.gameObject.GetComponent<PlatformSoundS>().PlayPlatformSounds();
 											}
 											else{
-												soundSource.PlayWallHit();
+													if (respawnInvulnTime <= 0){
+														soundSource.PlayWallHit();
+													}
 											}
 											
 											

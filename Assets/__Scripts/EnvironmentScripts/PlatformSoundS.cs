@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class PlatformSoundS : MonoBehaviour {
 
-	private float delaySound;
+	private float delaySound = 1f;
 
 	public List<GameObject> impactSoundObjs;
 
