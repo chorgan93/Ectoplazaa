@@ -42,6 +42,7 @@ public class StartMenu : MonoBehaviour {
 	public TextMesh musicVolumeDisplay;
 	public float musicVolumeChangeStep = 0.25f;
 	public TextMesh sfxVolumeDisplay;
+	private bool selectButtonDown = false;
 	public float sfxVolumeChangeStep = 0.25f;
 	public TextMesh screenShakeDisplay;
 	public float screenShakeChangeStep = 0.25f;
@@ -63,6 +64,7 @@ public class StartMenu : MonoBehaviour {
 	private float delayLoadTime = 0.5f;
 
 	public List<GameObject> scrollSoundObjs;
+	private int numSixes = 0;
 	public List<GameObject> selectSoundObjs;
 	public GameObject advSoundObj;
 	public GameObject bellSoundObj;
@@ -87,6 +89,7 @@ public class StartMenu : MonoBehaviour {
 	public GameObject optionSlashEffect;
 
 	public Material greenSpriteMat;
+	public static bool deckolnUevetS = false;
 	public Material startSpriteMat;
 	public SpriteRenderer[] menuOptionSprites;
 
@@ -96,6 +99,9 @@ public class StartMenu : MonoBehaviour {
 	public FadeObjS[] fadeObjs;
 
 	public WhiteFlashS whiteFlash;
+	private OptionsArrowHandler arrowHandler;
+
+	public GameObject goodSound;
 
 	AsyncOperation async;
 
@@ -109,6 +115,8 @@ public class StartMenu : MonoBehaviour {
 
 		platformType = PlatformS.GetPlatform (); 
 		cameraFollow = GameObject.Find("Main Camera").GetComponent<CameraFollowS>();
+
+		arrowHandler = GetComponent<OptionsArrowHandler>();
 
 		if(started){
 			cameraFollow.poi = startMenuPoiPos[0];
@@ -199,16 +207,33 @@ public class StartMenu : MonoBehaviour {
 				}
 
 				// move cursor function
-				if (Mathf.Abs(Input.GetAxis("Vertical")) > cursorSensitivity || (Mathf.Abs(Input.GetAxis("Horizontal")) > cursorSensitivity && !onOptions)){
+				if (Mathf.Abs(Input.GetAxis("Vertical")) > cursorSensitivity || (Mathf.Abs(Input.GetAxis("Horizontal")) > cursorSensitivity)){
 					if (!movedCursor){
 						if ((Mathf.Abs(Input.GetAxis("Vertical")) > cursorSensitivity && Input.GetAxis("Vertical") < 0) ||
 						    (Mathf.Abs(Input.GetAxis("Horizontal")) > cursorSensitivity && Input.GetAxis("Horizontal") > 0)){
 							// add to current level selected
 							currentCursorPos ++;
 							if (onOptions){
+
+								// easter egg undo
+								if ((Mathf.Abs(Input.GetAxis("Horizontal")) > cursorSensitivity && Input.GetAxis("Horizontal") > 0)
+								    && (currentCursorPos <= 7 || currentCursorPos >= 17)){
+									currentCursorPos--;
+								}
+
 								if (currentCursorPos > optionsCursorPositions.Count-1){
 									currentCursorPos = 0;
 								}
+
+								// easter egg pt 1
+								if (currentCursorPos > 7 && currentCursorPos < 17){
+									if (Mathf.Abs(Input.GetAxis("Vertical")) > cursorSensitivity && Input.GetAxis("Vertical") < 0){
+										// skip
+										currentCursorPos = 17;
+									}
+								}
+
+								arrowHandler.TurnArrowsOnOff(currentCursorPos);
 							}
 							else if (onCredits){
 								if (currentCursorPos > creditsCursorPositions.Count-1){
@@ -223,7 +248,18 @@ public class StartMenu : MonoBehaviour {
 						}
 						// else subtract from current pos
 						else{
+
 							currentCursorPos --;
+
+							// needs to be here not in next onOptions
+							if (onOptions){
+								// easter egg undo
+								if ((Mathf.Abs(Input.GetAxis("Horizontal")) > cursorSensitivity && Input.GetAxis("Horizontal") < 0)
+								    && (currentCursorPos <= 6 || currentCursorPos >= 17)){
+									currentCursorPos++;
+								}
+							}
+
 							if (currentCursorPos < 0){
 								if (onOptions){
 									currentCursorPos = optionsCursorPositions.Count-1;
@@ -233,6 +269,18 @@ public class StartMenu : MonoBehaviour {
 								}
 								else{
 									currentCursorPos = cursorPositions.Count-1;
+								}
+							}
+							if (onOptions){
+								arrowHandler.TurnArrowsOnOff(currentCursorPos);
+
+
+								// easter egg pt 2
+								if (currentCursorPos > 7 && currentCursorPos < 17){
+									if (Mathf.Abs(Input.GetAxis("Vertical")) > cursorSensitivity && Input.GetAxis("Vertical") > 0){
+										// skip
+										currentCursorPos = 7;
+									}
 								}
 							}
 						}
@@ -373,10 +421,18 @@ public class StartMenu : MonoBehaviour {
 						cursorObj.transform.position = Vector3.Lerp(cursorObj.transform.position,  optionsCursorPositions[currentCursorPos].transform.position, cursorSpeed);
 						cameraFollow.poi = optionMenuPoiPos[currentCursorPos];
 
+						if (currentCursorPos < arrowHandler.optionArrows.Length){
+							arrowHandler.optionArrows[currentCursorPos].isOn = true;
+						}
+
 						// allow for different options to change 
 
 						// music volume
 						if (currentCursorPos == 0){
+
+							arrowHandler.optionArrows[currentCursorPos].leftShowing = (BGMS.bgmVolumeMult > 0);
+							arrowHandler.optionArrows[currentCursorPos].rightShowing = (BGMS.bgmVolumeMult < 1);
+
 
 							// allow movement of option up/down using left/right control
 
@@ -413,6 +469,10 @@ public class StartMenu : MonoBehaviour {
 						// sfx volume
 						if (currentCursorPos == 1){
 
+							
+							arrowHandler.optionArrows[currentCursorPos].leftShowing = (SFXObjS.sfxVolumeMult > 0);
+							arrowHandler.optionArrows[currentCursorPos].rightShowing = (SFXObjS.sfxVolumeMult < 1);
+
 							// allow movement of option up/down using left/right control
 							
 							if (Mathf.Abs(Input.GetAxis("Horizontal")) 
@@ -448,6 +508,10 @@ public class StartMenu : MonoBehaviour {
 
 						// screenshake options
 						if (currentCursorPos == 2){
+							
+							arrowHandler.optionArrows[currentCursorPos].leftShowing = (CameraShakeS.shakeStrengthMult > 0);
+							arrowHandler.optionArrows[currentCursorPos].rightShowing = (CameraShakeS.shakeStrengthMult < 2);
+
 							if (Mathf.Abs(Input.GetAxis("Horizontal")) 
 							    > cursorSensitivity){
 								if (!movedCursorLeftRight){
@@ -456,6 +520,8 @@ public class StartMenu : MonoBehaviour {
 										CameraShakeS.shakeStrengthMult += screenShakeChangeStep;
 										if (CameraShakeS.shakeStrengthMult > 2){
 											CameraShakeS.shakeStrengthMult = 2;
+										}else{
+											CameraShakeS.C.SmallShake();
 										}
 									}
 									// else decrease option
@@ -463,6 +529,8 @@ public class StartMenu : MonoBehaviour {
 										CameraShakeS.shakeStrengthMult -= screenShakeChangeStep;
 										if (CameraShakeS.shakeStrengthMult < 0){
 											CameraShakeS.shakeStrengthMult = 0;
+										}else{
+											CameraShakeS.C.SmallShake();
 										}
 									}
 									
@@ -480,6 +548,11 @@ public class StartMenu : MonoBehaviour {
 
 						// time options
 						if (currentCursorPos == 3){
+							
+							arrowHandler.optionArrows[currentCursorPos].leftShowing = !CameraShakeS.timeSleepOn;
+							arrowHandler.optionArrows[currentCursorPos].rightShowing = CameraShakeS.timeSleepOn;
+
+
 							if (Mathf.Abs(Input.GetAxis("Horizontal")) 
 							    > cursorSensitivity){
 								if (!movedCursorLeftRight){
@@ -513,6 +586,10 @@ public class StartMenu : MonoBehaviour {
 
 						// rounds options
 						if (currentCursorPos == 4){
+							
+							arrowHandler.optionArrows[currentCursorPos].leftShowing = CurrentModeS.numRoundsDefault > 1;
+							arrowHandler.optionArrows[currentCursorPos].rightShowing = CurrentModeS.numRoundsDefault < CurrentModeS.maxRounds;
+
 							if (Mathf.Abs(Input.GetAxis("Horizontal")) 
 							    > cursorSensitivity){
 								if (!movedCursorLeftRight){
@@ -543,6 +620,11 @@ public class StartMenu : MonoBehaviour {
 
 						// specials options
 						if (currentCursorPos == 5){
+
+							
+							arrowHandler.optionArrows[currentCursorPos].leftShowing = !CurrentModeS.allowSpecials;
+							arrowHandler.optionArrows[currentCursorPos].rightShowing = CurrentModeS.allowSpecials;
+
 							if (Mathf.Abs(Input.GetAxis("Horizontal")) 
 							    > cursorSensitivity){
 								if (!movedCursorLeftRight){
@@ -565,8 +647,13 @@ public class StartMenu : MonoBehaviour {
 								movedCursorLeftRight = false;
 							}
 						}
-						// rounds options
+						// hazards options
 						if (currentCursorPos == 6){
+
+							
+							arrowHandler.optionArrows[currentCursorPos].leftShowing = !CurrentModeS.allowHazards;
+							arrowHandler.optionArrows[currentCursorPos].rightShowing = CurrentModeS.allowHazards;
+
 							if (Mathf.Abs(Input.GetAxis("Horizontal")) 
 							    > cursorSensitivity){
 								if (!movedCursorLeftRight){
@@ -613,10 +700,61 @@ public class StartMenu : MonoBehaviour {
 						else{
 							hazardOnDisplay.text = "OFF";
 						}
+
+						if (currentCursorPos > 6 && currentCursorPos < 17){
+							if (Input.GetButton ("AButtonAllPlayers" + platformType)) 
+							{
+								if (!selectButtonDown){
+								selectButtonDown = true;
+								Instantiate (selectSoundObjs[Mathf.RoundToInt(Random.Range(0, selectSoundObjs.Count-1))]);
+
+								if (currentCursorPos == 12){
+									numSixes++;
+									if (numSixes == 3 && CameraShakeS.shakeStrengthMult == 2){
+										// unlock steve
+										deckolnUevetS = true;
+											Instantiate(goodSound);
+										Debug.Log("BLAHG??????");
+									}
+								}
+								}
+							}
+							else{
+								selectButtonDown = false;
+							}
+						}else{
+							numSixes = 0;
+						}
+
+						if (currentCursorPos == optionsCursorPositions.Count-1){
+							
+							if (Input.GetButton ("AButtonAllPlayers" + platformType)) 
+							{
+								onOptions = false;
+								onCredits = false;
+								whiteFlash.StartFlash();
+								movedCursor = false;
+								currentCursorPos = 0;
+								inputDelay = inputDelayTransition;
+							}
+						}
 					}
 					if (onCredits){
 						cameraFollow.poi = creditsCameraPositions[currentCursorPos];
 						cursorObj.transform.position = Vector3.Lerp(cursorObj.transform.position, creditsCursorPositions[currentCursorPos].transform.position, cursorSpeed);
+
+						if (currentCursorPos == creditsCursorPositions.Count-1){
+							
+							if (Input.GetButton ("AButtonAllPlayers" + platformType)) 
+							{
+								onOptions = false;
+								onCredits = false;
+								whiteFlash.StartFlash();
+								movedCursor = false;
+								currentCursorPos = 0;
+								inputDelay = inputDelayTransition;
+							}
+						}
 
 					}
 				}
