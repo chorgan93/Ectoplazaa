@@ -83,6 +83,27 @@ public class NewScoreUI : MonoBehaviour {
 				
 			}
 		}
+		if (CurrentModeS.currentMode != 2){
+			foreach (Image ball in ballModeScore){
+				
+				ball.gameObject.SetActive(false);
+				
+			}
+		}
+		else{
+			if (!CurrentModeS.isTeamMode){
+
+				// reposition for 3 ball set (5 is default setup)
+				float ballX = ballModeScore[0].rectTransform.sizeDelta.x;
+				ballModeScore[0].rectTransform.anchoredPosition += new Vector2(ballX*0.75f, 0);
+				ballModeScore[1].rectTransform.anchoredPosition += new Vector2(ballX, 0);
+				ballModeScore[2].rectTransform.anchoredPosition += new Vector2(ballX*1.25f, 0);
+
+				// turn off extra two images
+				ballModeScore[3].gameObject.SetActive(false);
+				ballModeScore[4].gameObject.SetActive(false);
+			}
+		}
 
 
 
@@ -96,7 +117,7 @@ public class NewScoreUI : MonoBehaviour {
 
 		if (!myPlayer){
 
-			if (GlobalVars.totalPlayers < playerNum){
+			if (GlobalVars.playerList[playerNum-1] == null){
 				gameObject.SetActive(false);
 			}
 			else{
@@ -232,10 +253,20 @@ public class NewScoreUI : MonoBehaviour {
 	
 				// ball mode
 				if (CurrentModeS.currentMode == 2){
-						//textDisplay.text += ": " + (100*myPlayer.score/ScoreKeeperS.scoreThresholdGhostball);
-						textDisplay.text += ": " + myPlayer.score;
 
-						//charImageFill.fillAmount = myPlayer.score*1f/ScoreKeeperS.scoreThresholdGhostballTeam*1f;
+						int i = 0;
+						foreach (Image ball in ballModeScore){
+							if (ball.gameObject.activeSelf){
+								if (i < myPlayer.score){
+									ball.sprite = ballScored;
+								}
+								else{
+									ball.sprite = ballNotScored;
+								}
+							}
+							i++;
+						}
+
 
 						if (myPlayer.numLives > 0){
 							charImageFill.fillAmount = 1f;
@@ -291,9 +322,19 @@ public class NewScoreUI : MonoBehaviour {
 						if (teamNum == 2){
 							currentScore = scoreKeeper.GetBlueScore();
 						}
-						textDisplay.text += ": " + currentScore;
-						
-						//charImageFill.fillAmount = currentScore*1f/ScoreKeeperS.scoreThresholdGhostballTeam*1f;
+
+						int i = 0;
+						foreach (Image ball in ballModeScore){
+							if (ball.gameObject.activeSelf){
+								if (i < currentScore){
+									ball.sprite = ballScored;
+								}
+								else{
+									ball.sprite = ballNotScored;
+								}
+							}
+							i++;
+						}
 
 						if (myPlayer.numLives > 0){
 							charImageFill.fillAmount = 1f;

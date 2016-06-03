@@ -29,7 +29,9 @@ public class NewGhostballGoalS : MonoBehaviour {
 			else{
 				AddScoreTeam(ghostBall.GetCurrentTeam(), ghostBall.GetCurrentPlayer());
 			}
-				ghostBall.GetCurrentPlayerRef().scoreEffect.StartFlicker("+1!", ghostBall.transform.position);
+				Vector3 effectPos = ghostBall.transform.position;
+				effectPos.z -= 2f;
+				ghostBall.GetCurrentPlayerRef().scoreEffect.StartFlicker("+1!", effectPos);
 			ghostBall.MakeSlashEffect(transform.position);
 			goalScored = true;
 

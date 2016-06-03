@@ -548,7 +548,7 @@ public class DamageS : MonoBehaviour {
 			spawnRateCountdown = spawnRate;
 			
 			Vector3 spawnPos = laserRenderEnd.transform.position+Random.insideUnitSphere*spawnRad;
-			spawnPos.z = transform.position.z-1f;
+			spawnPos.z = transform.position.z-3f;
 			
 			SpawnManagerS.Instance.SpawnSmoke(spawnPos, Quaternion.Euler(new Vector3(0,0,Random.Range(0,360))), Color.magenta);
 			
