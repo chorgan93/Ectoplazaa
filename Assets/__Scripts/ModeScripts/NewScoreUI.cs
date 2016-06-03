@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class NewScoreUI : MonoBehaviour {
 
+	// test change
+
 	public int playerNum;
 
 	public Image charBorder;

@@ -48,7 +48,6 @@ public class BGMS : MonoBehaviour {
 			//print ("change music!");
 		}
 
-		// in future, allow for multiple bgm players that fade out when going into new scene
 	
 	}
 	
