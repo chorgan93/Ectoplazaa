@@ -303,6 +303,12 @@ public class CharacterSelectMenu : MonoBehaviour {
 							}
 						}
 						
+						int totalSkins = GlobalVars.totalSkins;
+						if (StartMenu.deckolnUevetS){
+							 totalSkins = GlobalVars.totalSkins+1;
+						}
+
+						
 						// LEFT SELECT CODE, FOR CHANGING CHARACTER
 						#if UNITY_WIIU
 						if (((i == 1 && Input.GetAxis("HorizontalPlayer" + i + platformType) < -selectThreshold)
@@ -319,11 +325,11 @@ public class CharacterSelectMenu : MonoBehaviour {
 									int newSkin = players[i-1].GetComponent<PlayerS>().characterNum; 
 									int newColor = 0;
 									
-									for(int j= 1; j <= GlobalVars.totalSkins; j++) //loop once through all skins
+									for(int j= 1; j <= totalSkins; j++) //loop once through all skins
 									{
 										newSkin -= 1; //increment to next skin, check if available; 
 										if(newSkin < 1) //loop if at end of skins
-											newSkin = GlobalVars.totalSkins; 
+											newSkin = totalSkins; 
 										
 										bool flag = false; 
 										
@@ -380,13 +386,14 @@ public class CharacterSelectMenu : MonoBehaviour {
 										
 										int newSkin = players[i-1].GetComponent<PlayerS>().characterNum; 
 										int newColor = 0;
+
 										
-										for(int j= 1; j <= GlobalVars.totalSkins; j++) //loop once through all skins
+										for(int j= 1; j <= totalSkins; j++) //loop once through all skins
 										{
 											newSkin += 1; //increment to next skin, check if available; 
-											if((!StartMenu.deckolnUevetS && newSkin > GlobalVars.totalSkins) ||
-											   (StartMenu.deckolnUevetS && newSkin > GlobalVars.totalSkins+1)) //loop if at end of skins
+											if(newSkin > totalSkins){ //loop if at end of skins
 												newSkin = 1; 
+											}
 											
 											bool flag = false; 
 											
