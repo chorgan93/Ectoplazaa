@@ -63,79 +63,6 @@ public class PlayerAnimS : MonoBehaviour {
 	[HideInInspector]
 	public int myColor = 0;
 
-	// alt color 1
-	
-	public Sprite [] ninjaHeadSpritesB;
-	public Sprite [] ninjaHeadSpecialSpritesB;
-	
-	public Sprite [] mummyHeadSpritesB;
-	public Sprite [] mummyHeadSpecialSpritesB;  
-	
-	
-	public Sprite [] acidHeadSpritesB;
-	public Sprite [] acidHeadSpecialSpritesB; 
-	
-	public Sprite [] pinkHeadSpritesB; 
-	public Sprite [] pinkHeadSpecialSpritesB; 
-	
-	public Sprite [] char5HeadSpritesB; 
-	public Sprite [] char5SpecialSpritesB; 
-	
-	public Sprite [] char6HeadSpritesB; 
-	public Sprite [] char6SpecialSpritesB; 
-	
-	public Sprite [] char7HeadSpritesB; 
-	public Sprite [] char7SpecialSpritesB; 
-
-	// alt color 2
-	
-	public Sprite [] ninjaHeadSpritesC;
-	public Sprite [] ninjaHeadSpecialSpritesC;
-	
-	public Sprite [] mummyHeadSpritesC;
-	public Sprite [] mummyHeadSpecialSpritesC;  
-	
-	
-	public Sprite [] acidHeadSpritesC;
-	public Sprite [] acidHeadSpecialSpritesC; 
-	
-	public Sprite [] pinkHeadSpritesC; 
-	public Sprite [] pinkHeadSpecialSpritesC; 
-	
-	public Sprite [] char5HeadSpritesC; 
-	public Sprite [] char5SpecialSpritesC; 
-	
-	public Sprite [] char6HeadSpritesC; 
-	public Sprite [] char6SpecialSpritesC; 
-	
-	public Sprite [] char7HeadSpritesC; 
-	public Sprite [] char7SpecialSpritesC; 
-
-	// alt color 3
-	
-	public Sprite [] ninjaHeadSpritesD;
-	public Sprite [] ninjaHeadSpecialSpritesD;
-	
-	public Sprite [] mummyHeadSpritesD;
-	public Sprite [] mummyHeadSpecialSpritesD;  
-	
-	
-	public Sprite [] acidHeadSpritesD;
-	public Sprite [] acidHeadSpecialSpritesD; 
-	
-	public Sprite [] pinkHeadSpritesD; 
-	public Sprite [] pinkHeadSpecialSpritesD; 
-	
-	public Sprite [] char5HeadSpritesD; 
-	public Sprite [] char5SpecialSpritesD; 
-	
-	public Sprite [] char6HeadSpritesD; 
-	public Sprite [] char6SpecialSpritesD; 
-	
-	public Sprite [] char7HeadSpritesD; 
-	public Sprite [] char7SpecialSpritesD; 
-
-
 	public int myCharNum;
 
 	public Sprite [] currentHeadSprites;
@@ -517,142 +444,58 @@ public class PlayerAnimS : MonoBehaviour {
 
 		// Ninja sprite sets
 		if (characterNumber == 1) {
-			if (myColor == 3){
-				currentHeadSprites = ninjaHeadSpritesD;
-				currentSpecialSprites = ninjaHeadSpecialSpritesD;
-			}
-			else if (myColor == 2){
-				currentHeadSprites = ninjaHeadSpritesC;
-				currentSpecialSprites = ninjaHeadSpecialSpritesC;
-			}
-			else if (myColor == 1){
-				currentHeadSprites = ninjaHeadSpritesB;
-				currentSpecialSprites = ninjaHeadSpecialSpritesB;
-			}
-			else{
+
 				currentHeadSprites = ninjaHeadSprites;
 				currentSpecialSprites = ninjaHeadSpecialSprites;
-			}
+
 
 		}
 		// Acidmouth sprite sets
 		else if (characterNumber == 2) {
-			if (myColor == 3){
-				currentHeadSprites = acidHeadSpritesD;
-				currentSpecialSprites = acidHeadSpecialSpritesD;
-			}
-			else if (myColor == 2){
-				currentHeadSprites = acidHeadSpritesC;
-				currentSpecialSprites = acidHeadSpecialSpritesC;
-			}
-			else if (myColor == 1){
-				currentHeadSprites = acidHeadSpritesB;
-				currentSpecialSprites = acidHeadSpecialSpritesB;
-			}
-			else{
+
 				currentHeadSprites = acidHeadSprites;
 				currentSpecialSprites = acidHeadSpecialSprites;
-			}
+
 			
 		}
 		// Mr Wraps sprite sets
 		else if (characterNumber == 3) {
-			if (myColor == 3){
-				currentHeadSprites = mummyHeadSpritesD;
-				currentSpecialSprites = mummyHeadSpecialSpritesD;
-			}
-			else if (myColor == 2){
-				currentHeadSprites = mummyHeadSpritesC;
-				currentSpecialSprites = mummyHeadSpecialSpritesC;
-			}
-			else if (myColor == 1){
-				currentHeadSprites = mummyHeadSpritesB;
-				currentSpecialSprites = mummyHeadSpecialSpritesB;
-			}
-			else{
+
 				currentHeadSprites = mummyHeadSprites;
 				currentSpecialSprites = mummyHeadSpecialSprites;
-			}
+
 			
 		}
 		// 
 		else if (characterNumber == 4) {
-			if (myColor == 3){
-				currentHeadSprites = pinkHeadSpritesD;
-				currentSpecialSprites = pinkHeadSpecialSpritesD;
-			}
-			else if (myColor == 2){
-				currentHeadSprites = pinkHeadSpritesC;
-				currentSpecialSprites = pinkHeadSpecialSpritesC;
-			}
-			else if (myColor == 1){
-				currentHeadSprites = pinkHeadSpritesB;
-				currentSpecialSprites = pinkHeadSpecialSpritesB;
-			}
-			else{
+
 				currentHeadSprites = pinkHeadSprites;
 				currentSpecialSprites = pinkHeadSpecialSprites;
-			}
+
 			
 		}
 
 		else if (characterNumber == 5) {
-			if (myColor == 3){
-				currentHeadSprites = char5HeadSpritesD;
-				currentSpecialSprites = char5SpecialSpritesD;
-			}
-			else if (myColor == 2){
-				currentHeadSprites = char5HeadSpritesC;
-				currentSpecialSprites = char5SpecialSpritesC;
-			}
-			else if (myColor == 1){
-				currentHeadSprites = char5HeadSpritesB;
-				currentSpecialSprites = char5SpecialSpritesB;
-			}
-			else{
+
 				currentHeadSprites = char5HeadSprites;
 				currentSpecialSprites = char5SpecialSprites;
-			}
+
 			
 		}
 
 		else if (characterNumber == 6) {
-			if (myColor == 3){
-				currentHeadSprites = char6HeadSpritesD;
-				currentSpecialSprites = char6SpecialSpritesD;
-			}
-			else if (myColor == 2){
-				currentHeadSprites = char6HeadSpritesC;
-				currentSpecialSprites = char6SpecialSpritesC;
-			}
-			else if (myColor == 1){
-				currentHeadSprites = char6HeadSpritesB;
-				currentSpecialSprites = char6SpecialSpritesB;
-			}
-			else{
+
 				currentHeadSprites = char6HeadSprites;
 				currentSpecialSprites = char6SpecialSprites;
-			}
+
 			
 		}
 
 		else if (characterNumber == 7) {
-			if (myColor == 3){
-				currentHeadSprites = char7HeadSpritesD;
-				currentSpecialSprites = char7SpecialSpritesD;
-			}
-			else if (myColor == 2){
-				currentHeadSprites = char7HeadSpritesC;
-				currentSpecialSprites = char7SpecialSpritesC;
-			}
-			else if (myColor == 1){
-				currentHeadSprites = char7HeadSpritesB;
-				currentSpecialSprites = char7SpecialSpritesB;
-			}
-			else{
+
 				currentHeadSprites = char7HeadSprites;
 				currentSpecialSprites = char7SpecialSprites;
-			}
+
 			
 		}
 	}

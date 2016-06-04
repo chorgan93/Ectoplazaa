@@ -2436,7 +2436,7 @@ public class PlayerS : MonoBehaviour {
 								
 							}
 							
-							public void SelfDestruct(){
+								public void SelfDestruct(bool isSpecial = false){
 								
 								TurnOffIgnoreWalls();
 								UnpauseCharacter();
@@ -2444,7 +2444,7 @@ public class PlayerS : MonoBehaviour {
 								specialTriggered = false;
 								specialCooldown = 0;
 								ownRigid.useGravity = true;
-								TakeDamage(10000, false);
+								TakeDamage(10000, isSpecial);
 								
 								if (pinkGrabbed != null){
 									pinkGrabbed.transform.parent = null;
@@ -2766,6 +2766,10 @@ public class PlayerS : MonoBehaviour {
 								if (characterNum == 6){
 									blobbySpecialDelay = blobbySpecialDelayMax;
 								}
+									//STIONCEIONECNAOINIOCNEOANO NO 666
+									if (characterNum == 7){
+										SelfDestruct(true);
+									}
 								
 							}
 							

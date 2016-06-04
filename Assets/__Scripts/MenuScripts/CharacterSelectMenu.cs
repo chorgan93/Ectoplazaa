@@ -30,13 +30,6 @@ public class CharacterSelectMenu : MonoBehaviour {
 	private bool startedLoading = false;
 	AsyncOperation async;
 	
-	
-	// description texts for each character (name and ability)
-	private string character1Text;
-	private string character2Text;
-	private string character3Text;
-	private string character4Text;
-	
 	public GameObject selectSFXObj;
 	
 	// to make sure we're only reading button taps
@@ -391,7 +384,8 @@ public class CharacterSelectMenu : MonoBehaviour {
 										for(int j= 1; j <= GlobalVars.totalSkins; j++) //loop once through all skins
 										{
 											newSkin += 1; //increment to next skin, check if available; 
-											if(newSkin > GlobalVars.totalSkins) //loop if at end of skins
+											if((!StartMenu.deckolnUevetS && newSkin > GlobalVars.totalSkins) ||
+											   (StartMenu.deckolnUevetS && newSkin > GlobalVars.totalSkins+1)) //loop if at end of skins
 												newSkin = 1; 
 											
 											bool flag = false; 
