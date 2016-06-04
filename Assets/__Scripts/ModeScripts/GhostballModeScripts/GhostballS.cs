@@ -89,6 +89,7 @@ public class GhostballS : MonoBehaviour {
 		blinking = false;
 		currentBlinkFrame = 0;
 		hitFlashCountdown = hitFlashTimeMax;
+		hitWhiteFlash.transform.localPosition = new Vector3(0,0,-1f);
 		hitWhiteFlash.SetActive(true);
 
 		gettingHit = true;

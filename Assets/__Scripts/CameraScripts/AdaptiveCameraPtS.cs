@@ -102,25 +102,31 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 
 			}
 
+			// factor in ball in ball mode
+			if (CurrentModeS.currentMode == 2){
+				if (ghostBall.transform.position.x < minXPlayer){
+					minXPlayer = ghostBall.transform.position.x;
+				}
+				if (ghostBall.transform.position.y < minYPlayer){
+					minYPlayer = ghostBall.transform.position.y;
+				}
+				if (ghostBall.transform.position.x > maxXPlayer){
+					maxXPlayer = ghostBall.transform.position.x;
+				}
+				if (ghostBall.transform.position.y > maxYPlayer){
+					maxYPlayer = ghostBall.transform.position.y;
+				}
+			}
+
 			playerCenterPos.x = (minXPlayer + maxXPlayer)/2f;
 			playerCenterPos.y = (minYPlayer + maxYPlayer)/2f;
 
 			// add two values together and divide by total weight
 
-			// factor in ballmode
-			if (CurrentModeS.currentMode == 2){
-
-				adaptPt = (centerPt.transform.position*centerWeight + playerCenterPos*playerWeight
-				           + hitCenter*currentHitWeight + ghostBall.transform.position*ghostBallWeight)
-					/(centerWeight+playerWeight+currentHitWeight+ghostBallWeight);
-
-			}
-			else{
-
 				adaptPt = (centerPt.transform.position*centerWeight + playerCenterPos*playerWeight
 				           + hitCenter*currentHitWeight)/(centerWeight+playerWeight+currentHitWeight);
 
-			}
+
 		}
 
 		// set pos to adaptPt
