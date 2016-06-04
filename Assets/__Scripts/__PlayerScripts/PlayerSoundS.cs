@@ -76,6 +76,8 @@ public class PlayerSoundS : MonoBehaviour {
 	public GameObject jabberSpecialObj;
 	public GameObject jabberSpecialObjEnd;
 
+	public GameObject screamSoundObj;
+
 	private GameObject currentSpecialSoundObj;
 	private GameObject currentLaserSoundObj;
 
@@ -130,6 +132,10 @@ public class PlayerSoundS : MonoBehaviour {
 
 	public void PlayBlobbySpecial(){
 		Instantiate(blobbySpecialObj);
+	}
+
+	public void PlayScreamSpecial(){
+		Instantiate(screamSoundObj);
 	}
 
 	public void PlaySpecialZoom(){
@@ -218,6 +224,9 @@ public class PlayerSoundS : MonoBehaviour {
 				soundToPlay = Mathf.FloorToInt(Random.Range(0, blobbyLv1AttackSoundObjs.Count));
 				Instantiate(blobbyLv1AttackSoundObjs[soundToPlay]);
 			}
+			if (playerRef.characterNum == 7){
+				Instantiate(screamSoundObj);
+			}
 			break;
 		case 1:
 			if (playerRef.characterNum == 1){
@@ -245,6 +254,9 @@ public class PlayerSoundS : MonoBehaviour {
 			if (playerRef.characterNum == 6){
 				soundToPlay = Mathf.FloorToInt(Random.Range(0, blobbyLv2AttackSoundObjs.Count));
 				Instantiate(blobbyLv2AttackSoundObjs[soundToPlay]);
+			}
+			if (playerRef.characterNum == 7){
+				Instantiate(screamSoundObj);
 			}
 			break;
 		case 2:
@@ -274,6 +286,9 @@ public class PlayerSoundS : MonoBehaviour {
 				soundToPlay = Mathf.FloorToInt(Random.Range(0, blobbyLv3AttackSoundObjs.Count));
 				Instantiate(blobbyLv3AttackSoundObjs[soundToPlay]);
 			}
+			if (playerRef.characterNum == 7){
+				Instantiate(screamSoundObj);
+			}
 			break;
 		default:
 			if (playerRef.characterNum == 1){
@@ -301,6 +316,9 @@ public class PlayerSoundS : MonoBehaviour {
 			if (playerRef.characterNum == 6){
 				soundToPlay = Mathf.FloorToInt(Random.Range(0, blobbyLv1AttackSoundObjs.Count));
 				Instantiate(blobbyLv1AttackSoundObjs[soundToPlay]);
+			}
+			if (playerRef.characterNum == 7){
+				Instantiate(screamSoundObj);
 			}
 			break;
 		}
@@ -476,6 +494,9 @@ public class PlayerSoundS : MonoBehaviour {
 			randomChoice = Mathf.FloorToInt(Random.Range(0, blobbyDeathSoundObjs.Count));
 			Instantiate(blobbyDeathSoundObjs[randomChoice]);
 			break;
+		case 7:
+			Instantiate(screamSoundObj);
+			break;
 		}
 		//Instantiate(deathSoundObjs[numToPlay]);
 		
@@ -527,6 +548,9 @@ public class PlayerSoundS : MonoBehaviour {
 		case 6:
 			randomChoice = Mathf.FloorToInt(Random.Range(0, blobbySpecialDeathSoundObjs.Count));
 			Instantiate(blobbyDeathSoundObjs[randomChoice]);
+			break;
+		case 7:
+			Instantiate(screamSoundObj);
 			break;
 		}
 		//Instantiate(deathSoundObjs[numToPlay]);
