@@ -33,7 +33,7 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 	public float minY;
 	public float maxY;
 
-	public GameObject ghostBall;
+	private GameObject ghostBall;
 	private float ghostBallWeight = 0.25f;
 
 	
@@ -48,6 +48,9 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 
 	void Start () {
 		playerPositions.Clear();
+		if (CurrentModeS.currentMode == 2){
+		ghostBall = GameObject.Find("NewGhostball");
+		}
 
 		GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
 		for (int i = 0; i < players.Length; i++){
@@ -198,8 +201,10 @@ public class AdaptiveCameraPtS : MonoBehaviour {
 			}
 
 			// if ball mode, add ball into equation
+			if (CurrentModeS.currentMode ==2){
 			checkPos2d.x = ghostBall.transform.position.x;
 			checkPos2d.y = ghostBall.transform.position.y;
+			}
 
 			currentDistance = Vector2.Distance(playerPos2d, checkPos2d);
 			if (currentDistance > largestDistance){

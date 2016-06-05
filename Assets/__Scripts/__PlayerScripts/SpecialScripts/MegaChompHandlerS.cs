@@ -45,8 +45,8 @@ public class MegaChompHandlerS : MonoBehaviour {
 				topChomp.transform.position = new Vector3(transform.position.x, startY+topStartY, 0);
 				bottomChomp.transform.position = new Vector3(transform.position.x, startY+bottomStartY, 0);
 
-				topChomp.GetComponent<TrailRenderer>().enabled = true;
-				bottomChomp.GetComponent<TrailRenderer>().enabled = true;
+				topChomp.GetComponentInChildren<TrailRenderer>().enabled = true;
+				bottomChomp.GetComponentInChildren<TrailRenderer>().enabled = true;
 
 				playerSet = true;
 

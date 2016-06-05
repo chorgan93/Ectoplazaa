@@ -3,7 +3,7 @@ using System.Collections;
 
 public class FakeParaS : MonoBehaviour {
 
-	public AdaptiveCameraPtS adaptRef;
+	private AdaptiveCameraPtS adaptRef;
 
 	private float xDiffRef;
 
@@ -15,6 +15,8 @@ public class FakeParaS : MonoBehaviour {
 	void Start () {
 
 		startPos = transform.position;
+
+		adaptRef = GameObject.Find("AdaptPt").GetComponent<AdaptiveCameraPtS>();
 	
 	}
 	

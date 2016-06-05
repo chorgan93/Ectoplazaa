@@ -72,7 +72,7 @@ public class ScoreKeeperS : MonoBehaviour {
 	private int playersOut;
 	private int lastRemaining;
 
-	public List <GameObject> mapLayoutsForMode;
+	private List <GameObject> mapLayoutsForMode = new List<GameObject>();
 
 	private int redTeamScore = 0;
 	private int blueTeamScore = 0;
@@ -93,8 +93,16 @@ public class ScoreKeeperS : MonoBehaviour {
 
 	private bool roundEnded = false;
 
+	public StageLoaderS levelLoad;
+
 	void Awake () 
 	{
+		levelLoad.LoadLevel();
+
+		mapLayoutsForMode.Add(GameObject.FindGameObjectWithTag("CollectoplazaLayout"));
+		mapLayoutsForMode.Add(GameObject.FindGameObjectWithTag("AfterlivesLayout"));
+		mapLayoutsForMode.Add(GameObject.FindGameObjectWithTag("GhostballLayout"));
+
 		endGameObj.SetActive(false);
 		gameStarted = false;
 		gameEnd = false;
