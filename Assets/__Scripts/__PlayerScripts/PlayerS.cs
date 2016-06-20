@@ -162,9 +162,6 @@ public class PlayerS : MonoBehaviour {
 	
 	public Material [] playerMats;
 	public Material [] playerParticleMats; 
-	public Material [] playerHurtMats; 
-	public Material	 hurtMat; 
-	Color hurtTint = new Color(255f/255f,130f/255f,130f/255f); 
 	
 	// sound stuff
 	[HideInInspector]
@@ -1996,10 +1993,7 @@ public class PlayerS : MonoBehaviour {
 									trailRendererGO.GetComponent<TrailRenderer>().material = playerMats [characterNum -1];
 									
 									
-								} else {
-									spriteObjRender.color = hurtTint; 
-									trailRendererGO.GetComponent<TrailRenderer>().material = playerHurtMats[characterNum -1];
-								}
+								} 
 								
 								// trying to fix something with lv 2
 								if (!groundDetect.Grounded()){
@@ -2333,6 +2327,8 @@ public class PlayerS : MonoBehaviour {
 											// destroy character
 											SelfDestruct();
 											TurnOffIgnoreWalls();
+												CameraShakeS.C.LargeShake();
+												CameraShakeS.C.TimeSleep(0.12f);
 											
 											
 										}
@@ -2376,7 +2372,9 @@ public class PlayerS : MonoBehaviour {
 											
 											// destroy character
 											SelfDestruct();
-											TurnOffIgnoreWalls();
+												TurnOffIgnoreWalls();
+												CameraShakeS.C.LargeShake();
+												CameraShakeS.C.TimeSleep(0.12f);
 											
 											
 										}
